@@ -21,8 +21,11 @@ import {
   animateEstateMapTo,
   DEFAULT_ESTATE_MAP_REGION,
 } from '../../../components/grower/EstateBoundaryMap';
-import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
+import { FormKeyboardWrap } from '../../../components/FormKeyboardWrap';
+import { FormHelperText } from '../../../components/FormHelperText';
+import { farmerFormUi } from '../../../lib/farmer-form-ui';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { estatesAPI, parcelsAPI, harvestAnnouncementsAPI, type CreateHarvestPlanBody } from '../../../lib/api';
 import { apiErrorMessage, isLikelyNetworkError } from '../../../lib/api-error';
 import { isDeviceOnline } from '../../../lib/network-utils';
@@ -44,6 +47,7 @@ type CategoryKey = 'fruits' | 'vegetables' | 'grains';
 export default function NewEstateScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const p = useBioVeraScreenPadding();
   const [step, setStep] = useState<EstateStep>(1);
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
@@ -148,16 +152,14 @@ export default function NewEstateScreen() {
             if (isLikelyNetworkError(e)) {
               await offlineStorage.savePendingHarvestPlan({ payload: plantingPayload });
               void syncService.getSyncStatus();
-            } else if (__DEV__) {
-              console.warn('[NewEstateScreen] PLANTING record not created', e);
             }
           }
         } else {
           await offlineStorage.savePendingHarvestPlan({ payload: plantingPayload });
           void syncService.getSyncStatus();
         }
-      } catch (q) {
-        if (__DEV__) console.warn('[NewEstateScreen] planting queue failed', q);
+      } catch {
+        // planting queue failed — estate was still created
       }
 
       await markStepComplete(2);
@@ -181,38 +183,43 @@ export default function NewEstateScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surface }}>
+    <FormKeyboardWrap style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
       <View
         style={{
-          paddingTop: 56,
+          paddingTop: p.headerTop,
           paddingBottom: theme.spacing.md,
           paddingHorizontal: theme.spacing.lg,
-          backgroundColor: colors.background,
+          backgroundColor: theme.colors.background,
           borderBottomWidth: 0.5,
-          borderBottomColor: colors.border,
+          borderBottomColor: theme.colors.border,
           flexDirection: 'row',
           alignItems: 'center',
         }}
       >
-        <TouchableOpacity onPress={() => (step > 1 ? setStep((s) => (s - 1) as EstateStep) : router.back())} style={{ marginRight: theme.spacing.md }}>
-          <ArrowLeft size={24} color={colors.text.primary} strokeWidth={1.5} />
+        <TouchableOpacity
+          onPress={() => (step > 1 ? setStep((s) => (s - 1) as EstateStep) : router.back())}
+          style={{ marginRight: theme.spacing.md, ...farmerFormUi.touchTarget, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <ArrowLeft size={24} color={theme.colors.text.primary} strokeWidth={1.5} />
         </TouchableOpacity>
-        <Text style={{ flex: 1, fontSize: 18, fontWeight: '600', color: colors.text.primary }}>
+        <Text style={{ flex: 1, fontSize: 18, fontWeight: '600', color: theme.colors.text.primary }}>
           {t('producer.estates.newEstate')} · {t('producer.estates.step')} {step}/3
         </Text>
         {step === 3 && (
           <TouchableOpacity onPress={handleSave} disabled={loading || !canProceedStep3}>
-            {loading ? <ActivityIndicator size="small" color={colors.primary} /> : <Save size={24} color={colors.primary} strokeWidth={1.5} />}
+            {loading ? <ActivityIndicator size="small" color={theme.colors.primary} /> : <Save size={24} color={theme.colors.primary} strokeWidth={1.5} />}
           </TouchableOpacity>
         )}
       </View>
 
       <ScrollView style={{ flex: 1 }} scrollEnabled={step !== 1 || !drawing} keyboardShouldPersistTaps="handled">
-        <View style={{ padding: theme.spacing.md }}>
+        <View style={{ padding: 16 }}>
           {/* Step 1: Name, location, map */}
           {step === 1 && (
             <>
-              <View style={{ marginBottom: theme.spacing.md }}>
+              <FormHelperText style={{ marginBottom: 16 }}>{t('form.helper.estateStep1')}</FormHelperText>
+              <View style={{ marginBottom: 24 }}>
                 <Text style={labelStyle}>{t('producer.estates.estateName')}</Text>
                 <TextInput
                   value={name}
@@ -220,15 +227,17 @@ export default function NewEstateScreen() {
                   placeholder={t('producer.estates.estateNamePlaceholder')}
                   style={inputStyle}
                 />
+                <FormHelperText>{t('form.helper.estateName')}</FormHelperText>
               </View>
-              <View style={{ marginBottom: theme.spacing.md }}>
+              <View style={{ marginBottom: 24 }}>
                 <Text style={labelStyle}>{t('producer.estates.locationOptional')}</Text>
                 <TextInput value={location} onChangeText={setLocation} placeholder="e.g. Arilje, Serbia" style={inputStyle} />
+                <FormHelperText>{t('form.helper.estateLocation')}</FormHelperText>
               </View>
               <View style={infoBoxStyle}>
-                <Text style={{ fontSize: 13, color: colors.text.primary }}>{t('producer.estates.drawFingerHint')}</Text>
+                <Text style={{ fontSize: 13, color: theme.colors.text.primary }}>{t('producer.estates.drawFingerHint')}</Text>
                 {drawStyle === 'tap' ? (
-                  <Text style={{ fontSize: 11, color: colors.text.secondary, marginTop: 6 }}>{t('producer.estates.atLeast3Points')}</Text>
+                  <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginTop: 6 }}>{t('producer.estates.atLeast3Points')}</Text>
                 ) : null}
               </View>
               <View style={{ flexDirection: 'row', gap: theme.spacing.sm, marginBottom: theme.spacing.sm }}>
@@ -237,7 +246,7 @@ export default function NewEstateScreen() {
                   disabled={fingerDrawingLocked && fingerStroke.length > 0}
                   style={[
                     buttonStyle,
-                    drawStyle === 'tap' && { borderColor: colors.primary, backgroundColor: `${colors.primary}12` },
+                    drawStyle === 'tap' && { borderColor: theme.colors.primary, backgroundColor: `${theme.colors.primary}12` },
                   ]}
                 >
                   <Text style={[buttonTextStyle, drawStyle === 'tap' && { fontWeight: '700' }]}>
@@ -249,7 +258,7 @@ export default function NewEstateScreen() {
                   disabled={fingerDrawingLocked && fingerStroke.length > 0}
                   style={[
                     buttonStyle,
-                    drawStyle === 'finger' && { borderColor: colors.primary, backgroundColor: `${colors.primary}12` },
+                    drawStyle === 'finger' && { borderColor: theme.colors.primary, backgroundColor: `${theme.colors.primary}12` },
                   ]}
                 >
                   <Text style={[buttonTextStyle, drawStyle === 'finger' && { fontWeight: '700' }]}>
@@ -260,9 +269,9 @@ export default function NewEstateScreen() {
               <View style={{ flexDirection: 'row', gap: theme.spacing.sm, marginBottom: theme.spacing.md, flexWrap: 'wrap' }}>
                 <TouchableOpacity
                   onPress={() => setDrawing(!drawing)}
-                  style={[buttonStyle, drawing && { backgroundColor: colors.primary }]}
+                  style={[buttonStyle, drawing && { backgroundColor: theme.colors.primary }]}
                 >
-                  <Text style={[buttonTextStyle, drawing && { color: colors.background }]}>
+                  <Text style={[buttonTextStyle, drawing && { color: theme.colors.background }]}>
                     {drawing
                       ? drawStyle === 'finger'
                         ? t('producer.estates.drawStyleFinger')
@@ -278,20 +287,20 @@ export default function NewEstateScreen() {
                       minWidth: 120,
                       padding: theme.spacing.md,
                       borderRadius: theme.borderRadius.sm,
-                      backgroundColor: colors.primary,
+                      backgroundColor: theme.colors.primary,
                       borderWidth: 0.5,
-                      borderColor: colors.primary,
+                      borderColor: theme.colors.primary,
                       alignItems: 'center',
                     }}
                   >
-                    <Text style={{ fontSize: 13, fontWeight: '700', color: colors.background }}>
+                    <Text style={{ fontSize: 13, fontWeight: '700', color: theme.colors.background }}>
                       {t('producer.estates.acceptFingerOutline')}
                     </Text>
                   </TouchableOpacity>
                 )}
                 {(polygonCoordinates.length > 0 || fingerStroke.length > 0) && (
                   <TouchableOpacity onPress={clearPolygon} style={[buttonStyle, { flex: 0 }]}>
-                    <Text style={[buttonTextStyle, { color: colors.error }]}>{t('producer.estates.delete')}</Text>
+                    <Text style={[buttonTextStyle, { color: theme.colors.error }]}>{t('producer.estates.delete')}</Text>
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity
@@ -301,9 +310,9 @@ export default function NewEstateScreen() {
                   accessibilityLabel={t('producer.estates.yourLocation')}
                 >
                   {locationRefreshing ? (
-                    <ActivityIndicator size="small" color={colors.primary} />
+                    <ActivityIndicator size="small" color={theme.colors.primary} />
                   ) : (
-                    <MapPin size={20} color={colors.primary} strokeWidth={1.5} />
+                    <MapPin size={20} color={theme.colors.primary} strokeWidth={1.5} />
                   )}
                 </TouchableOpacity>
               </View>
@@ -322,7 +331,7 @@ export default function NewEstateScreen() {
                 yourLocationTitle={t('producer.estates.yourLocation')}
               />
               {(polygonCoordinates.length > 0 || fingerStroke.length > 0) && (
-                <Text style={{ fontSize: 12, color: colors.text.secondary, marginBottom: theme.spacing.md }}>
+                <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginBottom: theme.spacing.md }}>
                   {t('producer.estates.boundaryPoints')}: {polygonCoordinates.length}
                   {fingerDrawingLocked && fingerStroke.length > 0 ? ` · ${fingerStroke.length}` : ''}
                 </Text>
@@ -332,8 +341,8 @@ export default function NewEstateScreen() {
                 disabled={!canProceedStep1}
                 style={[primaryButtonStyle, !canProceedStep1 && { opacity: 0.5 }]}
               >
-                <Text style={{ color: colors.background, fontWeight: '600' }}>{t('common.next')}</Text>
-                <ChevronRight size={18} color={colors.background} strokeWidth={2} />
+                <Text style={{ color: theme.colors.background, fontWeight: '600' }}>{t('common.next')}</Text>
+                <ChevronRight size={18} color={theme.colors.background} strokeWidth={2} />
               </TouchableOpacity>
             </>
           )}
@@ -341,24 +350,25 @@ export default function NewEstateScreen() {
           {/* Step 2: New or existing plantings */}
           {step === 2 && (
             <>
-              <Text style={{ fontSize: 15, color: colors.text.secondary, marginBottom: theme.spacing.lg }}>{t('producer.estates.plantingTypePrompt')}</Text>
+              <FormHelperText style={{ marginBottom: 16 }}>{t('form.helper.estateStep2')}</FormHelperText>
+              <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginBottom: 24 }}>{t('producer.estates.plantingTypePrompt')}</Text>
               <TouchableOpacity
                 onPress={() => setPlantingType('NEW')}
                 style={[optionCardStyle, plantingType === 'NEW' && optionCardActiveStyle]}
               >
-                <Text style={[optionCardTitleStyle, plantingType === 'NEW' && { color: colors.primary }]}>{t('producer.estates.newPlanting')}</Text>
+                <Text style={[optionCardTitleStyle, plantingType === 'NEW' && { color: theme.colors.primary }]}>{t('producer.estates.newPlanting')}</Text>
                 <Text style={optionCardDescStyle}>{t('producer.estates.newPlantingDesc')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => setPlantingType('EXISTING')}
                 style={[optionCardStyle, plantingType === 'EXISTING' && optionCardActiveStyle]}
               >
-                <Text style={[optionCardTitleStyle, plantingType === 'EXISTING' && { color: colors.primary }]}>{t('producer.estates.existingPlanting')}</Text>
+                <Text style={[optionCardTitleStyle, plantingType === 'EXISTING' && { color: theme.colors.primary }]}>{t('producer.estates.existingPlanting')}</Text>
                 <Text style={optionCardDescStyle}>{t('producer.estates.existingPlantingDesc')}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleNextStep} disabled={!canProceedStep2} style={[primaryButtonStyle, !canProceedStep2 && { opacity: 0.5 }]}>
-                <Text style={{ color: colors.background, fontWeight: '600' }}>{t('common.next')}</Text>
-                <ChevronRight size={18} color={colors.background} strokeWidth={2} />
+                <Text style={{ color: theme.colors.background, fontWeight: '600' }}>{t('common.next')}</Text>
+                <ChevronRight size={18} color={theme.colors.background} strokeWidth={2} />
               </TouchableOpacity>
             </>
           )}
@@ -366,7 +376,8 @@ export default function NewEstateScreen() {
           {/* Step 3: Crop selection */}
           {step === 3 && (
             <>
-              <Text style={{ fontSize: 15, color: colors.text.secondary, marginBottom: theme.spacing.lg }}>{t('producer.estates.whatPlanted')}</Text>
+              <FormHelperText style={{ marginBottom: 16 }}>{t('form.helper.estateStep3')}</FormHelperText>
+              <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginBottom: 24 }}>{t('producer.estates.whatPlanted')}</Text>
               <Text style={labelStyle}>{t('producer.estates.cropCategory.label')}</Text>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: theme.spacing.lg }}>
                 {(Object.keys(CROP_HIERARCHY) as CategoryKey[]).map((cat) => (
@@ -375,7 +386,7 @@ export default function NewEstateScreen() {
                     onPress={() => { setCategory(cat); setCropId(null); setVarietyId(null); }}
                     style={[chipStyle, category === cat && chipActiveStyle]}
                   >
-                    <Text style={[chipTextStyle, category === cat && { color: colors.primary }]}>{categoryLabels[cat]}</Text>
+                    <Text style={[chipTextStyle, category === cat && { color: theme.colors.primary }]}>{categoryLabels[cat]}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -390,7 +401,7 @@ export default function NewEstateScreen() {
                           onPress={() => { setCropId(crop.id); setVarietyId(null); }}
                           style={[chipStyle, cropId === crop.id && chipActiveStyle]}
                         >
-                          <Text style={[chipTextStyle, cropId === crop.id && { color: colors.primary }]}>{crop.name}</Text>
+                          <Text style={[chipTextStyle, cropId === crop.id && { color: theme.colors.primary }]}>{crop.name}</Text>
                         </TouchableOpacity>
                       ))}
                     </View>
@@ -403,88 +414,93 @@ export default function NewEstateScreen() {
                   <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: theme.spacing.lg }}>
                     {CROP_HIERARCHY[category].find((c) => c.id === cropId)?.varieties.map((v) => (
                       <TouchableOpacity key={v.id} onPress={() => setVarietyId(v.id)} style={[chipStyle, varietyId === v.id && chipActiveStyle]}>
-                        <Text style={[chipTextStyle, varietyId === v.id && { color: colors.primary }]}>{v.name}</Text>
+                        <Text style={[chipTextStyle, varietyId === v.id && { color: theme.colors.primary }]}>{v.name}</Text>
                       </TouchableOpacity>
                     ))}
                   </View>
                 </>
               )}
               <TouchableOpacity onPress={handleSave} disabled={loading || !canProceedStep3} style={[primaryButtonStyle, (loading || !canProceedStep3) && { opacity: 0.5 }]}>
-                {loading ? <ActivityIndicator color={colors.background} /> : <Text style={{ color: colors.background, fontWeight: '600' }}>{t('producer.estates.saveEstate')}</Text>}
+                {loading ? <ActivityIndicator color={theme.colors.background} /> : <Text style={{ color: theme.colors.background, fontWeight: '600' }}>{t('producer.estates.saveEstate')}</Text>}
               </TouchableOpacity>
             </>
           )}
         </View>
       </ScrollView>
     </View>
+    </FormKeyboardWrap>
   );
 }
 
 const labelStyle: TextStyle = {
   fontSize: 13,
   fontWeight: '500',
-  color: colors.text.secondary,
+  color: theme.colors.text.secondary,
   marginBottom: 6,
 };
 const inputStyle: TextStyle = {
-  fontSize: 15,
-  color: colors.text.primary,
+  ...farmerFormUi.input,
+  color: theme.colors.text.primary,
   borderWidth: 0.5,
-  borderColor: colors.border,
+  borderColor: theme.colors.border,
   borderRadius: theme.borderRadius.sm,
-  padding: theme.spacing.md,
-  backgroundColor: colors.background,
+  backgroundColor: theme.colors.background,
 };
 const infoBoxStyle: ViewStyle = {
-  backgroundColor: `${colors.primary}10`,
+  backgroundColor: `${theme.colors.primary}10`,
   borderRadius: theme.borderRadius.md,
-  padding: theme.spacing.md,
-  marginBottom: theme.spacing.md,
+  padding: 16,
+  marginBottom: 24,
   borderWidth: 0.5,
-  borderColor: colors.primary,
+  borderColor: theme.colors.primary,
 };
 const buttonStyle: ViewStyle = {
   flex: 1,
-  padding: theme.spacing.md,
+  ...farmerFormUi.touchTarget,
   borderRadius: theme.borderRadius.sm,
-  backgroundColor: colors.background,
+  backgroundColor: theme.colors.background,
   borderWidth: 0.5,
-  borderColor: colors.border,
+  borderColor: theme.colors.border,
   alignItems: 'center',
+  justifyContent: 'center',
 };
-const buttonTextStyle: TextStyle = { fontSize: 13, fontWeight: '500', color: colors.text.primary };
+const buttonTextStyle: TextStyle = { fontSize: 13, fontWeight: '500', color: theme.colors.text.primary };
 const primaryButtonStyle: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'center',
   gap: 8,
-  backgroundColor: colors.primary,
-  paddingVertical: 14,
+  backgroundColor: theme.colors.primary,
+  minHeight: 48,
+  paddingVertical: 12,
+  paddingHorizontal: 16,
   borderRadius: theme.borderRadius.md,
 };
 const optionCardStyle: ViewStyle = {
-  padding: theme.spacing.lg,
+  padding: 16,
   borderRadius: theme.borderRadius.lg,
   borderWidth: 1,
-  borderColor: colors.border,
-  backgroundColor: colors.background,
-  marginBottom: theme.spacing.md,
+  borderColor: theme.colors.border,
+  backgroundColor: theme.colors.background,
+  marginBottom: 24,
+  minHeight: 48,
 };
-const optionCardActiveStyle: ViewStyle = { borderColor: colors.primary, backgroundColor: `${colors.primary}08` };
+const optionCardActiveStyle: ViewStyle = { borderColor: theme.colors.primary, backgroundColor: `${theme.colors.primary}08` };
 const optionCardTitleStyle: TextStyle = {
   fontSize: 16,
   fontWeight: '600',
-  color: colors.text.primary,
+  color: theme.colors.text.primary,
   marginBottom: 4,
 };
-const optionCardDescStyle: TextStyle = { fontSize: 13, color: colors.text.secondary };
+const optionCardDescStyle: TextStyle = { fontSize: 13, color: theme.colors.text.secondary };
 const chipStyle: ViewStyle = {
   paddingHorizontal: 14,
-  paddingVertical: 10,
+  minHeight: 48,
+  justifyContent: 'center',
   borderRadius: theme.borderRadius.md,
   borderWidth: 1,
-  borderColor: colors.border,
-  backgroundColor: colors.background,
+  borderColor: theme.colors.border,
+  backgroundColor: theme.colors.background,
 };
-const chipActiveStyle: ViewStyle = { borderColor: colors.primary, backgroundColor: `${colors.primary}10` };
-const chipTextStyle: TextStyle = { fontSize: 14, fontWeight: '500', color: colors.text.primary };
+const chipActiveStyle: ViewStyle = { borderColor: theme.colors.primary, backgroundColor: `${theme.colors.primary}10` };
+const chipTextStyle: TextStyle = { fontSize: 14, fontWeight: '500', color: theme.colors.text.primary };

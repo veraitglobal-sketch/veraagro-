@@ -11,7 +11,9 @@ import ErrorMessage from '../../../components/ErrorMessage';
 import Card from '../../../components/ui/Card';
 import { useCart } from '../../../hooks/useCart';
 import { theme } from '../../../lib/theme';
+import { bioVeraScrollProps, TAB_SCROLL_PADDING_BOTTOM } from '../../../lib/scroll-view-props';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
+import EmptyState from '../../../components/EmptyState';
 
 /**
  * Buyer Shop Screen
@@ -120,7 +122,7 @@ export default function ShopScreen() {
               paddingHorizontal: 3,
             }}
           >
-            <Text style={{ fontSize: 10, fontWeight: '600', color: theme.colors.background }}>
+            <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.background }}>
               {unreadNotifications > 9 ? '9+' : unreadNotifications}
             </Text>
           </View>
@@ -160,7 +162,7 @@ export default function ShopScreen() {
               paddingHorizontal: 4,
             }}>
               <Text style={{
-                fontSize: 11,
+                fontSize: 14,
                 fontWeight: '500',
                 color: theme.colors.text.inverse,
               }}>
@@ -172,13 +174,14 @@ export default function ShopScreen() {
       )}
 
       <ScrollView 
+        {...bioVeraScrollProps}
         style={{ flex: 1, backgroundColor: theme.colors.background }}
-        contentContainerStyle={{ paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: TAB_SCROLL_PADDING_BOTTOM }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
+            progressViewOffset={p.topInset}
             tintColor={theme.colors.primary}
             colors={[theme.colors.primary]}
           />
@@ -213,7 +216,7 @@ export default function ShopScreen() {
               <View style={{ flex: 1 }}>
                 <Text style={{
                   fontSize: 18,
-                  fontWeight: '300',
+                  fontWeight: '400',
                   color: theme.colors.text.primary,
                   marginBottom: theme.spacing.xs,
                   letterSpacing: 0.5,
@@ -221,8 +224,8 @@ export default function ShopScreen() {
                   {t('buyer.shop.title')}
                 </Text>
                 <Text style={{
-                  fontSize: 12,
-                  fontWeight: '300',
+                  fontSize: 14,
+                  fontWeight: '400',
                   color: theme.colors.text.secondary,
                   letterSpacing: 0.2,
                 }}>
@@ -272,7 +275,7 @@ export default function ShopScreen() {
                     <Icon size={20} color={category.color} strokeWidth={1.5} />
                     <Text style={{
                       fontSize: 13,
-                      fontWeight: '300',
+                      fontWeight: '400',
                       color: category.color,
                       marginLeft: theme.spacing.sm,
                       letterSpacing: 0.3,
@@ -292,36 +295,7 @@ export default function ShopScreen() {
         ) : error ? (
           <ErrorMessage message={error} onRetry={loadProducts} />
         ) : products.length === 0 ? (
-          <Card 
-            variant="outlined" 
-            padding="xl"
-            style={{
-              alignItems: 'center',
-              borderWidth: 0.5,
-              borderColor: 'rgba(0, 0, 0, 0.05)',
-            }}
-          >
-            <View style={{
-              width: 64,
-              height: 64,
-              borderRadius: theme.borderRadius.md,
-              backgroundColor: theme.colors.surface,
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: theme.spacing.md,
-            }}>
-              <Package size={32} color={theme.colors.text.tertiary} strokeWidth={1} />
-            </View>
-            <Text style={{
-              fontSize: 13,
-              fontWeight: '300',
-              color: theme.colors.text.secondary,
-              textAlign: 'center',
-              letterSpacing: 0.3,
-            }}>
-              {t('buyer.shop.noProducts')}
-            </Text>
-          </Card>
+          <EmptyState message={t('buyer.shop.noProducts')} icon={Package} />
         ) : (
           <View style={{ 
             flexDirection: 'row', 

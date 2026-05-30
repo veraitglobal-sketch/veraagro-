@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: enterpriseColors.primary,
   },
   label: {
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: '500',
     marginTop: 4,
     letterSpacing: -0.1,

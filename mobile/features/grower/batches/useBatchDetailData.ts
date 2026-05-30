@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { batchesAPI } from '../../../lib/api';
-import { colors } from '../../../lib/colors';
+import { theme } from '../../../lib/theme';
 
 /** API returns { batch, traceability }; the detail screen expects a merged flat object. */
 function mergeBatchTraceabilityResponse(
@@ -61,12 +61,12 @@ export function getBatchStatusColor(status: string): string {
   switch (status) {
     case 'PACKED':
     case 'QUALITY_VERIFIED':
-      return colors.accent;
-    case 'IN_HUB': return colors.warning;
-    case 'IN_TRANSIT': return colors.primary;
-    case 'DELIVERED': return colors.success || colors.primary;
-    case 'RETURNED': return colors.warning;
-    case 'EXPIRED': return colors.text.secondary;
-    default: return colors.text.secondary;
+      return theme.colors.accent;
+    case 'IN_HUB': return theme.colors.warning;
+    case 'IN_TRANSIT': return theme.colors.primary;
+    case 'DELIVERED': return theme.colors.success || theme.colors.primary;
+    case 'RETURNED': return theme.colors.warning;
+    case 'EXPIRED': return theme.colors.text.secondary;
+    default: return theme.colors.text.secondary;
   }
 }

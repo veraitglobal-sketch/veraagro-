@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     borderTopColor: enterpriseColors.gray200,
   },
   noteLabel: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
     color: enterpriseColors.gray600,
     textTransform: 'uppercase',

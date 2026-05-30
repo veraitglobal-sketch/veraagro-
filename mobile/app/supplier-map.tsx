@@ -106,7 +106,7 @@ export default function SupplierMapScreen() {
           >
             <Text
               style={{
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: '500',
                 color: theme.colors.text.secondary,
               }}

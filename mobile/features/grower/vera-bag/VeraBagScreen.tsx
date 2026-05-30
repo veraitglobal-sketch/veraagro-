@@ -1,9 +1,11 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from 'lucide-react-native';
-import { colors } from '../../../lib/colors';
+import { theme } from '../../../lib/theme';
 import VeraBag from '../../../components/VeraBag';
+import { a11yIconButton } from '../../../lib/date-locale';
 
 interface Photo {
   id: string;
@@ -18,39 +20,39 @@ interface Photo {
  * App route: app/(producer)/vera-bag.tsx renders this screen.
  */
 export default function VeraBagScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { batchId, parcelId } = useLocalSearchParams<{ batchId?: string; parcelId?: string }>();
   const [photos, setPhotos] = useState<Photo[]>([]);
 
   const handleSave = (updatedPhotos: Photo[]) => {
     setPhotos(updatedPhotos);
-    console.log('Saving photos:', updatedPhotos);
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <View
         style={{
           padding: 20,
           borderBottomWidth: 0.5,
-          borderBottomColor: colors.border,
+          borderBottomColor: theme.colors.border,
           flexDirection: 'row',
           alignItems: 'center',
           gap: 12,
         }}
       >
-        <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
-          <ArrowLeft size={20} color={colors.text.primary} strokeWidth={1} />
+        <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7} {...a11yIconButton(t('common.back'))}>
+          <ArrowLeft size={20} color={theme.colors.text.primary} strokeWidth={1} />
         </TouchableOpacity>
         <Text
           style={{
             fontSize: 16,
-            fontWeight: '300',
-            color: colors.text.primary,
+            fontWeight: '400',
+            color: theme.colors.text.primary,
             letterSpacing: 0.5,
           }}
         >
-          Vera Digital Bag
+          {t('producer.veraBag.title')}
         </Text>
       </View>
 

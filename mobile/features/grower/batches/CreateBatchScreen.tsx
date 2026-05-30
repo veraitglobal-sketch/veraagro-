@@ -27,6 +27,7 @@ import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { normalizeHarvestParcelId } from '../harvest/useHarvestData';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 type ParcelRow = {
   id: string;
@@ -111,6 +112,7 @@ export default function CreateBatchScreen() {
   const router = useRouter();
   const p = useBioVeraScreenPadding();
   const langSr = !!i18n.language?.startsWith('sr');
+  const dateLocale = useAppLocaleTag();
 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -210,13 +212,12 @@ export default function CreateBatchScreen() {
   const formatWhen = useCallback(
     (iso: string) => {
       try {
-        const tag = langSr ? 'sr-Latn' : 'en-GB';
-        return new Date(iso).toLocaleDateString(tag, { dateStyle: 'medium' });
+        return new Date(iso).toLocaleDateString(dateLocale, { dateStyle: 'medium' });
       } catch {
         return iso;
       }
     },
-    [langSr],
+    [dateLocale],
   );
 
   const step1Ok = Boolean(parcelId);

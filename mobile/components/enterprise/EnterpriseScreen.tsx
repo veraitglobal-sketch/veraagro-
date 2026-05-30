@@ -7,8 +7,10 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { enterpriseColors, enterpriseUi } from '../../lib/enterprise-ui';
 import { growerUi } from '../../lib/grower-ui';
+import { bioVeraScrollProps, TAB_SCROLL_PADDING_BOTTOM } from '../../lib/scroll-view-props';
 
 type Props = {
   children: ReactNode;
@@ -27,11 +29,13 @@ export function EnterpriseScreen({
   header,
   refreshing = false,
   onRefresh,
-  contentPaddingBottom = 16,
+  contentPaddingBottom = TAB_SCROLL_PADDING_BOTTOM,
   withTopWash = false,
   contentContainerStyle,
   fillViewport = false,
 }: Props) {
+  const insets = useSafeAreaInsets();
+
   return (
     <View style={growerUi.canvas}>
       {withTopWash ? (
@@ -42,20 +46,20 @@ export function EnterpriseScreen({
         />
       ) : null}
       <ScrollView
-        style={{ flex: 1 }}
+        {...bioVeraScrollProps}
         contentContainerStyle={[
-          { paddingBottom: contentPaddingBottom, flexGrow: fillViewport ? 1 : 0 },
+          { paddingBottom: contentPaddingBottom, flexGrow: 1 },
           contentContainerStyle,
         ]}
         contentInsetAdjustmentBehavior="never"
         automaticallyAdjustContentInsets={false}
-        showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         refreshControl={
           onRefresh ? (
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
+              progressViewOffset={insets.top}
               tintColor={enterpriseColors.primary}
               colors={[enterpriseColors.primary]}
             />

@@ -265,7 +265,7 @@ export default function HandoverLoadingScreen() {
         </Text>
         <Text
           style={{
-            fontSize: 12,
+            fontSize: 14,
             color: theme.colors.text.secondary,
             marginTop: 4,
             lineHeight: 18,
@@ -305,7 +305,7 @@ export default function HandoverLoadingScreen() {
                       <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary }}>
                         {m.missionNumber || m.id.slice(0, 8)}
                       </Text>
-                      <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }}>
+                      <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginTop: 2 }}>
                         {m.batch?.batchId || m.batchId || '—'} · {m.status}
                       </Text>
                     </TouchableOpacity>
@@ -448,7 +448,7 @@ function PhotoBlock({
       <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 4 }}>
         {label}
       </Text>
-      <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginBottom: 10, lineHeight: 17 }}>
+      <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginBottom: 10, lineHeight: 17 }}>
         {hint}
       </Text>
       {uri ? (
@@ -491,9 +491,9 @@ function PhotoBlock({
 }
 
 const styles = StyleSheet.create({
-  label: { fontSize: 12, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 6 },
-  hint: { fontSize: 12, color: theme.colors.text.secondary, marginBottom: 12 },
-  hintSmall: { fontSize: 11, color: theme.colors.text.tertiary, marginBottom: 12 },
+  label: { fontSize: 14, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 6 },
+  hint: { fontSize: 14, color: theme.colors.text.secondary, marginBottom: 12 },
+  hintSmall: { fontSize: 14, color: theme.colors.text.tertiary, marginBottom: 12 },
   input: {
     borderWidth: 1,
     borderColor: theme.colors.border,

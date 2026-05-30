@@ -18,6 +18,7 @@ import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader'
 import { useAppLocaleTag } from '../../../lib/date-locale';
 import { formatOrderLines, orderStatusSortKey } from './types';
 import { usePartnerOrdersData } from './usePartnerOrdersData';
+import EmptyState from '../../../components/EmptyState';
 import { orderPartnerLabel, orderStatusTone, threadTitle } from './partner-order-ui';
 
 type TabId = 'orders' | 'messages';
@@ -135,11 +136,7 @@ export default function PartnerOrdersScreen() {
                 <ActivityIndicator color={enterpriseColors.primary} />
               </View>
             ) : sortedOrders.length === 0 ? (
-              <View style={growerUi.emptyCard}>
-                <Package size={28} color={enterpriseColors.gray600} strokeWidth={1.5} />
-                <Text style={styles.emptyTitle}>{t('producer.dashboard.partnerOrders.emptyOrdersShort')}</Text>
-                <Text style={styles.emptyHint}>{t('producer.dashboard.partnerOrders.emptyOrders')}</Text>
-              </View>
+              <EmptyState message={t('producer.dashboard.partnerOrders.emptyOrdersShort')} icon={Package} />
             ) : (
               <View style={styles.panel}>
                 {sortedOrders.map((o, index) => {
@@ -215,11 +212,7 @@ export default function PartnerOrdersScreen() {
                 <ActivityIndicator color={enterpriseColors.primary} />
               </View>
             ) : threads.length === 0 ? (
-              <View style={growerUi.emptyCard}>
-                <MessageCircle size={28} color={enterpriseColors.gray600} strokeWidth={1.5} />
-                <Text style={styles.emptyTitle}>{t('producer.dashboard.partnerOrders.emptyThreadsShort')}</Text>
-                <Text style={styles.emptyHint}>{t('producer.dashboard.partnerOrders.emptyThreads')}</Text>
-              </View>
+              <EmptyState message={t('producer.dashboard.partnerOrders.emptyThreadsShort')} icon={MessageCircle} />
             ) : (
               <View style={styles.messagesPanel}>
                 {threads
@@ -314,7 +307,7 @@ const styles = StyleSheet.create({
     backgroundColor: enterpriseColors.primary,
   },
   tabBadgeText: {
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: '600',
     color: enterpriseColors.gray600,
   },

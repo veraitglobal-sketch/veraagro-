@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { materialsAPI, Material } from '../../../lib/api';
 import { offlineStorage } from '../../../lib/offline-storage';
-import { colors } from '../../../lib/colors';
+import { theme } from '../../../lib/theme';
 
 export type MaterialFilterType = 'all' | 'FERTILIZER' | 'PESTICIDE' | 'SEED' | 'OTHER';
 
@@ -27,10 +27,6 @@ export function useMaterialsData() {
         setLastSync(new Date());
       }
     } catch (error) {
-      // Network/offline: fallback below; avoid console.error so RN LogBox does not show a full-screen strip on unrelated screens
-      if (__DEV__) {
-        console.warn('Materials whitelist unavailable, using cache if any:', error);
-      }
       const cachedBarcodes = await offlineStorage.getWhitelist();
       if (cachedBarcodes.length > 0) {
         const cachedMaterials: Material[] = cachedBarcodes.map(barcode => ({
@@ -79,10 +75,10 @@ export function useMaterialsData() {
 
   const getTypeColor = useCallback((type: string) => {
     switch (type) {
-      case 'FERTILIZER': return colors.accent;
-      case 'PESTICIDE': return colors.warning;
-      case 'SEED': return colors.primary;
-      default: return colors.text.secondary;
+      case 'FERTILIZER': return theme.colors.accent;
+      case 'PESTICIDE': return theme.colors.warning;
+      case 'SEED': return theme.colors.primary;
+      default: return theme.colors.text.secondary;
     }
   }, []);
 

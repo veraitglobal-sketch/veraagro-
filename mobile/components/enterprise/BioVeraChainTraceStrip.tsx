@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 15,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.gray600,
     letterSpacing: -0.2,
   },
@@ -158,12 +158,12 @@ const styles = StyleSheet.create({
     letterSpacing: -0.28,
   },
   labelUpcoming: {
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.gray600,
   },
   separator: {
     fontSize: 15,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.gray200,
     marginHorizontal: 10,
     letterSpacing: 0,

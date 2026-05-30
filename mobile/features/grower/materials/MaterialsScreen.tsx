@@ -8,6 +8,7 @@ import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
+import { FormKeyboardWrap } from '../../../components/FormKeyboardWrap';
 import { useMaterialsData } from './useMaterialsData';
 import { WhitelistSearch } from './WhitelistSearch';
 import { MaterialList } from './MaterialList';
@@ -29,6 +30,7 @@ export function MaterialsScreen() {
   };
 
   return (
+    <FormKeyboardWrap style={growerUi.canvas}>
     <View style={growerUi.canvas}>
       <EnterpriseScreen
         refreshing={data.refreshing}
@@ -37,7 +39,7 @@ export function MaterialsScreen() {
         header={
           <>
             <GrowerStackHeader
-              title={t('producer.materials.screenTitle')}
+              title={t('producer.materials.title')}
               subtitle={t('producer.materials.screenLeadShort')}
               onBack={goBack}
             />
@@ -88,6 +90,7 @@ export function MaterialsScreen() {
         onSuccess={data.loadMaterials}
       />
     </View>
+    </FormKeyboardWrap>
   );
 }
 

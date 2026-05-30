@@ -42,7 +42,7 @@ export const homeUi = {
 
   heroFarmName: {
     fontSize: 26,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.gray900,
     letterSpacing: -0.6,
     lineHeight: 32,
@@ -91,7 +91,7 @@ export const homeUi = {
 
   statValue: {
     fontSize: 28,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.gray900,
     letterSpacing: -0.8,
     marginTop: 6,
@@ -179,7 +179,7 @@ export const homeUi = {
   } as TextStyle,
 
   alsoLabel: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: '600',
     color: enterpriseColors.gray600,
     letterSpacing: 0.55,
@@ -257,7 +257,7 @@ export const homeUi = {
   } as TextStyle,
 
   linkSubtitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '400',
     color: enterpriseColors.gray600,
     marginTop: 3,

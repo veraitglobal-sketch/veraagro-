@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     backgroundColor: enterpriseColors.white,
   },
   partnerLabel: {
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: '600',
     color: enterpriseColors.gray600,
     letterSpacing: 0.4,

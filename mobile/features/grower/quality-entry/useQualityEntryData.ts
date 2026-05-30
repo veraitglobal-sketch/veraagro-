@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { qualityEntryAPI, QualityEntry, batchesAPI } from '../../../lib/api';
-import { colors } from '../../../lib/colors';
+import { theme } from '../../../lib/theme';
 import { growerOfflineCache } from '../../../lib/grower-offline-cache';
 
 /** Batches where a new quality entry is not applicable (web may still list them). */
@@ -208,7 +208,7 @@ export function useQualityEntryData() {
           text: t('common.ok'),
           onPress: () => {
             if (router.canGoBack()) router.back();
-            else router.replace('/(producer)/(tabs)/shop');
+            else router.replace('/(producer)/(tabs)/supplies');
           },
         },
       ]);
@@ -228,15 +228,15 @@ export function useQualityEntryData() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'DRAFT':
-        return colors.warning;
+        return theme.colors.warning;
       case 'COMPLETED':
-        return colors.accent;
+        return theme.colors.accent;
       case 'VERIFIED':
-        return colors.primary;
+        return theme.colors.primary;
       case 'REJECTED':
-        return colors.error;
+        return theme.colors.error;
       default:
-        return colors.text.secondary;
+        return theme.colors.text.secondary;
     }
   };
 

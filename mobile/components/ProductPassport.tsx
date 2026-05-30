@@ -1,4 +1,5 @@
-import { View, Text, Modal, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { BioVeraBottomSheet } from './enterprise/BioVeraBottomSheet';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +21,7 @@ function formatDateTime(
   if (iso == null) return dash;
   const d = typeof iso === 'string' ? new Date(iso) : iso;
   if (Number.isNaN(d.getTime())) return dash;
-  const loc = locale.toLowerCase().startsWith('sr') ? 'sr-Latn-RS' : 'en-GB';
+  const loc = locale.toLowerCase().startsWith('sr') ? 'sr-Latn' : 'en-US';
   return d.toLocaleString(loc, {
     day: '2-digit',
     month: 'short',
@@ -83,16 +84,10 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
 
   const center = useMemo(() => (passport ? mapCenter(passport) : null), [passport]);
 
-  if (!visible) return null;
-
   return (
-    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)', justifyContent: 'flex-end' }}>
+    <BioVeraBottomSheet visible={visible} onClose={onClose}>
         <View
           style={{
-            backgroundColor: theme.colors.background,
-            borderTopLeftRadius: theme.borderRadius.xl,
-            borderTopRightRadius: theme.borderRadius.xl,
             maxHeight: '92%',
             borderWidth: 0.5,
             borderColor: 'rgba(0, 0, 0, 0.08)',
@@ -114,7 +109,7 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
                   <Text
                     style={{
                       fontSize: 16,
-                      fontWeight: '300',
+                      fontWeight: '400',
                       color: theme.colors.text.primary,
                       letterSpacing: 0.5,
                       marginBottom: theme.spacing.xs,
@@ -126,8 +121,8 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
                     <CheckCircle2 size={14} color={theme.colors.primary} strokeWidth={1} />
                     <Text
                       style={{
-                        fontSize: 11,
-                        fontWeight: '300',
+                        fontSize: 14,
+                        fontWeight: '400',
                         color: theme.colors.primary,
                         letterSpacing: 0.5,
                         textTransform: 'uppercase',
@@ -162,8 +157,8 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
                 <ActivityIndicator size="large" color={theme.colors.primary} />
                 <Text
                   style={{
-                    fontSize: 12,
-                    fontWeight: '300',
+                    fontSize: 14,
+                    fontWeight: '400',
                     color: theme.colors.text.secondary,
                     marginTop: theme.spacing.md,
                   }}
@@ -173,7 +168,7 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
               </View>
             ) : error ? (
               <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
-                <Text style={{ fontSize: 12, color: theme.colors.text.secondary, textAlign: 'center' }}>{error}</Text>
+                <Text style={{ fontSize: 14, color: theme.colors.text.secondary, textAlign: 'center' }}>{error}</Text>
               </View>
             ) : passport ? (
               <>
@@ -398,11 +393,11 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
                         )}
                         {m.locationLogs && m.locationLogs.length > 0 && (
                           <View style={{ marginTop: 8 }}>
-                            <Text style={{ fontSize: 10, color: theme.colors.text.tertiary, marginBottom: 4 }}>
+                            <Text style={{ fontSize: 13, color: theme.colors.text.tertiary, marginBottom: 4 }}>
                               {t('buyer.passport.gpsLogTitle', { count: m.locationLogs.length })}
                             </Text>
                             {m.locationLogs.slice(0, 8).map((log, j) => (
-                              <Text key={j} style={{ fontSize: 10, color: theme.colors.text.secondary }}>
+                              <Text key={j} style={{ fontSize: 13, color: theme.colors.text.secondary }}>
                                 {fmt(log.timestamp)} · {log.latitude.toFixed(4)}, {log.longitude.toFixed(4)}
                                 {log.address ? ` · ${log.address}` : ''}
                               </Text>
@@ -462,13 +457,12 @@ export default function ProductPassport({ visible, batchId, onClose }: ProductPa
             ) : null}
           </ScrollView>
         </View>
-      </View>
-    </Modal>
+    </BioVeraBottomSheet>
   );
 }
 
 const sectionLabel = {
-  fontSize: 11,
+  fontSize: 14,
   fontWeight: '500' as const,
   color: theme.colors.text.secondary,
   letterSpacing: 0.6,
@@ -480,7 +474,7 @@ const blockPad = { paddingHorizontal: theme.spacing.md, marginBottom: theme.spac
 
 const bodyText = { fontSize: 13, fontWeight: '400' as const, color: theme.colors.text.primary, lineHeight: 20 };
 const titleText = { fontSize: 17, fontWeight: '500' as const, color: theme.colors.text.primary, marginBottom: 4 };
-const mutedText = { fontSize: 11, fontWeight: '300' as const, color: theme.colors.text.secondary, marginTop: 2, lineHeight: 16 };
+const mutedText = { fontSize: 14, fontWeight: '400' as const, color: theme.colors.text.secondary, marginTop: 2, lineHeight: 16 };
 
 function JourneyRow({ label, value, detail }: { label: string; value: string; detail?: string }) {
   return (

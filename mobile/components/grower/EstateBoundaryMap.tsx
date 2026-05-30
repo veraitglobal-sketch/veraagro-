@@ -1,7 +1,6 @@
 import { forwardRef, type RefObject } from 'react';
 import { View, type NativeSyntheticEvent } from 'react-native';
 import MapView, { Marker, Polygon, Polyline, type Region } from 'react-native-maps';
-import { colors } from '../../lib/colors';
 import { theme } from '../../lib/theme';
 import type { MapLonLat } from '../../lib/map-boundary-geometry';
 
@@ -55,7 +54,7 @@ export const EstateBoundaryMap = forwardRef<MapView, Props>(function EstateBound
         borderRadius: theme.borderRadius.md,
         overflow: 'hidden',
         borderWidth: 0.5,
-        borderColor: colors.border,
+        borderColor: theme.colors.border,
         marginBottom: theme.spacing.md,
       }}
     >
@@ -83,23 +82,23 @@ export const EstateBoundaryMap = forwardRef<MapView, Props>(function EstateBound
         {polygonCoordinates.length > 0 && !(fingerDrawingLocked && fingerStroke.length >= 2) ? (
           <Polygon
             coordinates={polygonCoordinates.map((c) => ({ latitude: c.lat, longitude: c.lng }))}
-            fillColor={`${colors.primary}30`}
-            strokeColor={colors.primary}
+            fillColor={`${theme.colors.primary}30`}
+            strokeColor={theme.colors.primary}
             strokeWidth={2}
           />
         ) : null}
         {polygonCoordinates.length > 0 && fingerDrawingLocked && fingerStroke.length >= 2 ? (
           <Polygon
             coordinates={polygonCoordinates.map((c) => ({ latitude: c.lat, longitude: c.lng }))}
-            fillColor={`${colors.primary}14`}
-            strokeColor={colors.primary}
+            fillColor={`${theme.colors.primary}14`}
+            strokeColor={theme.colors.primary}
             strokeWidth={1}
           />
         ) : null}
         {fingerDrawingLocked && fingerStroke.length >= 2 ? (
           <Polyline
             coordinates={fingerStroke.map((c) => ({ latitude: c.lat, longitude: c.lng }))}
-            strokeColor={colors.primary}
+            strokeColor={theme.colors.primary}
             strokeWidth={3}
           />
         ) : null}

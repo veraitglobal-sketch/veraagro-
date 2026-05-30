@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
-  Modal,
   Pressable,
   Alert,
   StyleSheet,
@@ -22,14 +21,17 @@ import { apiErrorMessage, axiosLikeMessage, isLikelyNetworkError } from '../../.
 import { usePlantingsData, type HaRow, type ParcelAug } from './usePlantingsData';
 import { PlantingAddWizard } from './PlantingAddWizard';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
+import { BioVeraBottomSheet } from '../../../components/enterprise/BioVeraBottomSheet';
 import { EnterpriseNotice } from '../../../components/enterprise/EnterpriseNotice';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { formatArea } from './crop-catalog';
+import EmptyState from '../../../components/EmptyState';
 import { mapPlantingSaveError } from './map-planting-save-error';
 import { plantingFormDateToEstimatedIsoUtc } from './planting-estimated-date';
 import { normalizeHarvestParcelId } from '../harvest/useHarvestData';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 function parcelLabelSnippet(ha: HaRow): string {
   const id = normalizeHarvestParcelId(ha.parcelId, ha.parcel ?? null);
@@ -42,6 +44,7 @@ export default function PlantingsScreen() {
   const routeParams = useLocalSearchParams<{ openAdd?: string; parcelId?: string }>();
   const p = useBioVeraScreenPadding();
   const langSr = !!i18n.language?.startsWith('sr');
+  const dateLocale = useAppLocaleTag();
 
   const {
     loading,
@@ -98,25 +101,23 @@ export default function PlantingsScreen() {
   const formatWhen = useCallback(
     (iso: string) => {
       try {
-        const tag = langSr ? 'sr-Latn' : 'en-GB';
-        return new Date(iso).toLocaleString(tag, { dateStyle: 'short', timeStyle: 'short' });
+        return new Date(iso).toLocaleString(dateLocale, { dateStyle: 'short', timeStyle: 'short' });
       } catch {
         return iso;
       }
     },
-    [langSr],
+    [dateLocale],
   );
 
   const formatDateShort = useCallback(
     (iso: string) => {
       try {
-        const tag = langSr ? 'sr-Latn' : 'en-GB';
-        return new Date(iso).toLocaleDateString(tag, { dateStyle: 'medium' });
+        return new Date(iso).toLocaleDateString(dateLocale, { dateStyle: 'medium' });
       } catch {
         return iso;
       }
     },
-    [langSr],
+    [dateLocale],
   );
 
   const resolvedParcelFor = (ha: HaRow): ParcelAug | undefined => {
@@ -289,11 +290,12 @@ export default function PlantingsScreen() {
         ) : (
           <>
             {plantingsSorted.length === 0 ? (
-              <View style={growerUi.emptyCard}>
-                <Sprout size={40} color={enterpriseColors.gray600} strokeWidth={1.5} />
-                <Text style={styles.emptyText}>{t('producer.plantings.empty')}</Text>
+              <>
+                <EmptyState message={t('producer.plantings.empty')} icon={Sprout} />
                 {parcelList.length === 0 ? (
-                  <Text style={styles.emptyHint}>{t('producer.plantings.noParcelsHint')}</Text>
+                  <Text style={[styles.emptyHint, { textAlign: 'center', marginTop: 8 }]}>
+                    {t('producer.plantings.noParcelsHint')}
+                  </Text>
                 ) : (
                   <TouchableOpacity
                     onPress={() => openAdd()}
@@ -303,7 +305,7 @@ export default function PlantingsScreen() {
                     <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.plantings.addAccessibility')}</Text>
                   </TouchableOpacity>
                 )}
-              </View>
+              </>
             ) : (
               plantingsSorted.map((a) => {
                 const pr = resolvedParcelFor(a);
@@ -418,51 +420,58 @@ export default function PlantingsScreen() {
         onSubmit={(payload) => void submitPlanting(payload)}
       />
 
-      <Modal visible={detailHa != null} animationType="slide" transparent presentationStyle="pageSheet">
-        <View style={styles.modalBackdrop}>
-          <View style={[styles.modalSheet, { paddingHorizontal: p.screenPaddingLeft, paddingBottom: Math.max(p.bottomInset, 16) }]}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{t('producer.plantings.detailTitle')}</Text>
-              <TouchableOpacity onPress={() => setDetailHa(null)} hitSlop={12}>
-                <X size={24} color={enterpriseColors.gray600} />
-              </TouchableOpacity>
-            </View>
-            {detailHa ? (
-              <ScrollView keyboardShouldPersistTaps="handled">
-                <Text style={styles.detailCrop}>{detailHa.cropType}</Text>
-                <Text style={styles.detailMeta}>
-                  {resolvedParcelFor(detailHa)?.label ?? '—'} · {formatWhen(detailHa.estimatedDate)}
-                </Text>
-                <Text style={styles.detailStatus}>
-                  {t(`producer.plantings.ha_${detailHa.status}`, { defaultValue: detailHa.status })}
-                </Text>
-                {detailHa.notes ? (
-                  <Text style={styles.detailNotes}>{detailHa.notes}</Text>
-                ) : null}
-                <TouchableOpacity
-                  onPress={() => goHarvestForPlanting(detailHa)}
-                  style={[enterpriseUi.authBtnPrimary, styles.detailBtn]}
-                >
-                  <Text style={enterpriseUi.authBtnPrimaryText}>
-                    {t('producer.plantings.openHarvestPlanCta')}
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setDetailHa(null);
-                    openGrowthJournal(detailHa);
-                  }}
-                  style={[styles.detailBtnSecondary]}
-                >
-                  <Text style={styles.detailBtnSecondaryText}>
-                    {t('producer.plantings.progressOpenJournal')}
-                  </Text>
-                </TouchableOpacity>
-              </ScrollView>
-            ) : null}
+      <BioVeraBottomSheet visible={detailHa != null} onClose={() => setDetailHa(null)}>
+        <View style={{ paddingHorizontal: p.screenPaddingLeft, paddingBottom: Math.max(p.bottomInset, 16) }}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>{t('producer.plantings.detailTitle')}</Text>
+            <TouchableOpacity onPress={() => setDetailHa(null)} hitSlop={12}>
+              <X size={24} color={enterpriseColors.gray600} />
+            </TouchableOpacity>
           </View>
+          {detailHa ? (
+            <ScrollView keyboardShouldPersistTaps="handled">
+              <Text style={styles.detailCrop}>{detailHa.cropType}</Text>
+              {(() => {
+                const pr = resolvedParcelFor(detailHa);
+                if (!pr) return null;
+                const parcelLine = pr.cropType?.trim() || pr.label;
+                return (
+                  <>
+                    <Text style={styles.detailLabel}>{t('producer.plantings.detailEstate')}</Text>
+                    <Text style={styles.detailValue}>{pr.estateName || '—'}</Text>
+                    <Text style={styles.detailLabel}>{t('producer.plantings.detailParcel')}</Text>
+                    <Text style={styles.detailValue}>{parcelLine || '—'}</Text>
+                  </>
+                );
+              })()}
+              <Text style={styles.detailMeta}>{formatWhen(detailHa.estimatedDate)}</Text>
+              <Text style={styles.detailStatus}>
+                {t(`producer.plantings.ha_${detailHa.status}`, { defaultValue: detailHa.status })}
+              </Text>
+              {detailHa.notes ? <Text style={styles.detailNotes}>{detailHa.notes}</Text> : null}
+              <TouchableOpacity
+                onPress={() => goHarvestForPlanting(detailHa)}
+                style={[enterpriseUi.authBtnPrimary, styles.detailBtn]}
+              >
+                <Text style={enterpriseUi.authBtnPrimaryText}>
+                  {t('producer.plantings.openHarvestPlanCta')}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setDetailHa(null);
+                  openGrowthJournal(detailHa);
+                }}
+                style={[styles.detailBtnSecondary]}
+              >
+                <Text style={styles.detailBtnSecondaryText}>
+                  {t('producer.plantings.progressOpenJournal')}
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
+          ) : null}
         </View>
-      </Modal>
+      </BioVeraBottomSheet>
     </View>
   );
 }
@@ -518,10 +527,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   cropTitle: { fontSize: 18, fontWeight: '600', color: enterpriseColors.gray900 },
-  queueLabel: { fontSize: 12, fontWeight: '600', color: enterpriseColors.gray700, marginTop: 4 },
+  queueLabel: { fontSize: 14, fontWeight: '600', color: enterpriseColors.gray700, marginTop: 4 },
   queueError: { color: enterpriseColors.destructive },
   statusPill: {
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: '600',
     color: enterpriseColors.primary,
     paddingHorizontal: 8,
@@ -565,6 +574,15 @@ const styles = StyleSheet.create({
   },
   modalTitle: { fontSize: 18, fontWeight: '600', color: enterpriseColors.gray900, flex: 1 },
   detailCrop: { fontSize: 22, fontWeight: '600', color: enterpriseColors.gray900 },
+  detailLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: enterpriseColors.gray600,
+    marginTop: 12,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+  detailValue: { fontSize: 16, color: enterpriseColors.gray900, marginTop: 4 },
   detailMeta: { fontSize: 15, color: enterpriseColors.gray600, marginTop: 8, lineHeight: 22 },
   detailStatus: { fontSize: 14, color: enterpriseColors.gray600, marginTop: 8 },
   detailNotes: { fontSize: 15, color: enterpriseColors.gray700, marginTop: 12, lineHeight: 22 },

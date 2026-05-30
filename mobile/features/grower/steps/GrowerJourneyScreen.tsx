@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   glanceTitle: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
     color: enterpriseColors.gray600,
     letterSpacing: 0.45,
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   stepKicker: {
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: '600',
     color: enterpriseColors.gray600,
     letterSpacing: 0.5,

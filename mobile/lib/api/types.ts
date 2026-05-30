@@ -321,6 +321,12 @@ export type MissionVehicleInfo = {
 };
 
 
+export type MissionBatchRef = {
+  id?: string;
+  batchId?: string | null;
+  productName?: string | null;
+};
+
 export interface Mission {
   id: string;
   /** Human-readable, e.g. MISSION-2026-0001-AB12 */
@@ -337,7 +343,7 @@ export interface Mission {
   hasAssignedPickupDriver?: boolean;
   createdAt: string;
   updatedAt: string;
-  batch?: unknown;
+  batch?: MissionBatchRef | null;
   /** Mapped for grower API responses */
   assignedDriver?: MissionAssignedDriver | null;
   vehicleInfo?: MissionVehicleInfo | null;

@@ -67,7 +67,7 @@ export function useSocket() {
         socketRef.current = newSocket;
 
         newSocket.on('connect', () => {
-          console.log('Socket connected');
+          if (__DEV__) console.log('Socket connected');
           if (mounted) {
             setConnected(true);
             setSocket(newSocket);
@@ -75,7 +75,7 @@ export function useSocket() {
         });
 
         newSocket.on('disconnect', (reason) => {
-          console.log('Socket disconnected', reason);
+          if (__DEV__) console.log('Socket disconnected', reason);
           if (mounted) {
             setConnected(false);
           }
@@ -104,7 +104,7 @@ export function useSocket() {
         });
 
         newSocket.on('notification', (notification: Notification) => {
-          console.log('Received notification:', notification);
+          if (__DEV__) console.log('Received notification:', notification);
           if (mounted) {
             setNotifications((prev) => [notification, ...prev]);
             if (notification.batchId || notification.title?.toLowerCase().includes('batch')) {
@@ -114,7 +114,7 @@ export function useSocket() {
         });
 
         newSocket.on('notifications', (notificationsList: Notification[]) => {
-          console.log('Received notifications list:', notificationsList.length);
+          if (__DEV__) console.log('Received notifications list:', notificationsList.length);
           if (mounted) {
             setNotifications(notificationsList);
           }

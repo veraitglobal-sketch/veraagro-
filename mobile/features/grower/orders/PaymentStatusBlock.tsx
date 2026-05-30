@@ -2,7 +2,6 @@ import { View, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Euro, CheckCircle, Clock } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
-import { colors } from '../../../lib/colors';
 
 interface PaymentStatusBlockProps {
   paymentStatus: string;
@@ -14,26 +13,26 @@ export default function PaymentStatusBlock({ paymentStatus }: PaymentStatusBlock
   return (
     <View
       style={{
-        backgroundColor: colors.background,
+        backgroundColor: theme.colors.background,
         borderRadius: theme.borderRadius.md,
         padding: theme.spacing.md,
         marginBottom: theme.spacing.md,
         borderWidth: 0.5,
-        borderColor: colors.border,
+        borderColor: theme.colors.border,
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm }}>
-        <Euro size={18} color={colors.text.primary} strokeWidth={1} />
-        <Text style={{ fontSize: 15, fontWeight: '300', color: colors.text.primary, marginLeft: theme.spacing.xs, letterSpacing: 0.3 }}>
+        <Euro size={18} color={theme.colors.text.primary} strokeWidth={1} />
+        <Text style={{ fontSize: 15, fontWeight: '400', color: theme.colors.text.primary, marginLeft: theme.spacing.xs, letterSpacing: 0.3 }}>
           {t('producer.orders.paymentStatus')}
         </Text>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>{label}</Text>
+        <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary }}>{label}</Text>
         {paymentStatus === 'PAID' ? (
-          <CheckCircle size={16} color={colors.primary} strokeWidth={1} />
+          <CheckCircle size={16} color={theme.colors.primary} strokeWidth={1} />
         ) : (
-          <Clock size={16} color={colors.warning} strokeWidth={1} />
+          <Clock size={16} color={theme.colors.warning} strokeWidth={1} />
         )}
       </View>
     </View>

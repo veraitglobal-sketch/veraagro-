@@ -1,6 +1,7 @@
 import { View, Text, TextInput } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { colors } from '../../../lib/colors';
+import { theme } from '../../../lib/theme';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 interface DimensionsFormProps {
   length: string;
@@ -18,13 +19,14 @@ export function DimensionsForm({
   onWidthChange,
 }: DimensionsFormProps) {
   const { t } = useTranslation();
+  const dateLocale = useAppLocaleTag();
   return (
     <View style={{ marginBottom: 24 }}>
       <Text
         style={{
           fontSize: 13,
           fontWeight: '400',
-          color: colors.text.primary,
+          color: theme.colors.text.primary,
           marginBottom: 12,
           letterSpacing: 0.3,
         }}
@@ -35,9 +37,9 @@ export function DimensionsForm({
         <View style={{ flex: 1 }}>
           <Text
             style={{
-              fontSize: 11,
-              fontWeight: '300',
-              color: colors.text.secondary,
+              fontSize: 14,
+              fontWeight: '400',
+              color: theme.colors.text.secondary,
               marginBottom: 6,
             }}
           >
@@ -51,21 +53,21 @@ export function DimensionsForm({
             style={{
               padding: 12,
               borderWidth: 0.5,
-              borderColor: colors.border,
+              borderColor: theme.colors.border,
               borderRadius: 6,
-              backgroundColor: colors.surface,
+              backgroundColor: theme.colors.surface,
               fontSize: 13,
-              fontWeight: '300',
-              color: colors.text.primary,
+              fontWeight: '400',
+              color: theme.colors.text.primary,
             }}
           />
         </View>
         <View style={{ flex: 1 }}>
           <Text
             style={{
-              fontSize: 11,
-              fontWeight: '300',
-              color: colors.text.secondary,
+              fontSize: 14,
+              fontWeight: '400',
+              color: theme.colors.text.secondary,
               marginBottom: 6,
             }}
           >
@@ -79,12 +81,12 @@ export function DimensionsForm({
             style={{
               padding: 12,
               borderWidth: 0.5,
-              borderColor: colors.border,
+              borderColor: theme.colors.border,
               borderRadius: 6,
-              backgroundColor: colors.surface,
+              backgroundColor: theme.colors.surface,
               fontSize: 13,
-              fontWeight: '300',
-              color: colors.text.primary,
+              fontWeight: '400',
+              color: theme.colors.text.primary,
             }}
           />
         </View>
@@ -93,12 +95,12 @@ export function DimensionsForm({
         <Text
           style={{
             marginTop: 8,
-            fontSize: 11,
-            fontWeight: '300',
-            color: colors.text.secondary,
+            fontSize: 14,
+            fontWeight: '400',
+            color: theme.colors.text.secondary,
           }}
         >
-          {t('producer.plotMapper.totalArea')}: {totalArea.toLocaleString()} m²
+          {t('producer.plotMapper.totalArea')}: {totalArea.toLocaleString(dateLocale)} m²
         </Text>
       )}
     </View>

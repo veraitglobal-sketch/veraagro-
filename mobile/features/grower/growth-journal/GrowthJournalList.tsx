@@ -5,6 +5,7 @@ import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import type { GrowthLog } from '../../../lib/api';
 import { GrowthLogCard } from './GrowthLogCard';
+import EmptyState from '../../../components/EmptyState';
 
 interface GrowthJournalListProps {
   logs: GrowthLog[];
@@ -38,17 +39,7 @@ export function GrowthJournalList({ logs, loading, logsLoading }: GrowthJournalL
   }
 
   if (logs.length === 0) {
-    return (
-      <View style={[growerUi.emptyCard, { marginTop: 4 }]}>
-        <ImageIcon size={32} color={enterpriseColors.gray600} strokeWidth={1.5} />
-        <Text style={[enterpriseUi.navRowTitle, { marginTop: 12, textAlign: 'center' }]}>
-          {t('producer.growthJournal.noLogs')}
-        </Text>
-        <Text style={[enterpriseUi.navRowSubtitle, { marginTop: 8, textAlign: 'center' }]}>
-          {t('producer.growthJournal.addPhotosToTrack')}
-        </Text>
-      </View>
-    );
+    return <EmptyState message={t('producer.growthJournal.noLogs')} icon={ImageIcon} />;
   }
 
   return (

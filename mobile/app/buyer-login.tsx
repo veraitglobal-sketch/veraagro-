@@ -1,10 +1,19 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+  ScrollView,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { getPostLoginPath, normalizeUserRoles } from '../lib/post-login-redirect';
 import { theme } from '../lib/theme';
+import { FormKeyboardWrap } from '../components/FormKeyboardWrap';
 
 /**
  * Buyer Login Screen
@@ -57,12 +66,20 @@ export default function BuyerLoginScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center', padding: theme.spacing.xl }}>
+    <FormKeyboardWrap style={{ backgroundColor: theme.colors.background }}>
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'center',
+          padding: theme.spacing.xl,
+        }}
+      >
       {/* Header */}
       <View style={{ marginBottom: theme.spacing.xl, alignItems: 'center' }}>
         <Text style={{
           fontSize: 28,
-          fontWeight: '300',
+          fontWeight: '400',
           color: theme.colors.primary,
           marginBottom: theme.spacing.sm,
           letterSpacing: 2,
@@ -71,7 +88,7 @@ export default function BuyerLoginScreen() {
         </Text>
         <Text style={{
           fontSize: 13,
-          fontWeight: '300',
+          fontWeight: '400',
           color: theme.colors.text.secondary,
           letterSpacing: 0.5,
         }}>
@@ -89,7 +106,7 @@ export default function BuyerLoginScreen() {
         marginBottom: theme.spacing.lg,
       }}>
         <Text style={{
-          fontSize: 11,
+          fontSize: 14,
           fontWeight: '500',
           color: theme.colors.text.secondary,
           marginBottom: theme.spacing.sm,
@@ -107,7 +124,7 @@ export default function BuyerLoginScreen() {
           autoCorrect={false}
           style={{
             fontSize: 14,
-            fontWeight: '300',
+            fontWeight: '400',
             color: theme.colors.text.primary,
             paddingVertical: theme.spacing.md,
             paddingHorizontal: theme.spacing.md,
@@ -119,7 +136,7 @@ export default function BuyerLoginScreen() {
         />
 
         <Text style={{
-          fontSize: 11,
+          fontSize: 14,
           fontWeight: '500',
           color: theme.colors.text.secondary,
           marginBottom: theme.spacing.sm,
@@ -136,7 +153,7 @@ export default function BuyerLoginScreen() {
           secureTextEntry
           style={{
             fontSize: 14,
-            fontWeight: '300',
+            fontWeight: '400',
             color: theme.colors.text.primary,
             paddingVertical: theme.spacing.md,
             paddingHorizontal: theme.spacing.md,
@@ -164,7 +181,7 @@ export default function BuyerLoginScreen() {
           ) : (
             <Text style={{
               fontSize: 14,
-              fontWeight: '300',
+              fontWeight: '400',
               color: theme.colors.text.inverse,
               letterSpacing: 1,
             }}>
@@ -183,8 +200,8 @@ export default function BuyerLoginScreen() {
         <View style={{ flex: 1, height: 0.5, backgroundColor: 'rgba(0, 0, 0, 0.1)' }} />
         <Text style={{
           marginHorizontal: theme.spacing.md,
-          fontSize: 11,
-          fontWeight: '300',
+          fontSize: 14,
+          fontWeight: '400',
           color: theme.colors.text.secondary,
           letterSpacing: 1,
         }}>
@@ -209,7 +226,7 @@ export default function BuyerLoginScreen() {
       >
         <Text style={{
           fontSize: 14,
-          fontWeight: '300',
+          fontWeight: '400',
           color: theme.colors.text.primary,
           letterSpacing: 0.5,
         }}>
@@ -232,7 +249,7 @@ export default function BuyerLoginScreen() {
       >
         <Text style={{
           fontSize: 13,
-          fontWeight: '300',
+          fontWeight: '400',
           color: theme.colors.text.secondary,
           letterSpacing: 0.5,
         }}>
@@ -246,8 +263,8 @@ export default function BuyerLoginScreen() {
         style={{ marginTop: theme.spacing.lg, alignItems: 'center' }}
       >
         <Text style={{
-          fontSize: 12,
-          fontWeight: '300',
+          fontSize: 14,
+          fontWeight: '400',
           color: theme.colors.text.secondary,
           letterSpacing: 0.5,
         }}>
@@ -261,14 +278,15 @@ export default function BuyerLoginScreen() {
         style={{ marginTop: theme.spacing.md, alignItems: 'center' }}
       >
         <Text style={{
-          fontSize: 12,
-          fontWeight: '300',
+          fontSize: 14,
+          fontWeight: '400',
           color: theme.colors.text.secondary,
           letterSpacing: 0.5,
         }}>
           {t('buyerLogin.backToMarketplace')}
         </Text>
       </TouchableOpacity>
-    </View>
+      </ScrollView>
+    </FormKeyboardWrap>
   );
 }

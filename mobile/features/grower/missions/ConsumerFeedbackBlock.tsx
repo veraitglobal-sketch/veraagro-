@@ -13,7 +13,7 @@ export default function ConsumerFeedbackBlock({ feedback }: ConsumerFeedbackBloc
   if (!feedback) return null;
 
   return (
-    <MissionDetailSection title={t('producer.missions.consumerFeedbackTitle')} icon={MessageSquare}>
+    <MissionDetailSection title={t('producer.missions.feedback')} icon={MessageSquare}>
       {feedback.rating != null ? (
         <Text style={enterpriseUi.navRowSubtitle}>
           {t('producer.missions.ratingWithMax', { n: feedback.rating })}

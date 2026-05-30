@@ -12,6 +12,7 @@ import { normalizeUserRoles } from '../../../lib/post-login-redirect';
 import { resolveNotificationActionHref } from '../../../lib/resolve-notification-action';
 import { useAuth } from '../../../hooks/useAuth';
 import { useAppLocaleTag } from '../../../lib/date-locale';
+import EmptyState from '../../../components/EmptyState';
 
 type Filter = 'all' | 'unread' | 'ACTION_REQUIRED' | 'REMINDER' | 'ALERT';
 
@@ -153,10 +154,7 @@ export function NotificationsListScreen() {
             <Text style={[enterpriseUi.navRowSubtitle, styles.loadingText]}>{t('notificationsCenter.loading')}</Text>
           </View>
         ) : filteredNotifications.length === 0 ? (
-          <View style={growerUi.emptyCard}>
-            <Bell size={32} color={enterpriseColors.gray600} strokeWidth={1.5} />
-            <Text style={[enterpriseUi.navRowSubtitle, styles.emptyText]}>{t('producer.notifications.empty')}</Text>
-          </View>
+          <EmptyState message={t('producer.notifications.empty')} icon={Bell} />
         ) : (
           filteredNotifications.map((notification) => {
             const Icon = getNotificationIcon(notification.type);

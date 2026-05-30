@@ -1,11 +1,13 @@
 import { View, Text, TouchableOpacity, StyleSheet, type ViewStyle, type StyleProp } from 'react-native';
 import type { ReactNode } from 'react';
 import { router, useSegments } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { replaceToRoleHome } from '../lib/app-navigation';
 import { ArrowLeft } from 'lucide-react-native';
 import { useBioVeraScreenPadding } from '../lib/screen-insets';
 import { enterpriseColors } from '../lib/enterprise-ui';
 import { growerUi } from '../lib/grower-ui';
+import { a11yIconButton } from '../lib/date-locale';
 
 type LeftMode = 'back' | 'none';
 
@@ -29,6 +31,7 @@ export function BioVeraSubpageHeader({
 }: BioVeraSubpageHeaderProps) {
   const p = useBioVeraScreenPadding();
   const segments = useSegments();
+  const { t } = useTranslation();
 
   return (
     <View
@@ -61,6 +64,7 @@ export function BioVeraSubpageHeader({
           }
           hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
           style={{ minWidth: 44, minHeight: 44, justifyContent: 'center', marginRight: 4 }}
+          {...a11yIconButton(t('common.back'))}
         >
           <ArrowLeft size={22} color={enterpriseColors.gray900} strokeWidth={1.5} />
         </TouchableOpacity>

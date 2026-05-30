@@ -125,7 +125,7 @@ export function HomeFarmSnapshot({
           amount: euro(ordersFinancial.farmerShareInEscrow, locale),
         }),
         icon: Wallet,
-        onPress: () => router.push('/(producer)/(tabs)/wallet'),
+        onPress: () => router.push('/(producer)/wallet'),
       });
     }
 

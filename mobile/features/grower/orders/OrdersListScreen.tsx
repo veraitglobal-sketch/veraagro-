@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 import { Package, Calendar, Euro } from 'lucide-react-native';
+import EmptyState from '../../../components/EmptyState';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
@@ -22,7 +23,7 @@ export function OrdersListScreen() {
 
   const filterSpecs = useMemo(
     (): { id: OrderFilterStatus; labelKey: string }[] => [
-      { id: 'all', labelKey: 'common.all' },
+      { id: 'all', labelKey: 'producer.orders.filterAll' },
       { id: 'PENDING', labelKey: 'producer.orders.statusPending' },
       { id: 'CONFIRMED', labelKey: 'producer.orders.statusConfirmed' },
       { id: 'PREPARING', labelKey: 'producer.orders.statusPreparing' },
@@ -63,8 +64,8 @@ export function OrdersListScreen() {
                 }}
               >
                 <Text style={{
-                  fontSize: 11,
-                  fontWeight: '300',
+                  fontSize: 14,
+                  fontWeight: '400',
                   color: data.filter === f.id ? theme.colors.primary : theme.colors.text.secondary,
                   letterSpacing: 0.3,
                 }}>
@@ -96,24 +97,12 @@ export function OrdersListScreen() {
         >
           {data.loading ? (
             <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
-              <Text style={{ color: theme.colors.text.secondary, fontSize: 11, fontWeight: '300', letterSpacing: 0.3 }}>
-                {t('producer.orders.loading')}
+              <Text style={{ color: theme.colors.text.secondary, fontSize: 14, fontWeight: '400', letterSpacing: 0.3 }}>
+                {t('common.loading')}
               </Text>
             </View>
           ) : data.filteredOrders.length === 0 ? (
-            <View style={{
-              backgroundColor: theme.colors.surface,
-              borderRadius: theme.borderRadius.md,
-              padding: theme.spacing.xl,
-              borderWidth: 0.5,
-              borderColor: 'rgba(0, 0, 0, 0.05)',
-              alignItems: 'center',
-            }}>
-              <Package size={32} color={theme.colors.text.tertiary} strokeWidth={1} />
-              <Text style={{ fontSize: 11, fontWeight: '300', color: theme.colors.text.secondary, marginTop: theme.spacing.sm, letterSpacing: 0.3, textAlign: 'center' }}>
-                {t('producer.orders.listEmpty')}
-              </Text>
-            </View>
+            <EmptyState message={t('producer.orders.empty')} icon={Package} />
           ) : (
             <View style={{ gap: theme.spacing.sm }}>
               {data.filteredOrders.map((order) => (
@@ -142,13 +131,13 @@ export function OrdersListScreen() {
                       <Package size={20} color={data.getStatusColor(order.status)} strokeWidth={1} />
                     </View>
                     <View style={{ flex: 1 }}>
-                      <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.primary, marginBottom: theme.spacing.xs, letterSpacing: 0.3 }}>
+                      <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.primary, marginBottom: theme.spacing.xs, letterSpacing: 0.3 }}>
                         #{order.orderNumber || order.id.slice(0, 8)}
                       </Text>
-                      <Text style={{ fontSize: 11, fontWeight: '300', color: theme.colors.text.secondary, letterSpacing: 0.2 }}>
+                      <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.secondary, letterSpacing: 0.2 }}>
                         {order.productName}
                       </Text>
-                      <Text style={{ fontSize: 11, fontWeight: '300', color: theme.colors.text.secondary, marginTop: 2, letterSpacing: 0.2 }}>
+                      <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.secondary, marginTop: 2, letterSpacing: 0.2 }}>
                         {order.quantity} {order.unit}
                       </Text>
                     </View>
@@ -158,7 +147,7 @@ export function OrdersListScreen() {
                       borderRadius: theme.borderRadius.sm,
                       backgroundColor: `${data.getStatusColor(order.status)}15`,
                     }}>
-                      <Text style={{ fontSize: 9, fontWeight: '300', color: data.getStatusColor(order.status), letterSpacing: 0.3 }}>
+                      <Text style={{ fontSize: 13, fontWeight: '400', color: data.getStatusColor(order.status), letterSpacing: 0.3 }}>
                         {data.getStatusLabel(order.status)}
                       </Text>
                     </View>
@@ -174,13 +163,13 @@ export function OrdersListScreen() {
                   }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <Euro size={14} color={theme.colors.text.secondary} strokeWidth={1} />
-                      <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.primary, marginLeft: 4, letterSpacing: 0.2 }}>
+                      <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.primary, marginLeft: 4, letterSpacing: 0.2 }}>
                         {order.totalAmount.toLocaleString(dateLocale, { style: 'currency', currency: 'EUR' })}
                       </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <Calendar size={11} color={theme.colors.text.secondary} strokeWidth={1} />
-                      <Text style={{ fontSize: 9, fontWeight: '300', color: theme.colors.text.secondary, marginLeft: 4, letterSpacing: 0.2 }}>
+                      <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary, marginLeft: 4, letterSpacing: 0.2 }}>
                         {new Date(order.createdAt).toLocaleDateString(dateLocale)}
                       </Text>
                     </View>

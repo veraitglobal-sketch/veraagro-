@@ -166,8 +166,8 @@ const styles = StyleSheet.create({
   },
   hintBody: {
     marginTop: 4,
-    fontSize: 12,
-    fontWeight: '300',
+    fontSize: 14,
+    fontWeight: '400',
     lineHeight: 17,
     color: theme.colors.text.secondary,
   },

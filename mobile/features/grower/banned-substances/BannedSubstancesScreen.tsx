@@ -10,6 +10,7 @@ import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { materialsAPI } from '../../../lib/api';
+import EmptyState from '../../../components/EmptyState';
 
 const BANNED_CACHE_KEY = 'banned_substances_cache';
 
@@ -101,9 +102,7 @@ export default function BannedSubstancesScreen() {
           {loading && allowedList.length === 0 ? (
             <Text style={enterpriseUi.navRowSubtitle}>{t('producer.bannedSubstances.loading')}</Text>
           ) : allowedList.length === 0 ? (
-            <View style={growerUi.emptyCard}>
-              <Text style={enterpriseUi.navRowSubtitle}>{t('producer.bannedSubstances.noCache')}</Text>
-            </View>
+            <EmptyState message={t('producer.bannedSubstances.noCache')} icon={ShieldAlert} />
           ) : (
             <View style={[enterpriseUi.inAppPanel, styles.listPanel]}>
               {allowedList.slice(0, 30).map((a, i) => (

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { missionStatusEnterpriseTone } from '../../../lib/mission-status';
 import { growerUi, growerStyles } from '../../../lib/grower-ui';
+import EmptyState from '../../../components/EmptyState';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { missionsAPI, type Mission } from '../../../lib/api';
@@ -116,9 +117,7 @@ export default function MissionsListScreen() {
             <ActivityIndicator size="small" color={enterpriseColors.primary} />
           </View>
         ) : filteredMissions.length === 0 ? (
-          <View style={[growerUi.emptyCard, { marginTop: 20 }]}>
-            <Text style={styles.emptyTitle}>{t('producer.missions.empty')}</Text>
-          </View>
+          <EmptyState message={t('producer.missions.empty')} />
         ) : (
           <View style={[enterpriseUi.inAppPanel, styles.list]}>
             {filteredMissions.map((mission, index) => {

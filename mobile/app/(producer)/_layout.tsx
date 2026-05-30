@@ -1,13 +1,14 @@
 import { View } from 'react-native';
 import { Stack } from 'expo-router';
 import i18n from '../../i18n/config';
-import { bioVeraStackScreenOptions } from '../../lib/stack-navigation-options';
+import { bioVeraStackScreenOptions, modalStackScreenOptions } from '../../lib/stack-navigation-options';
 import { AuthGuard } from '../../components/AuthGuard';
 import { NetworkProvider } from '../../contexts/NetworkContext';
 import { ProducerOfflineStrip } from '../../components/ProducerOfflineStrip';
 import { GrowerReconnectAutoSync } from '../../components/GrowerReconnectAutoSync';
 import { PostLoginPermissions } from '../../components/PostLoginPermissions';
 import { GrowerDashboardProvider } from '../../contexts/GrowerDashboardContext';
+import { WalletProvider } from '../../contexts/WalletContext';
 
 /**
  * Producer Layout
@@ -17,6 +18,7 @@ export default function ProducerLayout() {
   return (
     <AuthGuard requiredRole={['ADMIN', 'FARMER', 'PARTNER', 'GROWER']}>
       <NetworkProvider>
+      <WalletProvider>
       <GrowerDashboardProvider>
       <View style={{ flex: 1 }}>
         <GrowerReconnectAutoSync />
@@ -28,7 +30,7 @@ export default function ProducerLayout() {
         <Stack.Screen
           name="scanner"
           options={{
-            presentation: 'modal',
+            ...modalStackScreenOptions,
             headerShown: true,
             headerTitle: i18n.t('navigation.scanBarcode'),
           }}
@@ -64,7 +66,9 @@ export default function ProducerLayout() {
         <Stack.Screen name="partner-order/[orderId]" options={{ headerShown: false }} />
         <Stack.Screen name="vera-bag" />
         <Stack.Screen name="vera-insights" />
+        <Stack.Screen name="wallet" options={{ headerShown: false }} />
         <Stack.Screen name="plot-mapper" />
+        <Stack.Screen name="seed-registration" options={{ headerShown: false }} />
         <Stack.Screen name="packing-flow" options={{ title: i18n.t('navigation.packingFlow') }} />
         <Stack.Screen name="package-badges" options={{ title: i18n.t('navigation.packageBadges') }} />
         <Stack.Screen name="package-badges-print-order" />
@@ -80,6 +84,7 @@ export default function ProducerLayout() {
       </View>
       </View>
       </GrowerDashboardProvider>
+      </WalletProvider>
       </NetworkProvider>
     </AuthGuard>
   );

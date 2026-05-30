@@ -1,7 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { Alert, AppState, AppStateStatus } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   estatesAPI,
   Estate,
@@ -17,23 +16,16 @@ import {
 } from '../../../lib/api';
 import { syncService } from '../../../lib/sync-service';
 import { useSocket } from '../../../hooks/useSocket';
-import { API_URL } from '../../../lib/api-url';
 import { growerOfflineCache } from '../../../lib/grower-offline-cache';
-import { fetchGrowerOrdersFinancial, type OrdersFinancialSnapshot } from './fetchGrowerOrdersFinancial';
 import {
   fetchSuppliesSnapshot,
   type SuppliesSnapshot,
 } from '../hubs/fetchSuppliesSnapshot';
-
-export interface FinancialData {
-  totalEarned: number;
-  pendingBalance: number;
-  availableBalance: number;
-  nextPayout?: string;
-}
+import { useWallet } from '../../../contexts/WalletContext';
 
 export function useDashboardData(user: { id?: string; trustScore?: number; partnerCode?: string } | null) {
   const { t } = useTranslation();
+  const { reload: reloadWallet } = useWallet();
   const { connected, notifications: socketNotifications } = useSocket();
   const [estates, setEstates] = useState<Estate[]>([]);
   const [trustScore, setTrustScore] = useState(75);
@@ -43,8 +35,6 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
-  const [financialData, setFinancialData] = useState<FinancialData | null>(null);
-  const [ordersFinancial, setOrdersFinancial] = useState<OrdersFinancialSnapshot | null>(null);
   const [parcelSteps, setParcelSteps] = useState<{
     loaded: boolean;
     total: number;
@@ -269,36 +259,6 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     }
   }, []);
 
-  const loadFinancialData = useCallback(async () => {
-    try {
-      const token = await AsyncStorage.getItem('auth_token');
-      if (!token) return;
-      const response = await fetch(`${API_URL}/wallets/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.ok) {
-        const wallet = await response.json();
-        setFinancialData({
-          totalEarned: wallet.totalEarned || 0,
-          pendingBalance: wallet.pendingBalance || 0,
-          availableBalance: wallet.availableBalance || 0,
-          nextPayout: wallet.nextPayoutDate,
-        });
-      }
-    } catch {
-      // ignore
-    }
-  }, []);
-
-  const loadOrdersFinancial = useCallback(async () => {
-    try {
-      const snap = await fetchGrowerOrdersFinancial();
-      setOrdersFinancial(snap);
-    } catch {
-      setOrdersFinancial(null);
-    }
-  }, []);
-
   const loadSuppliesSnapshot = useCallback(async () => {
     try {
       const snap = await fetchSuppliesSnapshot();
@@ -324,8 +284,6 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
         loadMissions(),
         loadBatches(),
         loadNotifications(),
-        loadFinancialData(),
-        loadOrdersFinancial(),
         loadHarvestPlans(),
         loadSuppliesSnapshot(),
       ]);
@@ -336,8 +294,6 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     loadMissions,
     loadBatches,
     loadNotifications,
-    loadFinancialData,
-    loadOrdersFinancial,
     loadHarvestPlans,
     loadSuppliesSnapshot,
   ]);
@@ -422,7 +378,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     }, 45_000);
     try {
       await syncService.syncAll();
-      await loadData();
+      await Promise.all([loadData(), reloadWallet()]);
     } finally {
       clearTimeout(clearStuckRefresh);
       setRefreshing(false);
@@ -430,7 +386,7 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
       refreshInFlightRef.current = false;
       await loadOfflinePending();
     }
-  }, [loadData, loadOfflinePending]);
+  }, [loadData, loadOfflinePending, reloadWallet]);
 
   const onPurgeLegacyFieldLog = useCallback(() => {
     if (legacyFieldLogPending === 0) return;
@@ -494,8 +450,6 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
     activeBatches,
     notifications,
     unreadCount,
-    financialData,
-    ordersFinancial,
     parcelSteps,
     offlinePending,
     legacyFieldLogPending,

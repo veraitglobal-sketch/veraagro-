@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Home, MapPin, Package, ShoppingBag, User } from 'lucide-react-native';
+import { Home, Sprout, Package, ShoppingBag, User } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { growerTabScreenOptions } from '../../../lib/enterprise-ui';
@@ -28,9 +28,9 @@ export default function ProducerTabsLayout() {
         name="field"
         options={{
           headerShown: false,
-          title: t('producer.tabs.fieldHub'),
+          title: 'Polje',
           tabBarLabel: t('producer.tabs.field'),
-          tabBarIcon: ({ color, size }) => <MapPin size={size || 22} color={color} strokeWidth={1.5} />,
+          tabBarIcon: ({ color, size }) => <Sprout size={size || 22} color={color} strokeWidth={1.5} />,
         }}
       />
       <Tabs.Screen
@@ -66,7 +66,6 @@ export default function ProducerTabsLayout() {
       <Tabs.Screen name="certifications" options={{ title: t('producer.tabs.certifications'), href: null }} />
       <Tabs.Screen name="banned-substances" options={{ title: t('producer.tabs.bannedSubstances'), href: null }} />
       <Tabs.Screen name="field-log" options={{ title: t('producer.tabs.fieldLog'), href: null }} />
-      <Tabs.Screen name="shop" options={{ href: null }} />
       <Tabs.Screen name="harvest" options={{ title: t('producer.tabs.harvest'), href: null }} />
       <Tabs.Screen name="wallet" options={{ title: t('producer.tabs.wallet'), href: null }} />
       <Tabs.Screen name="settings" options={{ title: t('producer.tabs.settings'), href: null }} />

@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     borderColor: enterpriseColors.gray200,
   },
   metricLabel: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '500',
     color: enterpriseColors.gray600,
     marginBottom: 6,
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   bonusFoot: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '400',
     color: enterpriseColors.gray600,
     marginTop: 10,

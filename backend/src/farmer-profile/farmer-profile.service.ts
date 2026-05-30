@@ -19,6 +19,7 @@ export class FarmerProfileService {
             parcels: {
               include: {
                 growth_logs: {
+                  where: { moderationStatus: { not: 'REJECTED' } },
                   orderBy: { createdAt: 'desc' },
                   take: 5, // Latest 5 growth logs with photos
                 },
@@ -30,6 +31,7 @@ export class FarmerProfileService {
           orderBy: { harvestDate: 'desc' },
           take: 10, // Latest 10 harvests
           select: {
+            id: true,
             batchId: true,
             productName: true,
             harvestDate: true,
@@ -53,7 +55,7 @@ export class FarmerProfileService {
     const compliancePhotos = await this.prisma.compliance_photos.findMany({
       where: {
         batchId: {
-          in: user.batches_batches_harvestedByUserIdTousers.map(b => b.batchId),
+          in: user.batches_batches_harvestedByUserIdTousers.map(b => b.id),
         },
       },
       orderBy: { uploadedAt: 'desc' },

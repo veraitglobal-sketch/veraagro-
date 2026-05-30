@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { View, Text, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useOrderDetailData } from './useOrderDetailData';
 import OrderDetailHeader from './OrderDetailHeader';
@@ -23,21 +22,26 @@ export default function OrderDetailScreen({ orderId }: OrderDetailScreenProps) {
   const [refreshing, setRefreshing] = useState(false);
   const handleRefresh = async () => {
     setRefreshing(true);
-    await onRefresh();
-    setRefreshing(false);
+    try {
+      await onRefresh();
+    } catch {
+      Alert.alert(t('common.error'), t('common.tryAgain'));
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   if (loading && !order) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>{t('producer.orders.loading')}</Text>
+      <View style={{ flex: 1, backgroundColor: theme.colors.surface, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ color: theme.colors.text.secondary, fontSize: 13 }}>{t('producer.orders.loading')}</Text>
       </View>
     );
   }
   if (!order) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>{t('producer.orders.notFound')}</Text>
+      <View style={{ flex: 1, backgroundColor: theme.colors.surface, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ color: theme.colors.text.secondary, fontSize: 13 }}>{t('producer.orders.notFound')}</Text>
       </View>
     );
   }
@@ -47,11 +51,11 @@ export default function OrderDetailScreen({ orderId }: OrderDetailScreenProps) {
   const paymentStatus = orderAny.paymentStatus || 'PENDING';
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surface }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
       <OrderDetailHeader />
       <ScrollView
         style={{ flex: 1 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.primary} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={theme.colors.primary} />}
       >
         <View style={{ padding: theme.spacing.md }}>
           <OrderInfoBlock order={order} />
@@ -62,18 +66,18 @@ export default function OrderDetailScreen({ orderId }: OrderDetailScreenProps) {
           {order.deliveryNotes && (
             <View
               style={{
-                backgroundColor: colors.background,
+                backgroundColor: theme.colors.background,
                 borderRadius: theme.borderRadius.md,
                 padding: theme.spacing.md,
                 marginBottom: theme.spacing.md,
                 borderWidth: 0.5,
-                borderColor: colors.border,
+                borderColor: theme.colors.border,
               }}
             >
-              <Text style={{ fontSize: 15, fontWeight: '300', color: colors.text.primary, marginBottom: theme.spacing.sm, letterSpacing: 0.3 }}>
+              <Text style={{ fontSize: 15, fontWeight: '400', color: theme.colors.text.primary, marginBottom: theme.spacing.sm, letterSpacing: 0.3 }}>
                 {t('producer.orders.deliveryNotesHeading')}
               </Text>
-              <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>{order.deliveryNotes}</Text>
+              <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary }}>{order.deliveryNotes}</Text>
             </View>
           )}
           <OrderTimelineBlock order={order} />

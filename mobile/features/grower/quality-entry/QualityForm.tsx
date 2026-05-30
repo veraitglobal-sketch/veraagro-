@@ -1,7 +1,6 @@
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Package } from 'lucide-react-native';
-import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import type { QualityEntry } from '../../../lib/api';
 import type { BatchItem } from './useQualityEntryData';
@@ -47,19 +46,19 @@ export function QualityForm({
     <>
       {/* Batch Info */}
       <View style={{
-        backgroundColor: colors.background,
+        backgroundColor: theme.colors.background,
         borderRadius: theme.borderRadius.md,
         padding: theme.spacing.md,
         marginBottom: theme.spacing.md,
         borderWidth: 0.5,
-        borderColor: colors.border,
+        borderColor: theme.colors.border,
       }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm }}>
-          <Package size={18} color={colors.text.primary} strokeWidth={1} />
+          <Package size={18} color={theme.colors.text.primary} strokeWidth={1} />
           <Text style={{
             fontSize: 15,
-            fontWeight: '300',
-            color: colors.text.primary,
+            fontWeight: '400',
+            color: theme.colors.text.primary,
             marginLeft: theme.spacing.xs,
             letterSpacing: 0.3,
           }}>
@@ -83,8 +82,8 @@ export function QualityForm({
               <Text
                 style={{
                   fontSize: 13,
-                  fontWeight: '300',
-                  color: colors.text.secondary,
+                  fontWeight: '400',
+                  color: theme.colors.text.secondary,
                   marginTop: theme.spacing.xs,
                   lineHeight: 18,
                 }}
@@ -99,8 +98,8 @@ export function QualityForm({
             <Text
               style={{
                 fontSize: 13,
-                fontWeight: '300',
-                color: colors.warning,
+                fontWeight: '400',
+                color: theme.colors.warning,
                 marginTop: theme.spacing.xs,
               }}
             >
@@ -111,8 +110,8 @@ export function QualityForm({
         {selectedBatch.quantity != null && (
           <Text style={{
             fontSize: 16,
-            fontWeight: '300',
-            color: colors.text.secondary,
+            fontWeight: '400',
+            color: theme.colors.text.secondary,
             marginTop: theme.spacing.sm,
           }}>
             {selectedBatch.quantity} {selectedBatch.unit || 'kg'}
@@ -123,18 +122,18 @@ export function QualityForm({
       {/* Quality Entry Status */}
       {qualityEntry && (
         <View style={{
-          backgroundColor: colors.background,
+          backgroundColor: theme.colors.background,
           borderRadius: theme.borderRadius.md,
           padding: theme.spacing.md,
           marginBottom: theme.spacing.md,
           borderWidth: 0.5,
-          borderColor: colors.border,
+          borderColor: theme.colors.border,
         }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <Text style={{
               fontSize: 16,
-              fontWeight: '300',
-              color: colors.text.secondary,
+              fontWeight: '400',
+              color: theme.colors.text.secondary,
             }}>
               {t('producer.qualityEntry.statusLabel')}
             </Text>
@@ -146,7 +145,7 @@ export function QualityForm({
             }}>
               <Text style={{
                 fontSize: 15,
-                fontWeight: '300',
+                fontWeight: '400',
                 color: getStatusColor(qualityEntry.status),
                 letterSpacing: 0.3,
               }}>
@@ -161,8 +160,8 @@ export function QualityForm({
       <View style={{ marginBottom: theme.spacing.md }}>
         <Text style={{
           fontSize: 16,
-          fontWeight: '300',
-          color: colors.text.secondary,
+          fontWeight: '400',
+          color: theme.colors.text.secondary,
           marginBottom: theme.spacing.xs,
           letterSpacing: 0.3,
         }}>
@@ -176,13 +175,13 @@ export function QualityForm({
           keyboardType="numeric"
           style={{
             fontSize: 15,
-            fontWeight: '300',
-            color: colors.text.primary,
+            fontWeight: '400',
+            color: theme.colors.text.primary,
             borderWidth: 0.5,
-            borderColor: colors.border,
+            borderColor: theme.colors.border,
             borderRadius: theme.borderRadius.sm,
             padding: theme.spacing.md,
-            backgroundColor: canEdit ? colors.background : colors.surface,
+            backgroundColor: canEdit ? theme.colors.background : theme.colors.surface,
             opacity: canEdit ? 1 : 0.85,
           }}
         />
@@ -192,8 +191,8 @@ export function QualityForm({
       <View style={{ marginBottom: theme.spacing.md }}>
         <Text style={{
           fontSize: 16,
-          fontWeight: '300',
-          color: colors.text.secondary,
+          fontWeight: '400',
+          color: theme.colors.text.secondary,
           marginBottom: theme.spacing.xs,
           letterSpacing: 0.3,
         }}>
@@ -208,13 +207,13 @@ export function QualityForm({
           numberOfLines={4}
           style={{
             fontSize: 15,
-            fontWeight: '300',
-            color: colors.text.primary,
+            fontWeight: '400',
+            color: theme.colors.text.primary,
             borderWidth: 0.5,
-            borderColor: colors.border,
+            borderColor: theme.colors.border,
             borderRadius: theme.borderRadius.sm,
             padding: theme.spacing.md,
-            backgroundColor: canEdit ? colors.background : colors.surface,
+            backgroundColor: canEdit ? theme.colors.background : theme.colors.surface,
             minHeight: 100,
             textAlignVertical: 'top',
             opacity: canEdit ? 1 : 0.85,
@@ -230,17 +229,17 @@ export function QualityForm({
           style={{
             padding: theme.spacing.md,
             borderRadius: theme.borderRadius.md,
-            backgroundColor: colors.primary,
+            backgroundColor: theme.colors.primary,
             alignItems: 'center',
           }}
         >
           {saving ? (
-            <ActivityIndicator size="small" color={colors.background} />
+            <ActivityIndicator size="small" color={theme.colors.background} />
           ) : (
             <Text style={{
               fontSize: 15,
-              fontWeight: '300',
-              color: colors.background,
+              fontWeight: '400',
+              color: theme.colors.background,
               letterSpacing: 0.3,
             }}>
               {qualityEntry ? t('producer.qualityEntry.update') : t('producer.qualityEntry.save')}

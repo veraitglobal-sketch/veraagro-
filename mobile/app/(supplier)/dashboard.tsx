@@ -104,7 +104,7 @@ export default function SupplierDashboardScreen() {
                   paddingHorizontal: 4,
                 }}
               >
-                <Text style={{ fontSize: 9, fontWeight: '600', color: theme.colors.background }}>
+                <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.background }}>
                   {unreadNotifications > 9 ? '9+' : unreadNotifications}
                 </Text>
               </View>
@@ -114,7 +114,7 @@ export default function SupplierDashboardScreen() {
       </View>
 
       {loading && <ActivityIndicator color={theme.colors.primary} style={{ marginBottom: 12 }} />}
-      <Text style={{ fontSize: 22, fontWeight: '300', color: theme.colors.text.primary, marginBottom: 4 }}>
+      <Text style={{ fontSize: 22, fontWeight: '400', color: theme.colors.text.primary, marginBottom: 4 }}>
         {name || t('supplier.partnerStore')}
       </Text>
       <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginBottom: 20 }}>
@@ -141,7 +141,7 @@ export default function SupplierDashboardScreen() {
         <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginBottom: 6 }}>
           {t('supplier.store.dashboardHint')}
         </Text>
-        <Text style={{ fontSize: 28, fontWeight: '300', color: enterpriseColors.primary }}>{catalogCount}</Text>
+        <Text style={{ fontSize: 28, fontWeight: '400', color: enterpriseColors.primary }}>{catalogCount}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -156,7 +156,7 @@ export default function SupplierDashboardScreen() {
         }}
       >
         <Text style={{ fontSize: 15, fontWeight: '500', color: theme.colors.text.primary }}>{t('supplier.ordersFromGrowers')}</Text>
-        <Text style={{ fontSize: 28, fontWeight: '300', color: theme.colors.primary, marginTop: 4 }}>{orders}</Text>
+        <Text style={{ fontSize: 28, fontWeight: '400', color: theme.colors.primary, marginTop: 4 }}>{orders}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -171,7 +171,7 @@ export default function SupplierDashboardScreen() {
         }}
       >
         <Text style={{ fontSize: 15, fontWeight: '500', color: theme.colors.text.primary }}>{t('supplier.messagesCard')}</Text>
-        <Text style={{ fontSize: 28, fontWeight: '300', color: theme.colors.primary, marginTop: 4 }}>{threads}</Text>
+        <Text style={{ fontSize: 28, fontWeight: '400', color: theme.colors.primary, marginTop: 4 }}>{threads}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity

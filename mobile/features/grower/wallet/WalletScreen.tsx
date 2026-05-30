@@ -13,6 +13,7 @@ import { useWallet } from '../../../contexts/WalletContext';
 import { WalletBalanceCard } from './WalletBalanceCard';
 import { TransactionItem } from './TransactionItem';
 import GrowerOrdersFinancialSection from '../dashboard/GrowerOrdersFinancialSection';
+import EmptyState from '../../../components/EmptyState';
 
 /**
  * Wallet – stanje i transakcije (grower).
@@ -99,9 +100,7 @@ export default function WalletScreen() {
           </Text>
 
           {transactions.length === 0 ? (
-            <View style={growerUi.emptyCard}>
-              <Text style={enterpriseUi.navRowSubtitle}>{t('producer.wallet.noTransactions')}</Text>
-            </View>
+            <EmptyState message={t('producer.wallet.noTransactions')} />
           ) : (
             transactions.map((tx) => <TransactionItem key={tx.id} transaction={tx} />)
           )}

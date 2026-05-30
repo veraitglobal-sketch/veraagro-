@@ -6,11 +6,9 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Modal,
   StyleSheet,
 } from 'react-native';
+import { BioVeraBottomSheet } from '../../../components/enterprise/BioVeraBottomSheet';
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react-native';
 import { GrowerSelectField } from '../../../components/grower/GrowerSelectField';
@@ -110,12 +108,8 @@ export function PlantingAddWizard({
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent presentationStyle="pageSheet">
-      <View style={styles.backdrop}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={[styles.sheet, { paddingHorizontal: p.screenPaddingLeft }]}
-        >
+    <BioVeraBottomSheet visible={visible} onClose={onClose} keyboardAvoiding>
+      <View style={[styles.sheet, { paddingHorizontal: p.screenPaddingLeft }]}>
           <View style={styles.sheetHeader}>
             <View style={styles.sheetTitles}>
               <Text style={styles.stepFraction}>
@@ -256,24 +250,15 @@ export function PlantingAddWizard({
               </View>
             </>
           )}
-        </KeyboardAvoidingView>
       </View>
-    </Modal>
+    </BioVeraBottomSheet>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    justifyContent: 'flex-end',
-  },
   sheet: {
-    maxHeight: '92%',
-    minHeight: '72%',
-    backgroundColor: enterpriseColors.white,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    flex: 1,
+    minHeight: 360,
   },
   sheetHeader: {
     flexDirection: 'row',
@@ -305,7 +290,7 @@ const styles = StyleSheet.create({
   },
   chipText: { fontSize: 16, color: enterpriseColors.gray700 },
   chipTextSelected: { color: enterpriseColors.primary, fontWeight: '600' },
-  chipPending: { fontSize: 11, color: enterpriseColors.gray600, marginTop: 4 },
+  chipPending: { fontSize: 14, color: enterpriseColors.gray600, marginTop: 4 },
   lockedParcel: {
     flexDirection: 'row',
     flexWrap: 'wrap',

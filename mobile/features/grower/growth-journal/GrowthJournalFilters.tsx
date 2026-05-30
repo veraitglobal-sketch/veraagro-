@@ -6,6 +6,17 @@ import type { ParcelOption } from './useGrowthJournalData';
 
 export type PlantingOption = { id: string; label: string; announcementType?: string };
 
+/** Growth stage filter chips (AddGrowthLogModal). */
+export const GROWTH_STAGE_PRESET_KEYS = [
+  'vegetative',
+  'flowering',
+  'fruitSet',
+  'ripening',
+  'preHarvest',
+] as const;
+
+export type GrowthStagePresetKey = (typeof GROWTH_STAGE_PRESET_KEYS)[number];
+
 interface GrowthJournalFiltersProps {
   parcels: ParcelOption[];
   selectedParcelId: string;

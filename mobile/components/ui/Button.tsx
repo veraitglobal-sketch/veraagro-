@@ -11,6 +11,7 @@ interface ButtonProps {
   fullWidth?: boolean;
   icon?: React.ReactNode;
   className?: string;
+  accessibilityLabel?: string;
 }
 
 export default function Button({
@@ -23,6 +24,7 @@ export default function Button({
   fullWidth = false,
   icon,
   className = '',
+  accessibilityLabel,
 }: ButtonProps) {
   const sizeStyles = {
     sm: { paddingVertical: 10, paddingHorizontal: 16, fontSize: 14 },
@@ -72,6 +74,8 @@ export default function Button({
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel ?? title}
       style={{
         paddingVertical: currentSize.paddingVertical,
         paddingHorizontal: currentSize.paddingHorizontal,

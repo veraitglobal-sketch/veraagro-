@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { X, ScanLine } from 'lucide-react-native';
 import { theme } from '../lib/theme';
@@ -11,6 +12,7 @@ import { theme } from '../lib/theme';
  * No auth required – saves scanned data to AsyncStorage and returns
  */
 export default function ScanQRScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
@@ -23,8 +25,13 @@ export default function ScanQRScreen() {
   const handleBarCodeScanned = async ({ data }: { data: string }) => {
     if (scanned) return;
     setScanned(true);
-    await AsyncStorage.setItem('last_scanned_qr', data);
-    router.back();
+    try {
+      await AsyncStorage.setItem('last_scanned_qr', data);
+      router.back();
+    } catch {
+      setScanned(false);
+      Alert.alert(t('common.error'), t('common.tryAgain'));
+    }
   };
 
   if (!permission) {

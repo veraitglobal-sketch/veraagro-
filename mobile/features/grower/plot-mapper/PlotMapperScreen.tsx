@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, RefreshCon
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Save, ChevronLeft } from 'lucide-react-native';
-import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { usePlotMapperData } from './usePlotMapperData';
@@ -67,19 +66,19 @@ function PlotMapperEditor({
       <View
         style={{
           flex: 1,
-          backgroundColor: colors.background,
+          backgroundColor: theme.colors.background,
           justifyContent: 'center',
           alignItems: 'center',
           paddingTop: p.topInset,
         }}
       >
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <View
         style={{
           paddingTop: Math.max(p.headerTop, theme.spacing.md),
@@ -87,7 +86,7 @@ function PlotMapperEditor({
           paddingRight: Math.max(theme.spacing.sm, p.screenPaddingRight),
           paddingBottom: 14,
           borderBottomWidth: 0.5,
-          borderBottomColor: colors.border,
+          borderBottomColor: theme.colors.border,
         }}
       >
         <TouchableOpacity
@@ -95,8 +94,8 @@ function PlotMapperEditor({
           hitSlop={12}
           style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: parcelLabel ? 4 : 0 }}
         >
-          <ChevronLeft size={20} color={colors.primary} strokeWidth={1.75} />
-          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primary }}>
+          <ChevronLeft size={20} color={theme.colors.primary} strokeWidth={1.75} />
+          <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.primary }}>
             {t('producer.plotMapper.changeParcel')}
           </Text>
         </TouchableOpacity>
@@ -104,7 +103,7 @@ function PlotMapperEditor({
           <Text
             style={{
               fontSize: 13,
-              color: colors.text.secondary,
+              color: theme.colors.text.secondary,
               marginBottom: 4,
               flexWrap: 'wrap',
             }}
@@ -125,8 +124,8 @@ function PlotMapperEditor({
           <Text
             style={{
               fontSize: 16,
-              fontWeight: '300',
-              color: colors.text.primary,
+              fontWeight: '400',
+              color: theme.colors.text.primary,
               letterSpacing: 0.5,
               flex: 1,
               minWidth: 160,
@@ -140,7 +139,7 @@ function PlotMapperEditor({
             style={{
               paddingHorizontal: 16,
               paddingVertical: 8,
-              backgroundColor: colors.primary,
+              backgroundColor: theme.colors.primary,
               borderRadius: 6,
               flexDirection: 'row',
               alignItems: 'center',
@@ -151,15 +150,15 @@ function PlotMapperEditor({
             activeOpacity={0.7}
           >
             {saving ? (
-              <ActivityIndicator size="small" color={colors.background} />
+              <ActivityIndicator size="small" color={theme.colors.background} />
             ) : (
-              <Save size={16} color={colors.background} strokeWidth={1} />
+              <Save size={16} color={theme.colors.background} strokeWidth={1} />
             )}
             <Text
               style={{
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: '400',
-                color: colors.background,
+                color: theme.colors.background,
                 letterSpacing: 0.3,
               }}
             >
@@ -184,8 +183,8 @@ function PlotMapperEditor({
                 setPullRefreshing(false);
               }
             }}
-            tintColor={colors.primary}
-            colors={[colors.primary]}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
           />
         }
       >

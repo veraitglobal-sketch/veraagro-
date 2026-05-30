@@ -1,14 +1,6 @@
 import { useMemo, useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  FlatList,
-  Pressable,
-  TextInput,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet } from 'react-native';
+import { BioVeraBottomSheet } from '../enterprise/BioVeraBottomSheet';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Check, X } from 'lucide-react-native';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
@@ -71,69 +63,66 @@ export function GrowerSelectField({
       </TouchableOpacity>
       {hint ? <Text style={styles.hint}>{hint}</Text> : null}
 
-      <Modal visible={open} animationType="slide" transparent onRequestClose={() => setOpen(false)}>
-        <View style={styles.modalRoot}>
-          <Pressable style={styles.backdrop} onPress={() => setOpen(false)} />
-          <View style={[styles.sheet, { paddingBottom: Math.max(p.bottomInset, 16) }]}>
-            <View style={[styles.sheetHeader, { paddingHorizontal: p.screenPaddingLeft }]}>
-              <Text style={styles.sheetTitle}>{label}</Text>
-              <TouchableOpacity onPress={() => setOpen(false)} hitSlop={12} accessibilityRole="button">
-                <X size={22} color={enterpriseColors.gray600} />
-              </TouchableOpacity>
-            </View>
-            {onListSearchChange && listSearchPlaceholder ? (
-              <View style={{ paddingHorizontal: p.screenPaddingLeft, paddingBottom: 10 }}>
-                <TextInput
-                  style={growerUi.formInput}
-                  value={listSearchValue ?? ''}
-                  onChangeText={onListSearchChange}
-                  placeholder={listSearchPlaceholder}
-                  placeholderTextColor={enterpriseColors.gray600}
-                />
-              </View>
-            ) : null}
-            <FlatList
-              data={options}
-              keyExtractor={(item) => item.id}
-              keyboardShouldPersistTaps="handled"
-              style={{ maxHeight: 420 }}
-              contentContainerStyle={{
-                paddingHorizontal: p.screenPaddingLeft,
-                paddingRight: p.screenPaddingRight,
-                paddingBottom: 8,
-              }}
-              renderItem={({ item }) => {
-                const picked = item.id === valueId;
-                return (
-                  <TouchableOpacity
-                    onPress={() => {
-                      onSelect(item.id);
-                      setOpen(false);
-                    }}
-                    activeOpacity={0.72}
-                    style={[styles.row, picked && styles.rowPicked]}
-                  >
-                    <View style={styles.rowCopy}>
-                      <Text style={[styles.rowText, picked && styles.rowTextPicked]} numberOfLines={3}>
-                        {item.label}
-                      </Text>
-                      {item.subtitle ? (
-                        <Text style={styles.rowSubtitle} numberOfLines={2}>
-                          {item.subtitle}
-                        </Text>
-                      ) : null}
-                    </View>
-                    {picked ? <Check size={20} color={enterpriseColors.primary} strokeWidth={2} /> : null}
-                  </TouchableOpacity>
-                );
-              }}
-              ListEmptyComponent={
-                <Text style={enterpriseUi.navRowSubtitle}>{t('common.noResults')}</Text>
-              }
-            />
+      <BioVeraBottomSheet visible={open} onClose={() => setOpen(false)}>
+        <View style={[styles.sheet, { paddingBottom: Math.max(p.bottomInset, 16) }]}>
+          <View style={[styles.sheetHeader, { paddingHorizontal: p.screenPaddingLeft }]}>
+            <Text style={styles.sheetTitle}>{label}</Text>
+            <TouchableOpacity onPress={() => setOpen(false)} hitSlop={12} accessibilityRole="button">
+              <X size={22} color={enterpriseColors.gray600} />
+            </TouchableOpacity>
           </View>
+          {onListSearchChange && listSearchPlaceholder ? (
+            <View style={{ paddingHorizontal: p.screenPaddingLeft, paddingBottom: 10 }}>
+              <TextInput
+                style={growerUi.formInput}
+                value={listSearchValue ?? ''}
+                onChangeText={onListSearchChange}
+                placeholder={listSearchPlaceholder}
+                placeholderTextColor={enterpriseColors.gray600}
+              />
+            </View>
+          ) : null}
+          <FlatList
+            data={options}
+            keyExtractor={(item) => item.id}
+            keyboardShouldPersistTaps="handled"
+            style={{ maxHeight: 420 }}
+            contentContainerStyle={{
+              paddingHorizontal: p.screenPaddingLeft,
+              paddingRight: p.screenPaddingRight,
+              paddingBottom: 8,
+            }}
+            renderItem={({ item }) => {
+              const picked = item.id === valueId;
+              return (
+                <TouchableOpacity
+                  onPress={() => {
+                    onSelect(item.id);
+                    setOpen(false);
+                  }}
+                  activeOpacity={0.72}
+                  style={[styles.row, picked && styles.rowPicked]}
+                >
+                  <View style={styles.rowCopy}>
+                    <Text style={[styles.rowText, picked && styles.rowTextPicked]} numberOfLines={3}>
+                      {item.label}
+                    </Text>
+                    {item.subtitle ? (
+                      <Text style={styles.rowSubtitle} numberOfLines={2}>
+                        {item.subtitle}
+                      </Text>
+                    ) : null}
+                  </View>
+                  {picked ? <Check size={20} color={enterpriseColors.primary} strokeWidth={2} /> : null}
+                </TouchableOpacity>
+              );
+            }}
+            ListEmptyComponent={
+              <Text style={enterpriseUi.navRowSubtitle}>{t('common.noResults')}</Text>
+            }
+          />
         </View>
-      </Modal>
+      </BioVeraBottomSheet>
     </View>
   );
 }
@@ -174,19 +163,8 @@ const styles = StyleSheet.create({
     marginTop: 6,
     lineHeight: 20,
   },
-  modalRoot: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-  },
   sheet: {
-    backgroundColor: enterpriseColors.white,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    maxHeight: '78%',
+    flexShrink: 1,
   },
   sheetHeader: {
     flexDirection: 'row',

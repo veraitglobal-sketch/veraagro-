@@ -2,12 +2,9 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  Modal,
   TextInput,
   TouchableOpacity,
   ScrollView,
-  KeyboardAvoidingView,
-  Platform,
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
@@ -16,14 +13,8 @@ import { X, Camera } from 'lucide-react-native';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
-
-export const GROWTH_STAGE_PRESETS = [
-  'Vegetative',
-  'Flowering',
-  'Fruit set',
-  'Ripening',
-  'Pre-harvest',
-] as const;
+import { BioVeraBottomSheet } from '../../../components/enterprise/BioVeraBottomSheet';
+import { GROWTH_STAGE_PRESET_KEYS, type GrowthStagePresetKey } from './GrowthJournalFilters';
 
 type Props = {
   visible: boolean;
@@ -59,28 +50,27 @@ export function AddGrowthLogModal({
   }, [visible]);
 
   const stageToSave =
-    growthStage === '__custom__' ? customStage.trim() || undefined : growthStage || undefined;
+    growthStage === '__custom__'
+      ? customStage.trim() || undefined
+      : growthStage && GROWTH_STAGE_PRESET_KEYS.includes(growthStage as GrowthStagePresetKey)
+        ? t(`producer.growthJournal.stagePreset.${growthStage}`)
+        : growthStage || undefined;
 
   const submit = async () => {
     await onSubmit({ notes: notes.trim(), growthStage: stageToSave });
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.overlay}
-      >
-        <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose} />
-        <View
-          style={[
-            styles.sheet,
-            { paddingBottom: Math.max(p.bottomInset, 16) },
-          ]}
-        >
+    <BioVeraBottomSheet visible={visible} onClose={onClose} keyboardAvoiding>
+        <View style={{ paddingBottom: Math.max(p.bottomInset, 8) }}>
           <View style={[styles.sheetHeader, { paddingHorizontal: p.screenPaddingLeft }]}>
             <Text style={styles.sheetTitle}>{t('producer.growthJournal.addLogTitle')}</Text>
-            <TouchableOpacity onPress={onClose} hitSlop={12} accessibilityRole="button">
+            <TouchableOpacity
+              onPress={onClose}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel={t('common.close')}
+            >
               <X size={22} color={enterpriseColors.gray600} strokeWidth={1.5} />
             </TouchableOpacity>
           </View>
@@ -104,18 +94,20 @@ export function AddGrowthLogModal({
               )}
             </Text>
             <View style={styles.chipRow}>
-              {GROWTH_STAGE_PRESETS.map((s) => {
-                const sel = growthStage === s;
+              {GROWTH_STAGE_PRESET_KEYS.map((key) => {
+                const sel = growthStage === key;
                 return (
                   <TouchableOpacity
-                    key={s}
+                    key={key}
                     onPress={() => {
-                      setGrowthStage(sel ? '' : s);
+                      setGrowthStage(sel ? '' : key);
                       setCustomStage('');
                     }}
                     style={[styles.chip, sel && styles.chipSelected]}
                   >
-                    <Text style={[styles.chipText, sel && styles.chipTextSelected]}>{s}</Text>
+                    <Text style={[styles.chipText, sel && styles.chipTextSelected]}>
+                      {t(`producer.growthJournal.stagePreset.${key}`)}
+                    </Text>
                   </TouchableOpacity>
                 );
               })}
@@ -186,26 +178,11 @@ export function AddGrowthLogModal({
             <Text style={styles.footerNote}>{t('producer.growthJournal.addLogFooter')}</Text>
           </ScrollView>
         </View>
-      </KeyboardAvoidingView>
-    </Modal>
+    </BioVeraBottomSheet>
   );
 }
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-  },
-  sheet: {
-    backgroundColor: enterpriseColors.white,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    maxHeight: '88%',
-  },
   sheetHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -278,7 +255,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   footerNote: {
-    fontSize: 12,
+    fontSize: 14,
     lineHeight: 17,
     color: enterpriseColors.gray600,
     marginTop: 10,

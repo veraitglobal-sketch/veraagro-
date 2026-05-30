@@ -1,7 +1,9 @@
 import axios, { type AxiosError } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from '../api-url';
+import { getApiUrl, API_URL } from '../api-url';
 import { notifyAuthUnauthorized } from '../auth-events';
+
+export { getApiUrl, API_URL, PRODUCTION_API_URL } from '../api-url';
 
 /** 401 on these routes is credential/registration UX, not an expired JWT. */
 export function isAuthNegotiationUrl(url: string | undefined): boolean {

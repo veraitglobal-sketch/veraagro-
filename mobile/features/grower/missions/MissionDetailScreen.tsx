@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
@@ -29,8 +29,13 @@ export default function MissionDetailScreen({ missionId, variant = 'grower' }: M
   const [refreshing, setRefreshing] = useState(false);
   const handleRefresh = async () => {
     setRefreshing(true);
-    await onRefresh();
-    setRefreshing(false);
+    try {
+      await onRefresh();
+    } catch {
+      Alert.alert(t('common.error'), t('common.tryAgain'));
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   if (loading && !mission) {

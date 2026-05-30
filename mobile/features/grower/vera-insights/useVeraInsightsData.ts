@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import type { TFunction } from 'i18next';
 import api from '../../../lib/api';
 import type { CropInsight } from './types';
 
@@ -61,11 +62,11 @@ export function getScoreColor(score: number, theme: VeraInsightsTheme): string {
   return theme.colors.error;
 }
 
-export function getScoreLabel(score: number): string {
-  if (score >= 80) return 'Excellent';
-  if (score >= 60) return 'Good';
-  if (score >= 40) return 'Moderate';
-  return 'Low';
+export function getScoreLabel(score: number, t: TFunction): string {
+  if (score >= 80) return t('producer.insights.scoreExcellent');
+  if (score >= 60) return t('producer.insights.scoreGood');
+  if (score >= 40) return t('producer.insights.scoreModerate');
+  return t('producer.insights.scoreLow');
 }
 
 export function getRiskColor(risk: string, theme: VeraInsightsTheme): string {
@@ -81,15 +82,15 @@ export function getRiskColor(risk: string, theme: VeraInsightsTheme): string {
   }
 }
 
-export function getRiskLabel(risk: string): string {
+export function getRiskLabel(risk: string, t: TFunction): string {
   switch (risk) {
     case 'LOW':
-      return 'Low';
+      return t('producer.insights.riskLow');
     case 'MEDIUM':
-      return 'Medium';
+      return t('producer.insights.riskMedium');
     case 'HIGH':
-      return 'High';
+      return t('producer.insights.riskHigh');
     default:
-      return 'Unknown';
+      return t('producer.insights.riskUnknown');
   }
 }

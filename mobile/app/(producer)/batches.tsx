@@ -1,5 +1,5 @@
-import BatchesListScreen from '../../features/grower/batches/BatchesListScreen';
+import { BatchesScreen } from '../../features/grower/batches/BatchesScreen';
 
 export default function BatchesRoute() {
-  return <BatchesListScreen />;
+  return <BatchesScreen />;
 }

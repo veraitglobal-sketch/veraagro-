@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { Material } from '../../../lib/api';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { growerStyles, growerUi } from '../../../lib/grower-ui';
+import EmptyState from '../../../components/EmptyState';
 import type { MaterialFilterType } from './useMaterialsData';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 
@@ -46,13 +47,13 @@ export function MaterialList({
 
   if (filteredMaterials.length === 0) {
     return (
-      <View style={growerUi.emptyCard}>
-        <Text style={styles.emptyText}>
-          {searchQuery || filterType !== 'all'
+      <EmptyState
+        message={
+          searchQuery || filterType !== 'all'
             ? t('producer.materials.noResults')
-            : t('producer.materials.noMaterials')}
-        </Text>
-      </View>
+            : t('producer.materials.noMaterials')
+        }
+      />
     );
   }
 

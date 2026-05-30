@@ -3,5 +3,5 @@ import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 
 export default function BatchDetailHeader() {
   const { t } = useTranslation();
-  return <BioVeraSubpageHeader title={t('producer.batches.detailScreenTitle')} left="back" />;
+  return <BioVeraSubpageHeader title={t('producer.batches.details')} left="back" />;
 }

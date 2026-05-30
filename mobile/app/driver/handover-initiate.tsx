@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { QrCode } from 'lucide-react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useTranslation } from 'react-i18next';
-import { colors } from '../../lib/colors';
+import { theme } from '../../lib/theme';
 import { digitalHandoverAPI } from '../../lib/api';
 import { apiErrorMessage } from '../../lib/api-error';
 import StepIndicator from '../../components/StepIndicator';
@@ -24,7 +24,7 @@ export default function HandoverInitiateScreen() {
     if (!permission?.granted) {
       const result = await requestPermission();
       if (!result.granted) {
-        Alert.alert(t('error'), t('handover.errCamera'));
+        Alert.alert(t('common.permissionRequired'), t('handover.errCamera'));
         return;
       }
     }
@@ -57,7 +57,7 @@ export default function HandoverInitiateScreen() {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
         <Text style={styles.muted}>{t('handover.initiating')}</Text>
       </View>
     );
@@ -65,7 +65,7 @@ export default function HandoverInitiateScreen() {
 
   if (scanning) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <View style={styles.topBar}>
           <Text style={styles.heading}>{t('handover.scanningTitle')}</Text>
         </View>
@@ -89,31 +89,31 @@ export default function HandoverInitiateScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <View style={styles.topBar}>
         <Text style={styles.heading}>{t('handover.initTitle')}</Text>
       </View>
       <View style={{ padding: 20 }}>
         <View
           style={{
-            backgroundColor: `${colors.primary}0d`,
+            backgroundColor: `${theme.colors.primary}0d`,
             borderRadius: 8,
             borderWidth: 0.5,
-            borderColor: `${colors.primary}40`,
+            borderColor: `${theme.colors.primary}40`,
             padding: 12,
             marginBottom: 16,
           }}
         >
-          <Text style={{ fontSize: 12, color: colors.text.primary, lineHeight: 18 }}>{t('logistics.handoverInit.documentFirst')}</Text>
+          <Text style={{ fontSize: 14, color: theme.colors.text.primary, lineHeight: 18 }}>{t('logistics.handoverInit.documentFirst')}</Text>
         </View>
         <StepIndicator currentStep={1} totalSteps={3} labels={[t('handover.stepScan'), t('handover.stepAudit'), t('handover.stepSign')]} />
         <View
           style={{
-            backgroundColor: colors.surface,
+            backgroundColor: theme.colors.surface,
             borderRadius: 8,
             padding: 20,
             borderWidth: 0.5,
-            borderColor: colors.border,
+            borderColor: theme.colors.border,
             marginTop: 20,
           }}
         >
@@ -121,7 +121,7 @@ export default function HandoverInitiateScreen() {
           <TouchableOpacity
             onPress={handleScanQR}
             style={{
-              backgroundColor: colors.primary,
+              backgroundColor: theme.colors.primary,
               paddingVertical: 16,
               borderRadius: 8,
               alignItems: 'center',
@@ -129,10 +129,12 @@ export default function HandoverInitiateScreen() {
               marginTop: 20,
             }}
             activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel={t('handover.scanCta')}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <QrCode size={20} color={colors.background} strokeWidth={1} />
-              <Text style={{ fontSize: 14, fontWeight: '400', color: colors.background, letterSpacing: 0.5 }}>
+              <QrCode size={20} color={theme.colors.background} strokeWidth={1} />
+              <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.background, letterSpacing: 0.5 }}>
                 {t('handover.scanCta')}
               </Text>
             </View>
@@ -144,23 +146,23 @@ export default function HandoverInitiateScreen() {
 }
 
 const styles = StyleSheet.create({
-  centered: { flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' },
-  muted: { marginTop: 16, fontSize: 13, color: colors.text.secondary, fontWeight: '300' },
-  topBar: { padding: 20, borderBottomWidth: 0.5, borderBottomColor: colors.border },
-  heading: { fontSize: 16, fontWeight: '300', color: colors.text.primary, letterSpacing: 0.5 },
+  centered: { flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center', alignItems: 'center' },
+  muted: { marginTop: 16, fontSize: 13, color: theme.colors.text.secondary, fontWeight: '400' },
+  topBar: { padding: 20, borderBottomWidth: 0.5, borderBottomColor: theme.colors.border },
+  heading: { fontSize: 16, fontWeight: '400', color: theme.colors.text.primary, letterSpacing: 0.5 },
   overlay: { justifyContent: 'center', alignItems: 'center' },
-  frame: { width: 250, height: 250, borderWidth: 0.5, borderColor: colors.primary, borderRadius: 8, backgroundColor: 'transparent' },
+  frame: { width: 250, height: 250, borderWidth: 0.5, borderColor: theme.colors.primary, borderRadius: 8, backgroundColor: 'transparent' },
   hintOnCam: {
     marginTop: 20,
     fontSize: 13,
-    color: colors.background,
-    fontWeight: '300',
+    color: theme.colors.background,
+    fontWeight: '400',
     textAlign: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
     padding: 8,
     borderRadius: 4,
   },
-  cancelBar: { padding: 16, backgroundColor: colors.background, borderTopWidth: 0.5, borderTopColor: colors.border },
-  cancelText: { fontSize: 14, fontWeight: '400', color: colors.text.primary, textAlign: 'center' },
-  instructions: { fontSize: 13, fontWeight: '300', color: colors.text.primary, letterSpacing: 0.3, lineHeight: 20 },
+  cancelBar: { padding: 16, backgroundColor: theme.colors.background, borderTopWidth: 0.5, borderTopColor: theme.colors.border },
+  cancelText: { fontSize: 14, fontWeight: '400', color: theme.colors.text.primary, textAlign: 'center' },
+  instructions: { fontSize: 13, fontWeight: '400', color: theme.colors.text.primary, letterSpacing: 0.3, lineHeight: 20 },
 });

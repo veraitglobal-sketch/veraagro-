@@ -54,7 +54,7 @@ export default function LogisticsClaimMissionBlock({ mission, onClaimed }: Props
           <Text style={enterpriseUi.authBtnPrimaryText}>{t('logistics.claim.cta')}</Text>
         )}
       </TouchableOpacity>
-      <Text style={[enterpriseUi.navRowSubtitle, { fontSize: 11 }]}>{t('logistics.claim.vehicleHint')}</Text>
+      <Text style={[enterpriseUi.navRowSubtitle, { fontSize: 14 }]}>{t('logistics.claim.vehicleHint')}</Text>
     </View>
   );
 }

@@ -64,7 +64,7 @@ export function useMaterialCompliance() {
   const [labelRollFilter, setLabelRollFilter] = useState('');
 
   const parcelFilterOptions = useMemo((): ParcelFilterOption[] => {
-    const opts: ParcelFilterOption[] = [{ id: PARCEL_ALL_KEY, label: t('producer.qualityEntry.allParcels') }];
+    const opts: ParcelFilterOption[] = [{ id: PARCEL_ALL_KEY, label: t('common.all') }];
     const seen = new Set<string>();
     seen.add(PARCEL_ALL_KEY);
     for (const b of batches) {

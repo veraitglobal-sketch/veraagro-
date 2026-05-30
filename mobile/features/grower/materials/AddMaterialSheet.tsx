@@ -2,14 +2,11 @@ import { useState, useCallback } from 'react';
 import {
   View,
   Text,
-  Modal,
   TextInput,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
   Alert,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
 } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
@@ -19,8 +16,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { materialsAPI } from '../../../lib/api';
 import { apiErrorMessage } from '../../../lib/api-error';
 import { theme } from '../../../lib/theme';
-import { colors } from '../../../lib/colors';
 import type { MaterialFilterType } from './useMaterialsData';
+import { BioVeraBottomSheet } from '../../../components/enterprise/BioVeraBottomSheet';
 
 /** Tap order: seed, fertilizer, pesticide, other — user picks before typing name / barcode. */
 const TYPE_VALUES: Array<Exclude<MaterialFilterType, 'all'>> = [
@@ -123,16 +120,12 @@ export function AddMaterialSheet({ visible, onClose, onSuccess }: Props) {
     t(`producer.materials.addForm.namePh_${k}`, { defaultValue: t('producer.materials.addForm.namePh') });
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={handleClose}>
-      <KeyboardAvoidingView
-        style={styles.root}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
-      >
+    <BioVeraBottomSheet visible={visible} onClose={handleClose} keyboardAvoiding>
+      <View style={styles.root}>
         <View style={styles.header}>
           <Text style={styles.title}>{t('producer.materials.addForm.title')}</Text>
           <TouchableOpacity onPress={handleClose} style={styles.closeBtn} hitSlop={10}>
-            <X size={24} color={colors.text.secondary} />
+            <X size={24} color={theme.colors.text.secondary} />
           </TouchableOpacity>
         </View>
         <Text style={styles.lead}>{t('producer.materials.addForm.leadPickType')}</Text>
@@ -219,8 +212,8 @@ export function AddMaterialSheet({ visible, onClose, onSuccess }: Props) {
             )}
           </TouchableOpacity>
         </ScrollView>
-      </KeyboardAvoidingView>
-    </Modal>
+      </View>
+    </BioVeraBottomSheet>
   );
 }
 
@@ -236,7 +229,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: theme.colors.border,
   },
-  title: { fontSize: 18, fontWeight: '600', color: colors.text.primary, flex: 1 },
+  title: { fontSize: 18, fontWeight: '600', color: theme.colors.text.primary, flex: 1 },
   closeBtn: { padding: 4 },
   lead: {
     fontSize: 14,

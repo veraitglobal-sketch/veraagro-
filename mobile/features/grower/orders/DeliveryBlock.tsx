@@ -2,7 +2,6 @@ import { View, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { MapPin } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
-import { colors } from '../../../lib/colors';
 import type { Order } from '../../../lib/api';
 
 export default function DeliveryBlock({ order }: { order: Order }) {
@@ -12,32 +11,32 @@ export default function DeliveryBlock({ order }: { order: Order }) {
   return (
     <View
       style={{
-        backgroundColor: colors.background,
+        backgroundColor: theme.colors.background,
         borderRadius: theme.borderRadius.md,
         padding: theme.spacing.md,
         marginBottom: theme.spacing.md,
         borderWidth: 0.5,
-        borderColor: colors.border,
+        borderColor: theme.colors.border,
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm }}>
-        <MapPin size={18} color={colors.text.primary} strokeWidth={1} />
-        <Text style={{ fontSize: 15, fontWeight: '300', color: colors.text.primary, marginLeft: theme.spacing.xs, letterSpacing: 0.3 }}>
+        <MapPin size={18} color={theme.colors.text.primary} strokeWidth={1} />
+        <Text style={{ fontSize: 15, fontWeight: '400', color: theme.colors.text.primary, marginLeft: theme.spacing.xs, letterSpacing: 0.3 }}>
           {t('producer.orders.deliveryAddress')}
         </Text>
       </View>
       {typeof addr === 'string' ? (
-        <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>{addr}</Text>
+        <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary }}>{addr}</Text>
       ) : (
         <>
-          {addr.street && <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary }}>{addr.street}</Text>}
+          {addr.street && <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary }}>{addr.street}</Text>}
           {addr.city && (
-            <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary, marginTop: theme.spacing.xs }}>
+            <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary, marginTop: theme.spacing.xs }}>
               {addr.city}{addr.postalCode ? `, ${addr.postalCode}` : ''}
             </Text>
           )}
           {addr.country && (
-            <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.secondary, marginTop: theme.spacing.xs }}>
+            <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary, marginTop: theme.spacing.xs }}>
               {addr.country}
             </Text>
           )}

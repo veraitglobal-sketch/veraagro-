@@ -18,6 +18,7 @@ interface CartContextType {
   removeFromCart: (productId: string, lineKind: CartLineKind) => void;
   updateQuantity: (productId: string, quantity: number, lineKind: CartLineKind) => void;
   clearCart: () => void;
+  reloadCart: () => Promise<void>;
   getTotalPrice: () => number;
   getTotalItems: () => number;
 }
@@ -43,6 +44,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
             lineKind: it.lineKind || 'purchase',
           }))
         );
+      } else {
+        setItems([]);
       }
     } catch (error) {
       console.error('Error loading cart:', error);
@@ -120,6 +123,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         removeFromCart,
         updateQuantity,
         clearCart,
+        reloadCart: loadCart,
         getTotalPrice,
         getTotalItems,
       }}

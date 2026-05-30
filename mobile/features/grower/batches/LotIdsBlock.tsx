@@ -31,7 +31,7 @@ export default function LotIdsBlock({ lot, compact }: Props) {
 const styles = StyleSheet.create({
   wrap: { flex: 1, minWidth: 0 },
   kicker: {
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: '600',
     letterSpacing: 0.6,
     textTransform: 'uppercase',
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   },
   publicIdCompact: { fontSize: 15 },
   systemLine: {
-    fontSize: 11,
+    fontSize: 14,
     color: enterpriseColors.gray600,
     marginTop: 2,
     fontVariant: ['tabular-nums'],

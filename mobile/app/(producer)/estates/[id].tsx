@@ -1,10 +1,9 @@
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect, useLayoutEffect } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback } from 'react';
 import { MapPin, Calendar, Package, Edit, Trash2 } from 'lucide-react-native';
 import MapView, { Polygon, Marker } from 'react-native-maps';
-import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
@@ -45,11 +44,7 @@ export default function EstateDetailsScreen() {
     };
   }, [id, estate]);
 
-  useEffect(() => {
-    if (id) void loadEstate({ background: Boolean(estate) });
-  }, [id]);
-
-  const loadEstate = async (opts?: { background?: boolean }) => {
+  const loadEstate = useCallback(async (opts?: { background?: boolean }) => {
     if (!id) return;
     const background = opts?.background === true;
     if (!background) setLoading(true);
@@ -61,20 +56,27 @@ export default function EstateDetailsScreen() {
     } finally {
       if (!background) setLoading(false);
     }
-  };
+  }, [id]);
 
-  const onRefresh = async () => {
+  useEffect(() => {
+    if (id) void loadEstate({ background: seeded != null });
+  }, [id, loadEstate, seeded]);
+
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadEstate({ background: true });
-    setRefreshing(false);
-  };
+    try {
+      await loadEstate({ background: true });
+    } finally {
+      setRefreshing(false);
+    }
+  }, [loadEstate]);
 
   const dateLocale = useAppLocaleTag();
 
   if (loading && !estate) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>
+      <View style={{ flex: 1, paddingTop: p.topInset, backgroundColor: theme.colors.surface, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ color: theme.colors.text.secondary, fontSize: 13 }}>
           {t('producer.estates.loading')}
         </Text>
       </View>
@@ -83,8 +85,8 @@ export default function EstateDetailsScreen() {
 
   if (!estate) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: colors.text.secondary, fontSize: 13 }}>
+      <View style={{ flex: 1, paddingTop: p.topInset, backgroundColor: theme.colors.surface, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ color: theme.colors.text.secondary, fontSize: 13 }}>
           {t('producer.estates.notFound')}
         </Text>
       </View>
@@ -101,10 +103,10 @@ export default function EstateDetailsScreen() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'CERTIFIED': return colors.primary;
-      case 'ACTIVE': return colors.accent;
-      case 'PENDING_SETUP': return colors.warning;
-      default: return colors.text.secondary;
+      case 'CERTIFIED': return theme.colors.primary;
+      case 'ACTIVE': return theme.colors.accent;
+      case 'PENDING_SETUP': return theme.colors.warning;
+      default: return theme.colors.text.secondary;
     }
   };
 
@@ -118,7 +120,7 @@ export default function EstateDetailsScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surface }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
       <BioVeraSubpageHeader
         title={estate.name}
         left="back"
@@ -127,7 +129,7 @@ export default function EstateDetailsScreen() {
             onPress={() => router.push(`/(producer)/estates/${id}/edit`)}
             hitSlop={8}
           >
-            <Edit size={20} color={colors.text.secondary} strokeWidth={1.5} />
+            <Edit size={20} color={theme.colors.text.secondary} strokeWidth={1.5} />
           </TouchableOpacity>
         }
       />
@@ -137,8 +139,10 @@ export default function EstateDetailsScreen() {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={colors.primary}
+            onRefresh={() => void onRefresh()}
+            progressViewOffset={10}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
           />
         }
       >
@@ -152,18 +156,18 @@ export default function EstateDetailsScreen() {
         >
           {/* Status */}
           <View style={{
-            backgroundColor: colors.background,
+            backgroundColor: theme.colors.background,
             borderRadius: theme.borderRadius.md,
             padding: theme.spacing.md,
             marginBottom: theme.spacing.md,
             borderWidth: 0.5,
-            borderColor: colors.border,
+            borderColor: theme.colors.border,
           }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <Text style={{
                 fontSize: 13,
-                fontWeight: '300',
-                color: colors.text.secondary,
+                fontWeight: '400',
+                color: theme.colors.text.secondary,
               }}>
                 {t('producer.missions.statusFieldLabel')}
               </Text>
@@ -174,8 +178,8 @@ export default function EstateDetailsScreen() {
                 backgroundColor: `${getStatusColor(estate.status)}15`,
               }}>
                 <Text style={{
-                  fontSize: 12,
-                  fontWeight: '300',
+                  fontSize: 14,
+                  fontWeight: '400',
                   color: getStatusColor(estate.status),
                   letterSpacing: 0.3,
                 }}>
@@ -187,19 +191,19 @@ export default function EstateDetailsScreen() {
 
           {/* Location Info */}
           <View style={{
-            backgroundColor: colors.background,
+            backgroundColor: theme.colors.background,
             borderRadius: theme.borderRadius.md,
             padding: theme.spacing.md,
             marginBottom: theme.spacing.md,
             borderWidth: 0.5,
-            borderColor: colors.border,
+            borderColor: theme.colors.border,
           }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm }}>
-              <MapPin size={16} color={colors.text.secondary} strokeWidth={1} />
+              <MapPin size={16} color={theme.colors.text.secondary} strokeWidth={1} />
               <Text style={{
                 fontSize: 13,
-                fontWeight: '300',
-                color: colors.text.primary,
+                fontWeight: '400',
+                color: theme.colors.text.primary,
                 marginLeft: theme.spacing.xs,
               }}>
                 {estate.location || t('producer.estates.locationNotSpecified')}
@@ -207,9 +211,9 @@ export default function EstateDetailsScreen() {
             </View>
             {estate.calculatedArea > 0 && (
               <Text style={{
-                fontSize: 11,
-                fontWeight: '300',
-                color: colors.text.secondary,
+                fontSize: 14,
+                fontWeight: '400',
+                color: theme.colors.text.secondary,
                 marginTop: theme.spacing.xs,
               }}>
                 {t('producer.estates.area')}: {estate.calculatedArea.toFixed(2)} m²
@@ -224,7 +228,7 @@ export default function EstateDetailsScreen() {
               borderRadius: theme.borderRadius.md,
               overflow: 'hidden',
               borderWidth: 0.5,
-              borderColor: colors.border,
+              borderColor: theme.colors.border,
               marginBottom: theme.spacing.md,
             }}>
               <MapView
@@ -242,8 +246,8 @@ export default function EstateDetailsScreen() {
                     latitude: coord.lat,
                     longitude: coord.lng,
                   }))}
-                  fillColor={`${colors.primary}30`}
-                  strokeColor={colors.primary}
+                  fillColor={`${theme.colors.primary}30`}
+                  strokeColor={theme.colors.primary}
                   strokeWidth={2}
                 />
               </MapView>
@@ -255,8 +259,8 @@ export default function EstateDetailsScreen() {
             <View style={{ marginBottom: theme.spacing.md }}>
               <Text style={{
                 fontSize: 15,
-                fontWeight: '300',
-                color: colors.text.primary,
+                fontWeight: '400',
+                color: theme.colors.text.primary,
                 marginBottom: theme.spacing.sm,
                 letterSpacing: 0.3,
               }}>
@@ -267,19 +271,19 @@ export default function EstateDetailsScreen() {
                   <View
                     key={parcel.id}
                     style={{
-                      backgroundColor: colors.background,
+                      backgroundColor: theme.colors.background,
                       borderRadius: theme.borderRadius.md,
                       padding: theme.spacing.md,
                       borderWidth: 0.5,
-                      borderColor: colors.border,
+                      borderColor: theme.colors.border,
                     }}
                   >
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.xs, flexWrap: 'wrap', gap: 8 }}>
-                      <Package size={14} color={colors.text.secondary} strokeWidth={1} />
+                      <Package size={14} color={theme.colors.text.secondary} strokeWidth={1} />
                       <Text style={{
                         fontSize: 13,
-                        fontWeight: '300',
-                        color: colors.text.primary,
+                        fontWeight: '400',
+                        color: theme.colors.text.primary,
                         marginLeft: theme.spacing.xs,
                         flex: 1,
                         minWidth: 120,
@@ -297,14 +301,14 @@ export default function EstateDetailsScreen() {
                               paddingHorizontal: 8,
                               paddingVertical: 3,
                               borderRadius: theme.borderRadius.sm,
-                              backgroundColor: ok ? `${colors.success}18` : `${colors.warning}22`,
+                              backgroundColor: ok ? `${theme.colors.success}18` : `${theme.colors.warning}22`,
                             }}
                           >
                             <Text
                               style={{
-                                fontSize: 10,
+                                fontSize: 13,
                                 fontWeight: '600',
-                                color: ok ? colors.success : colors.warning,
+                                color: ok ? theme.colors.success : theme.colors.warning,
                               }}
                             >
                               {ok ? t('producer.estates.parcelApproved') : t('producer.estates.parcelPendingApproval')}
@@ -314,17 +318,17 @@ export default function EstateDetailsScreen() {
                       })()}
                     </View>
                     <Text style={{
-                      fontSize: 11,
-                      fontWeight: '300',
-                      color: colors.text.secondary,
+                      fontSize: 14,
+                      fontWeight: '400',
+                      color: theme.colors.text.secondary,
                     }}>
                       {t('producer.estates.area')}: {parcel.calculatedArea.toFixed(2)} m²
                     </Text>
                     {parcel.plantingDate && (
                       <Text style={{
-                        fontSize: 11,
-                        fontWeight: '300',
-                        color: colors.text.secondary,
+                        fontSize: 14,
+                        fontWeight: '400',
+                        color: theme.colors.text.secondary,
                         marginTop: 2,
                       }}>
                         {t('producer.recentActivity.planting')}: {new Date(parcel.plantingDate).toLocaleDateString(dateLocale)}
@@ -349,11 +353,11 @@ export default function EstateDetailsScreen() {
                         paddingHorizontal: 12,
                         borderRadius: theme.borderRadius.md,
                         borderWidth: 1,
-                        borderColor: colors.primary,
-                        backgroundColor: `${colors.primary}0D`,
+                        borderColor: theme.colors.primary,
+                        backgroundColor: `${theme.colors.primary}0D`,
                       }}
                     >
-                      <Text style={{ fontSize: 13, fontWeight: '600', color: colors.primary }}>
+                      <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.primary }}>
                         {t('producer.plotMapper.openPlanForParcel')} →
                       </Text>
                     </TouchableOpacity>
@@ -366,35 +370,35 @@ export default function EstateDetailsScreen() {
           {/* Certification Info */}
           {estate.certificationStartDate && (
             <View style={{
-              backgroundColor: colors.background,
+              backgroundColor: theme.colors.background,
               borderRadius: theme.borderRadius.md,
               padding: theme.spacing.md,
               borderWidth: 0.5,
-              borderColor: colors.border,
+              borderColor: theme.colors.border,
             }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.xs }}>
-                <Calendar size={16} color={colors.text.secondary} strokeWidth={1} />
+                <Calendar size={16} color={theme.colors.text.secondary} strokeWidth={1} />
                 <Text style={{
                   fontSize: 13,
-                  fontWeight: '300',
-                  color: colors.text.primary,
+                  fontWeight: '400',
+                  color: theme.colors.text.primary,
                   marginLeft: theme.spacing.xs,
                 }}>
                   {t('producer.estates.certificationSectionHeading')}
                 </Text>
               </View>
               <Text style={{
-                fontSize: 11,
-                fontWeight: '300',
-                color: colors.text.secondary,
+                fontSize: 14,
+                fontWeight: '400',
+                color: theme.colors.text.secondary,
               }}>
                 {t('producer.estates.started')}: {new Date(estate.certificationStartDate).toLocaleDateString(dateLocale)}
               </Text>
               {estate.daysRemaining !== undefined && estate.daysRemaining !== null && (
                 <Text style={{
-                  fontSize: 11,
-                  fontWeight: '300',
-                  color: colors.text.secondary,
+                  fontSize: 14,
+                  fontWeight: '400',
+                  color: theme.colors.text.secondary,
                   marginTop: 2,
                 }}>
                   {t('producer.estates.daysRemaining', { count: estate.daysRemaining ?? 0 })}

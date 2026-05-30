@@ -20,6 +20,7 @@ import { growerUi } from '../../lib/grower-ui';
 import { complianceStyles } from '../../lib/compliance-ui';
 import { batchesAPI, packageBadgesAPI, type PackageBadgeType } from '../../lib/api';
 import { API_URL } from '../../lib/api-url';
+import { FormKeyboardWrap } from '../../components/FormKeyboardWrap';
 
 type ParentType = Extract<PackageBadgeType, 'PALLET_MASTER' | 'ROLL_LINE'>;
 
@@ -185,6 +186,7 @@ export default function PackageBadgesScreen() {
   };
 
   return (
+    <FormKeyboardWrap style={{ flex: 1 }}>
     <EnterpriseScreen
       refreshing={listRefreshing}
       onRefresh={onListRefresh}
@@ -358,6 +360,7 @@ export default function PackageBadgesScreen() {
         <Text style={[enterpriseUi.navRowSubtitle, styles.qrHint]}>{t('producer.packageBadges.qrHint')}</Text>
       </View>
     </EnterpriseScreen>
+    </FormKeyboardWrap>
   );
 }
 

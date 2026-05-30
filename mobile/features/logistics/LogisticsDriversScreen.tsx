@@ -6,6 +6,7 @@ import { User } from 'lucide-react-native';
 import { EnterpriseScreen } from '../../components/enterprise/EnterpriseScreen';
 import { GrowerStackHeader } from '../../components/grower/GrowerStackHeader';
 import { enterpriseColors, enterpriseUi } from '../../lib/enterprise-ui';
+import EmptyState from '../../components/EmptyState';
 import { logisticsDriversAPI, type LogisticsDriverRow } from '../../lib/api';
 
 export default function LogisticsDriversScreen() {
@@ -49,7 +50,7 @@ export default function LogisticsDriversScreen() {
         {loading ? (
           <ActivityIndicator color={enterpriseColors.primary} style={{ marginTop: 24 }} />
         ) : list.length === 0 ? (
-          <Text style={enterpriseUi.navRowSubtitle}>{t('logistics.drivers.empty')}</Text>
+          <EmptyState message={t('logistics.drivers.empty')} icon={User} />
         ) : (
           list.map((d) => (
             <View key={d.id} style={[enterpriseUi.inAppPanel, { flexDirection: 'row', gap: 12, alignItems: 'center' }]}>

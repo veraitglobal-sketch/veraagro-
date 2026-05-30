@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native';
 import Svg, { Circle, Text as SvgText } from 'react-native-svg';
-import { colors } from '../lib/colors';
+import { theme } from '../lib/theme';
 
 interface TrustScoreWidgetProps {
   score: number; // 0-100
@@ -15,9 +15,9 @@ export default function TrustScoreWidget({ score, size = 120 }: TrustScoreWidget
 
   // Color based on score
   const getColor = () => {
-    if (score >= 80) return colors.success;
-    if (score >= 60) return colors.warning;
-    return colors.error;
+    if (score >= 80) return theme.colors.success;
+    if (score >= 60) return theme.colors.warning;
+    return theme.colors.error;
   };
 
   return (
@@ -28,7 +28,7 @@ export default function TrustScoreWidget({ score, size = 120 }: TrustScoreWidget
           cx={center}
           cy={center}
           r={radius}
-          stroke={colors.border}
+          stroke={theme.colors.border}
           strokeWidth={2}
           fill="none"
         />
@@ -51,7 +51,7 @@ export default function TrustScoreWidget({ score, size = 120 }: TrustScoreWidget
           y={center - 8}
           fontSize={24}
           fontWeight="normal"
-          fill={colors.text.primary}
+          fill={theme.colors.text.primary}
           textAnchor="middle"
         >
           {score}
@@ -60,7 +60,7 @@ export default function TrustScoreWidget({ score, size = 120 }: TrustScoreWidget
           x={center}
           y={center + 12}
           fontSize={13}
-          fill={colors.text.secondary}
+          fill={theme.colors.text.secondary}
           textAnchor="middle"
         >
           Trust Score

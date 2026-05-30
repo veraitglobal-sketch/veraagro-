@@ -1,7 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Save } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
-import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
@@ -19,17 +18,17 @@ export function QualityEntryScreen() {
   const p = useBioVeraScreenPadding();
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surface }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
       <BioVeraSubpageHeader
-        title={t('producer.qualityEntry.screenTitle')}
+        title={t('producer.qualityEntry.title')}
         left="back"
         right={
           data.canEditQuality ? (
             <TouchableOpacity onPress={data.handleSave} disabled={data.saving} hitSlop={8}>
               {data.saving ? (
-                <ActivityIndicator size="small" color={colors.primary} />
+                <ActivityIndicator size="small" color={theme.colors.primary} />
               ) : (
-                <Save size={24} color={colors.primary} strokeWidth={1.5} />
+                <Save size={24} color={theme.colors.primary} strokeWidth={1.5} />
               )}
             </TouchableOpacity>
           ) : null
@@ -42,7 +41,7 @@ export function QualityEntryScreen() {
           <RefreshControl
             refreshing={data.refreshing}
             onRefresh={data.onRefresh}
-            tintColor={colors.primary}
+            tintColor={theme.colors.primary}
           />
         }
       >

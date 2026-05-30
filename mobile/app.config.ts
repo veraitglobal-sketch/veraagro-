@@ -1,7 +1,22 @@
+import fs from 'fs';
+import path from 'path';
 import type { ExpoConfig } from 'expo/config';
 import appJson from './app.json';
 
 const base = appJson.expo as ExpoConfig;
+
+function firstExistingFile(...candidates: string[]): string | undefined {
+  for (const rel of candidates) {
+    if (fs.existsSync(path.join(__dirname, rel))) return rel;
+  }
+  return undefined;
+}
+
+const iosGoogleServices = firstExistingFile(
+  'GoogleService-Info.plist',
+  'GoogleService-Info.plist.example',
+);
+const androidGoogleServices = firstExistingFile('google-services.json', 'google-services.json.example');
 
 /**
  * Dynamic Expo config: Firebase client files (gitignored) are wired for EAS/prebuild.
@@ -12,7 +27,7 @@ export default (): ExpoConfig => ({
   owner: 'biovera',
   ios: {
     ...base.ios,
-    googleServicesFile: './GoogleService-Info.plist',
+    ...(iosGoogleServices ? { googleServicesFile: iosGoogleServices } : {}),
     infoPlist: {
       ...(base.ios?.infoPlist as Record<string, unknown> | undefined),
       UIBackgroundModes: ['remote-notification'],
@@ -20,7 +35,7 @@ export default (): ExpoConfig => ({
   },
   android: {
     ...base.android,
-    googleServicesFile: './google-services.json',
+    ...(androidGoogleServices ? { googleServicesFile: androidGoogleServices } : {}),
   },
   plugins: [
     ...(base.plugins ?? []).filter(

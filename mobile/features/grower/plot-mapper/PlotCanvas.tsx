@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, useWindowDimensions, PanResponder } from 
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react-native';
-import { colors } from '../../../lib/colors';
+import { theme } from '../../../lib/theme';
 import { CANVAS_WIDTH, CANVAS_HEIGHT, MIN_PARTITION_GESTURE_DRAG } from './constants';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { getPlotCanvasLayout } from './canvasLayout';
@@ -127,12 +127,12 @@ export function PlotCanvas({
           style={{
             fontSize: 13,
             fontWeight: '400',
-            color: colors.text.primary,
+            color: theme.colors.text.primary,
             letterSpacing: 0.3,
             flexShrink: 1,
           }}
         >
-          {t('producer.plotMapper.canvasPlanLabel')}
+          {t('producer.plotMapper.planTitle')}
         </Text>
         <TouchableOpacity
           onPress={onAddPartition}
@@ -140,28 +140,28 @@ export function PlotCanvas({
             paddingHorizontal: 12,
             paddingVertical: 6,
             borderWidth: 0.5,
-            borderColor: colors.border,
+            borderColor: theme.colors.border,
             borderRadius: 6,
             flexDirection: 'row',
             alignItems: 'center',
             gap: 6,
-            backgroundColor: partitionMode ? `${colors.primary}10` : colors.surface,
+            backgroundColor: partitionMode ? `${theme.colors.primary}10` : theme.colors.surface,
           }}
           activeOpacity={0.7}
         >
           <Plus
             size={14}
-            color={partitionMode ? colors.primary : colors.text.secondary}
+            color={partitionMode ? theme.colors.primary : theme.colors.text.secondary}
             strokeWidth={1}
           />
           <Text
             style={{
-              fontSize: 11,
-              fontWeight: '300',
-              color: partitionMode ? colors.primary : colors.text.secondary,
+              fontSize: 14,
+              fontWeight: '400',
+              color: partitionMode ? theme.colors.primary : theme.colors.text.secondary,
             }}
           >
-            {t('producer.plotMapper.addPartition')}
+            {t('producer.plotMapper.addDivision')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -169,9 +169,9 @@ export function PlotCanvas({
       {length ? (
         <Text
           style={{
-            fontSize: 11,
-            fontWeight: '300',
-            color: colors.text.secondary,
+            fontSize: 14,
+            fontWeight: '400',
+            color: theme.colors.text.secondary,
             textAlign: 'center',
             marginBottom: 6,
           }}
@@ -191,10 +191,10 @@ export function PlotCanvas({
               minHeight: displayH,
             }}
           >
-            <Text style={{ fontSize: 9, fontWeight: '300', color: colors.text.secondary, textAlign: 'center' }}>
+            <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary, textAlign: 'center' }}>
               {t('producer.plotMapper.axisWidth')}
             </Text>
-            <Text style={{ fontSize: 12, fontWeight: '600', color: colors.text.primary, textAlign: 'center', marginTop: 2 }}>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary, textAlign: 'center', marginTop: 2 }}>
               {width} m
             </Text>
           </View>
@@ -207,7 +207,7 @@ export function PlotCanvas({
           style={{
             width: displayW,
             height: displayH,
-            backgroundColor: colors.surface,
+            backgroundColor: theme.colors.surface,
             borderWidth: 0.5,
             borderColor: 'rgba(26, 48, 33, 0.2)',
             borderRadius: 6,
@@ -253,7 +253,7 @@ export function PlotCanvas({
                   left: 0,
                   width: displayW,
                   height: GRID_LINE,
-                  backgroundColor: colors.primary,
+                  backgroundColor: theme.colors.primary,
                   borderStyle: 'dashed',
                   opacity: 0.95,
                 }}
@@ -267,7 +267,7 @@ export function PlotCanvas({
                   top: 0,
                   height: displayH,
                   width: GRID_LINE,
-                  backgroundColor: colors.primary,
+                  backgroundColor: theme.colors.primary,
                   opacity: 0.95,
                 }}
               />
@@ -294,17 +294,17 @@ export function PlotCanvas({
                   style={{
                     flex: 1,
                     borderWidth: 0.5,
-                    borderColor: colors.primary,
-                    backgroundColor: zone.cropType ? `${colors.primary}05` : 'transparent',
+                    borderColor: theme.colors.primary,
+                    backgroundColor: zone.cropType ? `${theme.colors.primary}05` : 'transparent',
                     padding: 4,
                   }}
                   activeOpacity={0.7}
                 >
                   <Text
                     style={{
-                      fontSize: 9,
-                      fontWeight: '300',
-                      color: colors.text.primary,
+                      fontSize: 13,
+                      fontWeight: '400',
+                      color: theme.colors.text.primary,
                       letterSpacing: 0.2,
                     }}
                     numberOfLines={2}
@@ -314,9 +314,9 @@ export function PlotCanvas({
                   {zone.cropType ? (
                     <Text
                       style={{
-                        fontSize: 8,
-                        fontWeight: '300',
-                        color: colors.text.secondary,
+                        fontSize: 13,
+                        fontWeight: '400',
+                        color: theme.colors.text.secondary,
                         marginTop: 2,
                       }}
                       numberOfLines={1}
@@ -326,9 +326,9 @@ export function PlotCanvas({
                   ) : null}
                   <Text
                     style={{
-                      fontSize: 7,
-                      fontWeight: '300',
-                      color: colors.text.secondary,
+                      fontSize: 13,
+                      fontWeight: '400',
+                      color: theme.colors.text.secondary,
                       marginTop: 1,
                     }}
                     numberOfLines={1}
@@ -346,9 +346,9 @@ export function PlotCanvas({
         <Text
           style={{
             marginTop: 8,
-            fontSize: 11,
-            fontWeight: '300',
-            color: colors.primary,
+            fontSize: 14,
+            fontWeight: '400',
+            color: theme.colors.primary,
             textAlign: 'center',
           }}
         >

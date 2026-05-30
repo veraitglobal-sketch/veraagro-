@@ -41,10 +41,12 @@ export class GrowthLogsController {
   adminList(
     @Query('moderationStatus') moderationStatus?: string,
     @Query('limit') limit?: string,
+    @Query('partnerCode') partnerCode?: string,
   ) {
     return this.growthLogsService.listForAdmin({
       moderationStatus,
       limit: limit ? parseInt(limit, 10) : undefined,
+      partnerCode,
     });
   }
 

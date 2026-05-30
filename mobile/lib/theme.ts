@@ -1,6 +1,8 @@
 /**
  * Bio Vera mobile theme – aligned with web (biovera.app)
  * Primary #2D5A27, clean minimal look
+ *
+ * Farmer rule: never use fontSize below 13px in the app.
  */
 export const theme = {
   colors: {
@@ -59,43 +61,55 @@ export const theme = {
     full: 9999,
   },
 
-  // Tipografija u duhu weba – font-light / font-normal, letter-spacing -0.01
   typography: {
     h1: {
       fontSize: 28,
-      fontWeight: '300' as const,
+      fontWeight: '600' as const,
       lineHeight: 36,
-      letterSpacing: -0.5,
     },
     h2: {
       fontSize: 22,
       fontWeight: '600' as const,
       lineHeight: 30,
-      letterSpacing: -0.3,
     },
     h3: {
       fontSize: 18,
       fontWeight: '600' as const,
       lineHeight: 26,
-      letterSpacing: -0.2,
     },
     body: {
-      fontSize: 15,
+      fontSize: 16,
       fontWeight: '400' as const,
       lineHeight: 24,
-      letterSpacing: -0.2,
     },
     bodySmall: {
       fontSize: 14,
       fontWeight: '400' as const,
       lineHeight: 20,
-      letterSpacing: -0.1,
     },
     caption: {
-      fontSize: 12,
-      fontWeight: '400' as const,
+      fontSize: 13,
+      fontWeight: '500' as const,
+      lineHeight: 18,
+    },
+    label: {
+      fontSize: 14,
+      fontWeight: '500' as const,
+      lineHeight: 20,
+    },
+    /** @deprecated use caption */
+    badge: {
+      fontSize: 13,
+      fontWeight: '500' as const,
       lineHeight: 16,
-      letterSpacing: 0,
+    },
+    /** @deprecated use label + uppercase in style */
+    sectionLabel: {
+      fontSize: 13,
+      fontWeight: '600' as const,
+      lineHeight: 18,
+      letterSpacing: 0.4,
+      textTransform: 'uppercase' as const,
     },
   },
 

@@ -100,16 +100,16 @@ export default function SupplierOrdersScreen() {
               borderColor: theme.colors.border,
             }}
           >
-            <Text style={{ fontSize: 10, color: theme.colors.text.tertiary, marginBottom: 2 }}>
+            <Text style={{ fontSize: 13, color: theme.colors.text.tertiary, marginBottom: 2 }}>
               {t('supplier.orderRef')}{' '}
               {o.id ? `${String(o.id).slice(0, 8).toUpperCase()}…` : '—'}
             </Text>
-            <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginBottom: 4 }}>
+            <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginBottom: 4 }}>
               {o.farmer
                 ? `${o.farmer.firstName || ''} ${o.farmer.lastName || ''} · ${o.farmer.partnerCode || ''}`
                 : t('supplier.growerFallback')}
             </Text>
-            <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginBottom: 6 }}>
+            <Text style={{ fontSize: 14, color: theme.colors.text.tertiary, marginBottom: 6 }}>
               {fmt(o.createdAt)}
               {o.status ? ` · ${b2bOrderStatusLabel(o.status, t)}` : ''}
             </Text>
@@ -118,7 +118,7 @@ export default function SupplierOrdersScreen() {
                 {lines.map((line, i) => (
                   <Text
                     key={i}
-                    style={{ fontSize: 12, color: theme.colors.text.primary, marginBottom: 2 }}
+                    style={{ fontSize: 14, color: theme.colors.text.primary, marginBottom: 2 }}
                   >
                     • {line}
                   </Text>
@@ -126,7 +126,7 @@ export default function SupplierOrdersScreen() {
               </View>
             )}
             {o.farmerReceivedAt && (
-              <Text style={{ fontSize: 11, color: '#166534', marginBottom: 6 }}>
+              <Text style={{ fontSize: 14, color: '#166534', marginBottom: 6 }}>
                 {t('supplier.growerReceivedAtFarm', {
                   when: fmt(o.farmerReceivedAt),
                 })}
@@ -146,7 +146,7 @@ export default function SupplierOrdersScreen() {
                 >
                   <Text
                     style={{
-                      fontSize: 11,
+                      fontSize: 14,
                       color: o.status === s ? '#fff' : theme.colors.text.primary,
                     }}
                   >

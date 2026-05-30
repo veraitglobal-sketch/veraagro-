@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Generates or extends `i18n/locales/sr-partial.json` from `en.json` using OpenAI.
+ * Generates or extends `i18n/locales/sr.json` from `en.json` using OpenAI.
  * Preserves {{placeholders}} and _plural keys.
  *
  * Usage (from mobile/):
@@ -15,7 +15,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
 const enPath = path.join(root, 'i18n/locales/en.json');
-const outPath = path.join(root, 'i18n/locales/sr-partial.json');
+const outPath = path.join(root, 'i18n/locales/sr.json');
 
 function flatten(obj, prefix = '') {
   const out = {};

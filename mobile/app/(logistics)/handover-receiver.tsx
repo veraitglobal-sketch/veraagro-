@@ -198,12 +198,12 @@ export default function HandoverReceiverScreen() {
             {t('logistics.receiverProof.back')}
           </Text>
         </TouchableOpacity>
-        <Text style={{ fontSize: 18, fontWeight: '300', color: theme.colors.text.primary }}>
+        <Text style={{ fontSize: 18, fontWeight: '400', color: theme.colors.text.primary }}>
           {t('logistics.receiverProof.title')}
         </Text>
         <Text
           style={{
-            fontSize: 12,
+            fontSize: 14,
             color: theme.colors.text.secondary,
             marginTop: 4,
             lineHeight: 18,
@@ -344,18 +344,18 @@ export default function HandoverReceiverScreen() {
 
 const styles = StyleSheet.create({
   label: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
     color: theme.colors.text.primary,
     marginBottom: 6,
   },
   hint: {
-    fontSize: 12,
+    fontSize: 14,
     color: theme.colors.text.secondary,
     marginBottom: 12,
   },
   hintSmall: {
-    fontSize: 11,
+    fontSize: 14,
     color: theme.colors.text.tertiary,
     marginTop: 6,
     marginBottom: 16,
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
   },
   missionNo: { fontSize: 14, color: theme.colors.text.primary, fontWeight: '500' },
-  missionSub: { fontSize: 11, color: theme.colors.text.secondary, marginTop: 2 },
+  missionSub: { fontSize: 14, color: theme.colors.text.secondary, marginTop: 2 },
   radio: {
     width: 20,
     height: 20,

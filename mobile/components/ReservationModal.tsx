@@ -172,7 +172,7 @@ export default function ReservationModal({
           }}>
             <Text style={{
               fontSize: 16,
-              fontWeight: '300',
+              fontWeight: '400',
               color: theme.colors.text.primary,
               letterSpacing: 0.5,
             }}>
@@ -206,7 +206,7 @@ export default function ReservationModal({
           }}>
             <Text style={{
               fontSize: 14,
-              fontWeight: '300',
+              fontWeight: '400',
               color: theme.colors.text.primary,
               letterSpacing: 0.3,
               marginBottom: theme.spacing.xs,
@@ -215,8 +215,8 @@ export default function ReservationModal({
             </Text>
             {product.price && (
               <Text style={{
-                fontSize: 12,
-                fontWeight: '300',
+                fontSize: 14,
+                fontWeight: '400',
                 color: theme.colors.text.secondary,
                 letterSpacing: 0.3,
               }}>
@@ -229,8 +229,8 @@ export default function ReservationModal({
           {/* Quantity Selector */}
           <View style={{ marginBottom: theme.spacing.lg }}>
             <Text style={{
-              fontSize: 12,
-              fontWeight: '300',
+              fontSize: 14,
+              fontWeight: '400',
               color: theme.colors.text.secondary,
               letterSpacing: 0.5,
               marginBottom: theme.spacing.sm,
@@ -271,7 +271,7 @@ export default function ReservationModal({
                   flex: 1,
                   textAlign: 'center',
                   fontSize: 18,
-                  fontWeight: '300',
+                  fontWeight: '400',
                   color: theme.colors.text.primary,
                   letterSpacing: 0.5,
                   paddingVertical: theme.spacing.sm,
@@ -300,8 +300,8 @@ export default function ReservationModal({
               </TouchableOpacity>
             </View>
             <Text style={{
-              fontSize: 10,
-              fontWeight: '300',
+              fontSize: 13,
+              fontWeight: '400',
               color: theme.colors.text.secondary,
               letterSpacing: 0.2,
               marginTop: theme.spacing.xs,
@@ -313,8 +313,8 @@ export default function ReservationModal({
 
           <View style={{ marginBottom: theme.spacing.lg }}>
             <Text style={{
-              fontSize: 12,
-              fontWeight: '300',
+              fontSize: 14,
+              fontWeight: '400',
               color: theme.colors.text.secondary,
               letterSpacing: 0.5,
               marginBottom: theme.spacing.sm,
@@ -379,8 +379,8 @@ export default function ReservationModal({
               borderColor: 'rgba(0, 0, 0, 0.08)',
             }}>
               <Text style={{
-                fontSize: 11,
-                fontWeight: '300',
+                fontSize: 14,
+                fontWeight: '400',
                 color: theme.colors.text.secondary,
                 letterSpacing: 0.5,
                 marginBottom: theme.spacing.xs,
@@ -389,7 +389,7 @@ export default function ReservationModal({
               </Text>
               <Text style={{
                 fontSize: 20,
-                fontWeight: '300',
+                fontWeight: '400',
                 color: theme.colors.primary,
                 letterSpacing: 0.5,
               }}>
@@ -429,7 +429,7 @@ export default function ReservationModal({
           >
             <Text style={{
               fontSize: 14,
-              fontWeight: '300',
+              fontWeight: '400',
               color: theme.colors.text.inverse,
               letterSpacing: 0.5,
             }}>

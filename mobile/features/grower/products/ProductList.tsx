@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { PendingProduct } from '../../../lib/offline-storage';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerStyles, growerUi } from '../../../lib/grower-ui';
+import EmptyState from '../../../components/EmptyState';
 
 interface ProductListProps {
   products: PendingProduct[];
@@ -85,9 +86,7 @@ export default function ProductList({
       refreshing={listRefreshing}
       ListHeaderComponent={ListHeaderComponent}
       ListEmptyComponent={
-        <View style={growerUi.emptyCard}>
-          <Text style={enterpriseUi.navRowSubtitle}>{t('producer.products.noProducts')}</Text>
-        </View>
+        <EmptyState message={t('producer.products.noProducts')} />
       }
       contentContainerStyle={[styles.list, { paddingBottom: contentPaddingBottom }]}
       style={styles.flex}

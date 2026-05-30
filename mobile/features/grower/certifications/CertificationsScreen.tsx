@@ -10,6 +10,7 @@ import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader'
 import { EnterpriseNotice } from '../../../components/enterprise/EnterpriseNotice';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerStyles, growerUi } from '../../../lib/grower-ui';
+import EmptyState from '../../../components/EmptyState';
 import type { RequiredCert } from './useCertificationsData';
 
 function statusPillStyle(status: CertStatus) {
@@ -140,6 +141,7 @@ export default function CertificationsScreen() {
                   onPress={() => void load()}
                   style={styles.retryBtn}
                   accessibilityRole="button"
+                  accessibilityLabel={t('common.retry')}
                 >
                   <Text style={[enterpriseUi.navRowTitle, { color: enterpriseColors.primary }]}>
                     {t('producer.wallet.retry')}
@@ -151,9 +153,7 @@ export default function CertificationsScreen() {
         }
         ListEmptyComponent={
           !loading && !loadError ? (
-            <View style={growerUi.emptyCard}>
-              <Text style={enterpriseUi.navRowSubtitle}>{t('producer.certifications.empty')}</Text>
-            </View>
+            <EmptyState message={t('producer.certifications.empty')} />
           ) : null
         }
         renderItem={({ item }) => (

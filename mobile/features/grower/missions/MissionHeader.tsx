@@ -10,7 +10,7 @@ export default function MissionHeader() {
 
   return (
     <BioVeraSubpageHeader
-      title={t('producer.missions.detailScreenTitle')}
+      title={t('producer.missions.details')}
       left="back"
       onBack={() => {
         if (router.canGoBack()) {

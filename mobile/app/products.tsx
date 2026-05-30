@@ -167,7 +167,7 @@ export default function ProductsPage() {
           </TouchableOpacity>
           <Text style={{
             fontSize: 18,
-            fontWeight: '300',
+            fontWeight: '400',
             color: theme.colors.text.primary,
             letterSpacing: 1,
           }}>
@@ -197,7 +197,7 @@ export default function ProductsPage() {
           }}
         >
           <Text style={{
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: activeFilter === 'all' ? '400' : '300',
             color: activeFilter === 'all' ? theme.colors.primary : theme.colors.text.secondary,
             letterSpacing: 0.5,
@@ -230,7 +230,7 @@ export default function ProductsPage() {
                 strokeWidth={1} 
               />
               <Text style={{
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: isActive ? '400' : '300',
                 color: isActive ? category.color : theme.colors.text.secondary,
                 letterSpacing: 0.5,
@@ -271,7 +271,7 @@ export default function ProductsPage() {
             {filteredProducts.length > 0 && (
               <>
                 <Text style={{
-                  fontSize: 12,
+                  fontSize: 14,
                   fontWeight: '400',
                   color: theme.colors.text.primary,
                   marginBottom: theme.spacing.md,
@@ -304,7 +304,7 @@ export default function ProductsPage() {
             {activeFilter !== 'all' && (
               <>
                 <Text style={{
-                  fontSize: 12,
+                  fontSize: 14,
                   fontWeight: '400',
                   color: theme.colors.text.primary,
                   marginBottom: theme.spacing.md,
@@ -364,7 +364,7 @@ export default function ProductsPage() {
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm, marginBottom: 4, flexWrap: 'wrap' }}>
                               <Text style={{
                                 fontSize: 14,
-                                fontWeight: '300',
+                                fontWeight: '400',
                                 color: theme.colors.text.primary,
                                 letterSpacing: 0.3,
                               }}>
@@ -378,8 +378,8 @@ export default function ProductsPage() {
                                   borderRadius: theme.borderRadius.sm,
                                 }}>
                                   <Text style={{
-                                    fontSize: 9,
-                                    fontWeight: '300',
+                                    fontSize: 13,
+                                    fontWeight: '400',
                                     color: theme.colors.primary,
                                     letterSpacing: 0.5,
                                     textTransform: 'uppercase',
@@ -390,8 +390,8 @@ export default function ProductsPage() {
                               )}
                             </View>
                             <Text style={{
-                              fontSize: 11,
-                              fontWeight: '300',
+                              fontSize: 14,
+                              fontWeight: '400',
                               color: theme.colors.text.secondary,
                               letterSpacing: 0.2,
                               lineHeight: 16,
@@ -409,8 +409,8 @@ export default function ProductsPage() {
                                 marginTop: 4,
                               }}>
                                 <Text style={{
-                                  fontSize: 10,
-                                  fontWeight: '300',
+                                  fontSize: 13,
+                                  fontWeight: '400',
                                   color: categoryColor,
                                   letterSpacing: 0.5,
                                   textTransform: 'uppercase',
@@ -436,7 +436,7 @@ export default function ProductsPage() {
               }}>
                 <Text style={{
                   fontSize: 13,
-                  fontWeight: '300',
+                  fontWeight: '400',
                   color: theme.colors.text.secondary,
                   textAlign: 'center',
                 }}>

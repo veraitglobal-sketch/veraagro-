@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { Camera, Image as ImageIcon, X, Package } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 // Watermark will be added via overlay in UI
-import { colors } from '../lib/colors';
+import { theme } from '../lib/theme';
+import { useAppLocaleTag, formatAppDateTime } from '../lib/date-locale';
 import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 
 interface Photo {
@@ -27,6 +28,7 @@ interface VeraBagProps {
  */
 export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
   const { t } = useTranslation();
+  const dateLocale = useAppLocaleTag();
   const CATEGORIES = useMemo(
     () =>
       [
@@ -80,7 +82,7 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
     setUploading(true);
     try {
       // Create watermark with VERA logo and timestamp
-      const timestamp = new Date().toLocaleString('en-GB', {
+      const timestamp = formatAppDateTime(new Date(), dateLocale, {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
@@ -128,7 +130,7 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
   return (
     <View
       style={{
-        backgroundColor: colors.background,
+        backgroundColor: theme.colors.background,
         borderRadius: 12,
         borderWidth: 0.5,
         borderColor: 'rgba(26, 48, 33, 0.2)',
@@ -141,22 +143,22 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
           padding: 16,
           borderBottomWidth: 0.5,
           borderBottomColor: 'rgba(26, 48, 33, 0.2)',
-          backgroundColor: `${colors.primary}05`,
+          backgroundColor: `${theme.colors.primary}05`,
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View style={{ flex: 1 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-              <Package size={16} color={colors.primary} strokeWidth={1} />
-              <Text style={{ fontSize: 11, fontWeight: '300', color: colors.primary, letterSpacing: 1.5 }}>
+              <Package size={16} color={theme.colors.primary} strokeWidth={1} />
+              <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.primary, letterSpacing: 1.5 }}>
                 VERA
               </Text>
             </View>
-            <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary, letterSpacing: 0.3 }}>
+            <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.primary, letterSpacing: 0.3 }}>
               Vera Digital Bag
             </Text>
             {batchId && (
-              <Text style={{ fontSize: 10, fontWeight: '300', color: colors.text.secondary, marginTop: 2 }}>
+              <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary, marginTop: 2 }}>
                 Batch {batchId}
               </Text>
             )}
@@ -170,7 +172,7 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
           flexDirection: 'row',
           borderBottomWidth: 0.5,
           borderBottomColor: 'rgba(26, 48, 33, 0.2)',
-          backgroundColor: colors.surface,
+          backgroundColor: theme.colors.surface,
         }}
       >
         {CATEGORIES.map((category) => {
@@ -188,17 +190,17 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
                 paddingHorizontal: 8,
                 alignItems: 'center',
                 borderBottomWidth: isActive ? 1 : 0,
-                borderBottomColor: isActive ? colors.primary : 'transparent',
-                backgroundColor: isActive ? colors.background : 'transparent',
+                borderBottomColor: isActive ? theme.colors.primary : 'transparent',
+                backgroundColor: isActive ? theme.colors.background : 'transparent',
               }}
               activeOpacity={0.7}
             >
-              <IconComponent size={16} color={isActive ? colors.primary : colors.text.secondary} strokeWidth={1} />
+              <IconComponent size={16} color={isActive ? theme.colors.primary : theme.colors.text.secondary} strokeWidth={1} />
               <Text
                 style={{
-                  fontSize: 9,
-                  fontWeight: '300',
-                  color: isActive ? colors.primary : colors.text.secondary,
+                  fontSize: 13,
+                  fontWeight: '400',
+                  color: isActive ? theme.colors.primary : theme.colors.text.secondary,
                   marginTop: 4,
                   textAlign: 'center',
                 }}
@@ -215,12 +217,12 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
                     width: 16,
                     height: 16,
                     borderRadius: 8,
-                    backgroundColor: colors.primary,
+                    backgroundColor: theme.colors.primary,
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  <Text style={{ fontSize: 8, fontWeight: '600', color: colors.background }}>
+                  <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.background }}>
                     {photoCount}
                   </Text>
                 </View>
@@ -243,15 +245,15 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
                 borderColor: 'rgba(26, 48, 33, 0.2)',
                 borderStyle: 'dashed',
                 borderRadius: 8,
-                backgroundColor: colors.surface,
+                backgroundColor: theme.colors.surface,
               }}
             >
-              <ImageIcon size={32} color={colors.text.tertiary} strokeWidth={1} />
+              <ImageIcon size={32} color={theme.colors.text.tertiary} strokeWidth={1} />
               <Text
                 style={{
-                  fontSize: 11,
-                  fontWeight: '300',
-                  color: colors.text.secondary,
+                  fontSize: 14,
+                  fontWeight: '400',
+                  color: theme.colors.text.secondary,
                   marginTop: 12,
                   textAlign: 'center',
                 }}
@@ -302,7 +304,7 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
                       borderRadius: 4,
                     }}
                   >
-                    <Text style={{ fontSize: 7, fontWeight: '300', color: colors.text.primary }}>
+                    <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.primary }}>
                       {photo.watermark}
                     </Text>
                   </View>
@@ -322,7 +324,7 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
                     }}
                     activeOpacity={0.7}
                   >
-                    <X size={12} color={colors.background} strokeWidth={1.5} />
+                    <X size={12} color={theme.colors.background} strokeWidth={1.5} />
                   </TouchableOpacity>
                 </Animated.View>
               ))}
@@ -340,19 +342,19 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
                 justifyContent: 'center',
                 paddingVertical: 12,
                 borderWidth: 0.5,
-                borderColor: colors.primary,
+                borderColor: theme.colors.primary,
                 borderRadius: 8,
-                backgroundColor: colors.surface,
+                backgroundColor: theme.colors.surface,
                 gap: 8,
               }}
               activeOpacity={0.7}
             >
               {uploading ? (
-                <ActivityIndicator size="small" color={colors.primary} />
+                <ActivityIndicator size="small" color={theme.colors.primary} />
               ) : (
-                <Camera size={18} color={colors.primary} strokeWidth={1} />
+                <Camera size={18} color={theme.colors.primary} strokeWidth={1} />
               )}
-              <Text style={{ fontSize: 12, fontWeight: '300', color: colors.primary, letterSpacing: 0.3 }}>
+              <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.primary, letterSpacing: 0.3 }}>
                 Take Photo
               </Text>
             </TouchableOpacity>
@@ -366,15 +368,15 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
                 justifyContent: 'center',
                 paddingVertical: 12,
                 borderWidth: 0.5,
-                borderColor: colors.border,
+                borderColor: theme.colors.border,
                 borderRadius: 8,
-                backgroundColor: colors.surface,
+                backgroundColor: theme.colors.surface,
                 gap: 8,
               }}
               activeOpacity={0.7}
             >
-              <ImageIcon size={18} color={colors.text.secondary} strokeWidth={1} />
-              <Text style={{ fontSize: 12, fontWeight: '300', color: colors.text.secondary, letterSpacing: 0.3 }}>
+              <ImageIcon size={18} color={theme.colors.text.secondary} strokeWidth={1} />
+              <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.secondary, letterSpacing: 0.3 }}>
                 Choose from Gallery
               </Text>
             </TouchableOpacity>

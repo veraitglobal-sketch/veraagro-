@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { TFunction } from 'i18next';
 import { ordersAPI, Order } from '../../../lib/api';
-import { colors } from '../../../lib/colors';
+import { theme } from '../../../lib/theme';
 
 const ORDER_STATUS_KEYS: Record<string, string> = {
   PENDING: 'statusPending',
@@ -38,13 +38,13 @@ export function useOrderDetailData(orderId: string | undefined) {
 
 export function getOrderStatusColor(status: string): string {
   switch (status) {
-    case 'PENDING': return colors.warning;
-    case 'CONFIRMED': return colors.accent;
-    case 'PREPARING': return colors.primary;
-    case 'IN_TRANSIT': return colors.primary;
-    case 'DELIVERED': return colors.success || colors.primary;
-    case 'CANCELLED': return colors.error;
-    default: return colors.text.secondary;
+    case 'PENDING': return theme.colors.warning;
+    case 'CONFIRMED': return theme.colors.accent;
+    case 'PREPARING': return theme.colors.primary;
+    case 'IN_TRANSIT': return theme.colors.primary;
+    case 'DELIVERED': return theme.colors.success || theme.colors.primary;
+    case 'CANCELLED': return theme.colors.error;
+    default: return theme.colors.text.secondary;
   }
 }
 

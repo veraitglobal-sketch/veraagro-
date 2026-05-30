@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Cloud, CloudOff, RefreshCw } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { syncService, SyncStatus as SyncStatusType } from '../lib/sync-service';
-import { colors } from '../lib/colors';
+import { theme } from '../lib/theme';
 import { tString } from '../lib/i18n-strings';
 
 interface SyncStatusProps {
@@ -79,7 +79,7 @@ export default function SyncStatus({ className = '', hideWhenClear = false }: Sy
       className={`flex-row items-center px-3 py-2 rounded-lg border-[0.5px] ${className}`}
       style={{
         backgroundColor: syncStatus.pendingCount > 0 ? '#FEF3C7' : '#D1FAE5',
-        borderColor: syncStatus.pendingCount > 0 ? '#F59E0B' : colors.success,
+        borderColor: syncStatus.pendingCount > 0 ? '#F59E0B' : theme.colors.success,
         opacity: syncStatus.syncing ? 0.7 : 1,
       }}
     >
@@ -99,8 +99,8 @@ export default function SyncStatus({ className = '', hideWhenClear = false }: Sy
         </>
       ) : (
         <>
-          <Cloud size={16} color={colors.success} strokeWidth={1} />
-          <Text className="text-[13px] ml-2" style={{ color: colors.success }}>
+          <Cloud size={16} color={theme.colors.success} strokeWidth={1} />
+          <Text className="text-[13px] ml-2" style={{ color: theme.colors.success }}>
             {t('producer.sync.allSent')}
           </Text>
         </>

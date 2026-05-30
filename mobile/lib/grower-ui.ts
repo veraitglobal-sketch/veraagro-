@@ -25,7 +25,7 @@ export const growerUi = {
 
   pageTitle: {
     fontSize: 26,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.gray900,
     letterSpacing: -0.55,
     lineHeight: 32,
@@ -89,7 +89,7 @@ export const growerUi = {
   } as ViewStyle,
 
   formLabel: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
     color: enterpriseColors.gray600,
     letterSpacing: 0.4,
@@ -119,7 +119,7 @@ export const growerUi = {
   } as ViewStyle,
 
   settingsGroupTitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
     color: enterpriseColors.gray600,
     letterSpacing: 0.5,
@@ -207,7 +207,7 @@ export const growerStyles = StyleSheet.create({
     fontVariant: ['tabular-nums'],
   },
   metricsTitle: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: '600',
     color: enterpriseColors.gray600,
     letterSpacing: 0.5,
@@ -221,7 +221,7 @@ export const growerStyles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   statusPillText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
     letterSpacing: 0.1,
   },

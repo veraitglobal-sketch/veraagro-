@@ -15,7 +15,7 @@ export default function JourneyMapBlock({ journeyMap }: JourneyMapBlockProps) {
   const route = journeyMap.route;
 
   return (
-    <MissionDetailSection title={t('producer.missions.journeyMapTitle')} icon={MapPin}>
+    <MissionDetailSection title={t('producer.missions.journeyMap')} icon={MapPin}>
       <View style={styles.mapWrap}>
         <MapView
           style={StyleSheet.absoluteFill}

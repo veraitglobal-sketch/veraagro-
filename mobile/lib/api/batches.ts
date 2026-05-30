@@ -1,47 +1,18 @@
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from './client';
 import { API_URL } from '../api-url';
-import { apiErrorMessage, axiosResponseStatus, isLikelyNetworkError } from '../api-error';
+import { axiosResponseStatus, isLikelyNetworkError } from '../api-error';
 import type {
-  Product,
-  Estate,
-  Parcel,
-  Category,
-  AiAssistantResponse,
-  RetailLocation,
-  FieldEntry,
-  GrowthLog,
-  Order,
-  ProductPassport,
   BatchAvailability,
   QualityEntry,
   LogisticsDriverRow,
   LogisticsVehicleRow,
   PackageBadgeType,
-  MissionAssignedDriver,
-  MissionVehicleInfo,
-  Mission,
-  FinancialDashboardApiResponse,
-  Notification,
-  RequiredCertification,
-  DigitalHandover,
-  CompliancePhoto,
-  LabelRollRow,
-  ComplianceBatchStatus,
-  Material,
-  TreatmentLog,
-  PlotBlueprintZone,
-  PlotBlueprintPartition,
-  PlotBlueprint,
-  CreateHarvestPlanBody,
 } from './types';
 
-// Batch Availability API (Public)
 export const batchesAPI = {
   getAvailability: async (batchId: string): Promise<BatchAvailability> => {
     try {
-      // Public endpoint - no auth token needed
       const response = await axios.get(`${API_URL}/batches/${batchId}/availability`);
       return response.data;
     } catch (error: unknown) {
@@ -79,14 +50,12 @@ export const batchesAPI = {
     const response = await api.post('/batches', data);
     return response.data;
   },
-  /** Log packing wizard completion (GPS) — batchRef is internal id or public batchId */
   recordPackingFlow: async (
     batchRef: string,
     body: {
       latitude: number;
       longitude: number;
       completedAt?: string;
-      /** Raw base64 or data-URL; both crate + quality should be sent together */
       cratePhotoBase64?: string;
       qualityPhotoBase64?: string;
     },
@@ -96,7 +65,6 @@ export const batchesAPI = {
   },
 };
 
-// Quality Entry API
 export const qualityEntryAPI = {
   create: async (data: {
     batchId: string;
@@ -122,7 +90,6 @@ export const qualityEntryAPI = {
     const response = await api.get(`/quality-entry/can-create-shipment/${batchId}`);
     return response.data.canCreate || false;
   },
-  /** After loading handover: receiver name + optional signature (data URL) for PDF audit trail */
   submitHandoverReceiverProof: async (data: {
     missionId: string;
     receiverName: string;
@@ -131,10 +98,6 @@ export const qualityEntryAPI = {
     const response = await api.post('/quality-entry/handover/receiver-proof', data);
     return response.data;
   },
-  /**
-   * PDF only exists after submitHandoverReceiverProof. Returns raw bytes (RN-friendly; wrap in
-   * Blob in environments that support it, or write with expo-file-system).
-   */
   getHandoverReceiverPdf: async (missionId: string): Promise<ArrayBuffer> => {
     const response = await api.get(
       `/quality-entry/handover/mission/${encodeURIComponent(missionId)}/receiver-pdf`,
@@ -142,8 +105,6 @@ export const qualityEntryAPI = {
     );
     return response.data;
   },
-
-  /** Farm loading handover — temperature, pallet & truck photos, badge + driver signature → mission READY_FOR_LOADING */
   submitLoadingHandover: async (data: {
     missionId: string;
     insideTruckTemperature: number;
@@ -233,7 +194,6 @@ export const packageBadgesAPI = {
     const response = await api.post('/package-badges/return-to-supplier', data);
     return response.data;
   },
-  /** MATERIAL_SUPPLIER: tree returned from grower — assign to new grower */
   supplierTransferToGrower: async (data: { rootSerial: string; newGrowerUserId: string }) => {
     const response = await api.post('/package-badges/supplier/transfer-to-grower', data);
     return response.data;
@@ -242,7 +202,6 @@ export const packageBadgesAPI = {
     const response = await api.get(`/package-badges/scan/${encodeURIComponent(serial)}`);
     return response.data;
   },
-  /** Unauthenticated: QR on package resolves to farmer / batch links */
   publicResolve: async (serial: string) => {
     const { data } = await axios.get(`${API_URL}/public/badges/${encodeURIComponent(serial)}`);
     return data;

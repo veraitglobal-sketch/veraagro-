@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     paddingTop: 2,
   },
   eyebrow: {
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: '600',
     color: enterpriseColors.primary,
     letterSpacing: 1.2,

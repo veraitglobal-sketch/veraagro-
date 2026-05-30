@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 
 type TabId = 'transport' | 'growth' | 'plantings' | 'plans';
+type PhotoStatusFilter = 'ALL' | 'APPROVED' | 'REJECTED';
 
 function mediaSrc(url: string): string {
   if (!url) return '';
@@ -62,6 +63,14 @@ function GrowerControlInner() {
   const [growth, setGrowth] = useState<any[]>([]);
   const [plantings, setPlantings] = useState<any[]>([]);
   const [plans, setPlans] = useState<any[]>([]);
+  const [growthPartnerCode, setGrowthPartnerCode] = useState(searchParams.get('partnerCode') || '');
+  const [growthPhotoStatus, setGrowthPhotoStatus] = useState<PhotoStatusFilter>(
+    (searchParams.get('photoStatus') as PhotoStatusFilter) || 'ALL',
+  );
+  const [growthFilterDraft, setGrowthFilterDraft] = useState({
+    partnerCode: searchParams.get('partnerCode') || '',
+    photoStatus: ((searchParams.get('photoStatus') as PhotoStatusFilter) || 'ALL') as PhotoStatusFilter,
+  });
 
   useEffect(() => {
     setActiveTab(tab);
@@ -74,17 +83,26 @@ function GrowerControlInner() {
     router.replace(`/admin/grower-control?${q.toString()}`);
   };
 
+  const loadGrowthPhotos = useCallback(async () => {
+    const params: { limit: number; moderationStatus?: string; partnerCode?: string } = { limit: 200 };
+    if (growthPhotoStatus !== 'ALL') params.moderationStatus = growthPhotoStatus;
+    const code = growthPartnerCode.trim();
+    if (code) params.partnerCode = code;
+    const logs = await growthLogsAPI.adminList(params);
+    return Array.isArray(logs) ? logs : [];
+  }, [growthPartnerCode, growthPhotoStatus]);
+
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const [missions, logs, allAnnouncements] = await Promise.all([
         missionsAPI.getAllAdmin({ status: 'AWAITING_APPROVAL' }),
-        growthLogsAPI.adminList({ moderationStatus: 'APPROVED', limit: 80 }),
+        loadGrowthPhotos(),
         harvestAnnouncementsAPI.getAll(),
       ]);
       setTransport(Array.isArray(missions) ? missions : []);
-      setGrowth(Array.isArray(logs) ? logs : []);
+      setGrowth(logs);
       const rows = Array.isArray(allAnnouncements) ? allAnnouncements : [];
       setPlantings(rows.filter((r: { announcementType?: string }) => r.announcementType === 'PLANTING'));
       setPlans(rows.filter((r: { status?: string }) => r.status === 'PENDING'));
@@ -93,7 +111,7 @@ function GrowerControlInner() {
     } finally {
       setLoading(false);
     }
-  }, [t]);
+  }, [t, loadGrowthPhotos]);
 
   useEffect(() => {
     void load();
@@ -142,7 +160,22 @@ function GrowerControlInner() {
     }
   };
 
+  const applyGrowthFilters = () => {
+    const nextCode = growthFilterDraft.partnerCode.trim();
+    const nextStatus = growthFilterDraft.photoStatus;
+    setGrowthPartnerCode(nextCode);
+    setGrowthPhotoStatus(nextStatus);
+    const q = new URLSearchParams(searchParams.toString());
+    q.set('tab', 'growth');
+    if (nextCode) q.set('partnerCode', nextCode);
+    else q.delete('partnerCode');
+    if (nextStatus !== 'ALL') q.set('photoStatus', nextStatus);
+    else q.delete('photoStatus');
+    router.replace(`/admin/grower-control?${q.toString()}`);
+  };
+
   const rejectPhoto = async (id: string) => {
+    if (!window.confirm(t('adminPages.growerControl.confirmRejectPhoto'))) return;
     setSaving(id);
     setError(null);
     try {
@@ -314,12 +347,56 @@ function GrowerControlInner() {
           </ul>
         )
       ) : activeTab === 'growth' ? (
-        growth.length === 0 ? (
-          <Empty msg={t('adminPages.growerControl.emptyGrowth')} />
-        ) : (
+        <>
+          <div className="mb-4 p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+            <p className="text-xs text-gray-500 mb-3">{t('adminPages.growerControl.intro')}</p>
+            <div className="flex flex-wrap gap-3 items-end">
+              <label className="flex flex-col gap-1 min-w-[10rem] flex-1">
+                <span className="text-xs font-medium text-gray-700">{t('adminPages.growerControl.partnerCodeFilter')}</span>
+                <input
+                  type="text"
+                  value={growthFilterDraft.partnerCode}
+                  onChange={(e) => setGrowthFilterDraft((p) => ({ ...p, partnerCode: e.target.value }))}
+                  placeholder={t('adminPages.growerControl.partnerCodePlaceholder')}
+                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#2D5A27] focus:ring-2 focus:ring-[#2D5A27]/25 min-h-[44px]"
+                />
+              </label>
+              <label className="flex flex-col gap-1 min-w-[8rem]">
+                <span className="text-xs font-medium text-gray-700">{t('adminPages.growerControl.photoStatusFilter')}</span>
+                <select
+                  value={growthFilterDraft.photoStatus}
+                  onChange={(e) =>
+                    setGrowthFilterDraft((p) => ({ ...p, photoStatus: e.target.value as PhotoStatusFilter }))
+                  }
+                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#2D5A27] focus:ring-2 focus:ring-[#2D5A27]/25 min-h-[44px] bg-white"
+                >
+                  <option value="ALL">{t('adminPages.growerControl.photoStatusAll')}</option>
+                  <option value="APPROVED">{t('adminPages.growerControl.photoStatusApproved')}</option>
+                  <option value="REJECTED">{t('adminPages.growerControl.photoStatusRejected')}</option>
+                </select>
+              </label>
+              <button
+                type="button"
+                onClick={() => applyGrowthFilters()}
+                className="min-h-[44px] px-4 rounded-lg bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f]"
+              >
+                {t('adminPages.growerControl.applyPhotoFilter')}
+              </button>
+            </div>
+          </div>
+          {growth.length === 0 ? (
+            <Empty
+              msg={
+                growthPartnerCode.trim() || growthPhotoStatus !== 'ALL'
+                  ? t('adminPages.growerControl.emptyGrowthFiltered')
+                  : t('adminPages.growerControl.emptyGrowth')
+              }
+            />
+          ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {growth.map((log) => {
               const hi = highlightLog === log.id;
+              const isRejected = log.moderationStatus === 'REJECTED';
               return (
                 <li
                   key={log.id}
@@ -333,7 +410,21 @@ function GrowerControlInner() {
                       className="w-full h-40 object-cover rounded-lg border border-gray-100 mb-3"
                     />
                   ) : null}
-                  <p className="text-sm font-medium text-gray-900">{growerName(log.users)}</p>
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <p className="text-sm font-medium text-gray-900">{growerName(log.users)}</p>
+                    {log.users?.partnerCode ? (
+                      <span className="text-xs text-gray-500">{log.users.partnerCode}</span>
+                    ) : null}
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full ${
+                        isRejected ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                      }`}
+                    >
+                      {isRejected
+                        ? t('adminPages.growerControl.photoStatusRejected')
+                        : t('adminPages.growerControl.photoStatusApproved')}
+                    </span>
+                  </div>
                   <p className="text-xs text-gray-600">
                     {log.parcels?.estates?.name || '—'} · {log.parcels?.cropType || log.growthStage || '—'}
                   </p>
@@ -356,29 +447,46 @@ function GrowerControlInner() {
                     onChange={(e) => setReasons((p) => ({ ...p, [log.id]: e.target.value }))}
                   />
                   <div className="flex gap-2 mt-3">
-                    <button
-                      type="button"
-                      disabled={saving === log.id}
-                      onClick={() => void rejectPhoto(log.id)}
-                      className="flex-1 min-h-[44px] rounded-lg border border-amber-300 text-amber-900 text-sm font-medium hover:bg-amber-50"
-                    >
-                      {t('adminPages.growerControl.rejectPhoto')}
-                    </button>
+                    {!isRejected ? (
+                      <button
+                        type="button"
+                        disabled={saving === log.id}
+                        onClick={() => void rejectPhoto(log.id)}
+                        className="flex-1 min-h-[44px] rounded-lg border border-amber-300 text-amber-900 text-sm font-medium hover:bg-amber-50 inline-flex items-center justify-center gap-2 disabled:opacity-50"
+                      >
+                        {saving === log.id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <XCircle className="w-4 h-4" />
+                        )}
+                        {t('adminPages.growerControl.rejectPhoto')}
+                      </button>
+                    ) : (
+                      <p className="flex-1 text-xs text-red-700 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+                        {t('adminPages.growerControl.photoStatusRejected')}
+                        {log.rejectionReason ? `: ${log.rejectionReason}` : ''}
+                      </p>
+                    )}
                     <button
                       type="button"
                       disabled={saving === log.id}
                       onClick={() => void deletePhoto(log.id)}
-                      className="min-h-[44px] px-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
+                      className="min-h-[44px] px-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                       title={t('adminPages.growerControl.deletePhoto')}
                     >
-                      <Trash2 className="w-4 h-4" />
+                      {saving === log.id ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
                 </li>
               );
             })}
           </ul>
-        )
+          )}
+        </>
       ) : activeTab === 'plantings' ? (
         plantings.length === 0 ? (
           <Empty msg={t('adminPages.growerControl.emptyPlantings')} />

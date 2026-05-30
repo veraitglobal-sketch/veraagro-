@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Linking,
+  RefreshControl,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -28,31 +29,31 @@ function PaymentDetailsTextBlock() {
   return (
     <View>
       {c.beneficiary ? (
-        <Text style={{ fontSize: 12, fontWeight: '300', marginBottom: 4, color: theme.colors.text.primary }}>
+        <Text style={{ fontSize: 14, fontWeight: '400', marginBottom: 4, color: theme.colors.text.primary }}>
           <Text style={{ color: theme.colors.text.secondary }}>{t('buyer.orders.bankFieldLabels.beneficiary')} </Text>
           {c.beneficiary}
         </Text>
       ) : null}
       {c.bankName ? (
-        <Text style={{ fontSize: 12, fontWeight: '300', marginBottom: 4, color: theme.colors.text.primary }}>
+        <Text style={{ fontSize: 14, fontWeight: '400', marginBottom: 4, color: theme.colors.text.primary }}>
           <Text style={{ color: theme.colors.text.secondary }}>{t('buyer.orders.bankFieldLabels.bank')} </Text>
           {c.bankName}
         </Text>
       ) : null}
       {c.iban ? (
-        <Text selectable style={{ fontSize: 12, fontWeight: '300', marginBottom: 4, color: theme.colors.text.primary }}>
+        <Text selectable style={{ fontSize: 14, fontWeight: '400', marginBottom: 4, color: theme.colors.text.primary }}>
           <Text style={{ color: theme.colors.text.secondary }}>{t('buyer.orders.bankFieldLabels.iban')} </Text>
           {c.iban}
         </Text>
       ) : null}
       {c.swift ? (
-        <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.primary, marginBottom: 4 }}>
+        <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.primary, marginBottom: 4 }}>
           <Text style={{ color: theme.colors.text.secondary }}>{t('buyer.orders.bankFieldLabels.swift')} </Text>
           {c.swift}
         </Text>
       ) : null}
       {c.extraLines.map((line: string) => (
-        <Text key={line} style={{ fontSize: 11, fontWeight: '300', color: theme.colors.text.secondary, marginTop: 2 }}>
+        <Text key={line} style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.secondary, marginTop: 2 }}>
           {line}
         </Text>
       ))}
@@ -72,31 +73,44 @@ export default function OrderTrackingScreen() {
   const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const loadOrder = useCallback(async () => {
+  const loadOrder = useCallback(async (opts?: { background?: boolean }) => {
     if (!id || typeof id !== 'string') {
       setOrder(null);
       setLoading(false);
       return;
     }
-    try {
+    const background = opts?.background === true;
+    if (!background) {
       setLoading(true);
       setOrder(null);
+    }
+    try {
       const data = await ordersAPI.getOne(id);
       setOrder(data);
     } catch (error: unknown) {
       console.error('Error loading order:', error);
     } finally {
-      setLoading(false);
+      if (!background) setLoading(false);
     }
   }, [id]);
 
   useEffect(() => {
     void loadOrder();
   }, [loadOrder]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await loadOrder({ background: true });
+    } finally {
+      setRefreshing(false);
+    }
+  }, [loadOrder]);
   if (loading) {
     return (
-      <View style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, paddingTop: p.topInset, backgroundColor: theme.colors.background, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
@@ -104,16 +118,16 @@ export default function OrderTrackingScreen() {
 
   if (!order) {
     return (
-      <View style={{ flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center', alignItems: 'center', padding: theme.spacing.lg }}>
+      <View style={{ flex: 1, paddingTop: p.topInset, backgroundColor: theme.colors.background, justifyContent: 'center', alignItems: 'center', padding: theme.spacing.lg }}>
         <Text style={{ 
           fontSize: 14, 
-          fontWeight: '300',
+          fontWeight: '400',
           color: theme.colors.text.secondary, 
           textAlign: 'center',
           letterSpacing: 0.3,
           marginBottom: theme.spacing.md,
         }}>
-          {t('buyer.orders.detailMissing')}
+          {t('buyer.orders.notFound')}
         </Text>
         <TouchableOpacity
           onPress={() => router.replace('/(buyer)/orders')}
@@ -127,7 +141,7 @@ export default function OrderTrackingScreen() {
         >
           <Text style={{ 
             fontSize: 13, 
-            fontWeight: '300',
+            fontWeight: '400',
             color: theme.colors.text.inverse,
             letterSpacing: 0.5,
           }}>
@@ -164,15 +178,15 @@ export default function OrderTrackingScreen() {
           <View style={{ flex: 1 }}>
             <Text style={{
               fontSize: 18,
-              fontWeight: '300',
+              fontWeight: '400',
               color: theme.colors.text.primary,
               letterSpacing: 1,
             }}>
               {t('buyer.orders.tracking')}
             </Text>
             <Text style={{
-              fontSize: 11,
-              fontWeight: '300',
+              fontSize: 14,
+              fontWeight: '400',
               color: theme.colors.text.secondary,
               marginTop: 2,
               letterSpacing: 0.5,
@@ -189,7 +203,7 @@ export default function OrderTrackingScreen() {
                 borderColor: `${theme.colors.primary}40`,
               }}>
                 <Text style={{
-                  fontSize: 11,
+                  fontSize: 14,
                   fontWeight: '500',
                   color: theme.colors.text.primary,
                   letterSpacing: 0.3,
@@ -202,7 +216,18 @@ export default function OrderTrackingScreen() {
         </View>
       </View>
 
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void onRefresh()}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+            progressViewOffset={10}
+          />
+        }
+      >
         <View
           style={{
             paddingTop: theme.spacing.lg,
@@ -220,7 +245,7 @@ export default function OrderTrackingScreen() {
           }}>
             <Text style={{
               fontSize: 14,
-              fontWeight: '300',
+              fontWeight: '400',
               color: theme.colors.text.primary,
               marginBottom: theme.spacing.xs,
               letterSpacing: 0.3,
@@ -229,7 +254,7 @@ export default function OrderTrackingScreen() {
             </Text>
             <Text style={{
               fontSize: 13,
-              fontWeight: '300',
+              fontWeight: '400',
               color: theme.colors.text.secondary,
               letterSpacing: 0.2,
             }}>
@@ -248,14 +273,14 @@ export default function OrderTrackingScreen() {
             }}>
               <Text style={{
                 fontSize: 13,
-                fontWeight: '300',
+                fontWeight: '400',
                 color: theme.colors.text.secondary,
               }}>
-                {t('common.total')}
+                {t('buyer.cart.total')}
               </Text>
               <Text style={{
                 fontSize: 16,
-                fontWeight: '300',
+                fontWeight: '400',
                 color: theme.colors.text.primary,
               }}>
                 {order.totalAmount.toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' })}
@@ -277,7 +302,7 @@ export default function OrderTrackingScreen() {
             >
               <Text
                 style={{
-                  fontSize: 12,
+                  fontSize: 14,
                   fontWeight: '500',
                   color: theme.colors.text.primary,
                   marginBottom: theme.spacing.sm,
@@ -287,8 +312,8 @@ export default function OrderTrackingScreen() {
               </Text>
               <Text
                 style={{
-                  fontSize: 12,
-                  fontWeight: '300',
+                  fontSize: 14,
+                  fontWeight: '400',
                   color: theme.colors.text.secondary,
                   marginBottom: theme.spacing.md,
                 }}
@@ -296,7 +321,7 @@ export default function OrderTrackingScreen() {
                 {t('buyer.orders.paymentRefHint')}
               </Text>
               <View style={{ marginBottom: theme.spacing.sm }}>
-                <Text style={{ fontSize: 11, color: theme.colors.text.secondary, fontWeight: '300' }}>
+                <Text style={{ fontSize: 14, color: theme.colors.text.secondary, fontWeight: '400' }}>
                   {t('buyer.orders.reference')}
                 </Text>
                 <Text
@@ -309,7 +334,7 @@ export default function OrderTrackingScreen() {
               {hasExpoPaymentConfig() ? (
                 <PaymentDetailsTextBlock />
               ) : (
-                <Text style={{ fontSize: 12, fontWeight: '300', color: theme.colors.text.secondary }}>
+                <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.secondary }}>
                   {t('buyer.orders.paymentNotConfigured')}{' '}
                   <Text
                     onPress={() => Linking.openURL('mailto:info@biovera.app')}
@@ -327,19 +352,19 @@ export default function OrderTrackingScreen() {
             marginBottom: theme.spacing.xl,
           }}>
             <Text style={{
-              fontSize: 11,
+              fontSize: 14,
               fontWeight: '500',
               letterSpacing: 2,
               color: theme.colors.text.secondary,
               marginBottom: theme.spacing.lg,
               textTransform: 'uppercase',
             }}>
-              {t('buyer.orders.statusBadge')}
+              {t('common.status')}
             </Text>
 
             {timelineInvalid && (
               <View style={{ marginBottom: theme.spacing.lg, padding: theme.spacing.md, backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: theme.borderRadius.md }}>
-                <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.secondary }}>
+                <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary }}>
                   {t('buyer.orders.cancelledOrder')}
                 </Text>
               </View>
@@ -398,8 +423,8 @@ export default function OrderTrackingScreen() {
                       </Text>
                         {isCurrent && !isCompleted && (
                         <Text style={{
-                          fontSize: 11,
-                          fontWeight: '300',
+                          fontSize: 14,
+                          fontWeight: '400',
                           color: theme.colors.text.secondary,
                           marginTop: 2,
                           letterSpacing: 0.2,
@@ -422,18 +447,18 @@ export default function OrderTrackingScreen() {
               borderRadius: theme.borderRadius.md,
             }}>
               <Text style={{
-                fontSize: 11,
+                fontSize: 14,
                 fontWeight: '500',
                 letterSpacing: 2,
                 color: theme.colors.text.secondary,
                 marginBottom: theme.spacing.md,
                 textTransform: 'uppercase',
               }}>
-                {t('buyer.orders.deliveryAddressHeading')}
+                {t('buyer.checkout.deliveryAddress')}
               </Text>
               <Text style={{
                 fontSize: 13,
-                fontWeight: '300',
+                fontWeight: '400',
                 color: theme.colors.text.primary,
                 lineHeight: 20,
                 letterSpacing: 0.3,

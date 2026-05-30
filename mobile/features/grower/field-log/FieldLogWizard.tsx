@@ -10,11 +10,14 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { GrowerSelectField } from '../../../components/grower/GrowerSelectField';
 import { EnterpriseNotice } from '../../../components/enterprise/EnterpriseNotice';
 import { useTranslation } from 'react-i18next';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 import { Camera, MapPin, Check, ScanLine, Sprout } from 'lucide-react-native';
 import { enterpriseColors, enterpriseUi, enterpriseStyles } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
@@ -104,18 +107,17 @@ function SelectCard({
 
 /** 1. Parcela → 2. Zasad → 3. Rad + slika + GPS */
 export default function FieldLogWizard() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const dateLocale = useAppLocaleTag();
   const [step, setStep] = useState(1);
   const [showOptional, setShowOptional] = useState(false);
   const data = useFieldLogData();
-
-  const langSr = !!i18n.language?.startsWith('sr');
 
   const formatHistoryWhen = (iso: string) => {
     try {
       const d = new Date(iso);
       if (Number.isNaN(d.getTime())) return iso;
-      return d.toLocaleString(langSr ? 'sr-Latn' : 'en-GB', { dateStyle: 'short', timeStyle: 'short' });
+      return d.toLocaleString(dateLocale, { dateStyle: 'short', timeStyle: 'short' });
     } catch {
       return iso;
     }
@@ -212,9 +214,10 @@ export default function FieldLogWizard() {
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={[growerUi.scrollContent, { paddingBottom: 120 }]}
@@ -324,11 +327,11 @@ export default function FieldLogWizard() {
               <StepPanel step={3} title={t('producer.fieldLogForm.farmerStepWork')} />
 
               {data.gpsWarning ? (
-                <Text style={styles.gpsWarn}>{t('producer.fieldLogForm.gpsWarnShort')}</Text>
+                <Text style={styles.gpsWarn}>{t('producer.fieldLog.notOnParcel')}</Text>
               ) : null}
 
               <GrowerSelectField
-                label={t('producer.fieldLogForm.farmerStepWork')}
+                label={t('producer.fieldLog.activityType')}
                 placeholder={t('producer.select.work')}
                 valueId={data.activityType}
                 options={activitySelectOptions}
@@ -337,6 +340,7 @@ export default function FieldLogWizard() {
 
               {data.activityType ? (
                 <>
+                  <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.fieldLog.photo')}</Text>
                   <TouchableOpacity
                     onPress={data.takePhoto}
                     style={[enterpriseUi.authBtnPrimary, styles.photoBtn]}
@@ -345,12 +349,13 @@ export default function FieldLogWizard() {
                     <Camera size={24} color={enterpriseColors.white} strokeWidth={1.5} />
                     <Text style={[enterpriseUi.authBtnPrimaryText, styles.photoBtnText]}>
                       {data.photoUri
-                        ? t('producer.fieldLogForm.photoLoaded')
-                        : t('producer.fieldLogForm.farmerTapPhoto')}
+                        ? t('producer.fieldLog.photoLoaded')
+                        : t('producer.fieldLog.addPhoto')}
                     </Text>
                     {data.photoUri ? <Check size={22} color={enterpriseColors.white} strokeWidth={2} /> : null}
                   </TouchableOpacity>
 
+                  <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.fieldLog.location')}</Text>
                   <TouchableOpacity
                     onPress={data.getCurrentLocation}
                     disabled={data.gpsLoading}
@@ -368,7 +373,7 @@ export default function FieldLogWizard() {
                     <Text style={enterpriseUi.navRowTitle}>
                       {data.location
                         ? t('producer.fieldLogForm.locationOk')
-                        : t('producer.fieldLogForm.farmerTapGps')}
+                        : t('producer.fieldLog.getLocation')}
                     </Text>
                     {data.gpsLoading ? (
                       <ActivityIndicator color={enterpriseColors.primary} />
@@ -432,6 +437,7 @@ export default function FieldLogWizard() {
             />
           ) : null}
         </ScrollView>
+        </TouchableWithoutFeedback>
 
         <View style={styles.footer}>
           {step > 1 ? (
@@ -466,7 +472,7 @@ export default function FieldLogWizard() {
               {data.saveBusy ? (
                 <ActivityIndicator color={enterpriseColors.white} />
               ) : (
-                <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.fieldLogForm.farmerSave')}</Text>
+                <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.fieldLog.saveEntry')}</Text>
               )}
             </TouchableOpacity>
           ) : (

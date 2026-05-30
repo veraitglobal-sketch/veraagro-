@@ -65,7 +65,7 @@ export default function MapScreen() {
             </Text>
             <Text style={{
               fontSize: 13,
-              fontWeight: '300',
+              fontWeight: '400',
               color: 'rgba(255, 255, 255, 0.85)',
               letterSpacing: 0.3,
             }}>
@@ -141,7 +141,7 @@ export default function MapScreen() {
             >
               <Text
                 style={{
-                  fontSize: 11,
+                  fontSize: 14,
                   fontWeight: '600',
                   color: isSupplierPin(selectedLocation) ? '#9A3412' : theme.colors.primary,
                   letterSpacing: 0.2,
@@ -258,7 +258,7 @@ export default function MapScreen() {
                 {isSupplierPin(selectedLocation) && selectedLocation.description ? (
                   <Text
                     style={{
-                      fontSize: 12,
+                      fontSize: 14,
                       fontWeight: '400',
                       color: theme.colors.text.tertiary,
                       lineHeight: 18,

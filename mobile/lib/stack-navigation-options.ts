@@ -7,8 +7,15 @@ export function bioVeraStackScreenOptions(
 ): NativeStackNavigationOptions {
   return {
     gestureEnabled: true,
-    animation: 'slide_from_right',
-    ...(Platform.OS === 'ios' ? { fullScreenGestureEnabled: true } : {}),
+    gestureDirection: 'horizontal',
+    ...(Platform.OS === 'ios'
+      ? {
+          animation: 'default',
+          fullScreenGestureEnabled: true,
+        }
+      : {
+          animation: 'slide_from_right',
+        }),
     ...overrides,
   };
 }
@@ -17,4 +24,11 @@ export function bioVeraStackScreenOptions(
 export const authScreenNoSwipeBack: NativeStackNavigationOptions = {
   gestureEnabled: false,
   fullScreenGestureEnabled: false,
+};
+
+/** Modal routes (scanner, etc.) — swipe down to dismiss on iOS. */
+export const modalStackScreenOptions: NativeStackNavigationOptions = {
+  presentation: 'modal',
+  gestureEnabled: true,
+  ...(Platform.OS === 'ios' ? { gestureDirection: 'vertical' as const } : {}),
 };

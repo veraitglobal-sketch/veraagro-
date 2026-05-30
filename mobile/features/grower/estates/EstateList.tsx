@@ -4,6 +4,7 @@ import { MapPin, Calendar, Edit, Trash2, Package } from 'lucide-react-native';
 import type { Estate } from '../../../lib/api';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { growerUi, growerStyles } from '../../../lib/grower-ui';
+import EmptyState from '../../../components/EmptyState';
 
 export interface EstateListProps {
   estates: Estate[];
@@ -30,19 +31,21 @@ export function EstateList({
   const { t } = useTranslation();
 
   if (!ready) {
-    return null;
+    return (
+      <View style={[growerUi.emptyCard, { paddingVertical: 32 }]}>
+        <Text style={styles.emptySubtitle}>{t('common.loading')}</Text>
+      </View>
+    );
   }
 
   if (estates.length === 0) {
     return (
-      <View style={growerUi.emptyCard}>
-        <MapPin size={40} color={enterpriseColors.gray600} strokeWidth={1.5} />
-        <Text style={styles.emptyTitle}>{t('producer.estates.listEmptyTitle')}</Text>
-        <Text style={styles.emptySubtitle}>{t('producer.estates.listEmptySubtitle')}</Text>
+      <>
+        <EmptyState message={t('producer.estates.empty')} icon={MapPin} />
         <TouchableOpacity onPress={onPressNew} activeOpacity={0.9} style={[growerUi.btnPrimary, styles.emptyBtn]}>
           <Text style={growerUi.btnPrimaryText}>{t('producer.estates.newEstate')}</Text>
         </TouchableOpacity>
-      </View>
+      </>
     );
   }
 
@@ -76,10 +79,20 @@ export function EstateList({
                 ) : null}
               </View>
               <View style={styles.actions}>
-                <TouchableOpacity onPress={(e) => onPressEdit(estate, e)} hitSlop={8} accessibilityRole="button">
+                <TouchableOpacity
+                  onPress={(e) => onPressEdit(estate, e)}
+                  hitSlop={8}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('producer.estates.editA11y')}
+                >
                   <Edit size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={(e) => onDelete(estate, e)} hitSlop={8} accessibilityRole="button">
+                <TouchableOpacity
+                  onPress={(e) => onDelete(estate, e)}
+                  hitSlop={8}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('producer.estates.deleteA11y')}
+                >
                   <Trash2 size={20} color={enterpriseColors.destructive} strokeWidth={1.75} />
                 </TouchableOpacity>
               </View>

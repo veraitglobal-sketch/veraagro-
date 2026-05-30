@@ -100,7 +100,7 @@ export default function LogisticsHubScreen() {
                   paddingHorizontal: 6,
                 }}
               >
-                <Text style={{ fontSize: 11, fontWeight: '700', color: '#fff' }}>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>
                   {unreadNotifications > 9 ? '9+' : unreadNotifications}
                 </Text>
               </View>
@@ -137,7 +137,7 @@ export default function LogisticsHubScreen() {
               }}
             >
               <Text style={{ fontSize: 20, fontWeight: '600', color: '#2D5A27' }}>{chip.value}</Text>
-              <Text style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>{chip.label}</Text>
+              <Text style={{ fontSize: 14, color: '#64748b', marginTop: 4 }}>{chip.label}</Text>
             </View>
           ))}
         </View>

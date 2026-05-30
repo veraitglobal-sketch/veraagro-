@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  RefreshControl,
   type NativeSyntheticEvent,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -19,12 +18,12 @@ import {
   animateEstateMapTo,
   DEFAULT_ESTATE_MAP_REGION,
 } from '../../../../components/grower/EstateBoundaryMap';
-import { colors } from '../../../../lib/colors';
 import { theme } from '../../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../../lib/screen-insets';
 import { BioVeraSubpageHeader } from '../../../../components/BioVeraSubpageHeader';
 import { estatesAPI, Estate } from '../../../../lib/api';
 import { apiErrorMessage } from '../../../../lib/api-error';
+import { FormKeyboardWrap } from '../../../../components/FormKeyboardWrap';
 import {
   appendPanSample,
   finalizeFreehandRing,
@@ -46,17 +45,15 @@ export default function EditEstateScreen() {
   const [polygonCoordinates, setPolygonCoordinates] = useState<Array<{ lat: number; lng: number }>>([]);
   const mapRef = useRef<MapView>(null);
   const [initialLoad, setInitialLoad] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [drawing, setDrawing] = useState(false);
   const [drawStyle, setDrawStyle] = useState<'tap' | 'finger'>('tap');
   const [fingerStroke, setFingerStroke] = useState<MapLonLat[]>([]);
 
   const loadEstate = useCallback(
-    async (mode: 'initial' | 'refresh') => {
+    async () => {
       if (!id) return;
-      if (mode === 'refresh') setRefreshing(true);
-      else setInitialLoad(true);
+      setInitialLoad(true);
       try {
         const data = await estatesAPI.getOne(id);
         setEstate(data);
@@ -77,15 +74,14 @@ export default function EditEstateScreen() {
         console.error('Error loading estate:', error);
         Alert.alert(t('error'), t('producer.estates.loadFailed'));
       } finally {
-        if (mode === 'refresh') setRefreshing(false);
-        else setInitialLoad(false);
+        setInitialLoad(false);
       }
     },
     [id, t],
   );
 
   useEffect(() => {
-    if (id) void loadEstate('initial');
+    if (id) void loadEstate();
   }, [id, loadEstate]);
 
   const handleMapPress = (event: NativeSyntheticEvent<{ coordinate: { latitude: number; longitude: number } }>) => {
@@ -153,23 +149,24 @@ export default function EditEstateScreen() {
 
   if (initialLoad && !estate) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={colors.primary} />
+      <View style={{ flex: 1, paddingTop: p.topInset, backgroundColor: theme.colors.surface, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surface }}>
+    <FormKeyboardWrap style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
       <BioVeraSubpageHeader
         title={t('producer.estates.editEstateTitle')}
         left="back"
         right={
           <TouchableOpacity onPress={handleSave} disabled={saving} hitSlop={8}>
             {saving ? (
-              <ActivityIndicator size="small" color={colors.primary} />
+              <ActivityIndicator size="small" color={theme.colors.primary} />
             ) : (
-              <Save size={24} color={colors.primary} strokeWidth={1.5} />
+              <Save size={24} color={theme.colors.primary} strokeWidth={1.5} />
             )}
           </TouchableOpacity>
         }
@@ -179,14 +176,6 @@ export default function EditEstateScreen() {
         style={{ flex: 1 }}
         scrollEnabled={!drawing}
         keyboardShouldPersistTaps="handled"
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => void loadEstate('refresh')}
-            tintColor={colors.primary}
-            colors={[colors.primary]}
-          />
-        }
       >
         <View
           style={{
@@ -200,8 +189,8 @@ export default function EditEstateScreen() {
           <View style={{ marginBottom: theme.spacing.md }}>
             <Text style={{
               fontSize: 13,
-              fontWeight: '300',
-              color: colors.text.secondary,
+              fontWeight: '400',
+              color: theme.colors.text.secondary,
               marginBottom: theme.spacing.xs,
               letterSpacing: 0.3,
             }}>
@@ -213,13 +202,13 @@ export default function EditEstateScreen() {
               placeholder="e.g. North field"
               style={{
                 fontSize: 15,
-                fontWeight: '300',
-                color: colors.text.primary,
+                fontWeight: '400',
+                color: theme.colors.text.primary,
                 borderWidth: 0.5,
-                borderColor: colors.border,
+                borderColor: theme.colors.border,
                 borderRadius: theme.borderRadius.sm,
                 padding: theme.spacing.md,
-                backgroundColor: colors.background,
+                backgroundColor: theme.colors.background,
               }}
             />
           </View>
@@ -228,8 +217,8 @@ export default function EditEstateScreen() {
           <View style={{ marginBottom: theme.spacing.md }}>
             <Text style={{
               fontSize: 13,
-              fontWeight: '300',
-              color: colors.text.secondary,
+              fontWeight: '400',
+              color: theme.colors.text.secondary,
               marginBottom: theme.spacing.xs,
               letterSpacing: 0.3,
             }}>
@@ -241,13 +230,13 @@ export default function EditEstateScreen() {
               placeholder="e.g. Arilje, Serbia"
               style={{
                 fontSize: 15,
-                fontWeight: '300',
-                color: colors.text.primary,
+                fontWeight: '400',
+                color: theme.colors.text.primary,
                 borderWidth: 0.5,
-                borderColor: colors.border,
+                borderColor: theme.colors.border,
                 borderRadius: theme.borderRadius.sm,
                 padding: theme.spacing.md,
-                backgroundColor: colors.background,
+                backgroundColor: theme.colors.background,
               }}
             />
           </View>
@@ -256,7 +245,7 @@ export default function EditEstateScreen() {
           <Text
             style={{
               fontSize: 13,
-              color: colors.text.secondary,
+              color: theme.colors.text.secondary,
               lineHeight: 19,
               marginBottom: theme.spacing.sm,
             }}
@@ -278,13 +267,13 @@ export default function EditEstateScreen() {
                 paddingVertical: theme.spacing.sm,
                 paddingHorizontal: theme.spacing.md,
                 borderRadius: theme.borderRadius.sm,
-                backgroundColor: drawStyle === 'tap' ? `${colors.primary}18` : colors.background,
+                backgroundColor: drawStyle === 'tap' ? `${theme.colors.primary}18` : theme.colors.background,
                 borderWidth: 0.5,
-                borderColor: drawStyle === 'tap' ? colors.primary : colors.border,
+                borderColor: drawStyle === 'tap' ? theme.colors.primary : theme.colors.border,
                 alignItems: 'center',
               }}
             >
-              <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text.primary }}>
+              <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text.primary }}>
                 {t('producer.estates.drawStyleTap')}
               </Text>
             </TouchableOpacity>
@@ -296,13 +285,13 @@ export default function EditEstateScreen() {
                 paddingVertical: theme.spacing.sm,
                 paddingHorizontal: theme.spacing.md,
                 borderRadius: theme.borderRadius.sm,
-                backgroundColor: drawStyle === 'finger' ? `${colors.primary}18` : colors.background,
+                backgroundColor: drawStyle === 'finger' ? `${theme.colors.primary}18` : theme.colors.background,
                 borderWidth: 0.5,
-                borderColor: drawStyle === 'finger' ? colors.primary : colors.border,
+                borderColor: drawStyle === 'finger' ? theme.colors.primary : theme.colors.border,
                 alignItems: 'center',
               }}
             >
-              <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text.primary }}>
+              <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text.primary }}>
                 {t('producer.estates.drawStyleFinger')}
               </Text>
             </TouchableOpacity>
@@ -320,17 +309,17 @@ export default function EditEstateScreen() {
                 flex: 1,
                 padding: theme.spacing.md,
                 borderRadius: theme.borderRadius.sm,
-                backgroundColor: drawing ? colors.primary : colors.background,
+                backgroundColor: drawing ? theme.colors.primary : theme.colors.background,
                 borderWidth: 0.5,
-                borderColor: drawing ? colors.primary : colors.border,
+                borderColor: drawing ? theme.colors.primary : theme.colors.border,
                 alignItems: 'center',
               }}
             >
               <Text
                 style={{
                   fontSize: 13,
-                  fontWeight: '300',
-                  color: drawing ? colors.background : colors.text.primary,
+                  fontWeight: '400',
+                  color: drawing ? theme.colors.background : theme.colors.text.primary,
                 }}
               >
                 {drawing
@@ -347,13 +336,13 @@ export default function EditEstateScreen() {
                   paddingHorizontal: theme.spacing.md,
                   paddingVertical: theme.spacing.md,
                   borderRadius: theme.borderRadius.sm,
-                  backgroundColor: colors.primary,
+                  backgroundColor: theme.colors.primary,
                   borderWidth: 0.5,
-                  borderColor: colors.primary,
+                  borderColor: theme.colors.primary,
                   justifyContent: 'center',
                 }}
               >
-                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.background }}>
+                <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.background }}>
                   {t('producer.estates.acceptFingerOutline')}
                 </Text>
               </TouchableOpacity>
@@ -364,16 +353,16 @@ export default function EditEstateScreen() {
                 style={{
                   padding: theme.spacing.md,
                   borderRadius: theme.borderRadius.sm,
-                  backgroundColor: colors.background,
+                  backgroundColor: theme.colors.background,
                   borderWidth: 0.5,
-                  borderColor: colors.border,
+                  borderColor: theme.colors.border,
                 }}
               >
                 <Text
                   style={{
                     fontSize: 13,
-                    fontWeight: '300',
-                    color: colors.error,
+                    fontWeight: '400',
+                    color: theme.colors.error,
                   }}
                 >
                   {t('producer.estates.delete')}
@@ -401,16 +390,16 @@ export default function EditEstateScreen() {
           {/* Polygon Info */}
           {(polygonCoordinates.length > 0 || fingerStroke.length > 0) && (
             <View style={{
-              backgroundColor: colors.background,
+              backgroundColor: theme.colors.background,
               borderRadius: theme.borderRadius.md,
               padding: theme.spacing.md,
               borderWidth: 0.5,
-              borderColor: colors.border,
+              borderColor: theme.colors.border,
             }}>
               <Text style={{
                 fontSize: 13,
-                fontWeight: '300',
-                color: colors.text.primary,
+                fontWeight: '400',
+                color: theme.colors.text.primary,
               }}>
                 {t('producer.estates.boundaryPoints')}: {polygonCoordinates.length}
                 {fingerDrawingLocked && fingerStroke.length > 0
@@ -422,5 +411,6 @@ export default function EditEstateScreen() {
         </View>
       </ScrollView>
     </View>
+    </FormKeyboardWrap>
   );
 }

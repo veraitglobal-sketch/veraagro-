@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native';
-import { colors } from '../../../lib/colors';
+import { theme } from '../../../lib/theme';
 import type { Zone } from './types';
 
 interface ZonesListProps {
@@ -16,7 +16,7 @@ export function ZonesList({ zones, onZonePress }: ZonesListProps) {
         style={{
           fontSize: 13,
           fontWeight: '400',
-          color: colors.text.primary,
+          color: theme.colors.text.primary,
           marginBottom: 12,
           letterSpacing: 0.3,
         }}
@@ -30,9 +30,9 @@ export function ZonesList({ zones, onZonePress }: ZonesListProps) {
           style={{
             padding: 12,
             borderWidth: 0.5,
-            borderColor: colors.border,
+            borderColor: theme.colors.border,
             borderRadius: 6,
-            backgroundColor: colors.surface,
+            backgroundColor: theme.colors.surface,
             marginBottom: 8,
           }}
           activeOpacity={0.7}
@@ -41,9 +41,9 @@ export function ZonesList({ zones, onZonePress }: ZonesListProps) {
             <View style={{ flex: 1 }}>
               <Text
                 style={{
-                  fontSize: 12,
-                  fontWeight: '300',
-                  color: colors.text.primary,
+                  fontSize: 14,
+                  fontWeight: '400',
+                  color: theme.colors.text.primary,
                   letterSpacing: 0.2,
                 }}
               >
@@ -52,9 +52,9 @@ export function ZonesList({ zones, onZonePress }: ZonesListProps) {
               {zone.cropType ? (
                 <Text
                   style={{
-                    fontSize: 11,
-                    fontWeight: '300',
-                    color: colors.text.secondary,
+                    fontSize: 14,
+                    fontWeight: '400',
+                    color: theme.colors.text.secondary,
                     marginTop: 2,
                   }}
                 >
@@ -63,9 +63,9 @@ export function ZonesList({ zones, onZonePress }: ZonesListProps) {
               ) : (
                 <Text
                   style={{
-                    fontSize: 11,
-                    fontWeight: '300',
-                    color: colors.text.secondary,
+                    fontSize: 14,
+                    fontWeight: '400',
+                    color: theme.colors.text.secondary,
                     marginTop: 2,
                   }}
                 >

@@ -6,10 +6,12 @@ export const MIN_PARTITION_GESTURE_DRAG = 14;
 
 export const CROP_TYPES = ['Apple', 'Raspberry', 'Blueberry', 'Blackberry', 'Plum', 'Pear', 'Cherry'];
 
-export const CROP_STATUSES = [
-  { value: 'PREPARING_SOIL', label: 'Preparing soil' },
-  { value: 'YOUNG_SEEDLING', label: 'Young seedling' },
-  { value: 'IN_FULL_PRODUCTION', label: 'In full production' },
-  { value: 'HARVESTING', label: 'Harvest' },
-  { value: 'FALLOW', label: 'Fallow' },
+export const CROP_STATUS_VALUES = [
+  'PREPARING_SOIL',
+  'YOUNG_SEEDLING',
+  'IN_FULL_PRODUCTION',
+  'HARVESTING',
+  'FALLOW',
 ] as const;
+
+export type CropStatusValue = (typeof CROP_STATUS_VALUES)[number];

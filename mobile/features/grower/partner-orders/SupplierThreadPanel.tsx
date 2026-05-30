@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   msgAuthor: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '500',
     color: enterpriseColors.gray600,
     marginBottom: 4,

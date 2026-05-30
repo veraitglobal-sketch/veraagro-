@@ -3,7 +3,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bell, RefreshCw, Shield, Info, Wifi } from 'lucide-react-native';
 import Constants from 'expo-constants';
-import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { LanguageSettingsBlock } from '../../../components/LanguageSettingsBlock';
 import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
 import {
@@ -38,7 +37,6 @@ const SETTINGS_KEYS = {
 export default function SettingsScreen() {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const p = useBioVeraScreenPadding();
   const [notifications, setNotifications] = useState(true);
   const [autoSync, setAutoSync] = useState(true);
   const [gpsAlways, setGpsAlways] = useState(false);
@@ -97,7 +95,6 @@ export default function SettingsScreen() {
       setNotifications(value);
       void saveSetting(SETTINGS_KEYS.NOTIFICATIONS, value);
     } catch (e) {
-      console.warn('[settings] notifications toggle:', e instanceof Error ? e.message : e);
       Alert.alert(t('error'), t('producer.settings.notificationsRegisterFailed'));
     }
   };
@@ -227,9 +224,9 @@ export default function SettingsScreen() {
 
   return (
     <EnterpriseScreen
+      fillViewport
       refreshing={refreshing}
       onRefresh={onRefresh}
-      contentPaddingBottom={Math.max(p.bottomInset, 16) + 12}
       header={<GrowerStackHeader title={t('producer.tabs.settings')} />}
     >
       <View style={[growerUi.scrollContent, { paddingTop: 12 }]}>

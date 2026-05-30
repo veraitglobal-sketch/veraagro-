@@ -12,7 +12,10 @@ backend/
 web/
 blockchain/
 filedump/
+docs/
 node_modules/
+web/node_modules/
+backend/node_modules/
 
 # Mobile native dirs (EAS prebuild / cloud build)
 mobile/ios/

@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     height: 22,
   },
   caption: {
-    fontSize: 9,
+    fontSize: 13,
     fontWeight: '600',
     color: enterpriseColors.gray600,
     letterSpacing: 1.8,

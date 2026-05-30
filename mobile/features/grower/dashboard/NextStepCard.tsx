@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   },
   headline: {
     fontSize: 22,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.gray900,
     letterSpacing: -0.5,
     lineHeight: 28,

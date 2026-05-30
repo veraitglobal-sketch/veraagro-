@@ -356,12 +356,25 @@ export class GrowthLogsService {
     });
   }
 
-  async listForAdmin(opts?: { moderationStatus?: string; limit?: number }) {
+  async listForAdmin(opts?: { moderationStatus?: string; limit?: number; partnerCode?: string }) {
     const limit = Math.min(Math.max(opts?.limit ?? 80, 1), 200);
-    const where =
-      opts?.moderationStatus?.trim()
-        ? { moderationStatus: opts.moderationStatus.trim() }
-        : { moderationStatus: { not: 'REJECTED' } };
+    const partnerCode = opts?.partnerCode?.trim();
+    const status = opts?.moderationStatus?.trim();
+
+    const where: {
+      moderationStatus?: string | { not: string };
+      users?: { partnerCode: string };
+    } = {};
+
+    if (status && status !== 'ALL') {
+      where.moderationStatus = status;
+    } else if (!partnerCode) {
+      where.moderationStatus = { not: 'REJECTED' };
+    }
+
+    if (partnerCode) {
+      where.users = { partnerCode };
+    }
 
     return this.prisma.growth_logs.findMany({
       where,

@@ -18,7 +18,6 @@ export default function CostCalculatorScreen() {
   const insets = useSafeAreaInsets();
   const {
     costs,
-    products,
     parcels,
     allocationLoading,
     plantingsForParcel,
@@ -76,11 +75,6 @@ export default function CostCalculatorScreen() {
         <Plus size={22} color={enterpriseColors.white} strokeWidth={1.5} />
         <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.costCalculator.addCostAmount')}</Text>
       </TouchableOpacity>
-      {products.length > 0 ? (
-        <Text style={[enterpriseUi.navRowSubtitle, styles.hint]}>
-          {t('producer.costCalculator.productsTransferNote')}
-        </Text>
-      ) : null}
       {showForm ? (
         <View style={[enterpriseUi.authPanel, styles.formCard]}>
           <CostEntryForm

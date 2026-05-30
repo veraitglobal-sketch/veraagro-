@@ -3,11 +3,11 @@ import {
   View,
   Text,
   ScrollView,
-  Modal,
   TouchableOpacity,
   StyleSheet,
   Pressable,
 } from 'react-native';
+import { BioVeraBottomSheet } from '../../../components/enterprise/BioVeraBottomSheet';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Video, Scale, HeartHandshake, BookMarked, BookOpen, X } from 'lucide-react-native';
@@ -109,35 +109,38 @@ export default function GrowerEducationScreen() {
         <Text style={styles.footer}>{t('producer.education.footerNoteShort')}</Text>
       </ScrollView>
 
-      <Modal visible={detail != null} animationType="slide" transparent presentationStyle="pageSheet">
-        <Pressable style={styles.modalBackdrop} onPress={() => setDetail(null)}>
-          <Pressable style={styles.modalSheet} onPress={(e) => e.stopPropagation()}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle} numberOfLines={2}>
-                {detail?.title}
-              </Text>
-              <TouchableOpacity onPress={() => setDetail(null)} hitSlop={12} accessibilityRole="button">
-                <X size={24} color={enterpriseColors.gray600} strokeWidth={2} />
-              </TouchableOpacity>
-            </View>
-            {detail ? (
-              <ScrollView
-                style={{ maxHeight: 420 }}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 16 }}
-              >
-                <Text style={styles.modalIntro}>{detail.intro}</Text>
-                {detail.bullets.map((line) => (
-                  <View key={line.slice(0, 48)} style={styles.bulletRow}>
-                    <View style={styles.bulletDot} />
-                    <Text style={styles.bulletText}>{line}</Text>
-                  </View>
-                ))}
-              </ScrollView>
-            ) : null}
-          </Pressable>
-        </Pressable>
-      </Modal>
+      <BioVeraBottomSheet visible={detail != null} onClose={() => setDetail(null)}>
+        <View style={styles.modalSheet}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle} numberOfLines={2}>
+              {detail?.title}
+            </Text>
+            <TouchableOpacity
+              onPress={() => setDetail(null)}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel={t('common.close')}
+            >
+              <X size={24} color={enterpriseColors.gray600} strokeWidth={2} />
+            </TouchableOpacity>
+          </View>
+          {detail ? (
+            <ScrollView
+              style={{ maxHeight: 420 }}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 16 }}
+            >
+              <Text style={styles.modalIntro}>{detail.intro}</Text>
+              {detail.bullets.map((line) => (
+                <View key={line.slice(0, 48)} style={styles.bulletRow}>
+                  <View style={styles.bulletDot} />
+                  <Text style={styles.bulletText}>{line}</Text>
+                </View>
+              ))}
+            </ScrollView>
+          ) : null}
+        </View>
+      </BioVeraBottomSheet>
     </View>
   );
 }
@@ -150,7 +153,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   footer: {
-    fontSize: 12,
+    fontSize: 14,
     color: enterpriseColors.gray600,
     lineHeight: 18,
     marginTop: 8,

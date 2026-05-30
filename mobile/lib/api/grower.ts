@@ -1,43 +1,141 @@
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from './client';
-import { API_URL } from '../api-url';
 import { apiErrorMessage, axiosResponseStatus, isLikelyNetworkError } from '../api-error';
 import type {
-  Product,
-  Estate,
-  Parcel,
-  Category,
-  AiAssistantResponse,
-  RetailLocation,
   FieldEntry,
   GrowthLog,
-  Order,
-  ProductPassport,
-  BatchAvailability,
-  QualityEntry,
-  LogisticsDriverRow,
-  LogisticsVehicleRow,
-  PackageBadgeType,
-  MissionAssignedDriver,
-  MissionVehicleInfo,
-  Mission,
-  FinancialDashboardApiResponse,
-  Notification,
-  RequiredCertification,
-  DigitalHandover,
   CompliancePhoto,
+  Material,
+  CreateHarvestPlanBody,
   LabelRollRow,
   ComplianceBatchStatus,
-  Material,
-  TreatmentLog,
+  RequiredCertification,
+  PlotBlueprint,
   PlotBlueprintZone,
   PlotBlueprintPartition,
-  PlotBlueprint,
-  CreateHarvestPlanBody,
 } from './types';
 
-/** Grower checklist items (compliance / certification photos in app). */
+export const fieldEntriesAPI = {
+  getAll: async (farmId?: string): Promise<FieldEntry[]> => {
+    try {
+      const params = farmId ? { farmId } : {};
+      const response = await api.get('/field-entries', { params });
+      return response.data || [];
+    } catch (error: unknown) {
+      if (isLikelyNetworkError(error)) {
+        console.warn('Backend not available, returning empty field entries list');
+        return [];
+      }
+      console.warn('Error fetching field entries:', error instanceof Error ? error.message : error);
+      return [];
+    }
+  },
+};
+
+function normalizeGrowthLogRow(row: Record<string, unknown>): GrowthLog {
+  const parcels = row.parcels as { id: string; cropType: string } | null | undefined;
+  const ha = row.harvest_announcements as
+    | {
+        id: string;
+        cropType: string;
+        announcementType: string;
+        estimatedDate: string;
+        status: string;
+      }
+    | null
+    | undefined;
+  const { parcels: _p, harvest_announcements: _ha, ...rest } = row;
+  return {
+    ...(rest as unknown as GrowthLog),
+    parcel: parcels ? { id: parcels.id, cropType: parcels.cropType } : undefined,
+    plan: ha
+      ? {
+          id: ha.id,
+          cropType: ha.cropType,
+          announcementType: ha.announcementType,
+          estimatedDate: ha.estimatedDate,
+          status: ha.status,
+        }
+      : undefined,
+  };
+}
+
+export const growthLogsAPI = {
+  getAllByEstate: async (estateId: string): Promise<GrowthLog[]> => {
+    try {
+      const response = await api.get(`/growth-logs/estate/${estateId}`);
+      const raw = response.data;
+      if (!Array.isArray(raw)) return [];
+      return raw.map((r: Record<string, unknown>) => normalizeGrowthLogRow(r));
+    } catch (error: unknown) {
+      if (isLikelyNetworkError(error)) {
+        console.warn('Backend not available, returning empty growth logs list');
+        return [];
+      }
+      console.warn('Error fetching growth logs:', error instanceof Error ? error.message : error);
+      return [];
+    }
+  },
+  getAllByParcel: async (parcelId: string): Promise<GrowthLog[]> => {
+    try {
+      const response = await api.get(`/growth-logs/parcel/${parcelId}`);
+      const raw = response.data;
+      if (!Array.isArray(raw)) return [];
+      return raw.map((r: Record<string, unknown>) => normalizeGrowthLogRow(r));
+    } catch (error: unknown) {
+      if (isLikelyNetworkError(error)) {
+        console.warn('Backend not available, returning empty growth logs list');
+        return [];
+      }
+      console.warn('Error fetching growth logs:', error instanceof Error ? error.message : error);
+      return [];
+    }
+  },
+  create: async (data: {
+    estateId: string;
+    parcelId: string;
+    harvestAnnouncementId: string;
+    imageUrl: string;
+    imageHash: string;
+    gpsLatitude: number;
+    gpsLongitude: number;
+    deviceId: string;
+    deviceTimestamp: string;
+    notes?: string;
+    growthStage?: string;
+    materialBarcode?: string;
+    materialKind?: 'SEED' | 'FERTILIZER' | 'PESTICIDE';
+    requiresMaterialBarcode?: boolean;
+  }): Promise<GrowthLog> => {
+    try {
+      const response = await api.post('/growth-logs', data);
+      return response.data;
+    } catch (error: unknown) {
+      if (axiosResponseStatus(error) === 404) {
+        throw new Error(
+          'API ruta /growth-logs nije na serveru. Pokreni deploy najnovijeg backend-a na Railway.',
+        );
+      }
+      throw error;
+    }
+  },
+};
+
+export const harvestAnnouncementsAPI = {
+  create: async (data: CreateHarvestPlanBody) => {
+    const response = await api.post('/harvest-announcements', data);
+    return response.data;
+  },
+  getMy: async () => {
+    const response = await api.get('/harvest-announcements/my-announcements', { timeout: 25000 });
+    const raw = response.data as unknown;
+    if (Array.isArray(raw)) return raw;
+    if (raw !== null && typeof raw === 'object' && Array.isArray((raw as { data?: unknown }).data)) {
+      return (raw as { data: unknown[] }).data;
+    }
+    return [];
+  },
+};
+
 export const growerPortalAPI = {
   getRequiredCertifications: async (): Promise<RequiredCertification[]> => {
     const response = await api.get('/grower-portal/required-certifications');
@@ -51,10 +149,6 @@ export const growerPortalAPI = {
   },
 };
 
-// Digital Handover API
-// Compliance Photos API (legacy estate uploads — prefer materialControlAPI + batch)
-/** Label roll row from /material-control/my-label-rolls */
-/** GET /material-control/compliance-status/:batchId */
 export const materialControlAPI = {
   getMyLabelRolls: async (): Promise<LabelRollRow[]> => {
     const response = await api.get('/material-control/my-label-rolls');
@@ -68,9 +162,6 @@ export const materialControlAPI = {
     const response = await api.post('/material-control/verify-sticker', body);
     return response.data;
   },
-  /**
-   * Same contract as web: `photos` = three data URLs in order PUNNETS, LABELING, PALLETIZATION.
-   */
   uploadCompliancePhotos: async (body: {
     batchId: string;
     stickerRollId: string;
@@ -82,24 +173,6 @@ export const materialControlAPI = {
   },
 };
 
-// Materials Whitelist API
-// KYC API (Pillar 1)
-export const kycAPI = {
-  uploadDocument: async (docType: string, fileUrl: string) => {
-    const response = await api.post('/kyc/documents', { docType, fileUrl });
-    return response.data;
-  },
-  getMyDocuments: async () => {
-    const response = await api.get('/kyc/documents');
-    return response.data;
-  },
-  getStatus: async () => {
-    const response = await api.get('/kyc/status');
-    return response.data;
-  },
-};
-
-// Treatment Logs API (Pillar 2 - Phyto-Log)
 export const treatmentLogsAPI = {
   create: async (data: {
     parcelId: string;
@@ -144,15 +217,13 @@ export const materialsAPI = {
         barcode: String(row.barcode ?? ''),
         name: (row.name as string) || (row.productName as string) || undefined,
         productName: (row.productName as string) || undefined,
-        type:
-          ((row.materialType || row.type) as Material['type']) || 'OTHER',
+        type: ((row.materialType || row.type) as Material['type']) || 'OTHER',
         manufacturer: (row.manufacturer as string) || undefined,
         certification: (row.certification as string) || undefined,
         phiDays: row.phiDays != null ? Number(row.phiDays) : undefined,
         mrlLimit: row.mrlLimit != null ? Number(row.mrlLimit) : undefined,
       }));
     } catch (error: unknown) {
-      // If backend not available, return empty array
       if (isLikelyNetworkError(error)) {
         console.warn('Backend not available, returning empty whitelist');
         return [];
@@ -160,9 +231,6 @@ export const materialsAPI = {
       throw error;
     }
   },
-  /**
-   * Register a product on the compliance whitelist: display name, barcode, category (seed / spray / fert / other).
-   */
   submitGrower: async (body: {
     barcode: string;
     productName: string;
@@ -175,7 +243,6 @@ export const materialsAPI = {
   },
 };
 
-/** Link platform seed batch to parcel (area + GPS smart-lock). */
 export const smartLockAPI = {
   linkSeedToParcel: async (data: {
     inputSerialNumber: string;
@@ -197,7 +264,6 @@ export const smartLockAPI = {
   },
 };
 
-// Seeds API
 export const seedsAPI = {
   validate: async (serialNumber: string) => {
     try {
@@ -229,11 +295,6 @@ export const seedsAPI = {
   },
 };
 
-/**
- * Manual seed registration (Step 2 Grower Journey)
- * POST /seed-registrations with photo + GPS + timestamp
- * Backend TBD – when implemented, will persist to DB + Cloud Storage
- */
 export const seedRegistrationsAPI = {
   registerManual: async (data: {
     seedName: string;
@@ -249,7 +310,7 @@ export const seedRegistrationsAPI = {
       uri: data.photoUri,
       type: 'image/jpeg',
       name: 'seed-bag.jpg',
-    } as any);
+    } as unknown as Blob);
     const response = await api.post('/seed-registrations', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
@@ -259,7 +320,7 @@ export const seedRegistrationsAPI = {
 
 export const compliancePhotosAPI = {
   getAll: async (estateId?: string, parcelId?: string): Promise<CompliancePhoto[]> => {
-    const params: any = {};
+    const params: Record<string, string> = {};
     if (estateId) params.estateId = estateId;
     if (parcelId) params.parcelId = parcelId;
     const response = await api.get('/compliance/photos', { params });
@@ -284,74 +345,14 @@ export const compliancePhotosAPI = {
       uri: data.photoUri,
       type: 'image/jpeg',
       name: 'photo.jpg',
-    } as any);
+    } as unknown as Blob);
     formData.append('gpsLocation', JSON.stringify(data.gpsLocation));
     formData.append('type', data.type);
     if (data.notes) formData.append('notes', data.notes);
 
     const response = await api.post('/compliance/photos', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data;
   },
-};
-
-export const digitalHandoverAPI = {
-  initiate: async (data: {
-    deliveryId: string;
-    qrCode: string;
-  }): Promise<DigitalHandover> => {
-    const response = await api.post('/digital-handover/initiate', data);
-    return response.data;
-  },
-  complete: async (data: {
-    handoverId: string;
-    qualityCheck: {
-      visualCheck: 'FRESH' | 'DAMAGED';
-      temperature: number;
-      photoUrls: string[];
-      signature?: string;
-      notes?: string;
-    };
-  }): Promise<DigitalHandover & { pdfPath?: string }> => {
-    const response = await api.post('/digital-handover/complete', data);
-    return response.data;
-  },
-  getOne: async (id: string): Promise<DigitalHandover> => {
-    const response = await api.get(`/digital-handover/${id}`);
-    return response.data;
-  },
-};
-
-/** Plot mapper: parcel blueprint (zones, partitions). Used by features/grower/plot-mapper. */
-export const plotMapperAPI = {
-  getBlueprint: async (parcelId: string): Promise<PlotBlueprint | null> => {
-    try {
-      const response = await api.get(`/plot-mapper/parcel/${parcelId}`);
-      return response.data ?? null;
-    } catch {
-      return null;
-    }
-  },
-  /** @deprecated Use getBlueprint — kept for existing call sites. */
-  getByParcel: async (parcelId: string): Promise<PlotBlueprint | null> =>
-    plotMapperAPI.getBlueprint(parcelId),
-  saveBlueprint: async (data: {
-    parcelId: string;
-    length: number;
-    width: number;
-    blueprintData: { zones: PlotBlueprintZone[]; partitions: PlotBlueprintPartition[] };
-  }): Promise<PlotBlueprint> => {
-    const response = await api.post('/plot-mapper/save', data);
-    return response.data;
-  },
-  /** @deprecated Use saveBlueprint — kept for existing call sites. */
-  save: async (data: {
-    parcelId: string;
-    length: number;
-    width: number;
-    blueprintData: { zones: PlotBlueprintZone[]; partitions: PlotBlueprintPartition[] };
-  }): Promise<PlotBlueprint> => plotMapperAPI.saveBlueprint(data),
 };

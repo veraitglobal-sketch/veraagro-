@@ -82,7 +82,7 @@ export function GrowerDateField({ value, onChange, minimumDate, maximumDate, dis
             onChange={onPickerChange}
             minimumDate={minimumDate}
             maximumDate={maximumDate}
-            locale={i18n.language?.startsWith('sr') ? 'sr-Latn-RS' : 'en-GB'}
+            locale={i18n.language?.startsWith('sr') ? 'sr-Latn' : 'en-US'}
             themeVariant="light"
             style={styles.iosPicker}
           />
@@ -90,6 +90,7 @@ export function GrowerDateField({ value, onChange, minimumDate, maximumDate, dis
             onPress={() => setExpanded(false)}
             style={styles.doneBtn}
             accessibilityRole="button"
+            accessibilityLabel={t('common.ok')}
           >
             <Text style={styles.doneBtnText}>{t('common.ok')}</Text>
           </TouchableOpacity>

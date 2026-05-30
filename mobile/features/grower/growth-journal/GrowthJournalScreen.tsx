@@ -96,7 +96,7 @@ export default function GrowthJournalScreen() {
   return (
     <View style={growerUi.canvas}>
       <GrowerStackHeader
-        title={t('producer.growthJournal.screenTitle')}
+        title={t('producer.growthJournal.title')}
         subtitle={showIntroSubtitle ? t('producer.growthJournal.screenIntro') : undefined}
         onBack={goBack}
       />

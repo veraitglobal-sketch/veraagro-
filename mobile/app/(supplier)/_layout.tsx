@@ -15,7 +15,7 @@ export default function SupplierLayout() {
           screenOptions={bioVeraStackScreenOptions({
             headerStyle: { backgroundColor: theme.colors.background },
             headerTintColor: theme.colors.text.primary,
-            headerTitleStyle: { fontWeight: '300' as const, fontSize: 17 },
+            headerTitleStyle: { fontWeight: '400' as const, fontSize: 17 },
             headerShadowVisible: true,
           })}
         >

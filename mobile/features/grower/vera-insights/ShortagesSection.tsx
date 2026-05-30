@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { AlertCircle } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import type { CropInsight } from './types';
@@ -8,20 +9,21 @@ interface ShortagesSectionProps {
 }
 
 export default function ShortagesSection({ insights }: ShortagesSectionProps) {
+  const { t } = useTranslation();
   const withShortage = insights.filter((i) => i.historicalDeficit != null && i.historicalDeficit > 0);
 
   return (
     <View style={{ marginBottom: theme.spacing.lg }}>
       <Text
         style={{
-          fontSize: 12,
-          fontWeight: '300',
+          fontSize: 14,
+          fontWeight: '400',
           color: theme.colors.text.primary,
           marginBottom: theme.spacing.sm,
           letterSpacing: 0.5,
         }}
       >
-        Shortages Last Season
+        {t('producer.insights.shortages')}
       </Text>
       <View
         style={{
@@ -45,8 +47,8 @@ export default function ShortagesSection({ insights }: ShortagesSectionProps) {
             <View style={{ flex: 1 }}>
               <Text
                 style={{
-                  fontSize: 12,
-                  fontWeight: '300',
+                  fontSize: 14,
+                  fontWeight: '400',
                   color: theme.colors.text.primary,
                   marginBottom: theme.spacing.xs,
                   letterSpacing: 0.3,
@@ -58,13 +60,13 @@ export default function ShortagesSection({ insights }: ShortagesSectionProps) {
                 <AlertCircle size={14} color={theme.colors.warning} strokeWidth={1.5} />
                 <Text
                   style={{
-                    fontSize: 9,
-                    fontWeight: '300',
+                    fontSize: 13,
+                    fontWeight: '400',
                     color: theme.colors.text.secondary,
                     letterSpacing: 0.2,
                   }}
                 >
-                  {insight.historicalDeficit}% shortage
+                  {t('producer.insights.shortagePercent', { percent: insight.historicalDeficit })}
                 </Text>
               </View>
             </View>
@@ -73,14 +75,14 @@ export default function ShortagesSection({ insights }: ShortagesSectionProps) {
         {withShortage.length === 0 && (
           <Text
             style={{
-              fontSize: 11,
-              fontWeight: '300',
+              fontSize: 14,
+              fontWeight: '400',
               color: theme.colors.text.secondary,
               fontStyle: 'italic',
               letterSpacing: 0.2,
             }}
           >
-            No data on shortages for last season.
+            {t('producer.insights.noShortages')}
           </Text>
         )}
       </View>

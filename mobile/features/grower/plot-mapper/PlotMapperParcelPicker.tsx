@@ -10,7 +10,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { MapPin } from 'lucide-react-native';
-import { colors } from '../../../lib/colors';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { estatesAPI, parcelsAPI, type Estate, type Parcel } from '../../../lib/api';
@@ -69,18 +68,18 @@ export default function PlotMapperParcelPicker() {
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: colors.background,
+          backgroundColor: theme.colors.background,
           paddingTop: p.topInset,
         }}
       >
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: colors.background }}
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -88,7 +87,7 @@ export default function PlotMapperParcelPicker() {
             setRefreshing(true);
             void load();
           }}
-          tintColor={colors.primary}
+          tintColor={theme.colors.primary}
         />
       }
       contentContainerStyle={{
@@ -102,14 +101,14 @@ export default function PlotMapperParcelPicker() {
         style={{
           fontSize: 20,
           fontWeight: '700',
-          color: colors.text.primary,
+          color: theme.colors.text.primary,
           marginBottom: 6,
           letterSpacing: -0.3,
         }}
       >
         {t('producer.plotMapper.selectParcelTitle')}
       </Text>
-      <Text style={{ fontSize: 14, color: colors.text.secondary, lineHeight: 20, marginBottom: theme.spacing.md }}>
+      <Text style={{ fontSize: 14, color: theme.colors.text.secondary, lineHeight: 20, marginBottom: theme.spacing.md }}>
         {t('producer.plotMapper.selectParcelLead')}
       </Text>
 
@@ -119,17 +118,17 @@ export default function PlotMapperParcelPicker() {
             padding: theme.spacing.md,
             borderRadius: theme.borderRadius.md,
             borderWidth: 0.5,
-            borderColor: colors.border,
-            backgroundColor: colors.surface,
+            borderColor: theme.colors.border,
+            backgroundColor: theme.colors.surface,
           }}
         >
-          <Text style={{ fontSize: 14, color: colors.text.secondary }}>{t('producer.plotMapper.noParcels')}</Text>
+          <Text style={{ fontSize: 14, color: theme.colors.text.secondary }}>{t('producer.plotMapper.noParcels')}</Text>
           <TouchableOpacity
             style={{ marginTop: theme.spacing.sm }}
             onPress={() => router.push('/(producer)/estates')}
             activeOpacity={0.75}
           >
-            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.primary }}>
+            <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.primary }}>
               {t('producer.plotMapper.goToEstates')} →
             </Text>
           </TouchableOpacity>
@@ -148,8 +147,8 @@ export default function PlotMapperParcelPicker() {
                 padding: theme.spacing.md,
                 borderRadius: theme.borderRadius.md,
                 borderWidth: 0.5,
-                borderColor: colors.border,
-                backgroundColor: colors.surface,
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.surface,
               }}
             >
               <View
@@ -157,21 +156,21 @@ export default function PlotMapperParcelPicker() {
                   width: 44,
                   height: 44,
                   borderRadius: theme.borderRadius.md,
-                  backgroundColor: `${colors.primary}14`,
+                  backgroundColor: `${theme.colors.primary}14`,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <MapPin size={20} color={colors.primary} strokeWidth={1.75} />
+                <MapPin size={20} color={theme.colors.primary} strokeWidth={1.75} />
               </View>
               <View style={{ flex: 1, minWidth: 0 }}>
-                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text.secondary }} numberOfLines={1}>
+                <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text.secondary }} numberOfLines={1}>
                   {row.estateName}
                 </Text>
-                <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary, marginTop: 2 }} numberOfLines={2}>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginTop: 2 }} numberOfLines={2}>
                   {row.cropLabel}
                 </Text>
-                <Text style={{ fontSize: 12, color: colors.text.secondary, marginTop: 4 }}>
+                <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginTop: 4 }}>
                   {t('producer.estates.area')}: {row.area.toFixed(2)} m² · {t('producer.plotMapper.planForThisParcel')}
                 </Text>
               </View>

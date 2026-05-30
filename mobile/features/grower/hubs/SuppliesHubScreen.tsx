@@ -1,187 +1,201 @@
 import { useMemo } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
 import { useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Package, Box, ShoppingBag, Bell, MapPinned, Calculator } from 'lucide-react-native';
-import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
-import { TabRootBody } from '../../../components/enterprise/TabRootBody';
-import { EnterpriseNavSection } from '../../../components/enterprise/EnterpriseNavSection';
-import { GrowerTabShellHeader } from '../../../components/enterprise/GrowerTabShellHeader';
-import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
+import {
+  MapPinned,
+  Box,
+  ShoppingBag,
+  Package,
+  Calculator,
+  ChevronRight,
+  type LucideIcon,
+} from 'lucide-react-native';
+import { theme } from '../../../lib/theme';
 import { useGrowerDashboard } from '../../../contexts/GrowerDashboardContext';
 import { useGrowerTabRefresh } from '../../../hooks/useGrowerTabRefresh';
-import { HubMetricsStrip } from './HubMetricsStrip';
-import type { HubMetricRow } from './HubSummaryMetrics';
 import { suppliesStatusLine } from './suppliesStatusLine';
-import { SuppliesHubOrdersPreview } from './SuppliesHubOrdersPreview';
-import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
-import type { SuppliesSnapshot } from './fetchSuppliesSnapshot';
 
-const EMPTY_SNAPSHOT: SuppliesSnapshot = {
-  materialsCount: 0,
-  productsCount: 0,
-  partnerOrdersOpen: 0,
-  partnerOrdersAwaitingReceive: 0,
-  partnerOrdersPending: 0,
-  partnerOrdersTotal: 0,
-  recentOrders: [],
+type WorkflowStep = {
+  key: string;
+  icon: LucideIcon;
+  titleKey: string;
+  descKey: string;
+  href: Href;
 };
 
+/**
+ * Supplies tab — procurement workflow (map → materials → orders → products).
+ */
 export default function SuppliesHubScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const p = useBioVeraScreenPadding();
   const data = useGrowerDashboard();
   const tabRefresh = useGrowerTabRefresh();
 
-  const unread = data.unreadCount;
-  const snap = data.suppliesSnapshot ?? EMPTY_SNAPSHOT;
-  const snapLoaded = data.suppliesSnapshotLoaded;
-
-  const statusLine = suppliesStatusLine(t, unread, data.suppliesSnapshot, snapLoaded);
-
-  const metricRows = useMemo((): HubMetricRow[] => {
-    const materials = snapLoaded ? snap.materialsCount : 0;
-    const orders = snapLoaded ? snap.partnerOrdersOpen : 0;
-    const products = snapLoaded ? snap.productsCount : 0;
-    return [
-      {
-        key: 'materials',
-        type: 'count',
-        label: t('producer.dashboard.farmer.materialsTitle'),
-        count: materials,
-      },
-      {
-        key: 'orders',
-        type: 'count',
-        label: t('producer.hubs.supplies.metricOrdersOpen'),
-        count: orders,
-      },
-      {
-        key: 'products',
-        type: 'count',
-        label: t('producer.hubs.supplies.productsTitle'),
-        count: products,
-      },
-    ];
-  }, [t, snap, snapLoaded]);
-
-  const inboxItems = useMemo(
-    () =>
-      unread > 0
-        ? [
-            {
-              key: 'notifications',
-              title: t('producer.hubs.supplies.openNotifications', { count: unread }),
-              subtitle: t('producer.dashboard.nextStep.notificationsBody'),
-              icon: Bell,
-              onPress: () => router.push('/(producer)/notifications'),
-            },
-          ]
-        : [],
-    [t, router, unread],
+  const statusLine = suppliesStatusLine(
+    t,
+    data.unreadCount,
+    data.suppliesSnapshot,
+    data.suppliesSnapshotLoaded,
   );
 
-  const fieldItems = useMemo(
-    () => [
+  const steps = useMemo(
+    (): WorkflowStep[] => [
+      {
+        key: 'map',
+        icon: MapPinned,
+        titleKey: 'producer.hubs.supplies.workflow.mapTitle',
+        descKey: 'producer.hubs.supplies.workflow.mapDesc',
+        href: '/map',
+      },
       {
         key: 'materials',
-        title: t('producer.dashboard.farmer.materialsTitle'),
-        subtitle: t('producer.hubs.supplies.materialsDesc'),
         icon: Box,
-        onPress: () => router.push('/(producer)/materials'),
+        titleKey: 'producer.hubs.supplies.workflow.materialsTitle',
+        descKey: 'producer.hubs.supplies.workflow.materialsDesc',
+        href: '/(producer)/materials',
       },
       {
-        key: 'costs',
-        title: t('producer.costCalculator.title'),
-        subtitle: t('producer.dashboard.costCalculatorDesc'),
-        icon: Calculator,
-        onPress: () => router.push('/(producer)/(tabs)/cost-calculator'),
+        key: 'partner-orders',
+        icon: ShoppingBag,
+        titleKey: 'producer.hubs.supplies.workflow.partnerOrdersTitle',
+        descKey: 'producer.hubs.supplies.workflow.partnerOrdersDesc',
+        href: '/(producer)/partner-orders',
       },
-    ],
-    [t, router],
-  );
-
-  const offerItems = useMemo(
-    () => [
       {
         key: 'products',
-        title: t('producer.hubs.supplies.productsTitle'),
-        subtitle: t('producer.hubs.supplies.productsDesc'),
         icon: Package,
-        onPress: () => router.push('/(producer)/(tabs)/products'),
+        titleKey: 'producer.hubs.supplies.workflow.productsTitle',
+        descKey: 'producer.hubs.supplies.workflow.productsDesc',
+        href: '/(producer)/(tabs)/products',
+      },
+      {
+        key: 'cost-calculator',
+        icon: Calculator,
+        titleKey: 'producer.hubs.supplies.workflow.costCalculatorTitle',
+        descKey: 'producer.hubs.supplies.workflow.costCalculatorDesc',
+        href: '/(producer)/(tabs)/cost-calculator',
       },
     ],
-    [t, router],
+    [],
   );
 
   return (
-    <EnterpriseScreen
-      fillViewport
-      withTopWash
-      refreshing={tabRefresh.refreshing}
-      onRefresh={() => void tabRefresh.onRefresh()}
-      contentPaddingBottom={Math.max(p.bottomInset, 16) + 12}
-      header={
-        <GrowerTabShellHeader
-          eyebrow={t('producer.tabs.supplies')}
-          title={t('producer.hubs.supplies.title')}
-          statusLine={statusLine}
-        />
-      }
-    >
-      <TabRootBody style={{ paddingTop: 0 }}>
-        <HubMetricsStrip rows={metricRows} />
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: theme.spacing.md, paddingBottom: 100 }}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={tabRefresh.refreshing}
+            onRefresh={() => void tabRefresh.onRefresh()}
+            tintColor={theme.colors.primary}
+          />
+        }
+      >
+        <View style={{ paddingTop: 60, paddingBottom: theme.spacing.md }}>
+          <Text
+            style={{
+              fontSize: 22,
+              fontWeight: '600',
+              color: theme.colors.text.primary,
+              lineHeight: 30,
+            }}
+          >
+            {t('producer.hubs.supplies.screenTitle')}
+          </Text>
+          <Text
+            style={{
+              marginTop: 4,
+              fontSize: 14,
+              fontWeight: '400',
+              color: theme.colors.text.secondary,
+              lineHeight: 20,
+            }}
+          >
+            {t('producer.hubs.supplies.screenSubtitle')}
+          </Text>
+          <Text
+            style={{
+              marginTop: 10,
+              fontSize: 14,
+              fontWeight: '400',
+              color: theme.colors.text.secondary,
+              lineHeight: 20,
+            }}
+          >
+            {statusLine}
+          </Text>
+        </View>
 
-        <TouchableOpacity
-          onPress={() => router.push('/map' as Href)}
-          activeOpacity={0.72}
-          style={[enterpriseUi.inAppPanel, styles.mapRow]}
-          accessibilityRole="button"
-          accessibilityLabel={t('producer.dashboard.suppliersMap')}
-        >
-          <View style={enterpriseUi.navRowIcon}>
-            <MapPinned size={20} color={enterpriseColors.primary} strokeWidth={1.5} />
-          </View>
-          <View style={styles.mapCopy}>
-            <Text style={enterpriseUi.navRowTitle}>{t('producer.dashboard.suppliersMap')}</Text>
-            <Text style={enterpriseUi.navRowSubtitle}>{t('producer.dashboard.suppliersMapDesc')}</Text>
-          </View>
-        </TouchableOpacity>
-
-        <SuppliesHubOrdersPreview
-          loaded={snapLoaded}
-          orders={snapLoaded ? snap.recentOrders : []}
-          totalCount={snapLoaded ? snap.partnerOrdersTotal : 0}
-        />
-
-        {inboxItems.length > 0 ? <EnterpriseNavSection items={inboxItems} /> : null}
-
-        <EnterpriseNavSection
-          title={t('producer.hubs.supplies.sectionInputs')}
-          items={fieldItems}
-        />
-
-        <EnterpriseNavSection
-          title={t('producer.hubs.supplies.sectionOffer')}
-          items={offerItems}
-        />
-      </TabRootBody>
-    </EnterpriseScreen>
+        <View style={{ gap: 12 }}>
+          {steps.map((item) => {
+            const Icon = item.icon;
+            const title = t(item.titleKey);
+            const desc = t(item.descKey);
+            return (
+              <TouchableOpacity
+                key={item.key}
+                onPress={() => router.push(item.href)}
+                activeOpacity={0.72}
+                accessibilityRole="button"
+                accessibilityLabel={`${title}. ${desc}`}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  minHeight: 72,
+                  paddingHorizontal: theme.spacing.md,
+                  paddingVertical: theme.spacing.sm + 4,
+                  gap: 12,
+                  backgroundColor: theme.colors.background,
+                  borderWidth: 0.5,
+                  borderColor: theme.colors.border,
+                  borderRadius: theme.borderRadius.md,
+                }}
+              >
+                <View
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 22,
+                    backgroundColor: theme.colors.primaryLight,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Icon size={22} color={theme.colors.primary} strokeWidth={1.5} />
+                </View>
+                <View style={{ flex: 1, minWidth: 0 }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: '500',
+                      color: theme.colors.text.primary,
+                      lineHeight: 22,
+                    }}
+                  >
+                    {title}
+                  </Text>
+                  <Text
+                    numberOfLines={2}
+                    style={{
+                      marginTop: 2,
+                      fontSize: 14,
+                      fontWeight: '400',
+                      color: theme.colors.text.secondary,
+                      lineHeight: 20,
+                    }}
+                  >
+                    {desc}
+                  </Text>
+                </View>
+                <ChevronRight size={20} color={theme.colors.text.secondary} strokeWidth={1.5} />
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </ScrollView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  mapRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 14,
-    marginBottom: 18,
-    gap: 4,
-  },
-  mapCopy: {
-    flex: 1,
-    minWidth: 0,
-  },
-});

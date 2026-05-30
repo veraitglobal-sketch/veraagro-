@@ -1,43 +1,6 @@
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from './client';
-import { API_URL } from '../api-url';
-import { apiErrorMessage, axiosResponseStatus, isLikelyNetworkError } from '../api-error';
-import type {
-  Product,
-  Estate,
-  Parcel,
-  Category,
-  AiAssistantResponse,
-  RetailLocation,
-  FieldEntry,
-  GrowthLog,
-  Order,
-  ProductPassport,
-  BatchAvailability,
-  QualityEntry,
-  LogisticsDriverRow,
-  LogisticsVehicleRow,
-  PackageBadgeType,
-  MissionAssignedDriver,
-  MissionVehicleInfo,
-  Mission,
-  FinancialDashboardApiResponse,
-  Notification,
-  RequiredCertification,
-  DigitalHandover,
-  CompliancePhoto,
-  LabelRollRow,
-  ComplianceBatchStatus,
-  Material,
-  TreatmentLog,
-  PlotBlueprintZone,
-  PlotBlueprintPartition,
-  PlotBlueprint,
-  CreateHarvestPlanBody,
-} from './types';
+import type { Notification } from './types';
 
-// Notifications API
 function normalizeNotificationRow(n: Record<string, unknown>): Notification {
   const status = n.status as string | undefined;
   return {

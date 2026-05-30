@@ -1,3 +1,5 @@
+import { resolveAppLocaleTag } from './date-locale';
+
 /** ISO calendar date `YYYY-MM-DD` helpers (UTC noon avoids TZ off-by-one). */
 
 export function toYmd(date: Date): string {
@@ -24,7 +26,7 @@ export function parseYmd(ymd: string): Date {
 export function formatYmdForDisplay(ymd: string, language: string): string {
   if (!ymd.trim()) return '';
   const d = parseYmd(ymd);
-  const loc = language?.startsWith('sr') ? 'sr-Latn-RS' : 'en-GB';
+  const loc = resolveAppLocaleTag(language);
   try {
     return d.toLocaleDateString(loc, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
   } catch {

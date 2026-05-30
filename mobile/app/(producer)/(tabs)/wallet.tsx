@@ -1,5 +1,6 @@
-import WalletScreen from '../../../features/grower/wallet/WalletScreen';
+import { Redirect } from 'expo-router';
 
-export default function WalletTabRoute() {
-  return <WalletScreen />;
+/** Legacy tab route — wallet lives on the producer stack for correct back navigation. */
+export default function WalletTabRedirect() {
+  return <Redirect href="/(producer)/wallet" />;
 }

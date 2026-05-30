@@ -71,7 +71,7 @@ function isUnrecoverableFieldEntry(entry: PendingFieldEntry): boolean {
 
 async function reconcileLegacyQueueOnce(): Promise<number> {
   const removed = await offlineStorage.reconcileLegacyFieldLogQueue();
-  if (removed > 0) {
+  if (removed > 0 && __DEV__) {
     console.log(`[field-entry sync] removed ${removed} legacy local row(s) (missing parcel/plan)`);
   }
   return removed;
@@ -666,7 +666,7 @@ export const syncService = {
     try {
       await this.syncAll();
     } catch (error) {
-      console.log('Auto-sync failed (offline?):', error);
+      if (__DEV__) console.log('Auto-sync failed (offline?):', error);
     }
   },
 };

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useEffect, useCallback } from 'react';
@@ -21,30 +21,41 @@ export default function ProductDetailScreen() {
   const p = useBioVeraScreenPadding();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const isReservationMode = mode === 'reserve';
   const localeTag = useAppLocaleTag();
 
-  const loadProduct = useCallback(async () => {
+  const loadProduct = useCallback(async (opts?: { background?: boolean }) => {
     if (!id) {
       setProduct(null);
       setLoading(false);
       return;
     }
+    const background = opts?.background === true;
+    if (!background) setLoading(true);
     try {
-      setLoading(true);
       const products = await inventoryAPI.getAvailableProducts();
       const found = products.find((pRow) => pRow.id === id);
       setProduct(found || null);
     } catch (error) {
       console.error('Error loading product:', error);
     } finally {
-      setLoading(false);
+      if (!background) setLoading(false);
     }
   }, [id]);
 
   useEffect(() => {
-    loadProduct();
+    void loadProduct();
+  }, [loadProduct]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await loadProduct({ background: true });
+    } finally {
+      setRefreshing(false);
+    }
   }, [loadProduct]);
 
   const handleAddToCart = () => {
@@ -81,7 +92,7 @@ export default function ProductDetailScreen() {
           style={{
             marginTop: theme.spacing.md,
             fontSize: 14,
-            fontWeight: '300',
+            fontWeight: '400',
             color: theme.colors.text.secondary,
             textAlign: 'center',
           }}
@@ -150,7 +161,18 @@ export default function ProductDetailScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void onRefresh()}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+            progressViewOffset={p.topInset + 10}
+          />
+        }
+      >
         {/* Large Product Image */}
         <View
           style={{
@@ -170,7 +192,7 @@ export default function ProductDetailScreen() {
           <Text
             style={{
               fontSize: 16,
-              fontWeight: '300',
+              fontWeight: '400',
               letterSpacing: 4,
               color: theme.colors.text.primary,
               marginBottom: theme.spacing.xl,
@@ -185,7 +207,7 @@ export default function ProductDetailScreen() {
             <Text
               style={{
                 fontSize: 32,
-                fontWeight: '300',
+                fontWeight: '400',
                 color: theme.colors.text.primary,
                 letterSpacing: 1,
               }}
@@ -197,7 +219,7 @@ export default function ProductDetailScreen() {
             <Text
               style={{
                 fontSize: 13,
-                fontWeight: '300',
+                fontWeight: '400',
                 color: theme.colors.text.secondary,
                 marginTop: 4,
                 letterSpacing: 0.5,
@@ -218,7 +240,7 @@ export default function ProductDetailScreen() {
           >
             <Text
               style={{
-                fontSize: 11,
+                fontSize: 14,
                 fontWeight: '500',
                 letterSpacing: 2,
                 color: theme.colors.text.secondary,
@@ -233,7 +255,7 @@ export default function ProductDetailScreen() {
               <Text
                 style={{
                   fontSize: 13,
-                  fontWeight: '300',
+                  fontWeight: '400',
                   color: theme.colors.text.primary,
                   marginLeft: 6,
                   letterSpacing: 0.3,
@@ -245,8 +267,8 @@ export default function ProductDetailScreen() {
             {product.estate?.location && (
               <Text
                 style={{
-                  fontSize: 12,
-                  fontWeight: '300',
+                  fontSize: 14,
+                  fontWeight: '400',
                   color: theme.colors.text.secondary,
                   marginLeft: 20,
                   letterSpacing: 0.3,
@@ -261,7 +283,7 @@ export default function ProductDetailScreen() {
           <View style={{ marginBottom: theme.spacing.xl }}>
             <Text
               style={{
-                fontSize: 11,
+                fontSize: 14,
                 fontWeight: '500',
                 letterSpacing: 2,
                 color: theme.colors.text.secondary,
@@ -273,29 +295,29 @@ export default function ProductDetailScreen() {
             </Text>
             <View style={{ gap: theme.spacing.sm }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.secondary }}>
+                <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary }}>
                   {t('producer.orders.quantity')}
                 </Text>
-                <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.primary }}>
+                <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.primary }}>
                   {product.quantity} {product.unit}
                 </Text>
               </View>
               {product.harvestDate && (
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.secondary }}>
+                  <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary }}>
                     {t('producer.batches.harvestLabel')}
                   </Text>
-                  <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.primary }}>
+                  <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.primary }}>
                     {new Date(product.harvestDate).toLocaleDateString(localeTag)}
                   </Text>
                 </View>
               )}
               {product.daysInConversion != null && (
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.secondary }}>
+                  <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary }}>
                     {t('buyer.productDetail.daysInConversion')}
                   </Text>
-                  <Text style={{ fontSize: 13, fontWeight: '300', color: theme.colors.text.primary }}>
+                  <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.primary }}>
                     {product.daysInConversion}
                   </Text>
                 </View>
@@ -314,7 +336,7 @@ export default function ProductDetailScreen() {
           >
             <Text
               style={{
-                fontSize: 11,
+                fontSize: 14,
                 fontWeight: '500',
                 letterSpacing: 2,
                 color: theme.colors.text.secondary,
@@ -328,13 +350,15 @@ export default function ProductDetailScreen() {
               <TouchableOpacity
                 onPress={() => setQuantity(Math.max(1, quantity - 1))}
                 style={{ padding: theme.spacing.sm }}
+                accessibilityRole="button"
+                accessibilityLabel={t('buyer.cart.decreaseQty')}
               >
                 <Minus size={20} color={theme.colors.text.primary} strokeWidth={1.5} />
               </TouchableOpacity>
               <Text
                 style={{
                   fontSize: 18,
-                  fontWeight: '300',
+                  fontWeight: '400',
                   color: theme.colors.text.primary,
                   minWidth: 40,
                   textAlign: 'center',
@@ -346,6 +370,8 @@ export default function ProductDetailScreen() {
               <TouchableOpacity
                 onPress={() => setQuantity(quantity + 1)}
                 style={{ padding: theme.spacing.sm }}
+                accessibilityRole="button"
+                accessibilityLabel={t('buyer.cart.increaseQty')}
               >
                 <Plus size={20} color={theme.colors.text.primary} strokeWidth={1.5} />
               </TouchableOpacity>
@@ -380,7 +406,7 @@ export default function ProductDetailScreen() {
           <Text
             style={{
               fontSize: 14,
-              fontWeight: '300',
+              fontWeight: '400',
               color: theme.colors.text.inverse,
               letterSpacing: 1,
             }}

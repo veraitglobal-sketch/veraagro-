@@ -17,11 +17,12 @@ import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import ViewShot, { type CaptureOptions } from 'react-native-view-shot';
 import Svg, { Polyline } from 'react-native-svg';
-import { colors } from '../../lib/colors';
 import { theme } from '../../lib/theme';
 import { digitalHandoverAPI } from '../../lib/api';
 import { apiErrorMessage } from '../../lib/api-error';
 import StepIndicator from '../../components/StepIndicator';
+import { FormHelperText } from '../../components/FormHelperText';
+import { farmerFormUi } from '../../lib/farmer-form-ui';
 
 const PHOTO_COUNT = 4;
 const SLOT_KEYS = ['slot0', 'slot1', 'slot2', 'slot3'] as const;
@@ -89,7 +90,7 @@ export default function HandoverCompleteScreen() {
     async (index: number) => {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert(t('error'), t('handover.permCamera', { defaultValue: 'Camera permission is required' }));
+        Alert.alert(t('common.permissionRequired'), t('handover.permCamera'));
         return;
       }
       setPicking(true);
@@ -116,26 +117,26 @@ export default function HandoverCompleteScreen() {
 
   const handleComplete = async () => {
     if (!visualCheck) {
-      Alert.alert(t('error'), t('handover.errVisual'));
+      Alert.alert(t('common.required'), t('handover.errVisual'));
       return;
     }
     if (!temperature || Number.isNaN(parseFloat(temperature))) {
-      Alert.alert(t('error'), t('handover.errTemp'));
+      Alert.alert(t('common.required'), t('handover.errTemp'));
       return;
     }
     if (photos.some((p) => !p)) {
-      Alert.alert(t('error'), t('handover.errPhotos'));
+      Alert.alert(t('common.required'), t('handover.errPhotos'));
       return;
     }
     if (!handoverId) {
-      Alert.alert(t('error'), t('handover.errHandoverId'));
+      Alert.alert(t('common.required'), t('handover.errHandoverId'));
       return;
     }
 
     let signatureDataUrl: string | undefined;
     if (visualCheck === 'FRESH') {
       if (!hasStrokes(strokes)) {
-        Alert.alert(t('error'), t('handover.errSignature'));
+        Alert.alert(t('common.required'), t('handover.errSignature'));
         return;
       }
       try {
@@ -147,7 +148,7 @@ export default function HandoverCompleteScreen() {
         // fall through — caught below
       }
       if (!signatureDataUrl || signatureDataUrl.length < 80) {
-        Alert.alert(t('error'), t('handover.errSignatureCapture'));
+        Alert.alert(t('common.required'), t('handover.errSignatureCapture'));
         return;
       }
     }
@@ -171,7 +172,7 @@ export default function HandoverCompleteScreen() {
         [{ text: t('common.ok'), onPress: () => router.back() }],
       );
     } catch (error: unknown) {
-      Alert.alert(t('error'), apiErrorMessage(error, t('handover.errGeneric')));
+      Alert.alert(t('common.error'), apiErrorMessage(error, t('handover.errGeneric')));
     } finally {
       setLoading(false);
     }
@@ -180,7 +181,7 @@ export default function HandoverCompleteScreen() {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
         <Text style={styles.loadingText}>{t('handover.completing')}</Text>
       </View>
     );
@@ -199,6 +200,7 @@ export default function HandoverCompleteScreen() {
         />
         <Text style={styles.blockTitle}>{t('handover.photosBlockTitle')}</Text>
         <Text style={styles.blockIntro}>{t('handover.photosBlockIntro')}</Text>
+        <FormHelperText style={{ marginTop: 0 }}>{t('form.helper.handoverPhotos')}</FormHelperText>
         {SLOT_KEYS.map((key, index) => (
           <View key={key} style={{ marginTop: 16 }}>
             <Text style={styles.label}>{t(`handover.${key}Label`)} *</Text>
@@ -206,19 +208,19 @@ export default function HandoverCompleteScreen() {
             <TouchableOpacity
               onPress={() => takePhoto(index)}
               disabled={picking}
-              style={styles.slot}
+              style={[styles.slot, farmerFormUi.touchTarget]}
               activeOpacity={0.8}
             >
               {photos[index] ? (
                 <Image source={{ uri: photos[index]! }} style={styles.thumb} />
               ) : (
                 <View style={styles.emptySlot}>
-                  {picking ? <ActivityIndicator color={colors.primary} /> : <ImageIcon size={32} color={colors.text.tertiary} />}
+                  {picking ? <ActivityIndicator color={theme.colors.primary} /> : <ImageIcon size={32} color={theme.colors.text.tertiary} />}
                 </View>
               )}
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => takePhoto(index)} style={styles.retake} disabled={picking}>
-              <Camera size={16} color={colors.primary} />
+            <TouchableOpacity onPress={() => takePhoto(index)} style={[styles.retake, farmerFormUi.touchTarget]} disabled={picking}>
+              <Camera size={16} color={theme.colors.primary} />
               <Text style={styles.retakeText}>
                 {photos[index] ? t('handover.replaceSlot') : t('handover.takeForSlot', { n: index + 1 })}
               </Text>
@@ -233,12 +235,12 @@ export default function HandoverCompleteScreen() {
               onPress={() => setVisualCheck('FRESH')}
               style={[
                 styles.pill,
-                { borderColor: visualCheck === 'FRESH' ? colors.primary : colors.border },
-                visualCheck === 'FRESH' && { backgroundColor: `${colors.primary}10` },
+                { borderColor: visualCheck === 'FRESH' ? theme.colors.primary : theme.colors.border },
+                visualCheck === 'FRESH' && { backgroundColor: `${theme.colors.primary}10` },
               ]}
             >
-              <CheckCircle2 size={24} color={visualCheck === 'FRESH' ? colors.primary : colors.text.secondary} />
-              <Text style={[styles.pillText, visualCheck === 'FRESH' && { color: colors.primary }]}>{t('handover.fresh')}</Text>
+              <CheckCircle2 size={24} color={visualCheck === 'FRESH' ? theme.colors.primary : theme.colors.text.secondary} />
+              <Text style={[styles.pillText, visualCheck === 'FRESH' && { color: theme.colors.primary }]}>{t('handover.fresh')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
@@ -247,12 +249,12 @@ export default function HandoverCompleteScreen() {
               }}
               style={[
                 styles.pill,
-                { borderColor: visualCheck === 'DAMAGED' ? colors.error : colors.border },
-                visualCheck === 'DAMAGED' && { backgroundColor: `${colors.error}10` },
+                { borderColor: visualCheck === 'DAMAGED' ? theme.colors.error : theme.colors.border },
+                visualCheck === 'DAMAGED' && { backgroundColor: `${theme.colors.error}10` },
               ]}
             >
-              <XCircle size={24} color={visualCheck === 'DAMAGED' ? colors.error : colors.text.secondary} />
-              <Text style={[styles.pillText, visualCheck === 'DAMAGED' && { color: colors.error }]}>{t('handover.damaged')}</Text>
+              <XCircle size={24} color={visualCheck === 'DAMAGED' ? theme.colors.error : theme.colors.text.secondary} />
+              <Text style={[styles.pillText, visualCheck === 'DAMAGED' && { color: theme.colors.error }]}>{t('handover.damaged')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -260,17 +262,18 @@ export default function HandoverCompleteScreen() {
         <View style={{ marginTop: 24 }}>
           <Text style={styles.label}>{t('handover.tempCheck')}</Text>
           <View style={styles.tempRow}>
-            <Thermometer size={20} color={colors.text.secondary} />
+            <Thermometer size={20} color={theme.colors.text.secondary} />
             <TextInput
               value={temperature}
               onChangeText={setTemperature}
               placeholder={t('handover.tempPlaceholder')}
-              placeholderTextColor={colors.text.tertiary}
+              placeholderTextColor={theme.colors.text.tertiary}
               keyboardType="decimal-pad"
               style={styles.input}
             />
             <Text style={styles.celsius}>°C</Text>
           </View>
+          <FormHelperText>{t('form.helper.handoverTemperature')}</FormHelperText>
         </View>
 
         {visualCheck === 'FRESH' && (
@@ -282,6 +285,7 @@ export default function HandoverCompleteScreen() {
               </TouchableOpacity>
             </View>
             <Text style={styles.hint}>{t('handover.signatureHint')}</Text>
+            <FormHelperText style={{ marginTop: 0 }}>{t('form.helper.handoverSignature')}</FormHelperText>
             <View style={styles.shotWrap} collapsable={false}>
               <ViewShot ref={viewShotRef} options={viewShotOptions} style={styles.shotInner}>
                 <View style={styles.padTouch} collapsable={false} {...panResponder.panHandlers}>
@@ -324,42 +328,42 @@ export default function HandoverCompleteScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.background },
-  centered: { flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { marginTop: 16, fontSize: 13, color: colors.text.secondary, fontWeight: '300' },
-  header: { padding: 20, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
-  title: { fontSize: 16, fontWeight: '300', color: colors.text.primary, letterSpacing: 0.5 },
-  body: { padding: 20, paddingBottom: 48 },
-  blockTitle: { fontSize: 16, fontWeight: '600', color: colors.text.primary, marginTop: 8 },
-  blockIntro: { fontSize: 13, color: colors.text.secondary, lineHeight: 20, marginTop: 6 },
-  label: { fontSize: 13, fontWeight: '600', color: colors.text.primary, marginBottom: 8 },
-  hint: { fontSize: 12, color: colors.text.tertiary, lineHeight: 18, marginBottom: 8 },
-  slot: { borderRadius: theme.borderRadius.md, borderWidth: 2, borderStyle: 'dashed', borderColor: colors.border, minHeight: 200, overflow: 'hidden' },
-  emptySlot: { flex: 1, minHeight: 200, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surface },
+  root: { flex: 1, backgroundColor: theme.colors.background },
+  centered: { flex: 1, backgroundColor: theme.colors.background, justifyContent: 'center', alignItems: 'center' },
+  loadingText: { marginTop: 16, fontSize: 13, color: theme.colors.text.secondary, fontWeight: '400' },
+  header: { padding: 20, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: theme.colors.border },
+  title: { fontSize: 16, fontWeight: '400', color: theme.colors.text.primary, letterSpacing: 0.5 },
+  body: { padding: 16, paddingBottom: 48 },
+  blockTitle: { fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginTop: 8 },
+  blockIntro: { fontSize: 13, color: theme.colors.text.secondary, lineHeight: 20, marginTop: 6 },
+  label: { fontSize: 13, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 8 },
+  hint: { fontSize: 14, color: theme.colors.text.tertiary, lineHeight: 18, marginBottom: 8 },
+  slot: { borderRadius: theme.borderRadius.md, borderWidth: 2, borderStyle: 'dashed', borderColor: theme.colors.border, minHeight: 200, overflow: 'hidden' },
+  emptySlot: { flex: 1, minHeight: 200, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.surface },
   thumb: { width: '100%', height: 200, resizeMode: 'cover' },
   retake: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8, alignSelf: 'flex-start' },
-  retakeText: { fontSize: 12, color: colors.primary, fontWeight: '500' },
+  retakeText: { fontSize: 14, color: theme.colors.primary, fontWeight: '500' },
   row: { flexDirection: 'row', gap: 12, marginTop: 8 },
-  pill: { flex: 1, padding: 16, borderRadius: 8, borderWidth: 0.5, alignItems: 'center' },
-  pillText: { marginTop: 8, fontSize: 12, fontWeight: '300' },
+  pill: { flex: 1, minHeight: 48, padding: 16, borderRadius: 8, borderWidth: 0.5, alignItems: 'center', justifyContent: 'center' },
+  pillText: { marginTop: 8, fontSize: 14, fontWeight: '400' },
   tempRow: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 0.5,
-    borderColor: colors.border,
+    borderColor: theme.colors.border,
     borderRadius: 8,
     paddingHorizontal: 12,
   },
-  input: { flex: 1, padding: 12, fontSize: 14, color: colors.text.primary, fontWeight: '300' },
-  celsius: { fontSize: 13, color: colors.text.secondary, marginRight: 8 },
-  cta: { marginTop: 32, backgroundColor: colors.primary, paddingVertical: 16, borderRadius: 8, alignItems: 'center' },
-  ctaText: { fontSize: 14, fontWeight: '600', color: colors.background },
+  input: { flex: 1, minHeight: 48, padding: 12, fontSize: 16, color: theme.colors.text.primary, fontWeight: '400' },
+  celsius: { fontSize: 14, color: theme.colors.text.secondary, marginRight: 8 },
+  cta: { marginTop: 32, backgroundColor: theme.colors.primary, minHeight: 48, paddingVertical: 12, paddingHorizontal: 16, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+  ctaText: { fontSize: 14, fontWeight: '600', color: theme.colors.background },
   padHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  clearText: { fontSize: 12, color: colors.primary, fontWeight: '500' },
+  clearText: { fontSize: 14, color: theme.colors.primary, fontWeight: '500' },
   shotWrap: {
     marginTop: 8,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
+    borderColor: theme.colors.border,
     borderRadius: theme.borderRadius.md,
     overflow: 'hidden',
     alignSelf: 'flex-start',

@@ -3,15 +3,17 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Modal,
   ScrollView,
   TextInput,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react-native';
-import { colors } from '../../../lib/colors';
-import { CROP_TYPES, CROP_STATUSES } from './constants';
+import { theme } from '../../../lib/theme';
+import { CROP_TYPES, CROP_STATUS_VALUES } from './constants';
 import type { Zone } from './types';
+import { BioVeraBottomSheet } from '../../../components/enterprise/BioVeraBottomSheet';
 
 interface ZoneModalProps {
   visible: boolean;
@@ -50,16 +52,8 @@ export function ZoneModal({
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
-        <View
-          style={{
-            backgroundColor: colors.background,
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
-            padding: 20,
-          }}
-        >
+    <BioVeraBottomSheet visible={visible} onClose={onClose} keyboardAvoiding>
+        <View style={{ padding: 20 }}>
           <View
             style={{
               flexDirection: 'row',
@@ -71,25 +65,26 @@ export function ZoneModal({
             <Text
               style={{
                 fontSize: 16,
-                fontWeight: '300',
-                color: colors.text.primary,
+                fontWeight: '400',
+                color: theme.colors.text.primary,
                 letterSpacing: 0.5,
               }}
             >
               {selectedZone?.name}
             </Text>
             <TouchableOpacity onPress={onClose}>
-              <X size={20} color={colors.text.secondary} strokeWidth={1} />
+              <X size={20} color={theme.colors.text.secondary} strokeWidth={1} />
             </TouchableOpacity>
           </View>
 
-          <ScrollView>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <ScrollView keyboardShouldPersistTaps="handled">
             <View style={{ marginBottom: 16 }}>
               <Text
                 style={{
-                  fontSize: 11,
-                  fontWeight: '300',
-                  color: colors.text.secondary,
+                  fontSize: 14,
+                  fontWeight: '400',
+                  color: theme.colors.text.secondary,
                   marginBottom: 6,
                 }}
               >
@@ -105,18 +100,18 @@ export function ZoneModal({
                         paddingHorizontal: 12,
                         paddingVertical: 8,
                         borderWidth: 0.5,
-                        borderColor: zoneCropType === crop ? colors.primary : colors.border,
+                        borderColor: zoneCropType === crop ? theme.colors.primary : theme.colors.border,
                         borderRadius: 6,
                         backgroundColor:
-                          zoneCropType === crop ? `${colors.primary}10` : colors.surface,
+                          zoneCropType === crop ? `${theme.colors.primary}10` : theme.colors.surface,
                       }}
                       activeOpacity={0.7}
                     >
                       <Text
                         style={{
-                          fontSize: 11,
-                          fontWeight: '300',
-                          color: zoneCropType === crop ? colors.primary : colors.text.secondary,
+                          fontSize: 14,
+                          fontWeight: '400',
+                          color: zoneCropType === crop ? theme.colors.primary : theme.colors.text.secondary,
                         }}
                       >
                         {crop}
@@ -130,9 +125,9 @@ export function ZoneModal({
             <View style={{ marginBottom: 16 }}>
               <Text
                 style={{
-                  fontSize: 11,
-                  fontWeight: '300',
-                  color: colors.text.secondary,
+                  fontSize: 14,
+                  fontWeight: '400',
+                  color: theme.colors.text.secondary,
                   marginBottom: 6,
                 }}
               >
@@ -148,12 +143,12 @@ export function ZoneModal({
                 style={{
                   padding: 12,
                   borderWidth: 0.5,
-                  borderColor: colors.border,
+                  borderColor: theme.colors.border,
                   borderRadius: 6,
-                  backgroundColor: colors.surface,
+                  backgroundColor: theme.colors.surface,
                   fontSize: 13,
-                  fontWeight: '300',
-                  color: colors.text.primary,
+                  fontWeight: '400',
+                  color: theme.colors.text.primary,
                   flexDirection: 'row',
                   alignItems: 'center',
                   gap: 8,
@@ -164,37 +159,37 @@ export function ZoneModal({
             <View style={{ marginBottom: 20 }}>
               <Text
                 style={{
-                  fontSize: 11,
-                  fontWeight: '300',
-                  color: colors.text.secondary,
+                  fontSize: 14,
+                  fontWeight: '400',
+                  color: theme.colors.text.secondary,
                   marginBottom: 6,
                 }}
               >
-                Status
+                {t('common.status')}
               </Text>
               <View style={{ gap: 8 }}>
-                {CROP_STATUSES.map((status) => (
+                {CROP_STATUS_VALUES.map((statusValue) => (
                   <TouchableOpacity
-                    key={status.value}
-                    onPress={() => setZoneStatus(status.value)}
+                    key={statusValue}
+                    onPress={() => setZoneStatus(statusValue)}
                     style={{
                       padding: 12,
                       borderWidth: 0.5,
-                      borderColor: zoneStatus === status.value ? colors.primary : colors.border,
+                      borderColor: zoneStatus === statusValue ? theme.colors.primary : theme.colors.border,
                       borderRadius: 6,
                       backgroundColor:
-                        zoneStatus === status.value ? `${colors.primary}10` : colors.surface,
+                        zoneStatus === statusValue ? `${theme.colors.primary}10` : theme.colors.surface,
                     }}
                     activeOpacity={0.7}
                   >
                     <Text
                       style={{
-                        fontSize: 12,
-                        fontWeight: '300',
-                        color: zoneStatus === status.value ? colors.primary : colors.text.secondary,
+                        fontSize: 14,
+                        fontWeight: '400',
+                        color: zoneStatus === statusValue ? theme.colors.primary : theme.colors.text.secondary,
                       }}
                     >
-                      {status.label}
+                      {t(`producer.plotMapper.cropStatus.${statusValue}`)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -204,7 +199,7 @@ export function ZoneModal({
             <TouchableOpacity
               onPress={handleSave}
               style={{
-                backgroundColor: colors.primary,
+                backgroundColor: theme.colors.primary,
                 paddingVertical: 14,
                 borderRadius: 6,
                 alignItems: 'center',
@@ -215,7 +210,7 @@ export function ZoneModal({
                 style={{
                   fontSize: 14,
                   fontWeight: '400',
-                  color: colors.background,
+                  color: theme.colors.background,
                   letterSpacing: 0.5,
                 }}
               >
@@ -223,8 +218,8 @@ export function ZoneModal({
               </Text>
             </TouchableOpacity>
           </ScrollView>
+            </TouchableWithoutFeedback>
         </View>
-      </View>
-    </Modal>
+    </BioVeraBottomSheet>
   );
 }

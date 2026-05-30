@@ -11,6 +11,8 @@ import {
   Platform,
   ScrollView,
   Pressable,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -101,9 +103,10 @@ export default function LoginScreen() {
       <AuthScreenShell footer={footer}>
         <KeyboardAvoidingView
           style={styles.flex}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <ScrollView
             contentContainerStyle={styles.scroll}
             keyboardShouldPersistTaps="handled"
@@ -210,6 +213,7 @@ export default function LoginScreen() {
               </TouchableOpacity>
             </AuthPanel>
           </ScrollView>
+          </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
       </AuthScreenShell>
     </SafeAreaView>

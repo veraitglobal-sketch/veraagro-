@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native';
-import { colors } from '../lib/colors';
+import { theme } from '../lib/theme';
 
 interface StepIndicatorProps {
   currentStep: number;
@@ -28,8 +28,8 @@ export default function StepIndicator({ currentStep, totalSteps, labels }: StepI
                 height: 32,
                 borderRadius: 16,
                 borderWidth: isActive ? 0 : 0.5,
-                borderColor: colors.border,
-                backgroundColor: isActive ? colors.primary : colors.background,
+                borderColor: theme.colors.border,
+                backgroundColor: isActive ? theme.colors.primary : theme.colors.background,
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: 8,
@@ -41,7 +41,7 @@ export default function StepIndicator({ currentStep, totalSteps, labels }: StepI
                     width: 12,
                     height: 12,
                     borderRadius: 6,
-                    backgroundColor: colors.background,
+                    backgroundColor: theme.colors.background,
                   }}
                 />
               ) : (
@@ -50,7 +50,7 @@ export default function StepIndicator({ currentStep, totalSteps, labels }: StepI
                     width: 8,
                     height: 8,
                     borderRadius: 4,
-                    backgroundColor: colors.text.tertiary,
+                    backgroundColor: theme.colors.text.tertiary,
                   }}
                 />
               )}
@@ -59,9 +59,9 @@ export default function StepIndicator({ currentStep, totalSteps, labels }: StepI
             {/* Step Label */}
             <Text
               style={{
-                fontSize: 10,
-                fontWeight: '300',
-                color: isActive ? colors.text.primary : colors.text.secondary,
+                fontSize: 13,
+                fontWeight: '400',
+                color: isActive ? theme.colors.text.primary : theme.colors.text.secondary,
                 letterSpacing: 0.3,
                 textAlign: 'center',
               }}
@@ -78,7 +78,7 @@ export default function StepIndicator({ currentStep, totalSteps, labels }: StepI
                   left: '50%',
                   width: '100%',
                   height: 0.5,
-                  backgroundColor: step < currentStep ? colors.primary : colors.border,
+                  backgroundColor: step < currentStep ? theme.colors.primary : theme.colors.border,
                   zIndex: -1,
                 }}
               />

@@ -7,6 +7,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useGrowerDashboard } from '../../../contexts/GrowerDashboardContext';
 import { useGrowerTabRefresh } from '../../../hooks/useGrowerTabRefresh';
+import { useWallet } from '../../../contexts/WalletContext';
 import { BioVeraProvenanceRibbon } from '../../../components/enterprise/BioVeraProvenanceRibbon';
 import NextStepCard from './NextStepCard';
 import { HomeFarmSnapshot } from './HomeFarmSnapshot';
@@ -33,6 +34,7 @@ export default function DashboardScreen() {
   const router = useRouter();
   const p = useBioVeraScreenPadding();
   const data = useGrowerDashboard();
+  const { ordersFinancial } = useWallet();
   const tabRefresh = useGrowerTabRefresh();
 
   const farmName = data.estates[0]?.name || t('producer.dashboard.defaultFarmName');
@@ -71,7 +73,7 @@ export default function DashboardScreen() {
           batchesReadyForTransport={data.batchesReadyForTransport}
           activeBatches={data.activeBatches.length}
           offlinePending={data.offlinePending}
-          ordersFinancial={data.ordersFinancial}
+          ordersFinancial={ordersFinancial}
         />
 
         <NextStepCard
@@ -106,7 +108,7 @@ export default function DashboardScreen() {
           batchesReadyForTransport={data.batchesReadyForTransport}
           activeBatches={data.activeBatches.length}
           offlinePending={data.offlinePending}
-          ordersFinancial={data.ordersFinancial}
+          ordersFinancial={ordersFinancial}
         />
       </TabRootBody>
     </EnterpriseScreen>

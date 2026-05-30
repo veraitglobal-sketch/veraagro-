@@ -5,7 +5,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScanLine, X, Check } from 'lucide-react-native';
-import { colors } from '../../../lib/colors';
+import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { materialValidator } from '../../../lib/integrity-guard';
 
@@ -114,7 +114,7 @@ export default function ScannerScreen() {
   if (!permission) {
     return (
       <View style={[styles.container, styles.centerContent]}>
-        <ActivityIndicator size="large" color={colors.accent} />
+        <ActivityIndicator size="large" color={theme.colors.accent} />
         <Text style={[styles.text, { marginTop: 16 }]}>{t('producer.scanner.checkingPermissions')}</Text>
       </View>
     );
@@ -131,9 +131,9 @@ export default function ScannerScreen() {
         </Text>
         <TouchableOpacity
           onPress={requestPermission}
-          style={[styles.button, { backgroundColor: colors.accent }]}
+          style={[styles.button, { backgroundColor: theme.colors.accent }]}
         >
-          <Text style={[styles.buttonText, { color: colors.background }]}>
+          <Text style={[styles.buttonText, { color: theme.colors.background }]}>
             {t('producer.scanner.allowCamera')}
           </Text>
         </TouchableOpacity>
@@ -168,7 +168,7 @@ export default function ScannerScreen() {
             onPress={() => router.back()}
             style={styles.closeButton}
           >
-            <X size={24} color={colors.text.inverse} strokeWidth={1.5} />
+            <X size={24} color={theme.colors.text.inverse} strokeWidth={1.5} />
           </TouchableOpacity>
           <Text style={styles.overlayTitle}>{t('producer.scanner.scanBarcode')}</Text>
           <View style={{ width: 40 }} />
@@ -186,7 +186,7 @@ export default function ScannerScreen() {
             {/* Scanning line animation */}
             {!scanned && (
               <View style={styles.scanLine}>
-                <ScanLine size={200} color={colors.accent} strokeWidth={2} />
+                <ScanLine size={200} color={theme.colors.accent} strokeWidth={2} />
               </View>
             )}
           </View>
@@ -196,22 +196,22 @@ export default function ScannerScreen() {
         <View style={styles.bottomInfo}>
           {validating ? (
             <View style={styles.statusContainer}>
-              <ActivityIndicator size="small" color={colors.accent} />
+              <ActivityIndicator size="small" color={theme.colors.accent} />
               <Text style={styles.statusText}>{t('producer.scanner.validating')}</Text>
             </View>
           ) : scanned && barcode ? (
             <View style={styles.statusContainer}>
               {isValid ? (
                 <>
-                  <Check size={20} color={colors.success} strokeWidth={2} />
-                  <Text style={[styles.statusText, { color: colors.success }]}>
+                  <Check size={20} color={theme.colors.success} strokeWidth={2} />
+                  <Text style={[styles.statusText, { color: theme.colors.success }]}>
                     {t('producer.scanner.validBarcode')}
                   </Text>
                 </>
               ) : (
                 <>
-                  <X size={20} color={colors.error} strokeWidth={2} />
-                  <Text style={[styles.statusText, { color: colors.error }]}>
+                  <X size={20} color={theme.colors.error} strokeWidth={2} />
+                  <Text style={[styles.statusText, { color: theme.colors.error }]}>
                     {t('producer.scanner.barcodeInvalid')}
                   </Text>
                 </>
@@ -226,9 +226,9 @@ export default function ScannerScreen() {
           {scanned && (
             <TouchableOpacity
               onPress={handleReset}
-              style={[styles.resetButton, { borderColor: colors.border }]}
+              style={[styles.resetButton, { borderColor: theme.colors.border }]}
             >
-              <Text style={[styles.resetButtonText, { color: colors.text.primary }]}>
+              <Text style={[styles.resetButtonText, { color: theme.colors.text.primary }]}>
                 {t('producer.scanner.scanAgain')}
               </Text>
             </TouchableOpacity>
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   overlayTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.text.inverse,
+    color: theme.colors.text.inverse,
     letterSpacing: 0.5,
   },
   scanArea: {
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     height: 250,
     position: 'relative',
     borderWidth: 2,
-    borderColor: colors.accent,
+    borderColor: theme.colors.accent,
     borderRadius: 12,
     backgroundColor: 'transparent',
   },
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 30,
     height: 30,
-    borderColor: colors.accent,
+    borderColor: theme.colors.accent,
   },
   topLeft: {
     top: -2,
@@ -341,11 +341,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     marginLeft: 8,
-    color: colors.text.inverse,
+    color: theme.colors.text.inverse,
   },
   instructionText: {
     fontSize: 13,
-    color: colors.text.inverse,
+    color: theme.colors.text.inverse,
     textAlign: 'center',
     opacity: 0.9,
   },
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
-    backgroundColor: colors.background,
+    backgroundColor: theme.colors.background,
   },
   resetButtonText: {
     fontSize: 13,
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   text: {
-    color: colors.text.primary,
+    color: theme.colors.text.primary,
     fontSize: 14,
   },
   title: {

@@ -15,7 +15,7 @@ export default function BatchInfoBlock({ mission }: BatchInfoBlockProps) {
   const batch = mission.batch as { batchId?: string; productName?: string };
 
   return (
-    <MissionDetailSection title={t('producer.missionsCreate.batchLabel')} icon={Package}>
+    <MissionDetailSection title={t('producer.batches.batch')} icon={Package}>
       <Text style={enterpriseUi.navRowSubtitle}>{batch.batchId || mission.batchId}</Text>
       {batch.productName ? (
         <Text style={enterpriseUi.navRowTitle}>{batch.productName}</Text>

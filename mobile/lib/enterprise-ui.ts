@@ -93,7 +93,7 @@ export const enterpriseUi = {
 
   heroTitle: {
     fontSize: 34,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.gray900,
     letterSpacing: -0.8,
     lineHeight: 42,
@@ -114,7 +114,7 @@ export const enterpriseUi = {
   } as TextStyle,
 
   sectionLabel: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
     color: enterpriseColors.gray600,
     letterSpacing: 0.6,
@@ -133,7 +133,7 @@ export const enterpriseUi = {
 
   inAppTitle: {
     fontSize: 28,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.gray900,
     letterSpacing: -0.65,
     lineHeight: 34,
@@ -187,14 +187,14 @@ export const enterpriseUi = {
 
   kpiValue: {
     fontSize: 26,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.gray900,
     fontVariant: ['tabular-nums'],
     letterSpacing: -0.6,
   } as TextStyle,
 
   kpiLabel: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
     color: enterpriseColors.gray600,
     letterSpacing: -0.05,
@@ -229,7 +229,7 @@ export const enterpriseUi = {
 
   kpiValueAccent: {
     fontSize: 26,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.primary,
     fontVariant: ['tabular-nums'],
     letterSpacing: -0.6,
@@ -321,7 +321,7 @@ export const enterpriseUi = {
 
   authTaglineLine: {
     fontSize: 19,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.gray900,
     letterSpacing: -0.35,
     lineHeight: 26,
@@ -367,7 +367,7 @@ export const enterpriseUi = {
 
   authTitle: {
     fontSize: 26,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.gray900,
     letterSpacing: -0.5,
     textAlign: 'center',
@@ -392,7 +392,7 @@ export const enterpriseUi = {
   } as TextStyle,
 
   authHint: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '400',
     color: enterpriseColors.gray600,
     marginBottom: 6,
@@ -507,7 +507,7 @@ export const enterpriseUi = {
   } as ViewStyle,
 
   tabBarLabel: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
     letterSpacing: -0.15,
     marginTop: 2,

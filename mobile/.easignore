@@ -1,4 +1,6 @@
-# EAS upload ignore (monorepo: keep ../shared, skip heavy siblings)
+# EAS upload ignore — patterns must be relative (no ".." segments).
+# @see https://docs.expo.dev/build-reference/easignore/
+
 node_modules/
 .expo/
 dist/
@@ -9,8 +11,8 @@ android/
 .env
 .env.*
 
-../backend/
-../web/
-../blockchain/
-../filedump/
-../node_modules/
+# Monorepo siblings (repo-root folder names when EAS uploads the git tree)
+backend/
+web/
+blockchain/
+filedump/

@@ -27,8 +27,8 @@ export default function BuyerTabsLayout() {
             paddingTop: 8,
           },
           tabBarLabelStyle: {
-            fontSize: 9,
-            fontWeight: '300',
+            fontSize: 13,
+            fontWeight: '400',
             letterSpacing: 0.2,
             marginTop: 0,
           },
@@ -43,7 +43,7 @@ export default function BuyerTabsLayout() {
           headerTintColor: theme.colors.text.primary,
           headerTitleStyle: {
             fontSize: 18,
-            fontWeight: '300',
+            fontWeight: '400',
             letterSpacing: -0.2,
           },
         }}

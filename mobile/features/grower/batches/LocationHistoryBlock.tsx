@@ -1,7 +1,6 @@
 import { View, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { theme } from '../../../lib/theme';
-import { colors } from '../../../lib/colors';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 
 export default function LocationHistoryBlock({ locationHistory }: { locationHistory: any[] }) {
@@ -18,16 +17,16 @@ export default function LocationHistoryBlock({ locationHistory }: { locationHist
   return (
     <View
       style={{
-        backgroundColor: colors.background,
+        backgroundColor: theme.colors.background,
         borderRadius: theme.borderRadius.md,
         padding: theme.spacing.md,
         marginBottom: theme.spacing.md,
         borderWidth: 0.5,
-        borderColor: colors.border,
+        borderColor: theme.colors.border,
       }}
     >
-      <Text style={{ fontSize: 15, fontWeight: '300', color: colors.text.primary, marginBottom: theme.spacing.md, letterSpacing: 0.3 }}>
-        {t('producer.batches.locationHistoryTitle')}
+      <Text style={{ fontSize: 15, fontWeight: '400', color: theme.colors.text.primary, marginBottom: theme.spacing.md, letterSpacing: 0.3 }}>
+        {t('producer.batches.locationHistory')}
       </Text>
       <View style={{ gap: theme.spacing.sm }}>
         {locationHistory.map((entry: any, index: number) => (
@@ -36,14 +35,14 @@ export default function LocationHistoryBlock({ locationHistory }: { locationHist
             style={{
               paddingBottom: index < locationHistory.length - 1 ? theme.spacing.sm : 0,
               borderBottomWidth: index < locationHistory.length - 1 ? 0.5 : 0,
-              borderBottomColor: colors.border,
+              borderBottomColor: theme.colors.border,
             }}
           >
-            <Text style={{ fontSize: 13, fontWeight: '300', color: colors.text.primary }}>
+            <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.primary }}>
               {entry.hubId || entry.location || t('producer.batches.locationUnknown')}
             </Text>
             {entry.timestamp && (
-              <Text style={{ fontSize: 11, fontWeight: '300', color: colors.text.secondary, marginTop: 2 }}>
+              <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.secondary, marginTop: 2 }}>
                 {new Date(entry.timestamp).toLocaleString(dateLocale, dateOpts)}
               </Text>
             )}

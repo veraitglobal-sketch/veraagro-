@@ -83,7 +83,7 @@ export default function SupplierMessagesScreen() {
                 backgroundColor: activeId === thread.id ? theme.colors.primaryLight : 'transparent',
               }}
             >
-              <Text style={{ fontSize: 12, color: theme.colors.text.primary }} numberOfLines={2}>
+              <Text style={{ fontSize: 14, color: theme.colors.text.primary }} numberOfLines={2}>
                 {thread.farmer
                   ? `${thread.farmer.firstName || ''} ${thread.farmer.lastName || ''}\n${thread.farmer.partnerCode || ''}`
                   : t('supplier.threadUntitledShort', {
@@ -102,7 +102,7 @@ export default function SupplierMessagesScreen() {
                 {messages.map((m) => (
                   <View key={m.id} style={{ marginBottom: 10 }}>
                     <Text style={{ fontSize: 14, color: theme.colors.text.primary }}>{m.body}</Text>
-                    <Text style={{ fontSize: 10, color: theme.colors.text.tertiary, marginTop: 2 }}>
+                    <Text style={{ fontSize: 13, color: theme.colors.text.tertiary, marginTop: 2 }}>
                       {fmt(m.createdAt)}
                     </Text>
                   </View>

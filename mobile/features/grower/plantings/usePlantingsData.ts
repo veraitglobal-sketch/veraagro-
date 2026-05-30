@@ -140,9 +140,6 @@ export function usePlantingsData() {
       await growerOfflineCache.saveHarvestAnnouncements(serverRows);
       return { rows: [...local, ...serverRows], warn: null, warnDetail: null };
     } catch (e: unknown) {
-      if (__DEV__) {
-        console.warn('[usePlantingsData] getMy failed:', axiosLikeMessage(e) || e);
-      }
       const cached = await growerOfflineCache.loadHarvestAnnouncements();
       const cachedRows = (cached ?? []).map((r) =>
         normalizeServerRow(r as unknown as Record<string, unknown>),

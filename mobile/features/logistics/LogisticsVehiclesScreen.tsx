@@ -7,6 +7,7 @@ import { EnterpriseScreen } from '../../components/enterprise/EnterpriseScreen';
 import { GrowerStackHeader } from '../../components/grower/GrowerStackHeader';
 import { enterpriseColors, enterpriseUi } from '../../lib/enterprise-ui';
 import { logisticsVehiclesAPI, type LogisticsVehicleRow } from '../../lib/api';
+import EmptyState from '../../components/EmptyState';
 
 export default function LogisticsVehiclesScreen() {
   const { t } = useTranslation();
@@ -118,7 +119,7 @@ export default function LogisticsVehiclesScreen() {
         {loading ? (
           <ActivityIndicator color={enterpriseColors.primary} style={{ marginTop: 24 }} />
         ) : list.length === 0 ? (
-          <Text style={enterpriseUi.navRowSubtitle}>{t('logistics.vehicles.empty')}</Text>
+          <EmptyState message={t('logistics.vehicles.empty')} icon={Truck} />
         ) : (
           list.map((v) => (
             <View key={v.id} style={[enterpriseUi.inAppPanel, { flexDirection: 'row', gap: 12, alignItems: 'center' }]}>

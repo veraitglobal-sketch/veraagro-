@@ -8,7 +8,6 @@ import {
   Image,
   ActivityIndicator,
   Alert,
-  Modal,
   StyleSheet,
   RefreshControl,
 } from 'react-native';
@@ -20,8 +19,10 @@ import { b2bSuppliersAPI } from '../../lib/api';
 import { apiErrorMessage } from '../../lib/api-error';
 import { enterpriseColors, enterpriseUi } from '../../lib/enterprise-ui';
 import { growerUi } from '../../lib/grower-ui';
+import EmptyState from '../../components/EmptyState';
 import { pickFromGallery } from '../../lib/camera-picker';
 import { SupplierStorefrontHeader } from './SupplierStorefrontHeader';
+import { BioVeraBottomSheet } from '../../components/enterprise/BioVeraBottomSheet';
 import {
   validateSupplierCatalogForm,
   type SupplierCatalogFormErrors,
@@ -254,12 +255,12 @@ export default function SupplierCatalogScreen() {
         </View>
 
         {items.length === 0 ? (
-          <View style={growerUi.emptyCard}>
-            <Text style={enterpriseUi.navRowSubtitle}>{t('supplier.store.emptyCatalog')}</Text>
+          <>
+            <EmptyState message={t('supplier.store.emptyCatalog')} icon={Package} />
             <TouchableOpacity onPress={openAdd} style={[enterpriseUi.authBtnPrimary, styles.emptyCta]}>
               <Text style={enterpriseUi.authBtnPrimaryText}>{t('supplier.store.addProduct')}</Text>
             </TouchableOpacity>
-          </View>
+          </>
         ) : (
           items.map((it) => (
             <View key={it.id} style={[enterpriseUi.inAppPanel, styles.productRow]}>
@@ -292,7 +293,13 @@ export default function SupplierCatalogScreen() {
                   <Pencil size={18} color={enterpriseColors.primary} strokeWidth={1.5} />
                   <Text style={styles.iconBtnText}>{t('supplier.store.edit')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => removeItem(it.id)} style={styles.iconBtn} activeOpacity={0.72}>
+                <TouchableOpacity
+                  onPress={() => removeItem(it.id)}
+                  style={styles.iconBtn}
+                  activeOpacity={0.72}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('common.delete')}
+                >
                   <Trash2 size={18} color={enterpriseColors.destructive} strokeWidth={1.5} />
                 </TouchableOpacity>
               </View>
@@ -301,7 +308,7 @@ export default function SupplierCatalogScreen() {
         )}
       </ScrollView>
 
-      <Modal visible={modalOpen} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setModalOpen(false)}>
+      <BioVeraBottomSheet visible={modalOpen} onClose={() => setModalOpen(false)} keyboardAvoiding>
         <View style={styles.modal}>
           <ScrollView contentContainerStyle={styles.modalScroll} keyboardShouldPersistTaps="handled">
             <Text style={styles.modalTitle}>
@@ -405,7 +412,7 @@ export default function SupplierCatalogScreen() {
             </View>
           </ScrollView>
         </View>
-      </Modal>
+      </BioVeraBottomSheet>
     </View>
   );
 }
@@ -522,7 +529,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 22,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.gray900,
     marginBottom: 16,
   },

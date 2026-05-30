@@ -1,10 +1,14 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useCart } from '../../hooks/useCart';
 import { theme } from '../../lib/theme';
+import { useBioVeraScreenPadding } from '../../lib/screen-insets';
+import { bioVeraScrollProps } from '../../lib/scroll-view-props';
 import { useAppLocaleTag } from '../../lib/date-locale';
 import { Plus, Minus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react-native';
+import EmptyState from '../../components/EmptyState';
 
 /**
  * Shopping Cart Screen
@@ -13,8 +17,19 @@ import { Plus, Minus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react-nativ
 export default function CartScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const insets = useBioVeraScreenPadding();
   const priceLocale = useAppLocaleTag();
-  const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
+  const { items, updateQuantity, removeFromCart, getTotalPrice, reloadCart } = useCart();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await reloadCart();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [reloadCart]);
 
   const handleCheckout = () => {
     if (items.length > 0) {
@@ -24,26 +39,27 @@ export default function CartScreen() {
 
   if (items.length === 0) {
     return (
-      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: theme.spacing.xl }}>
-          <ShoppingBag size={48} color={theme.colors.text.secondary} strokeWidth={1} />
-          <Text style={{
-            fontSize: 16,
-            fontWeight: '300',
-            color: theme.colors.text.secondary,
-            marginTop: theme.spacing.lg,
-            letterSpacing: 0.5,
-          }}>
-            {t('buyer.checkout.cartEmpty')}
-          </Text>
-        </View>
+      <View style={{ flex: 1, paddingTop: insets.topInset, backgroundColor: theme.colors.background }}>
+        <EmptyState message={t('buyer.cart.empty')} icon={ShoppingBag} />
       </View>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <ScrollView style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingTop: insets.topInset, backgroundColor: theme.colors.background }}>
+      <ScrollView
+        {...bioVeraScrollProps}
+        contentContainerStyle={{ flexGrow: 1 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void onRefresh()}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+            progressViewOffset={10}
+          />
+        }
+      >
         <View style={{ padding: theme.spacing.lg }}>
           {items.map((item) => (
             <View key={`${item.product.id}-${item.lineKind}`}>
@@ -57,21 +73,21 @@ export default function CartScreen() {
                 <View style={{ flex: 1, marginRight: theme.spacing.md }}>
                   <Text style={{
                     fontSize: 14,
-                    fontWeight: '300',
+                    fontWeight: '400',
                     color: theme.colors.text.primary,
                     marginBottom: theme.spacing.xs,
                     letterSpacing: 0.3,
                   }}>
                     {item.product.productName}
                     {item.lineKind === 'reservation' && (
-                      <Text style={{ fontSize: 12, color: theme.colors.primary }}>
+                      <Text style={{ fontSize: 14, color: theme.colors.primary }}>
                         {t('buyer.cart.reservationBadge')}
                       </Text>
                     )}
                   </Text>
                   <Text style={{
                     fontSize: 13,
-                    fontWeight: '300',
+                    fontWeight: '400',
                     color: theme.colors.text.secondary,
                     letterSpacing: 0.2,
                   }}>
@@ -94,12 +110,14 @@ export default function CartScreen() {
                   <TouchableOpacity
                     onPress={() => updateQuantity(item.product.id, item.quantity - 1, item.lineKind)}
                     style={{ padding: theme.spacing.xs }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('buyer.cart.decreaseQty')}
                   >
                     <Minus size={18} color={theme.colors.text.primary} strokeWidth={1.5} />
                   </TouchableOpacity>
                   <Text style={{
                     fontSize: 16,
-                    fontWeight: '300',
+                    fontWeight: '400',
                     color: theme.colors.text.primary,
                     minWidth: 30,
                     textAlign: 'center',
@@ -110,6 +128,8 @@ export default function CartScreen() {
                   <TouchableOpacity
                     onPress={() => updateQuantity(item.product.id, item.quantity + 1, item.lineKind)}
                     style={{ padding: theme.spacing.xs }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('buyer.cart.increaseQty')}
                   >
                     <Plus size={18} color={theme.colors.text.primary} strokeWidth={1.5} />
                   </TouchableOpacity>
@@ -119,6 +139,8 @@ export default function CartScreen() {
                 <TouchableOpacity
                   onPress={() => removeFromCart(item.product.id, item.lineKind)}
                   style={{ marginLeft: theme.spacing.md, padding: theme.spacing.xs }}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('buyer.cart.removeItem')}
                 >
                   <Trash2 size={18} color={theme.colors.error} strokeWidth={1} />
                 </TouchableOpacity>
@@ -143,15 +165,15 @@ export default function CartScreen() {
         }}>
           <Text style={{
             fontSize: 13,
-            fontWeight: '300',
+            fontWeight: '400',
             color: theme.colors.text.secondary,
             letterSpacing: 0.5,
           }}>
-            {t('common.total')}
+            {t('buyer.cart.total')}
           </Text>
           <Text style={{
             fontSize: 20,
-            fontWeight: '300',
+            fontWeight: '400',
             color: theme.colors.text.primary,
             letterSpacing: 0.5,
           }}>
@@ -174,11 +196,11 @@ export default function CartScreen() {
         >
           <Text style={{
             fontSize: 14,
-            fontWeight: '300',
+            fontWeight: '400',
             color: theme.colors.text.inverse,
             letterSpacing: 1,
           }}>
-            {t('buyer.checkout.proceedToPayment')}
+            {t('buyer.cart.checkout')}
           </Text>
           <ArrowRight size={18} color={theme.colors.text.inverse} strokeWidth={1.5} />
         </TouchableOpacity>

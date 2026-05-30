@@ -92,7 +92,7 @@ export default function ProductCard({ product, onPress, showActions = true }: Pr
             }}>
               <CheckCircle size={14} color={theme.colors.success} strokeWidth={2} />
               <Text style={{
-                fontSize: 11,
+                fontSize: 14,
                 fontWeight: '600',
                 color: theme.colors.success,
                 marginLeft: 4,
@@ -121,7 +121,7 @@ export default function ProductCard({ product, onPress, showActions = true }: Pr
               }}>
                 <Star size={12} color={theme.colors.warning} strokeWidth={2} fill={theme.colors.warning} />
                 <Text style={{
-                  fontSize: 12,
+                  fontSize: 14,
                   fontWeight: '600',
                   color: theme.colors.warning,
                   marginLeft: 4,
@@ -141,7 +141,7 @@ export default function ProductCard({ product, onPress, showActions = true }: Pr
               }}>
                 <Calendar size={12} color={theme.colors.info} strokeWidth={2} />
                 <Text style={{
-                  fontSize: 11,
+                  fontSize: 14,
                   fontWeight: '500',
                   color: theme.colors.info,
                   marginLeft: 4,
@@ -175,7 +175,7 @@ export default function ProductCard({ product, onPress, showActions = true }: Pr
                 })}
               </Text>
               <Text style={{
-                fontSize: 12,
+                fontSize: 14,
                 color: 'rgba(255, 255, 255, 0.9)',
                 textAlign: 'center',
                 marginTop: 2,

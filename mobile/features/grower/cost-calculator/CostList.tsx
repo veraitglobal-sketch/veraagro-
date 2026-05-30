@@ -5,6 +5,7 @@ import { Trash2 } from 'lucide-react-native';
 import { PendingCost } from '../../../lib/offline-storage';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerStyles, growerUi } from '../../../lib/grower-ui';
+import EmptyState from '../../../components/EmptyState';
 
 interface CostListProps {
   costs: PendingCost[];
@@ -140,11 +141,7 @@ export default function CostList({
       refreshing={listRefreshing}
       ListHeaderComponent={ListHeaderComponent}
       ListFooterComponent={listFooter}
-      ListEmptyComponent={
-        <View style={growerUi.emptyCard}>
-          <Text style={enterpriseUi.navRowSubtitle}>{t('producer.costCalculator.noCosts')}</Text>
-        </View>
-      }
+      ListEmptyComponent={<EmptyState message={t('producer.costCalculator.noCosts')} />}
       contentContainerStyle={[styles.list, { paddingBottom: contentPaddingBottom }]}
       style={styles.flex}
       showsVerticalScrollIndicator={false}
@@ -208,7 +205,7 @@ const styles = StyleSheet.create({
   },
   totalAmount: {
     fontSize: 20,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.primary,
     letterSpacing: -0.4,
   },

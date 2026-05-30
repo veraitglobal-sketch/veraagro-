@@ -1,5 +1,5 @@
-import ProfileScreen from '../../../features/grower/profile/ProfileScreen';
+import ProducerProfileScreen from '../../../features/grower/profile/ProducerProfileScreen';
 
 export default function ProducerProfileTab() {
-  return <ProfileScreen />;
+  return <ProducerProfileScreen />;
 }

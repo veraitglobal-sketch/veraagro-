@@ -5,6 +5,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useAppLocaleTag, formatAppDateTime, a11yIconButton } from '../../../lib/date-locale';
 import { MapPin, Check } from 'lucide-react-native';
 import * as Location from 'expo-location';
 import { ensureForegroundLocationPermission } from '../../../lib/grower-permissions';
@@ -18,6 +19,7 @@ interface Props {
 
 export default function StepGps({ onCaptured }: Props) {
   const { t } = useTranslation();
+  const dateLocale = useAppLocaleTag();
   const [loading, setLoading] = useState(false);
   const [captured, setCaptured] = useState(false);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -65,7 +67,9 @@ export default function StepGps({ onCaptured }: Props) {
                 {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
               </Text>
             ) : null}
-            {timestamp ? <Text style={styles.time}>{new Date(timestamp).toLocaleString()}</Text> : null}
+            {timestamp ? (
+              <Text style={styles.time}>{formatAppDateTime(timestamp, dateLocale)}</Text>
+            ) : null}
           </View>
         ) : (
           <TouchableOpacity

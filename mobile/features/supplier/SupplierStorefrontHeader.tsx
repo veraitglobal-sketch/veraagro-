@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     backgroundColor: enterpriseColors.white,
   },
   badge: {
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: '600',
     letterSpacing: 0.4,
     textTransform: 'uppercase',
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.gray900,
     marginTop: 4,
     letterSpacing: -0.5,
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   windowLabel: {
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: '600',
     letterSpacing: 0.35,
     textTransform: 'uppercase',
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   windowHint: {
-    fontSize: 12,
+    fontSize: 14,
     color: enterpriseColors.gray600,
     marginTop: 8,
   },

@@ -544,7 +544,7 @@ export const growthLogsAPI = {
     const response = await api.get(`/growth-logs/parcel/${encodeURIComponent(parcelId)}`);
     return response.data || [];
   },
-  adminList: async (params?: { moderationStatus?: string; limit?: number }) => {
+  adminList: async (params?: { moderationStatus?: string; limit?: number; partnerCode?: string }) => {
     const response = await api.get('/growth-logs/admin/list', { params });
     return response.data || [];
   },

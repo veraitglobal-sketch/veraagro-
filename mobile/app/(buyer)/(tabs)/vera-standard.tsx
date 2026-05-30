@@ -1,7 +1,8 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, MapPin, Camera, FlaskConical, Clock } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
+import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 
 /**
  * Bio Vera Standard Screen
@@ -9,6 +10,7 @@ import { theme } from '../../../lib/theme';
  */
 export default function VeraStandardScreen() {
   const { t } = useTranslation();
+  const insets = useBioVeraScreenPadding();
 
   const requirements = [
     {
@@ -30,11 +32,8 @@ export default function VeraStandardScreen() {
   ];
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: theme.colors.background }}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={{ padding: theme.spacing.lg }}>
+    <View style={{ flex: 1, paddingTop: insets.topInset, backgroundColor: theme.colors.background }}>
+      <View style={{ flex: 1, padding: theme.spacing.lg }}>
         {/* Header Card */}
         <View style={{
           backgroundColor: theme.colors.surface,
@@ -61,7 +60,7 @@ export default function VeraStandardScreen() {
           
           <Text style={{
             fontSize: 18,
-            fontWeight: '300',
+            fontWeight: '400',
             color: theme.colors.text.primary,
             letterSpacing: 1,
             marginBottom: theme.spacing.sm,
@@ -72,7 +71,7 @@ export default function VeraStandardScreen() {
           
           <Text style={{
             fontSize: 13,
-            fontWeight: '300',
+            fontWeight: '400',
             color: theme.colors.text.secondary,
             letterSpacing: 0.3,
             textAlign: 'center',
@@ -129,8 +128,8 @@ export default function VeraStandardScreen() {
                   
                   <Text style={{
                     flex: 1,
-                    fontSize: 12,
-                    fontWeight: '300',
+                    fontSize: 14,
+                    fontWeight: '400',
                     color: theme.colors.text.primary,
                     letterSpacing: 0.3,
                     lineHeight: 18,
@@ -153,8 +152,8 @@ export default function VeraStandardScreen() {
           borderColor: `${theme.colors.primary}15`,
         }}>
           <Text style={{
-            fontSize: 11,
-            fontWeight: '300',
+            fontSize: 14,
+            fontWeight: '400',
             color: theme.colors.text.secondary,
             letterSpacing: 0.3,
             lineHeight: 16,
@@ -164,6 +163,6 @@ export default function VeraStandardScreen() {
           </Text>
         </View>
       </View>
-    </ScrollView>
+    </View>
   );
 }

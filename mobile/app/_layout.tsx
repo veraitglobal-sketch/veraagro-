@@ -1,7 +1,13 @@
+import 'react-native-gesture-handler';
 import { LogBox } from 'react-native';
 import { useEffect } from 'react';
 import { Stack } from 'expo-router';
-import { authScreenNoSwipeBack, bioVeraStackScreenOptions } from '../lib/stack-navigation-options';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {
+  authScreenNoSwipeBack,
+  bioVeraStackScreenOptions,
+  modalStackScreenOptions,
+} from '../lib/stack-navigation-options';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from '../contexts/AuthContext';
 import { PushNotificationHandler } from '../components/PushNotificationHandler';
@@ -11,14 +17,9 @@ import { applySavedLanguagePreference } from '../lib/i18n-language';
 import '../global.css';
 import { theme } from '../lib/theme';
 import { syncService } from '../lib/sync-service';
-import { API_URL } from '../lib/api-url';
 
 // RN 0.81+ deprecates built-in SafeAreaView; some deps still trigger this until they migrate.
 LogBox.ignoreLogs(['SafeAreaView has been deprecated']);
-
-if (__DEV__) {
-  console.log(`[BioVera] API_URL = ${API_URL}`);
-}
 
 /**
  * Expo Router’s Stack `screenOptions` types only allow a subset of header styles
@@ -31,7 +32,7 @@ const stackHeaderStyle = {
 } as const;
 
 const stackHeaderTitleStyle = {
-  fontWeight: '300' as const,
+  fontWeight: '400' as const,
   fontSize: 18,
   letterSpacing: -0.2,
 } as const;
@@ -42,6 +43,7 @@ export default function RootLayout() {
     void syncService.reconcileLegacyFieldLogQueueOnStartup();
   }, []);
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <SafeAreaProvider>
     <AuthProvider>
     <PushNotificationHandler />
@@ -59,7 +61,7 @@ export default function RootLayout() {
         <Stack.Screen name="b2b-thread/[threadId]" options={{ headerShown: false }} />
         <Stack.Screen name="supplier-map" options={{ headerShown: false }} />
         <Stack.Screen name="seed-registration" options={{ headerShown: false }} />
-        <Stack.Screen name="scan-qr" options={{ headerShown: false, presentation: 'modal' }} />
+        <Stack.Screen name="scan-qr" options={{ headerShown: false, ...modalStackScreenOptions }} />
         <Stack.Screen name="products" options={{ headerShown: false }} />
         <Stack.Screen name="product/[id]" options={{ headerShown: false }} />
         {/* Auth screens: no edge-swipe "back" — sign out only via Logout. */}
@@ -98,5 +100,6 @@ export default function RootLayout() {
     </CartProvider>
     </AuthProvider>
     </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

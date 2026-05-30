@@ -19,6 +19,7 @@ import { canClaimLogisticsMission } from '../../lib/logistics-mission-helpers';
 import { getMissionStatusColor, getMissionStatusLabelLocalized } from '../../lib/mission-status';
 import { useAppLocaleTag } from '../../lib/date-locale';
 import { GrowerTabHeader } from '../../components/grower/GrowerTabHeader';
+import EmptyState from '../../components/EmptyState';
 
 /** Pool (PENDING) + assigned runs — claim, filters, mission detail. */
 export default function LogisticsMissionsScreen() {
@@ -126,7 +127,7 @@ export default function LogisticsMissionsScreen() {
               paddingHorizontal: 3,
             }}
           >
-            <Text style={{ fontSize: 8, fontWeight: '700', color: theme.colors.background }}>
+            <Text style={{ fontSize: 13, fontWeight: '700', color: theme.colors.background }}>
               {unreadNotifications > 9 ? '9+' : unreadNotifications}
             </Text>
           </View>
@@ -179,8 +180,8 @@ export default function LogisticsMissionsScreen() {
               >
                 <Text
                   style={{
-                    fontSize: 11,
-                    fontWeight: '300',
+                    fontSize: 14,
+                    fontWeight: '400',
                     color: filter === f.id ? theme.colors.primary : theme.colors.text.secondary,
                     letterSpacing: 0.3,
                   }}
@@ -216,8 +217,8 @@ export default function LogisticsMissionsScreen() {
               <Text
                 style={{
                   color: theme.colors.text.secondary,
-                  fontSize: 11,
-                  fontWeight: '300',
+                  fontSize: 14,
+                  fontWeight: '400',
                   letterSpacing: 0.3,
                 }}
               >
@@ -225,30 +226,7 @@ export default function LogisticsMissionsScreen() {
               </Text>
             </View>
           ) : filteredMissions.length === 0 ? (
-            <View
-              style={{
-                backgroundColor: theme.colors.surface,
-                borderRadius: theme.borderRadius.md,
-                padding: theme.spacing.xl,
-                borderWidth: 0.5,
-                borderColor: 'rgba(0, 0, 0, 0.05)',
-                alignItems: 'center',
-              }}
-            >
-              <Truck size={32} color={theme.colors.text.tertiary} strokeWidth={1} />
-              <Text
-                style={{
-                  fontSize: 11,
-                  fontWeight: '300',
-                  color: theme.colors.text.secondary,
-                  marginTop: theme.spacing.sm,
-                  letterSpacing: 0.3,
-                  textAlign: 'center',
-                }}
-              >
-                {t('logistics.emptyMissions')}
-              </Text>
-            </View>
+            <EmptyState message={t('logistics.emptyMissions')} icon={Truck} />
           ) : (
             <View style={{ gap: theme.spacing.sm }}>
               {filteredMissions.map((mission) => {
@@ -287,8 +265,8 @@ export default function LogisticsMissionsScreen() {
                       <View style={{ flex: 1 }}>
                         <Text
                           style={{
-                            fontSize: 12,
-                            fontWeight: '300',
+                            fontSize: 14,
+                            fontWeight: '400',
                             color: theme.colors.text.primary,
                             marginBottom: theme.spacing.xs,
                             letterSpacing: 0.3,
@@ -297,18 +275,19 @@ export default function LogisticsMissionsScreen() {
                           {mission.missionNumber ||
                             t('producer.missions.missionPrefix', { id: mission.id.slice(0, 8) })}
                         </Text>
-                        {mission.batch && (
+                        {mission.batch ? (
                           <Text
                             style={{
-                              fontSize: 11,
-                              fontWeight: '300',
+                              fontSize: 14,
+                              fontWeight: '400',
                               color: theme.colors.text.secondary,
                               letterSpacing: 0.2,
                             }}
                           >
-                            {t('producer.missionsCreate.batchLabel')}: {mission.batch.batchId || mission.batchId}
+                            {t('producer.missionsCreate.batchLabel')}:{' '}
+                            {mission.batch.batchId || mission.batchId}
                           </Text>
-                        )}
+                        ) : null}
                       </View>
                       <View
                         style={{
@@ -320,8 +299,8 @@ export default function LogisticsMissionsScreen() {
                       >
                         <Text
                           style={{
-                            fontSize: 9,
-                            fontWeight: '300',
+                            fontSize: 13,
+                            fontWeight: '400',
                             color: c,
                             letterSpacing: 0.3,
                           }}
@@ -343,8 +322,8 @@ export default function LogisticsMissionsScreen() {
                         <Calendar size={11} color={theme.colors.text.secondary} strokeWidth={1} />
                         <Text
                           style={{
-                            fontSize: 9,
-                            fontWeight: '300',
+                            fontSize: 13,
+                            fontWeight: '400',
                             color: theme.colors.text.secondary,
                             marginLeft: 4,
                             letterSpacing: 0.2,
@@ -358,8 +337,8 @@ export default function LogisticsMissionsScreen() {
                           <Clock size={11} color={theme.colors.text.secondary} strokeWidth={1} />
                           <Text
                             style={{
-                              fontSize: 9,
-                              fontWeight: '300',
+                              fontSize: 13,
+                              fontWeight: '400',
                               color: theme.colors.text.secondary,
                               marginLeft: 4,
                               letterSpacing: 0.2,
@@ -391,7 +370,7 @@ export default function LogisticsMissionsScreen() {
                         ) : (
                           <Text
                             style={{
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: '500',
                               color: '#fff',
                               letterSpacing: 0.3,

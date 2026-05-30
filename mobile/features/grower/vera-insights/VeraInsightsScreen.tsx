@@ -8,6 +8,7 @@ import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useVeraInsightsData } from './useVeraInsightsData';
 import ShortagesSection from './ShortagesSection';
 import InsightCard from './InsightCard';
+import EmptyState from '../../../components/EmptyState';
 
 export default function VeraInsightsScreen() {
   const router = useRouter();
@@ -69,12 +70,12 @@ export default function VeraInsightsScreen() {
         <Text
           style={{
             fontSize: 18,
-            fontWeight: '300',
+            fontWeight: '400',
             color: theme.colors.text.primary,
             letterSpacing: 0.5,
           }}
         >
-          {t('producer.veraInsights.screenTitle')}
+          {t('producer.veraInsights.title')}
         </Text>
       </View>
 
@@ -100,19 +101,19 @@ export default function VeraInsightsScreen() {
           <View style={{ marginBottom: theme.spacing.lg }}>
             <Text
               style={{
-                fontSize: 12,
-                fontWeight: '300',
+                fontSize: 14,
+                fontWeight: '400',
                 color: theme.colors.text.primary,
                 marginBottom: theme.spacing.sm,
                 letterSpacing: 0.5,
               }}
             >
-              {t('producer.veraInsights.marketTitle')}
+              {t('producer.veraInsights.market')}
             </Text>
             <Text
               style={{
-                fontSize: 11,
-                fontWeight: '300',
+                fontSize: 14,
+                fontWeight: '400',
                 color: theme.colors.text.secondary,
                 lineHeight: 18,
                 letterSpacing: 0.2,
@@ -149,20 +150,7 @@ export default function VeraInsightsScreen() {
           ) : null}
 
           {!loadError && insights.length === 0 ? (
-            <View
-              style={{
-                padding: theme.spacing.md,
-                marginBottom: theme.spacing.lg,
-                borderRadius: 12,
-                backgroundColor: theme.colors.surface,
-                borderWidth: 1,
-                borderColor: theme.colors.border,
-              }}
-            >
-              <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22 }}>
-                {t('producer.veraInsights.empty')}
-              </Text>
-            </View>
+            <EmptyState message={t('producer.veraInsights.empty')} />
           ) : null}
 
           {!loadError && insights.length > 0 ? <ShortagesSection insights={insights} /> : null}
@@ -171,14 +159,14 @@ export default function VeraInsightsScreen() {
             <>
               <Text
                 style={{
-                  fontSize: 12,
-                  fontWeight: '300',
+                  fontSize: 14,
+                  fontWeight: '400',
                   color: theme.colors.text.primary,
                   marginBottom: theme.spacing.sm,
                   letterSpacing: 0.5,
                 }}
               >
-                {t('producer.veraInsights.cropTitle')}
+                {t('producer.veraInsights.profitability')}
               </Text>
 
               {insights.map((insight) => (

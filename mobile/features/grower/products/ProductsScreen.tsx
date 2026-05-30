@@ -94,6 +94,8 @@ export default function ProductsScreen() {
           }}
           activeOpacity={0.88}
           style={[styles.actionBtn, styles.actionBtnOutline]}
+          accessibilityRole="button"
+          accessibilityLabel={t('producer.dashboard.manualEntry')}
         >
           <Plus size={22} color={enterpriseColors.primary} strokeWidth={1.5} />
           <Text style={styles.actionBtnOutlineText}>{t('producer.dashboard.manualEntry')}</Text>

@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Camera, Image as ImageIcon } from 'lucide-react-native';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
@@ -25,10 +25,14 @@ export default function StepCamera({
   const { t } = useTranslation();
 
   const pickImage = async (type: 'crate' | 'quality') => {
-    const asset = await pickFromCamera({ t, quality: 0.8, allowsEditing: true });
-    if (!asset?.uri) return;
-    if (type === 'crate') onPhotoTaken(asset.uri);
-    else onQualityPhotoTaken(asset.uri);
+    try {
+      const asset = await pickFromCamera({ t, quality: 0.8, allowsEditing: true });
+      if (!asset?.uri) return;
+      if (type === 'crate') onPhotoTaken(asset.uri);
+      else onQualityPhotoTaken(asset.uri);
+    } catch {
+      Alert.alert(t('common.error'), t('common.tryAgain'));
+    }
   };
 
   return (

@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   amount: {
     fontSize: 34,
-    fontWeight: '300',
+    fontWeight: '400',
     color: enterpriseColors.primary,
     letterSpacing: -0.9,
     lineHeight: 40,
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     borderLeftColor: enterpriseColors.gray200,
   },
   metaLabel: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '500',
     color: enterpriseColors.gray600,
     marginBottom: 4,
