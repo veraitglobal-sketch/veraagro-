@@ -38,7 +38,7 @@ function parcelLabelSnippet(ha: HaRow): string {
   return id ? id.slice(0, 8) : '—';
 }
 
-export default function PlantingsScreen() {
+export default function PlantingsScreen({ embedded = false }: { embedded?: boolean }) {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const routeParams = useLocalSearchParams<{ openAdd?: string; parcelId?: string }>();
@@ -102,17 +102,6 @@ export default function PlantingsScreen() {
     (iso: string) => {
       try {
         return new Date(iso).toLocaleString(dateLocale, { dateStyle: 'short', timeStyle: 'short' });
-      } catch {
-        return iso;
-      }
-    },
-    [dateLocale],
-  );
-
-  const formatDateShort = useCallback(
-    (iso: string) => {
-      try {
-        return new Date(iso).toLocaleDateString(dateLocale, { dateStyle: 'medium' });
       } catch {
         return iso;
       }
@@ -243,12 +232,14 @@ export default function PlantingsScreen() {
   };
 
   return (
-    <View style={growerUi.canvas}>
-      <GrowerStackHeader
-        title={t('producer.plantings.screenTitle')}
-        subtitle={t('producer.plantings.introShort')}
-        onBack={goBack}
-      />
+    <View style={[growerUi.canvas, embedded && styles.embeddedRoot]}>
+      {!embedded ? (
+        <GrowerStackHeader
+          title={t('producer.plantings.screenTitle')}
+          subtitle={t('producer.plantings.introShort')}
+          onBack={goBack}
+        />
+      ) : null}
 
       <View style={styles.headerActions}>
         <TouchableOpacity
@@ -275,8 +266,6 @@ export default function PlantingsScreen() {
         contentContainerStyle={[growerUi.scrollContent, { paddingBottom: Math.max(p.bottomInset, 24) }]}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.ruleHint}>{t('producer.plantings.progressRuleShort', { days: 18 })}</Text>
-
         {err ? <EnterpriseNotice title={err} /> : null}
         {announcementsWarn && !err ? (
           <EnterpriseNotice
@@ -360,21 +349,12 @@ export default function PlantingsScreen() {
                       <Text style={styles.metaText}>{formatWhen(a.estimatedDate)}</Text>
                     </View>
 
-                    {a.plantingProgress ? (
+                    {a.plantingProgress?.isOverdue ? (
                       <View style={styles.progressBox}>
-                        <Text
-                          style={[
-                            styles.progressText,
-                            a.plantingProgress.isOverdue && styles.progressOverdue,
-                          ]}
-                        >
-                          {a.plantingProgress.isOverdue
-                            ? t('producer.plantings.progressOverdue', {
-                                days: a.plantingProgress.daysOverdue,
-                              })
-                            : t('producer.plantings.progressOk', {
-                                date: formatDateShort(a.plantingProgress.nextDueAt),
-                              })}
+                        <Text style={[styles.progressText, styles.progressOverdue]}>
+                          {t('producer.plantings.progressOverdue', {
+                            days: a.plantingProgress.daysOverdue,
+                          })}
                         </Text>
                         <TouchableOpacity onPress={() => openGrowthJournal(a)} hitSlop={8}>
                           <Text style={styles.progressLink}>
@@ -396,10 +376,10 @@ export default function PlantingsScreen() {
               <View style={styles.harvestLinkRow}>
                 <Wheat size={22} color={enterpriseColors.primary} strokeWidth={1.5} />
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.harvestLinkTitle}>{t('producer.plantings.sectionHarvests')}</Text>
+                  <Text style={styles.harvestLinkTitle}>{t('producer.plantings.sectionHarvestsShort')}</Text>
                   <Text style={styles.harvestLinkDesc}>
                     {harvestCount > 0
-                      ? t('producer.plantings.harvestLinkCount', { count: harvestCount })
+                      ? t('producer.plantings.harvestLinkCountShort', { count: harvestCount })
                       : t('producer.plantings.harvestEmpty')}
                   </Text>
                 </View>
@@ -489,12 +469,6 @@ const styles = StyleSheet.create({
     minHeight: 52,
   },
   disabled: { opacity: 0.5 },
-  ruleHint: {
-    fontSize: 14,
-    color: enterpriseColors.gray600,
-    lineHeight: 20,
-    marginBottom: 14,
-  },
   emptyText: {
     fontSize: 16,
     color: enterpriseColors.gray600,
@@ -597,4 +571,8 @@ const styles = StyleSheet.create({
     borderColor: enterpriseColors.primary,
   },
   detailBtnSecondaryText: { fontSize: 16, fontWeight: '600', color: enterpriseColors.primary },
+  embeddedRoot: {
+    flex: 1,
+    minHeight: 0,
+  },
 });

@@ -14,7 +14,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -65,7 +65,7 @@ export default function LoginScreen() {
       const response = await login(username.trim(), password);
       const path = getPostLoginPath(normalizeUserRoles(response.user), { partnerEntry });
       if (path) {
-        router.replace(path as never);
+        router.replace(path as Href);
       } else {
         await logout();
         Alert.alert(t('error'), partnerMode ? t('partnerLogin.notProducerAccess') : t('login.noRoleForApp'));
@@ -107,112 +107,112 @@ export default function LoginScreen() {
           keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <ScrollView
-            contentContainerStyle={styles.scroll}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            <TouchableOpacity
-              onPress={() => router.replace('/')}
-              style={styles.backRow}
-              hitSlop={12}
-              accessibilityLabel={t('common.back')}
-              activeOpacity={0.7}
+            <ScrollView
+              contentContainerStyle={styles.scroll}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
             >
-              <ChevronLeft size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
-              <Text style={styles.backText}>{t('common.back')}</Text>
-            </TouchableOpacity>
-
-            <AuthPanel>
-              <View style={enterpriseUi.authPanelHeader}>
-                <View style={enterpriseUi.authRule} />
-                <Text style={enterpriseUi.authTitle} accessibilityRole="header">
-                  {partnerMode ? t('partnerLogin.title') : t('login.title')}
-                </Text>
-                <Text style={enterpriseUi.authSubtitle}>
-                  {partnerMode ? t('partnerLogin.subtitle') : t('login.subtitle')}
-                </Text>
-              </View>
-
-              <Text style={enterpriseUi.authLabel}>
-                {partnerMode ? t('partnerLogin.username') : t('login.username')}
-              </Text>
-              {!partnerMode ? <Text style={enterpriseUi.authHint}>{t('login.usernameHelper')}</Text> : null}
-              <View style={[enterpriseUi.authInput, userFocused && enterpriseUi.authInputFocused]}>
-                <TextInput
-                  value={username}
-                  onChangeText={setUsername}
-                  placeholder={
-                    partnerMode ? t('partnerLogin.usernamePlaceholder') : t('login.usernamePlaceholder')
-                  }
-                  placeholderTextColor={theme.colors.text.tertiary}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  keyboardType="email-address"
-                  returnKeyType="next"
-                  onFocus={() => setUserFocused(true)}
-                  onBlur={() => setUserFocused(false)}
-                  style={styles.input}
-                />
-              </View>
-
-              <Text style={[enterpriseUi.authLabel, enterpriseUi.authFieldGap]}>
-                {partnerMode ? t('partnerLogin.password') : t('login.password')}
-              </Text>
-              <View
-                style={[
-                  enterpriseUi.authInput,
-                  styles.inputRow,
-                  passFocused && enterpriseUi.authInputFocused,
-                ]}
-              >
-                <TextInput
-                  value={password}
-                  onChangeText={setPassword}
-                  placeholder={
-                    partnerMode ? t('partnerLogin.passwordPlaceholder') : t('login.passwordPlaceholder')
-                  }
-                  placeholderTextColor={theme.colors.text.tertiary}
-                  secureTextEntry={!showPassword}
-                  returnKeyType="go"
-                  onSubmitEditing={handleLogin}
-                  onFocus={() => setPassFocused(true)}
-                  onBlur={() => setPassFocused(false)}
-                  style={styles.inputFlex}
-                />
-                <Pressable
-                  onPress={() => setShowPassword((s) => !s)}
-                  style={styles.eyeBtn}
-                  hitSlop={8}
-                  accessibilityRole="button"
-                  accessibilityLabel={showPassword ? t('login.hidePassword') : t('login.showPassword')}
-                >
-                  {showPassword ? (
-                    <EyeOff size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
-                  ) : (
-                    <Eye size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
-                  )}
-                </Pressable>
-              </View>
-
               <TouchableOpacity
-                onPress={handleLogin}
-                disabled={loading}
-                activeOpacity={0.9}
-                style={[enterpriseUi.authSubmit, loading && styles.submitDisabled]}
-                accessibilityRole="button"
-                accessibilityState={{ busy: loading }}
+                onPress={() => router.replace('/')}
+                style={styles.backRow}
+                hitSlop={12}
+                accessibilityLabel={t('common.back')}
+                activeOpacity={0.7}
               >
-                {loading ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={enterpriseUi.authSubmitText}>
-                    {partnerMode ? t('partnerLogin.button') : t('login.button')}
-                  </Text>
-                )}
+                <ChevronLeft size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
+                <Text style={styles.backText}>{t('common.back')}</Text>
               </TouchableOpacity>
-            </AuthPanel>
-          </ScrollView>
+
+              <AuthPanel>
+                <View style={enterpriseUi.authPanelHeader}>
+                  <View style={enterpriseUi.authRule} />
+                  <Text style={enterpriseUi.authTitle} accessibilityRole="header">
+                    {partnerMode ? t('partnerLogin.title') : t('login.title')}
+                  </Text>
+                  <Text style={enterpriseUi.authSubtitle}>
+                    {partnerMode ? t('partnerLogin.subtitle') : t('login.subtitle')}
+                  </Text>
+                </View>
+
+                <Text style={enterpriseUi.authLabel}>
+                  {partnerMode ? t('partnerLogin.username') : t('login.username')}
+                </Text>
+                {!partnerMode ? <Text style={enterpriseUi.authHint}>{t('login.usernameHelper')}</Text> : null}
+                <View style={[enterpriseUi.authInput, userFocused && enterpriseUi.authInputFocused]}>
+                  <TextInput
+                    value={username}
+                    onChangeText={setUsername}
+                    placeholder={
+                      partnerMode ? t('partnerLogin.usernamePlaceholder') : t('login.usernamePlaceholder')
+                    }
+                    placeholderTextColor={theme.colors.text.tertiary}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    keyboardType="email-address"
+                    returnKeyType="next"
+                    onFocus={() => setUserFocused(true)}
+                    onBlur={() => setUserFocused(false)}
+                    style={styles.input}
+                  />
+                </View>
+
+                <Text style={[enterpriseUi.authLabel, enterpriseUi.authFieldGap]}>
+                  {partnerMode ? t('partnerLogin.password') : t('login.password')}
+                </Text>
+                <View
+                  style={[
+                    enterpriseUi.authInput,
+                    styles.inputRow,
+                    passFocused && enterpriseUi.authInputFocused,
+                  ]}
+                >
+                  <TextInput
+                    value={password}
+                    onChangeText={setPassword}
+                    placeholder={
+                      partnerMode ? t('partnerLogin.passwordPlaceholder') : t('login.passwordPlaceholder')
+                    }
+                    placeholderTextColor={theme.colors.text.tertiary}
+                    secureTextEntry={!showPassword}
+                    returnKeyType="go"
+                    onSubmitEditing={handleLogin}
+                    onFocus={() => setPassFocused(true)}
+                    onBlur={() => setPassFocused(false)}
+                    style={styles.inputFlex}
+                  />
+                  <Pressable
+                    onPress={() => setShowPassword((s) => !s)}
+                    style={styles.eyeBtn}
+                    hitSlop={8}
+                    accessibilityRole="button"
+                    accessibilityLabel={showPassword ? t('login.hidePassword') : t('login.showPassword')}
+                  >
+                    {showPassword ? (
+                      <EyeOff size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
+                    ) : (
+                      <Eye size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
+                    )}
+                  </Pressable>
+                </View>
+
+                <TouchableOpacity
+                  onPress={handleLogin}
+                  disabled={loading}
+                  activeOpacity={0.9}
+                  style={[enterpriseUi.authSubmit, loading && styles.submitDisabled]}
+                  accessibilityRole="button"
+                  accessibilityState={{ busy: loading }}
+                >
+                  {loading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={enterpriseUi.authSubmitText}>
+                      {partnerMode ? t('partnerLogin.button') : t('login.button')}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              </AuthPanel>
+            </ScrollView>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
       </AuthScreenShell>

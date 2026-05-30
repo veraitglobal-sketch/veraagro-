@@ -14,7 +14,7 @@ export function AuthScreenShell({ children, footer, contentStyle }: Props) {
   return (
     <View style={styles.root}>
       <LinearGradient
-        colors={['rgba(45, 90, 39, 0.08)', 'rgba(249, 250, 251, 0)']}
+        colors={['rgba(45, 90, 39, 0.06)', 'rgba(246, 245, 241, 0)']}
         style={styles.gradient}
         pointerEvents="none"
       />

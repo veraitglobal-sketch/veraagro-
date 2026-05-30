@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { harvestAnnouncementsAPI } from '../../../lib/api';
+import { harvestAnnouncementsAPI, growerPortalAPI } from '../../../lib/api';
 import { loadGrowerParcelRows, type GrowerParcelRow } from '../../../lib/load-grower-parcels';
 import { offlineStorage, PendingCost, PendingProduct } from '../../../lib/offline-storage';
 import { isDeviceOnline } from '../../../lib/network-utils';
@@ -47,6 +47,48 @@ async function syncPortalQueuesIfOnline(): Promise<void> {
   ]);
 }
 
+function sortCosts(items: PendingCost[]): PendingCost[] {
+  return [...items].sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+  );
+}
+
+/** Local queue + server ingest rows (deduped by clientReference id). */
+async function loadMergedCosts(): Promise<PendingCost[]> {
+  const local = await offlineStorage.getPendingCosts();
+  if (!(await isDeviceOnline())) return sortCosts(local);
+
+  try {
+    const serverRows = await growerPortalAPI.getCosts();
+    const byId = new Map<string, PendingCost>();
+    for (const row of serverRows) {
+      byId.set(row.id, {
+        id: row.id,
+        type: row.type,
+        productId: row.productId,
+        label: row.label,
+        amount: row.amount,
+        currency: row.currency,
+        note: row.note,
+        estateId: row.estateId,
+        parcelId: row.parcelId,
+        harvestAnnouncementId: row.harvestAnnouncementId,
+        parcelLabel: row.parcelLabel,
+        plantingLabel: row.plantingLabel,
+        timestamp: row.timestamp,
+        status: 'synced',
+      });
+    }
+    for (const item of local) {
+      byId.set(item.id, item);
+    }
+    return sortCosts(Array.from(byId.values()));
+  } catch (error) {
+    console.error('Error merging server costs:', error);
+    return sortCosts(local);
+  }
+}
+
 export function useCostCalculatorData() {
   const { t } = useTranslation();
   const [costs, setCosts] = useState<PendingCost[]>([]);
@@ -85,10 +127,8 @@ export function useCostCalculatorData() {
     else setLoading(true);
     try {
       await syncPortalQueuesIfOnline();
-      const [costList, productList] = await Promise.all([
-        offlineStorage.getPendingCosts(),
-        offlineStorage.getPendingProducts(),
-      ]);
+      const costList = await loadMergedCosts();
+      const productList = await offlineStorage.getPendingProducts();
       setCosts(costList);
       setProducts(productList);
     } catch (error) {

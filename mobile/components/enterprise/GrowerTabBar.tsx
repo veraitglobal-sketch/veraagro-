@@ -1,8 +1,12 @@
 import { useMemo } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
+import { BlurView } from 'expo-blur';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { enterpriseColors } from '../../lib/enterprise-ui';
+import { GROWER_TAB_FLOAT_GAP, GROWER_TAB_PILL_BAR_HEIGHT } from '../../lib/grower-tab-bar-metrics';
+import { GROWER_TAB_LABEL_KEYS } from '../../lib/grower-tab-screen-options';
 
 /** Visible grower tabs only — must match (tabs)/_layout.tsx (href not null). */
 const GROWER_MAIN_TAB_ORDER = ['index', 'field', 'chain', 'supplies', 'profile'] as const;
@@ -19,12 +23,11 @@ function isRouteVisibleInTabBar(
   return true;
 }
 
-/**
- * Minimal bottom tabs — white bar, active indicator line.
- * Filters out Expo Router hidden routes (href: null) so the bar shows 5 items, not 14+.
- */
+/** Compact floating pill — icons + label only on active tab. */
 export function GrowerTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const bottomInset = Math.max(insets.bottom, 8);
 
   const visibleRoutes = useMemo(() => {
     const routes = state.routes.filter((route) =>
@@ -39,99 +42,140 @@ export function GrowerTabBar({ state, descriptors, navigation }: BottomTabBarPro
 
   const focusedRouteKey = state.routes[state.index]?.key;
 
+  const labelForRoute = (
+    routeName: string,
+    options: BottomTabBarProps['descriptors'][string]['options'],
+  ) => {
+    const key = GROWER_TAB_LABEL_KEYS[routeName];
+    if (key) return t(key);
+    if (options.tabBarLabel !== undefined) return String(options.tabBarLabel);
+    if (options.title !== undefined) return String(options.title);
+    return routeName;
+  };
+
   return (
-    <View style={[styles.bar, { paddingBottom: Math.max(insets.bottom, 6) }]}>
-      {visibleRoutes.map((route) => {
-        const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? String(options.tabBarLabel)
-            : options.title !== undefined
-              ? String(options.title)
-              : route.name;
+    <View
+      style={[styles.outer, { paddingBottom: bottomInset + GROWER_TAB_FLOAT_GAP }]}
+      pointerEvents="box-none"
+    >
+      <View style={styles.pill}>
+        <BlurView
+          intensity={72}
+          tint="dark"
+          style={StyleSheet.absoluteFill}
+          {...(Platform.OS === 'android'
+            ? { experimentalBlurMethod: 'dimezisBlurView' as const }
+            : {})}
+        />
+        <View style={styles.pillTint} />
+        <View style={styles.bar}>
+          {visibleRoutes.map((route) => {
+            const { options } = descriptors[route.key];
+            const label = labelForRoute(route.name, options);
 
-        const focused = focusedRouteKey === route.key;
-        const color = focused ? enterpriseColors.primary : enterpriseColors.gray600;
+            const focused = focusedRouteKey === route.key;
+            const color = focused ? '#FFFFFF' : 'rgba(255, 255, 255, 0.52)';
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
-          if (!focused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
-          }
-        };
+            const onPress = () => {
+              const event = navigation.emit({
+                type: 'tabPress',
+                target: route.key,
+                canPreventDefault: true,
+              });
+              if (!focused && !event.defaultPrevented) {
+                navigation.navigate(route.name, route.params);
+              }
+            };
 
-        const onLongPress = () => {
-          navigation.emit({ type: 'tabLongPress', target: route.key });
-        };
+            const onLongPress = () => {
+              navigation.emit({ type: 'tabLongPress', target: route.key });
+            };
 
-        return (
-          <Pressable
-            key={route.key}
-            onPress={onPress}
-            onLongPress={onLongPress}
-            style={styles.tab}
-            accessibilityRole="button"
-            accessibilityState={focused ? { selected: true } : {}}
-            accessibilityLabel={typeof label === 'string' ? label : route.name}
-          >
-            <View style={[styles.indicator, focused && styles.indicatorOn]} />
-            {options.tabBarIcon?.({ focused, color, size: 22 })}
-            <Text style={[styles.label, { color }, focused && styles.labelOn]} numberOfLines={1}>
-              {typeof label === 'string' ? label : route.name}
-            </Text>
-          </Pressable>
-        );
-      })}
+            return (
+              <Pressable
+                key={route.key}
+                onPress={onPress}
+                onLongPress={onLongPress}
+                style={styles.tab}
+                accessibilityRole="button"
+                accessibilityState={focused ? { selected: true } : {}}
+                accessibilityLabel={typeof label === 'string' ? label : route.name}
+              >
+                {focused ? <View style={styles.activeOrb} pointerEvents="none" /> : null}
+                {options.tabBarIcon?.({ focused, color, size: focused ? 23 : 22 })}
+                {focused ? (
+                  <Text style={styles.label} numberOfLines={1}>
+                    {typeof label === 'string' ? label : route.name}
+                  </Text>
+                ) : null}
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
     </View>
   );
 }
 
+/** Stable tabBar prop — must not be recreated per layout render. */
+export function GrowerTabBarRenderer(props: BottomTabBarProps) {
+  return <GrowerTabBar {...props} />;
+}
+
 const styles = StyleSheet.create({
+  outer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: 18,
+    alignItems: 'center',
+  },
+  pill: {
+    width: '100%',
+    maxWidth: 400,
+    borderRadius: 999,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.24,
+    shadowRadius: 20,
+    elevation: 14,
+  },
+  pillTint: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(14, 26, 20, 0.82)',
+  },
   bar: {
     flexDirection: 'row',
-    backgroundColor: enterpriseColors.white,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: enterpriseColors.gray200,
-    paddingTop: 6,
-    minHeight: 56,
-    shadowColor: '#111827',
-    shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    minHeight: GROWER_TAB_PILL_BAR_HEIGHT,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 4,
-    paddingBottom: 2,
-    minHeight: 50,
-    maxWidth: '100%',
+    paddingVertical: 4,
+    minHeight: 48,
+    position: 'relative',
   },
-  indicator: {
+  activeOrb: {
     position: 'absolute',
-    top: 0,
-    width: 28,
-    height: 2,
-    borderRadius: 1,
-    backgroundColor: 'transparent',
-  },
-  indicatorOn: {
+    top: 2,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: enterpriseColors.primary,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginTop: 4,
-    letterSpacing: -0.1,
-    textAlign: 'center',
-  },
-  labelOn: {
+    fontSize: 11,
     fontWeight: '600',
+    marginTop: 3,
+    letterSpacing: -0.05,
+    textAlign: 'center',
+    color: '#FFFFFF',
   },
 });

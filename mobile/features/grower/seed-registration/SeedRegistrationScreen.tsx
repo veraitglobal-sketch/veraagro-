@@ -4,9 +4,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  TextInput,
   Alert,
-  ActivityIndicator,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
@@ -23,8 +21,9 @@ import { seedsAPI, seedRegistrationsAPI } from '../../../lib/api';
 import { apiErrorMessage, axiosResponseStatus } from '../../../lib/api-error';
 import { markStepComplete } from '../../../lib/grower-journey';
 import { pickFromCamera } from '../../../lib/camera-picker';
-import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
+import { EnterpriseButton, EnterpriseTextField, EnterprisePanel } from '../../../design-system';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { FormHelperText } from '../../../components/FormHelperText';
 import { farmerFormUi } from '../../../lib/farmer-form-ui';
@@ -36,7 +35,7 @@ type Mode = 'select' | 'scan' | 'manual';
  * Seed Registration – Step 2 of Grower Journey
  * Scan QR (pulls batch_number, origin from API) or Manual Entry (requires photo + GPS)
  */
-export default function SeedRegistrationScreen() {
+export default function SeedRegistrationScreen({ embedded = false }: { embedded?: boolean }) {
   const { t } = useTranslation();
   const router = useRouter();
   const p = useBioVeraScreenPadding();
@@ -159,17 +158,23 @@ export default function SeedRegistrationScreen() {
         : t('growerJourney.step2.manualTitle');
 
   const goBack = useCallback(() => {
+    if (embedded) return;
     if (mode === 'select') router.back();
     else setMode('select');
-  }, [mode, router]);
+  }, [embedded, mode, router]);
+
+  const Shell = embedded ? View : SafeAreaView;
+  const shellProps = embedded ? { style: [growerUi.canvas, styles.embeddedRoot] } : { style: growerUi.canvas, edges: ['bottom'] as const };
 
   return (
-    <SafeAreaView style={growerUi.canvas} edges={['bottom']}>
-      <GrowerStackHeader
-        title={headerTitle}
-        subtitle={mode === 'select' ? t('growerJourney.step2.selectPrompt') : undefined}
-        onBack={goBack}
-      />
+    <Shell {...shellProps}>
+      {!embedded ? (
+        <GrowerStackHeader
+          title={headerTitle}
+          subtitle={mode === 'select' ? t('growerJourney.step2.selectPrompt') : undefined}
+          onBack={goBack}
+        />
+      ) : null}
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -207,17 +212,16 @@ export default function SeedRegistrationScreen() {
           )}
 
           {mode === 'manual' && (
-            <View style={growerUi.formPanel}>
-              <Text style={growerUi.formLabel}>{t('growerJourney.step2.seedName')}</Text>
-              <TextInput
-                style={[growerUi.formInput, farmerFormUi.input]}
+            <EnterprisePanel>
+              <EnterpriseTextField
+                label={t('growerJourney.step2.seedName')}
+                hint={t('form.helper.seedName')}
                 placeholder={t('growerJourney.step2.seedNamePlaceholder')}
-                placeholderTextColor={enterpriseColors.gray600}
                 value={manualName}
                 onChangeText={setManualName}
                 autoCapitalize="words"
+                size="farmer"
               />
-              <FormHelperText>{t('form.helper.seedName')}</FormHelperText>
               <Text style={growerUi.formLabel}>{t('growerJourney.step2.takePhotoBag')}</Text>
               <TouchableOpacity
                 style={[styles.photoBtn, photoUri ? styles.photoBtnDone : null, farmerFormUi.touchTarget]}
@@ -242,27 +246,27 @@ export default function SeedRegistrationScreen() {
                   {t('growerJourney.step2.gpsRecorded')}: {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
                 </Text>
               ) : null}
-              <TouchableOpacity
-                style={[enterpriseUi.authSubmit, styles.submit, loading && styles.submitDisabled]}
+              <EnterpriseButton
+                label={t('growerJourney.step2.submit')}
                 onPress={handleManualSubmit}
+                loading={loading}
                 disabled={loading}
-                activeOpacity={0.9}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={enterpriseUi.authSubmitText}>{t('growerJourney.step2.submit')}</Text>
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity onPress={goBack} style={styles.secondaryBack} activeOpacity={0.7}>
-                <Text style={styles.secondaryBackText}>{t('common.back')}</Text>
-              </TouchableOpacity>
-            </View>
+                fullWidth
+                size="large"
+              />
+              <EnterpriseButton
+                label={t('common.back')}
+                onPress={goBack}
+                variant="ghost"
+                fullWidth
+                style={styles.secondaryBackBtn}
+              />
+            </EnterprisePanel>
           )}
         </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </Shell>
   );
 }
 
@@ -302,18 +306,11 @@ const styles = StyleSheet.create({
     color: enterpriseColors.gray600,
     marginBottom: 16,
   },
-  submit: {
+  secondaryBackBtn: {
     marginTop: 8,
-    marginBottom: 0,
   },
-  submitDisabled: { opacity: 0.65 },
-  secondaryBack: {
-    alignItems: 'center',
-    paddingVertical: 14,
-    marginTop: 4,
-  },
-  secondaryBackText: {
-    fontSize: 15,
-    color: enterpriseColors.gray600,
+  embeddedRoot: {
+    flex: 1,
+    minHeight: 0,
   },
 });

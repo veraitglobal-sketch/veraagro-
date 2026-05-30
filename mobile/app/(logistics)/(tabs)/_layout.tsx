@@ -1,16 +1,21 @@
+import { useCallback } from 'react';
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Home, ClipboardList, User } from 'lucide-react-native';
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { growerTabScreenOptions } from '../../../lib/enterprise-ui';
 import { LogisticsTabBar } from '../../../components/logistics/LogisticsTabBar';
 
 export default function LogisticsTabsLayout() {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
+
+  const renderTabBar = useCallback(
+    (props: BottomTabBarProps) => <LogisticsTabBar {...props} />,
+    [],
+  );
 
   return (
-    <Tabs screenOptions={growerTabScreenOptions(insets)} tabBar={(props) => <LogisticsTabBar {...props} />}>
+    <Tabs screenOptions={growerTabScreenOptions} tabBar={renderTabBar}>
       <Tabs.Screen
         name="index"
         options={{

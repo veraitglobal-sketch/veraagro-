@@ -2,13 +2,11 @@ import {
   View,
   Text,
   ScrollView,
-  TextInput,
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  StyleSheet,
   type NativeSyntheticEvent,
-  type TextStyle,
-  type ViewStyle,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
@@ -21,11 +19,16 @@ import {
   animateEstateMapTo,
   DEFAULT_ESTATE_MAP_REGION,
 } from '../../../components/grower/EstateBoundaryMap';
-import { theme } from '../../../lib/theme';
 import { FormKeyboardWrap } from '../../../components/FormKeyboardWrap';
 import { FormHelperText } from '../../../components/FormHelperText';
 import { farmerFormUi } from '../../../lib/farmer-form-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
+import {
+  EnterpriseButton,
+  EnterpriseTextField,
+  EnterprisePanel,
+  dsColors,
+} from '../../../design-system';
 import { estatesAPI, parcelsAPI, harvestAnnouncementsAPI, type CreateHarvestPlanBody } from '../../../lib/api';
 import { apiErrorMessage, isLikelyNetworkError } from '../../../lib/api-error';
 import { isDeviceOnline } from '../../../lib/network-utils';
@@ -183,32 +186,25 @@ export default function NewEstateScreen() {
   };
 
   return (
-    <FormKeyboardWrap style={{ flex: 1, backgroundColor: theme.colors.surface }}>
-    <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
-      <View
-        style={{
-          paddingTop: p.headerTop,
-          paddingBottom: theme.spacing.md,
-          paddingHorizontal: theme.spacing.lg,
-          backgroundColor: theme.colors.background,
-          borderBottomWidth: 0.5,
-          borderBottomColor: theme.colors.border,
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}
-      >
+    <FormKeyboardWrap style={styles.flexCanvas}>
+    <View style={styles.flexCanvas}>
+      <View style={[styles.header, { paddingTop: p.headerTop }]}>
         <TouchableOpacity
           onPress={() => (step > 1 ? setStep((s) => (s - 1) as EstateStep) : router.back())}
-          style={{ marginRight: theme.spacing.md, ...farmerFormUi.touchTarget, justifyContent: 'center', alignItems: 'center' }}
+          style={styles.backBtn}
         >
-          <ArrowLeft size={24} color={theme.colors.text.primary} strokeWidth={1.5} />
+          <ArrowLeft size={24} color={dsColors.gray900} strokeWidth={1.5} />
         </TouchableOpacity>
-        <Text style={{ flex: 1, fontSize: 18, fontWeight: '600', color: theme.colors.text.primary }}>
+        <Text style={styles.headerTitle}>
           {t('producer.estates.newEstate')} · {t('producer.estates.step')} {step}/3
         </Text>
         {step === 3 && (
           <TouchableOpacity onPress={handleSave} disabled={loading || !canProceedStep3}>
-            {loading ? <ActivityIndicator size="small" color={theme.colors.primary} /> : <Save size={24} color={theme.colors.primary} strokeWidth={1.5} />}
+            {loading ? (
+              <ActivityIndicator size="small" color={dsColors.primary} />
+            ) : (
+              <Save size={24} color={dsColors.primary} strokeWidth={1.5} />
+            )}
           </TouchableOpacity>
         )}
       </View>
@@ -219,59 +215,55 @@ export default function NewEstateScreen() {
           {step === 1 && (
             <>
               <FormHelperText style={{ marginBottom: 16 }}>{t('form.helper.estateStep1')}</FormHelperText>
-              <View style={{ marginBottom: 24 }}>
-                <Text style={labelStyle}>{t('producer.estates.estateName')}</Text>
-                <TextInput
-                  value={name}
-                  onChangeText={setName}
-                  placeholder={t('producer.estates.estateNamePlaceholder')}
-                  style={inputStyle}
-                />
-                <FormHelperText>{t('form.helper.estateName')}</FormHelperText>
-              </View>
-              <View style={{ marginBottom: 24 }}>
-                <Text style={labelStyle}>{t('producer.estates.locationOptional')}</Text>
-                <TextInput value={location} onChangeText={setLocation} placeholder="e.g. Arilje, Serbia" style={inputStyle} />
-                <FormHelperText>{t('form.helper.estateLocation')}</FormHelperText>
-              </View>
-              <View style={infoBoxStyle}>
-                <Text style={{ fontSize: 13, color: theme.colors.text.primary }}>{t('producer.estates.drawFingerHint')}</Text>
+              <EnterpriseTextField
+                label={t('producer.estates.estateName')}
+                hint={t('form.helper.estateName')}
+                value={name}
+                onChangeText={setName}
+                placeholder={t('producer.estates.estateNamePlaceholder')}
+                required
+                size="farmer"
+              />
+              <EnterpriseTextField
+                label={t('producer.estates.locationOptional')}
+                hint={t('form.helper.estateLocation')}
+                value={location}
+                onChangeText={setLocation}
+                placeholder="e.g. Arilje, Serbia"
+                size="farmer"
+              />
+              <EnterprisePanel variant="tint" style={{ marginBottom: 24 }}>
+                <Text style={styles.infoText}>{t('producer.estates.drawFingerHint')}</Text>
                 {drawStyle === 'tap' ? (
-                  <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginTop: 6 }}>{t('producer.estates.atLeast3Points')}</Text>
+                  <Text style={styles.infoSubtext}>{t('producer.estates.atLeast3Points')}</Text>
                 ) : null}
-              </View>
-              <View style={{ flexDirection: 'row', gap: theme.spacing.sm, marginBottom: theme.spacing.sm }}>
+              </EnterprisePanel>
+              <View style={styles.drawStyleRow}>
                 <TouchableOpacity
                   onPress={() => setDrawStyleWrapped('tap')}
                   disabled={fingerDrawingLocked && fingerStroke.length > 0}
-                  style={[
-                    buttonStyle,
-                    drawStyle === 'tap' && { borderColor: theme.colors.primary, backgroundColor: `${theme.colors.primary}12` },
-                  ]}
+                  style={[styles.mapBtn, drawStyle === 'tap' && styles.mapBtnActive]}
                 >
-                  <Text style={[buttonTextStyle, drawStyle === 'tap' && { fontWeight: '700' }]}>
+                  <Text style={[styles.mapBtnText, drawStyle === 'tap' && styles.mapBtnTextActive]}>
                     {t('producer.estates.drawStyleTap')}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => setDrawStyleWrapped('finger')}
                   disabled={fingerDrawingLocked && fingerStroke.length > 0}
-                  style={[
-                    buttonStyle,
-                    drawStyle === 'finger' && { borderColor: theme.colors.primary, backgroundColor: `${theme.colors.primary}12` },
-                  ]}
+                  style={[styles.mapBtn, drawStyle === 'finger' && styles.mapBtnActive]}
                 >
-                  <Text style={[buttonTextStyle, drawStyle === 'finger' && { fontWeight: '700' }]}>
+                  <Text style={[styles.mapBtnText, drawStyle === 'finger' && styles.mapBtnTextActive]}>
                     {t('producer.estates.drawStyleFinger')}
                   </Text>
                 </TouchableOpacity>
               </View>
-              <View style={{ flexDirection: 'row', gap: theme.spacing.sm, marginBottom: theme.spacing.md, flexWrap: 'wrap' }}>
+              <View style={styles.mapToolbar}>
                 <TouchableOpacity
                   onPress={() => setDrawing(!drawing)}
-                  style={[buttonStyle, drawing && { backgroundColor: theme.colors.primary }]}
+                  style={[styles.mapBtn, drawing && styles.mapBtnDrawing]}
                 >
-                  <Text style={[buttonTextStyle, drawing && { color: theme.colors.background }]}>
+                  <Text style={[styles.mapBtnText, drawing && styles.mapBtnTextOnPrimary]}>
                     {drawing
                       ? drawStyle === 'finger'
                         ? t('producer.estates.drawStyleFinger')
@@ -280,39 +272,28 @@ export default function NewEstateScreen() {
                   </Text>
                 </TouchableOpacity>
                 {fingerDrawingLocked && fingerStroke.length > 2 && (
-                  <TouchableOpacity
+                  <EnterpriseButton
+                    label={t('producer.estates.acceptFingerOutline')}
                     onPress={handleAcceptFingerOutline}
-                    style={{
-                      flex: 1,
-                      minWidth: 120,
-                      padding: theme.spacing.md,
-                      borderRadius: theme.borderRadius.sm,
-                      backgroundColor: theme.colors.primary,
-                      borderWidth: 0.5,
-                      borderColor: theme.colors.primary,
-                      alignItems: 'center',
-                    }}
-                  >
-                    <Text style={{ fontSize: 13, fontWeight: '700', color: theme.colors.background }}>
-                      {t('producer.estates.acceptFingerOutline')}
-                    </Text>
-                  </TouchableOpacity>
+                    size="default"
+                    style={styles.acceptOutlineBtn}
+                  />
                 )}
                 {(polygonCoordinates.length > 0 || fingerStroke.length > 0) && (
-                  <TouchableOpacity onPress={clearPolygon} style={[buttonStyle, { flex: 0 }]}>
-                    <Text style={[buttonTextStyle, { color: theme.colors.error }]}>{t('producer.estates.delete')}</Text>
+                  <TouchableOpacity onPress={clearPolygon} style={[styles.mapBtn, styles.mapBtnCompact]}>
+                    <Text style={[styles.mapBtnText, styles.deleteText]}>{t('producer.estates.delete')}</Text>
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity
                   onPress={() => void refreshDeviceLocation()}
                   disabled={locationRefreshing}
-                  style={[buttonStyle, { flex: 0, minWidth: 52 }]}
+                  style={[styles.mapBtn, styles.mapBtnCompact]}
                   accessibilityLabel={t('producer.estates.yourLocation')}
                 >
                   {locationRefreshing ? (
-                    <ActivityIndicator size="small" color={theme.colors.primary} />
+                    <ActivityIndicator size="small" color={dsColors.primary} />
                   ) : (
-                    <MapPin size={20} color={theme.colors.primary} strokeWidth={1.5} />
+                    <MapPin size={20} color={dsColors.primary} strokeWidth={1.5} />
                   )}
                 </TouchableOpacity>
               </View>
@@ -331,19 +312,19 @@ export default function NewEstateScreen() {
                 yourLocationTitle={t('producer.estates.yourLocation')}
               />
               {(polygonCoordinates.length > 0 || fingerStroke.length > 0) && (
-                <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginBottom: theme.spacing.md }}>
+                <Text style={styles.boundaryCount}>
                   {t('producer.estates.boundaryPoints')}: {polygonCoordinates.length}
                   {fingerDrawingLocked && fingerStroke.length > 0 ? ` · ${fingerStroke.length}` : ''}
                 </Text>
               )}
-              <TouchableOpacity
+              <EnterpriseButton
+                label={t('common.next')}
                 onPress={handleNextStep}
                 disabled={!canProceedStep1}
-                style={[primaryButtonStyle, !canProceedStep1 && { opacity: 0.5 }]}
-              >
-                <Text style={{ color: theme.colors.background, fontWeight: '600' }}>{t('common.next')}</Text>
-                <ChevronRight size={18} color={theme.colors.background} strokeWidth={2} />
-              </TouchableOpacity>
+                fullWidth
+                size="large"
+                icon={<ChevronRight size={18} color={dsColors.white} strokeWidth={2} />}
+              />
             </>
           )}
 
@@ -351,25 +332,33 @@ export default function NewEstateScreen() {
           {step === 2 && (
             <>
               <FormHelperText style={{ marginBottom: 16 }}>{t('form.helper.estateStep2')}</FormHelperText>
-              <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginBottom: 24 }}>{t('producer.estates.plantingTypePrompt')}</Text>
+              <Text style={styles.stepLead}>{t('producer.estates.plantingTypePrompt')}</Text>
               <TouchableOpacity
                 onPress={() => setPlantingType('NEW')}
-                style={[optionCardStyle, plantingType === 'NEW' && optionCardActiveStyle]}
+                style={[styles.optionCard, plantingType === 'NEW' && styles.optionCardActive]}
               >
-                <Text style={[optionCardTitleStyle, plantingType === 'NEW' && { color: theme.colors.primary }]}>{t('producer.estates.newPlanting')}</Text>
-                <Text style={optionCardDescStyle}>{t('producer.estates.newPlantingDesc')}</Text>
+                <Text style={[styles.optionCardTitle, plantingType === 'NEW' && styles.optionCardTitleActive]}>
+                  {t('producer.estates.newPlanting')}
+                </Text>
+                <Text style={styles.optionCardDesc}>{t('producer.estates.newPlantingDesc')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => setPlantingType('EXISTING')}
-                style={[optionCardStyle, plantingType === 'EXISTING' && optionCardActiveStyle]}
+                style={[styles.optionCard, plantingType === 'EXISTING' && styles.optionCardActive]}
               >
-                <Text style={[optionCardTitleStyle, plantingType === 'EXISTING' && { color: theme.colors.primary }]}>{t('producer.estates.existingPlanting')}</Text>
-                <Text style={optionCardDescStyle}>{t('producer.estates.existingPlantingDesc')}</Text>
+                <Text style={[styles.optionCardTitle, plantingType === 'EXISTING' && styles.optionCardTitleActive]}>
+                  {t('producer.estates.existingPlanting')}
+                </Text>
+                <Text style={styles.optionCardDesc}>{t('producer.estates.existingPlantingDesc')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleNextStep} disabled={!canProceedStep2} style={[primaryButtonStyle, !canProceedStep2 && { opacity: 0.5 }]}>
-                <Text style={{ color: theme.colors.background, fontWeight: '600' }}>{t('common.next')}</Text>
-                <ChevronRight size={18} color={theme.colors.background} strokeWidth={2} />
-              </TouchableOpacity>
+              <EnterpriseButton
+                label={t('common.next')}
+                onPress={handleNextStep}
+                disabled={!canProceedStep2}
+                fullWidth
+                size="large"
+                icon={<ChevronRight size={18} color={dsColors.white} strokeWidth={2} />}
+              />
             </>
           )}
 
@@ -377,31 +366,35 @@ export default function NewEstateScreen() {
           {step === 3 && (
             <>
               <FormHelperText style={{ marginBottom: 16 }}>{t('form.helper.estateStep3')}</FormHelperText>
-              <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginBottom: 24 }}>{t('producer.estates.whatPlanted')}</Text>
-              <Text style={labelStyle}>{t('producer.estates.cropCategory.label')}</Text>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: theme.spacing.lg }}>
+              <Text style={styles.stepLead}>{t('producer.estates.whatPlanted')}</Text>
+              <Text style={styles.fieldLabel}>{t('producer.estates.cropCategory.label')}</Text>
+              <View style={styles.chipRow}>
                 {(Object.keys(CROP_HIERARCHY) as CategoryKey[]).map((cat) => (
                   <TouchableOpacity
                     key={cat}
                     onPress={() => { setCategory(cat); setCropId(null); setVarietyId(null); }}
-                    style={[chipStyle, category === cat && chipActiveStyle]}
+                    style={[styles.chip, category === cat && styles.chipActive]}
                   >
-                    <Text style={[chipTextStyle, category === cat && { color: theme.colors.primary }]}>{categoryLabels[cat]}</Text>
+                    <Text style={[styles.chipText, category === cat && styles.chipTextActive]}>
+                      {categoryLabels[cat]}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
               {category && (
                 <>
-                  <Text style={labelStyle}>{t('producer.estates.cropSelection')}</Text>
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: theme.spacing.md }}>
-                    <View style={{ flexDirection: 'row', gap: 8 }}>
+                  <Text style={styles.fieldLabel}>{t('producer.estates.cropSelection')}</Text>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.cropScroll}>
+                    <View style={styles.chipRowInline}>
                       {CROP_HIERARCHY[category].map((crop) => (
                         <TouchableOpacity
                           key={crop.id}
                           onPress={() => { setCropId(crop.id); setVarietyId(null); }}
-                          style={[chipStyle, cropId === crop.id && chipActiveStyle]}
+                          style={[styles.chip, cropId === crop.id && styles.chipActive]}
                         >
-                          <Text style={[chipTextStyle, cropId === crop.id && { color: theme.colors.primary }]}>{crop.name}</Text>
+                          <Text style={[styles.chipText, cropId === crop.id && styles.chipTextActive]}>
+                            {crop.name}
+                          </Text>
                         </TouchableOpacity>
                       ))}
                     </View>
@@ -410,19 +403,30 @@ export default function NewEstateScreen() {
               )}
               {category && cropId && (
                 <>
-                  <Text style={labelStyle}>{t('producer.estates.variety')}</Text>
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: theme.spacing.lg }}>
+                  <Text style={styles.fieldLabel}>{t('producer.estates.variety')}</Text>
+                  <View style={styles.chipRow}>
                     {CROP_HIERARCHY[category].find((c) => c.id === cropId)?.varieties.map((v) => (
-                      <TouchableOpacity key={v.id} onPress={() => setVarietyId(v.id)} style={[chipStyle, varietyId === v.id && chipActiveStyle]}>
-                        <Text style={[chipTextStyle, varietyId === v.id && { color: theme.colors.primary }]}>{v.name}</Text>
+                      <TouchableOpacity
+                        key={v.id}
+                        onPress={() => setVarietyId(v.id)}
+                        style={[styles.chip, varietyId === v.id && styles.chipActive]}
+                      >
+                        <Text style={[styles.chipText, varietyId === v.id && styles.chipTextActive]}>
+                          {v.name}
+                        </Text>
                       </TouchableOpacity>
                     ))}
                   </View>
                 </>
               )}
-              <TouchableOpacity onPress={handleSave} disabled={loading || !canProceedStep3} style={[primaryButtonStyle, (loading || !canProceedStep3) && { opacity: 0.5 }]}>
-                {loading ? <ActivityIndicator color={theme.colors.background} /> : <Text style={{ color: theme.colors.background, fontWeight: '600' }}>{t('producer.estates.saveEstate')}</Text>}
-              </TouchableOpacity>
+              <EnterpriseButton
+                label={t('producer.estates.saveEstate')}
+                onPress={handleSave}
+                loading={loading}
+                disabled={!canProceedStep3}
+                fullWidth
+                size="large"
+              />
             </>
           )}
         </View>
@@ -432,75 +436,166 @@ export default function NewEstateScreen() {
   );
 }
 
-const labelStyle: TextStyle = {
-  fontSize: 13,
-  fontWeight: '500',
-  color: theme.colors.text.secondary,
-  marginBottom: 6,
-};
-const inputStyle: TextStyle = {
-  ...farmerFormUi.input,
-  color: theme.colors.text.primary,
-  borderWidth: 0.5,
-  borderColor: theme.colors.border,
-  borderRadius: theme.borderRadius.sm,
-  backgroundColor: theme.colors.background,
-};
-const infoBoxStyle: ViewStyle = {
-  backgroundColor: `${theme.colors.primary}10`,
-  borderRadius: theme.borderRadius.md,
-  padding: 16,
-  marginBottom: 24,
-  borderWidth: 0.5,
-  borderColor: theme.colors.primary,
-};
-const buttonStyle: ViewStyle = {
-  flex: 1,
-  ...farmerFormUi.touchTarget,
-  borderRadius: theme.borderRadius.sm,
-  backgroundColor: theme.colors.background,
-  borderWidth: 0.5,
-  borderColor: theme.colors.border,
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-const buttonTextStyle: TextStyle = { fontSize: 13, fontWeight: '500', color: theme.colors.text.primary };
-const primaryButtonStyle: ViewStyle = {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 8,
-  backgroundColor: theme.colors.primary,
-  minHeight: 48,
-  paddingVertical: 12,
-  paddingHorizontal: 16,
-  borderRadius: theme.borderRadius.md,
-};
-const optionCardStyle: ViewStyle = {
-  padding: 16,
-  borderRadius: theme.borderRadius.lg,
-  borderWidth: 1,
-  borderColor: theme.colors.border,
-  backgroundColor: theme.colors.background,
-  marginBottom: 24,
-  minHeight: 48,
-};
-const optionCardActiveStyle: ViewStyle = { borderColor: theme.colors.primary, backgroundColor: `${theme.colors.primary}08` };
-const optionCardTitleStyle: TextStyle = {
-  fontSize: 16,
-  fontWeight: '600',
-  color: theme.colors.text.primary,
-  marginBottom: 4,
-};
-const optionCardDescStyle: TextStyle = { fontSize: 13, color: theme.colors.text.secondary };
-const chipStyle: ViewStyle = {
-  paddingHorizontal: 14,
-  minHeight: 48,
-  justifyContent: 'center',
-  borderRadius: theme.borderRadius.md,
-  borderWidth: 1,
-  borderColor: theme.colors.border,
-  backgroundColor: theme.colors.background,
-};
-const chipActiveStyle: ViewStyle = { borderColor: theme.colors.primary, backgroundColor: `${theme.colors.primary}10` };
-const chipTextStyle: TextStyle = { fontSize: 14, fontWeight: '500', color: theme.colors.text.primary };
+const styles = StyleSheet.create({
+  flexCanvas: {
+    flex: 1,
+    backgroundColor: dsColors.canvas,
+  },
+  header: {
+    paddingBottom: 12,
+    paddingHorizontal: 16,
+    backgroundColor: dsColors.surface,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: dsColors.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backBtn: {
+    marginRight: 12,
+    ...farmerFormUi.touchTarget,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: '600',
+    color: dsColors.gray900,
+  },
+  infoText: {
+    fontSize: 13,
+    color: dsColors.gray900,
+  },
+  infoSubtext: {
+    fontSize: 14,
+    color: dsColors.muted,
+    marginTop: 6,
+  },
+  drawStyleRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 8,
+  },
+  mapToolbar: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 12,
+    flexWrap: 'wrap',
+  },
+  mapBtn: {
+    flex: 1,
+    ...farmerFormUi.touchTarget,
+    borderRadius: 8,
+    backgroundColor: dsColors.surface,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: dsColors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mapBtnCompact: {
+    flex: 0,
+    minWidth: 52,
+  },
+  mapBtnActive: {
+    borderColor: dsColors.primary,
+    backgroundColor: dsColors.primaryTint,
+  },
+  mapBtnDrawing: {
+    backgroundColor: dsColors.primary,
+    borderColor: dsColors.primary,
+  },
+  mapBtnText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: dsColors.gray900,
+  },
+  mapBtnTextActive: {
+    fontWeight: '700',
+  },
+  mapBtnTextOnPrimary: {
+    color: dsColors.white,
+  },
+  deleteText: {
+    color: dsColors.destructive,
+  },
+  acceptOutlineBtn: {
+    flex: 1,
+    minWidth: 120,
+  },
+  boundaryCount: {
+    fontSize: 14,
+    color: dsColors.muted,
+    marginBottom: 12,
+  },
+  stepLead: {
+    fontSize: 15,
+    color: dsColors.muted,
+    marginBottom: 24,
+  },
+  fieldLabel: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: dsColors.muted,
+    marginBottom: 6,
+  },
+  optionCard: {
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: dsColors.border,
+    backgroundColor: dsColors.surface,
+    marginBottom: 24,
+    minHeight: 48,
+  },
+  optionCardActive: {
+    borderColor: dsColors.primary,
+    backgroundColor: dsColors.primaryTint,
+  },
+  optionCardTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: dsColors.gray900,
+    marginBottom: 4,
+  },
+  optionCardTitleActive: {
+    color: dsColors.primary,
+  },
+  optionCardDesc: {
+    fontSize: 13,
+    color: dsColors.muted,
+  },
+  chipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 16,
+  },
+  chipRowInline: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  cropScroll: {
+    marginBottom: 12,
+  },
+  chip: {
+    paddingHorizontal: 14,
+    minHeight: 48,
+    justifyContent: 'center',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: dsColors.border,
+    backgroundColor: dsColors.surface,
+  },
+  chipActive: {
+    borderColor: dsColors.primary,
+    backgroundColor: dsColors.primaryTint,
+  },
+  chipText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: dsColors.gray900,
+  },
+  chipTextActive: {
+    color: dsColors.primary,
+  },
+});

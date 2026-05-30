@@ -12,6 +12,8 @@ export interface BatchSelectorProps {
   selectedBatchId: string;
   setSelectedBatchId: (id: string) => void;
   loading: boolean;
+  parcelLabel?: string;
+  batchLabel?: string;
 }
 
 function parcelSummaryLine(batch: BatchItem): string {
@@ -32,6 +34,8 @@ export function BatchSelector({
   selectedBatchId,
   setSelectedBatchId,
   loading,
+  parcelLabel,
+  batchLabel,
 }: BatchSelectorProps) {
   const { t } = useTranslation();
 
@@ -53,7 +57,7 @@ export function BatchSelector({
   return (
     <View style={styles.wrap}>
       <GrowerSelectField
-        label={t('producer.qualityEntry.parcelHeading')}
+        label={parcelLabel ?? t('producer.qualityEntry.parcelHeading')}
         placeholder={t('producer.select.parcel')}
         valueId={parcelFilterId}
         options={parcelOptions}
@@ -68,7 +72,7 @@ export function BatchSelector({
         </View>
       ) : (
         <GrowerSelectField
-          label={t('producer.qualityEntry.batchHeading')}
+          label={batchLabel ?? t('producer.qualityEntry.batchHeading')}
           placeholder={t('producer.select.batch')}
           valueId={selectedBatchId}
           options={batchOptions}

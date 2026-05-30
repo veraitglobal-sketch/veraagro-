@@ -30,7 +30,13 @@ function CostItem({
       ? t('producer.costCalculator.savedOnDevice')
       : item.status === 'syncing'
         ? t('producer.costCalculator.syncing')
-        : item.status;
+        : item.status === 'synced'
+          ? t('producer.costCalculator.synced')
+          : item.status === 'skipped'
+            ? t('producer.costCalculator.skipped')
+            : item.status === 'error'
+              ? t('producer.costCalculator.syncError')
+              : item.status;
 
   const statusTone =
     item.status === 'synced'

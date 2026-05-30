@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { GlassSurface } from '../../../design-system/GlassSurface';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 import type { WalletData, Transaction } from '../wallet/useWalletData';
 
@@ -27,10 +28,10 @@ export function WalletCard({ wallet, loading, lastTransaction, onPress }: Props)
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.72}
-      style={styles.card}
       accessibilityRole="button"
       accessibilityLabel={t('producer.profileScreen.walletA11y')}
     >
+      <GlassSurface contentStyle={styles.cardInner} blur={44}>
       <View style={styles.header}>
         <View style={styles.headerText}>
           <Text style={styles.title}>{t('producer.tabs.wallet')}</Text>
@@ -72,13 +73,13 @@ export function WalletCard({ wallet, loading, lastTransaction, onPress }: Props)
           ) : null}
         </>
       )}
+      </GlassSurface>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    ...enterpriseUi.inAppPanel,
+  cardInner: {
     paddingHorizontal: 18,
     paddingTop: 16,
     paddingBottom: 18,

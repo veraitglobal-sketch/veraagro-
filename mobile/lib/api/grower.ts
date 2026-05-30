@@ -12,6 +12,7 @@ import type {
   PlotBlueprint,
   PlotBlueprintZone,
   PlotBlueprintPartition,
+  FarmerProfileMeResponse,
 } from './types';
 
 export const fieldEntriesAPI = {
@@ -136,6 +137,23 @@ export const harvestAnnouncementsAPI = {
   },
 };
 
+export type GrowerPortalCostRow = {
+  id: string;
+  type: 'product' | 'manual';
+  productId?: string;
+  label: string;
+  amount: number;
+  currency?: string;
+  note?: string;
+  estateId?: string;
+  parcelId?: string;
+  harvestAnnouncementId?: string;
+  parcelLabel?: string;
+  plantingLabel?: string;
+  timestamp: string;
+  status: 'synced';
+};
+
 export const growerPortalAPI = {
   getRequiredCertifications: async (): Promise<RequiredCertification[]> => {
     const response = await api.get('/grower-portal/required-certifications');
@@ -146,6 +164,16 @@ export const growerPortalAPI = {
       title: String(c.title),
       description: c.description,
     }));
+  },
+  getCosts: async (): Promise<GrowerPortalCostRow[]> => {
+    try {
+      const response = await api.get('/grower-portal/costs');
+      return Array.isArray(response.data) ? response.data : [];
+    } catch (error: unknown) {
+      if (isLikelyNetworkError(error)) return [];
+      console.warn('Error fetching grower costs:', error instanceof Error ? error.message : error);
+      return [];
+    }
   },
 };
 
@@ -353,6 +381,13 @@ export const compliancePhotosAPI = {
     const response = await api.post('/compliance/photos', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
+    return response.data;
+  },
+};
+
+export const farmerProfileAPI = {
+  getMyProfile: async (): Promise<FarmerProfileMeResponse> => {
+    const response = await api.get('/farmer-profile/me');
     return response.data;
   },
 };

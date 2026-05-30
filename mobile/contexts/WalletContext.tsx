@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -47,6 +48,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [loadError, setLoadError] = useState(false);
   const mountedRef = useRef(true);
   const requestGenRef = useRef(0);
+  const hasWalletRef = useRef(false);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -70,6 +72,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       ]);
       if (!mountedRef.current || gen !== requestGenRef.current) return;
       setWallet(walletResponse.data);
+      hasWalletRef.current = true;
       setTransactions(Array.isArray(transactionsResponse.data) ? transactionsResponse.data : []);
       setOrdersFinancial(ordersFin);
       setLoadError(false);
@@ -92,13 +95,16 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   }, [loadWalletData]);
 
   const reload = useCallback(async () => {
-    await loadWalletData({ background: wallet != null });
-  }, [loadWalletData, wallet]);
+    await loadWalletData({ background: hasWalletRef.current });
+  }, [loadWalletData]);
+
+  const value = useMemo(
+    () => ({ wallet, transactions, ordersFinancial, loading, loadError, reload }),
+    [wallet, transactions, ordersFinancial, loading, loadError, reload],
+  );
 
   return (
-    <WalletContext.Provider
-      value={{ wallet, transactions, ordersFinancial, loading, loadError, reload }}
-    >
+    <WalletContext.Provider value={value}>
       {children}
     </WalletContext.Provider>
   );

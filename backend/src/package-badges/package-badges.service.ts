@@ -1,4 +1,5 @@
 import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import {
@@ -13,6 +14,7 @@ import {
   CreatePrintOrderDto,
   PreviewPrintOrderDto,
   RegisterPackageBadgesDto,
+  ReceiveFromFactoryDto,
   ReceiveReturnFromGrowerDto,
   ReturnBadgesToSupplierDto,
   TransferBadgesToGrowerDto,
@@ -270,15 +272,292 @@ export class PackageBadgesService {
     return { success: true as const, returnedIds: ids, supplierUserId: dto.supplierUserId };
   }
 
+  private planJsonShape(plan: unknown): {
+    parents: string[];
+    children: Record<string, string[]>;
+    serialPrefix?: string;
+  } | null {
+    if (!plan || typeof plan !== 'object') return null;
+    const p = plan as Record<string, unknown>;
+    const parents = Array.isArray(p.parents) ? p.parents.filter((x): x is string => typeof x === 'string') : [];
+    const childrenRaw = p.children;
+    const children: Record<string, string[]> = {};
+    if (childrenRaw && typeof childrenRaw === 'object' && !Array.isArray(childrenRaw)) {
+      for (const [k, v] of Object.entries(childrenRaw as Record<string, unknown>)) {
+        if (Array.isArray(v)) {
+          children[k] = v.filter((x): x is string => typeof x === 'string');
+        }
+      }
+    }
+    const serialPrefix = typeof p.serialPrefix === 'string' ? p.serialPrefix : undefined;
+    return { parents, children, serialPrefix };
+  }
+
+  private inferBadgeTypeFromPlan(
+    parentSerial: string,
+    plan: { serialPrefix?: string } | null,
+    explicit?: PackageBadgeType,
+  ): PackageBadgeType {
+    if (explicit) return explicit;
+    const prefix = (plan?.serialPrefix || parentSerial.split('-')[0] || '').toUpperCase();
+    if (prefix.includes('ROLL') || prefix === 'RL') {
+      return PackageBadgeType.ROLL_LINE;
+    }
+    return PackageBadgeType.PALLET_MASTER;
+  }
+
+  private async resolveGrowerUserId(dto: TransferBadgesToGrowerDto): Promise<string> {
+    if (dto.newGrowerUserId?.trim()) {
+      return dto.newGrowerUserId.trim();
+    }
+    if (dto.farmerQrCode?.trim()) {
+      const u = await this.prisma.users.findFirst({
+        where: { farmerQrCode: dto.farmerQrCode.trim() },
+      });
+      if (!u) {
+        throw new NotFoundException('Grower not found for this farmer QR code');
+      }
+      return u.id;
+    }
+    if (dto.growerPartnerCode?.trim()) {
+      const u = await this.prisma.users.findFirst({
+        where: { partnerCode: dto.growerPartnerCode.trim() },
+      });
+      if (!u) {
+        throw new NotFoundException('Grower not found for this partner code');
+      }
+      return u.id;
+    }
+    throw new BadRequestException('Provide newGrowerUserId, farmerQrCode, or growerPartnerCode');
+  }
+
+  private async findPrintOrderForSerial(
+    serial: string,
+    supplierUserId: string,
+    printOrderIdHint?: string,
+  ): Promise<{
+    printOrderId: string;
+    parentSerial: string;
+    childSerials: string[];
+    badgeType: PackageBadgeType;
+  } | null> {
+    const s = serial.trim();
+    if (printOrderIdHint?.trim()) {
+      const po = await this.prisma.badge_print_orders.findUnique({ where: { id: printOrderIdHint.trim() } });
+      if (!po) {
+        throw new NotFoundException('Print order not found');
+      }
+      const plan = this.planJsonShape(po.planJson);
+      if (!plan) {
+        throw new BadRequestException('Print order has invalid planJson');
+      }
+      const match = this.matchSerialInPlan(s, plan);
+      if (!match) {
+        throw new BadRequestException('Serial not found in this print order plan');
+      }
+      return {
+        printOrderId: po.id,
+        parentSerial: match.parentSerial,
+        childSerials: match.childSerials,
+        badgeType: this.inferBadgeTypeFromPlan(match.parentSerial, plan),
+      };
+    }
+
+    const orders = await this.prisma.badge_print_orders.findMany({
+      where: {
+        OR: [{ printerSupplierId: supplierUserId }, { printerSupplierId: null }],
+        status: { in: [BadgePrintOrderStatus.SENT_TO_PRINTER, BadgePrintOrderStatus.DRAFT] },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 200,
+    });
+
+    for (const po of orders) {
+      const plan = this.planJsonShape(po.planJson);
+      if (!plan) continue;
+      const match = this.matchSerialInPlan(s, plan);
+      if (match) {
+        return {
+          printOrderId: po.id,
+          parentSerial: match.parentSerial,
+          childSerials: match.childSerials,
+          badgeType: this.inferBadgeTypeFromPlan(match.parentSerial, plan),
+        };
+      }
+    }
+    return null;
+  }
+
+  private matchSerialInPlan(
+    serial: string,
+    plan: { parents: string[]; children: Record<string, string[]> },
+  ): { parentSerial: string; childSerials: string[] } | null {
+    const s = serial.trim();
+    if (plan.parents.includes(s)) {
+      return { parentSerial: s, childSerials: plan.children[s] ?? [] };
+    }
+    for (const [parent, kids] of Object.entries(plan.children)) {
+      if (kids.includes(s)) {
+        return { parentSerial: parent, childSerials: plan.children[parent] ?? [] };
+      }
+    }
+    return null;
+  }
+
+  /** Supplier intake: scan master (or child) sticker when shipment arrives from factory. */
+  async supplierReceiveFromFactory(supplierUserId: string, dto: ReceiveFromFactoryDto) {
+    const scanned = dto.rootSerial.trim();
+    if (!scanned) {
+      throw new BadRequestException('rootSerial is required');
+    }
+
+    const existingTree = await this.findTreeBySerialWithClient(this.prisma, scanned);
+    if (existingTree) {
+      const { root } = existingTree;
+      if (root.ownerUserId === supplierUserId && root.lifecycle === PackageBadgeLifecycle.ACTIVE) {
+        return existingTree;
+      }
+      if (root.ownerUserId && root.ownerUserId !== supplierUserId) {
+        throw new ForbiddenException('This badge tree is already registered to another account');
+      }
+    }
+
+    const fromPlan = await this.findPrintOrderForSerial(scanned, supplierUserId, dto.printOrderId);
+    const parentSerial = fromPlan?.parentSerial ?? scanned;
+    const childSerials =
+      dto.childSerials?.map((c) => c.trim()).filter(Boolean) ?? fromPlan?.childSerials ?? [];
+    const badgeType =
+      dto.type ?? fromPlan?.badgeType ?? this.inferBadgeTypeFromPlan(parentSerial, null, dto.type);
+
+    if (!fromPlan && childSerials.length === 0) {
+      throw new BadRequestException(
+        'No print order matched this serial. Pass childSerials[] or printOrderId if the factory plan is not in the system yet.',
+      );
+    }
+
+    return this.register(supplierUserId, {
+      parentSerial,
+      type: badgeType,
+      childSerials,
+      ownerUserId: supplierUserId,
+      printOrderId: fromPlan?.printOrderId,
+    });
+  }
+
+  private async ensureLabelInventoryForGrower(rootSerial: string, growerUserId: string) {
+    let labelType = await this.prisma.material_types.findFirst({
+      where: { type: 'LABEL', isActive: true },
+    });
+    if (!labelType) {
+      const now = new Date();
+      labelType = await this.prisma.material_types.create({
+        data: {
+          id: crypto.randomUUID(),
+          name: 'Bio Vera Label roll',
+          type: 'LABEL',
+          unit: 'roll',
+          unitPrice: 0.1,
+          description: 'Official sticker / QR label roll',
+          isActive: true,
+          updatedAt: now,
+        },
+      });
+    }
+
+    const existing = await this.prisma.material_inventory.findUnique({
+      where: { serialNumber: rootSerial },
+    });
+    const now = new Date();
+    if (existing) {
+      await this.prisma.material_inventory.update({
+        where: { id: existing.id },
+        data: {
+          materialTypeId: labelType.id,
+          soldToUserId: growerUserId,
+          soldAt: now,
+          status: 'AVAILABLE',
+          usedInBatchId: null,
+          usedAt: null,
+          updatedAt: now,
+        },
+      });
+      return;
+    }
+
+    await this.prisma.material_inventory.create({
+      data: {
+        id: crypto.randomUUID(),
+        materialTypeId: labelType.id,
+        serialNumber: rootSerial,
+        status: 'AVAILABLE',
+        soldToUserId: growerUserId,
+        soldAt: now,
+        updatedAt: now,
+      },
+    });
+  }
+
+  async listSupplierStock(supplierUserId: string) {
+    const roots = await this.prisma.package_badges.findMany({
+      where: {
+        ownerUserId: supplierUserId,
+        parentId: null,
+        lifecycle: PackageBadgeLifecycle.ACTIVE,
+      },
+      include: {
+        children: { select: { id: true, serial: true }, orderBy: { serial: 'asc' } },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 200,
+    });
+    return roots.map((r) => ({
+      serial: r.serial,
+      type: r.type,
+      childCount: r.children.length,
+      batchId: r.batchId,
+      createdAt: r.createdAt.toISOString(),
+    }));
+  }
+
+  async listGrowerPackages(growerUserId: string) {
+    const roots = await this.prisma.package_badges.findMany({
+      where: {
+        ownerUserId: growerUserId,
+        parentId: null,
+        lifecycle: PackageBadgeLifecycle.ACTIVE,
+      },
+      include: {
+        children: { select: { serial: true, batchId: true }, orderBy: { serial: 'asc' } },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 200,
+    });
+    return roots.map((r) => ({
+      serial: r.serial,
+      type: r.type,
+      childCount: r.children.length,
+      batchId: r.batchId,
+      usedOnLot: r.batchId != null,
+      soldAt: r.createdAt.toISOString(),
+    }));
+  }
+
   async supplierTransferTreeToGrower(supplierUserId: string, dto: TransferBadgesToGrowerDto) {
+    const growerUserId = await this.resolveGrowerUserId(dto);
     const root = await this.resolveRootRowBySerial(dto.rootSerial);
     if (root.ownerUserId !== supplierUserId) {
       throw new ForbiddenException('Your supplier account does not hold this tree');
     }
-    if (root.lifecycle !== PackageBadgeLifecycle.RETURNED_TO_SUPPLIER) {
-      throw new BadRequestException('Tree must be in RETURNED_TO_SUPPLIER state to re-assign');
+    const allowedLifecycle =
+      root.lifecycle === PackageBadgeLifecycle.RETURNED_TO_SUPPLIER ||
+      root.lifecycle === PackageBadgeLifecycle.ACTIVE;
+    if (!allowedLifecycle) {
+      throw new BadRequestException('Tree is not available for handover to a grower');
     }
-    const grower = await this.prisma.users.findUnique({ where: { id: dto.newGrowerUserId } });
+    if (root.batchId) {
+      throw new BadRequestException('This package was already used on a lot and cannot be re-sold');
+    }
+    const grower = await this.prisma.users.findUnique({ where: { id: growerUserId } });
     if (!grower) {
       throw new BadRequestException('Grower not found');
     }
@@ -291,12 +570,21 @@ export class PackageBadgesService {
       where: { id: { in: ids } },
       data: {
         lifecycle: PackageBadgeLifecycle.ACTIVE,
-        ownerUserId: dto.newGrowerUserId,
+        ownerUserId: growerUserId,
         batchId: null,
         farmerQrCode: fq,
       },
     });
-    return { success: true as const, assignedTo: dto.newGrowerUserId, rowCount: ids.length };
+    if (root.type === PackageBadgeType.ROLL_LINE || root.type === PackageBadgeType.PALLET_MASTER) {
+      await this.ensureLabelInventoryForGrower(root.serial, growerUserId);
+    }
+    return {
+      success: true as const,
+      assignedTo: growerUserId,
+      growerName: `${grower.firstName} ${grower.lastName}`.trim(),
+      rowCount: ids.length,
+      rootSerial: root.serial,
+    };
   }
 
   private async findTreeBySerialTx(tx: Prisma.TransactionClient, serial: string) {

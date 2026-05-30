@@ -1,131 +1,116 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useMemo } from 'react';
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
-import { FileCheck, ShieldAlert } from 'lucide-react-native';
-import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
-import { TabRootBody } from '../../../components/enterprise/TabRootBody';
-import { EnterpriseNavSection } from '../../../components/enterprise/EnterpriseNavSection';
+import { FileCheck, Settings, LogOut } from 'lucide-react-native';
+import { GrowerHeroSheetScaffold, EnterpriseNavSection } from '../../../design-system';
+import { EnterprisePanel } from '../../../design-system/EnterprisePanel';
+import { GrowerHeroTopBar } from '../../../components/enterprise/GrowerHeroTopBar';
+import { GrowerPersonHero } from '../../../components/enterprise/GrowerPersonHero';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
-import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
-import { WalletCard } from './WalletCard';
-import { QuickAccessGrid } from './QuickAccessGrid';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 import { useProducerProfileData } from './useProducerProfileData';
+import { ProfileWalletPanel } from './ProfileWalletPanel';
 
 export default function ProducerProfileScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const pad = useBioVeraScreenPadding();
   const data = useProducerProfileData();
+  const locale = useAppLocaleTag();
 
-  const complianceItems = [
-    {
-      key: 'certifications',
-      title: t('producer.tabs.certifications'),
-      subtitle: t('producer.dashboard.certificationsDesc'),
-      icon: FileCheck,
-      onPress: () => router.push('/(producer)/(tabs)/certifications'),
-    },
-    {
-      key: 'banned-substances',
-      title: t('producer.tabs.bannedSubstances'),
-      subtitle: t('producer.dashboard.bannedSubstancesDesc'),
-      icon: ShieldAlert,
-      onPress: () => router.push('/(producer)/(tabs)/banned-substances'),
-    },
-  ];
+  const available = data.wallet?.availableBalance ?? 0;
+  const earned = data.wallet?.totalEarned ?? 0;
+  const pending = data.wallet?.pendingBalance ?? 0;
+
+  const lastTransactionLabel = data.lastTransaction
+    ? `${data.lastTransaction.description || '—'} · ${Math.abs(data.lastTransaction.amount).toLocaleString(locale, {
+        style: 'currency',
+        currency: 'EUR',
+      })}`
+    : null;
+
+  const accountItems = useMemo(
+    () => [
+      {
+        key: 'settings',
+        title: t('producer.tabs.settings'),
+        subtitle: t('producer.profileScreen.settingsSubtitle'),
+        icon: Settings,
+        onPress: () => router.push('/(producer)/(tabs)/settings'),
+      },
+      {
+        key: 'compliance',
+        title: t('producer.profile.compliance.navTitle'),
+        subtitle: t('producer.profile.compliance.navDesc'),
+        icon: FileCheck,
+        onPress: () => router.push('/(producer)/compliance'),
+      },
+    ],
+    [t, router],
+  );
 
   return (
-    <EnterpriseScreen
-      fillViewport
-      withTopWash
+    <GrowerHeroSheetScaffold
+      heroCompact
+      topBar={<GrowerHeroTopBar />}
+      hero={
+        <GrowerPersonHero
+          compact
+          name={data.displayName}
+          email={data.user?.email}
+          partnerCode={data.user?.partnerCode}
+          photoUri={data.profilePhoto}
+        />
+      }
       refreshing={data.refreshing}
       onRefresh={() => void data.onRefresh()}
-      contentPaddingBottom={100}
     >
-      <TabRootBody style={{ paddingTop: pad.headerTop }}>
-        <View style={styles.identity}>
-          <Text style={styles.name} numberOfLines={2} accessibilityRole="header">
-            {data.displayName}
-          </Text>
-          {data.user?.email ? (
-            <Text style={styles.email} numberOfLines={1}>
-              {data.user.email}
-            </Text>
-          ) : null}
-          {data.user?.partnerCode ? (
-            <Text style={styles.partner} numberOfLines={1}>
-              {t('producer.dashboard.partner')} {data.user.partnerCode}
-            </Text>
-          ) : null}
-        </View>
+      <ProfileWalletPanel
+        available={available}
+        earned={earned}
+        pending={pending}
+        lastTransactionLabel={lastTransactionLabel}
+        loading={data.walletLoading}
+        locale={locale}
+        onPress={data.openWallet}
+      />
 
-        <View style={styles.walletWrap}>
-          <WalletCard
-            wallet={data.wallet}
-            loading={data.walletLoading}
-            lastTransaction={data.lastTransaction}
-            onPress={data.openWallet}
-          />
-        </View>
+      <EnterpriseNavSection title={t('producer.profile.sectionAccount')} items={accountItems} />
 
-        <QuickAccessGrid />
+      <EnterpriseNavSection title={t('producer.dashboard.moreSection')} items={data.moreItems} />
 
-        <EnterpriseNavSection title={t('producer.profile.sectionCompliance')} items={complianceItems} />
-
-        <EnterpriseNavSection title={t('producer.dashboard.moreSection')} items={data.moreItems} />
-
+      <EnterprisePanel variant="default" padding="none" style={styles.logoutPanel}>
         <TouchableOpacity
           onPress={() => void data.handleLogout()}
-          activeOpacity={0.6}
-          style={styles.logout}
+          activeOpacity={0.72}
           accessibilityRole="button"
+          style={styles.logoutRow}
         >
+          <LogOut size={20} color={enterpriseColors.destructive} strokeWidth={1.5} />
           <Text style={styles.logoutText}>{t('supplier.logOut')}</Text>
         </TouchableOpacity>
-      </TabRootBody>
-    </EnterpriseScreen>
+      </EnterprisePanel>
+    </GrowerHeroSheetScaffold>
   );
 }
 
 const styles = StyleSheet.create({
-  identity: {
-    marginBottom: 18,
+  logoutPanel: {
+    marginBottom: 8,
   },
-  name: {
-    fontSize: 28,
-    fontWeight: '400',
-    color: enterpriseColors.gray900,
-    letterSpacing: -0.65,
-    lineHeight: 34,
-  },
-  email: {
-    fontSize: 15,
-    fontWeight: '400',
-    color: enterpriseColors.gray600,
-    marginTop: 6,
-    letterSpacing: -0.15,
-  },
-  partner: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: enterpriseColors.primary,
-    marginTop: 8,
-    letterSpacing: -0.05,
-  },
-  walletWrap: {
-    marginBottom: 14,
-  },
-  logout: {
-    alignSelf: 'flex-start',
-    marginTop: 12,
-    paddingVertical: 10,
-    minHeight: 48,
+  logoutRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
+    gap: 10,
+    minHeight: 52,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
   },
   logoutText: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '500',
-    color: enterpriseColors.gray600,
-    letterSpacing: -0.15,
+    color: enterpriseColors.destructive,
+    letterSpacing: -0.2,
   },
 });

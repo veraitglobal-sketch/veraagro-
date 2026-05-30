@@ -60,9 +60,15 @@
     <key>NSMicrophoneUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your microphone</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your photos</string>
+    <string>Bio Vera koristi fotografije samo kao dokaz unosa na parceli.</string>
+    <key>NSUserNotificationsUsageDescription</key>
+    <string>Obaveštenja o žetvi, transportu, sinhronizaciji terenskih unosa i porukama Bio Vera tima.</string>
     <key>RCTNewArchEnabled</key>
     <true/>
+    <key>UIBackgroundModes</key>
+    <array>
+      <string>remote-notification</string>
+    </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

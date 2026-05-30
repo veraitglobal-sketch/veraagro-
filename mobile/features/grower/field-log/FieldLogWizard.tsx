@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  TextInput,
   ActivityIndicator,
   RefreshControl,
   StyleSheet,
@@ -21,6 +20,7 @@ import { useAppLocaleTag } from '../../../lib/date-locale';
 import { Camera, MapPin, Check, ScanLine, Sprout } from 'lucide-react-native';
 import { enterpriseColors, enterpriseUi, enterpriseStyles } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
+import { EnterpriseButton, EnterpriseTextField, EnterpriseTextArea } from '../../../design-system';
 import {
   useFieldLogData,
   ACTIVITY_TYPES,
@@ -106,7 +106,7 @@ function SelectCard({
 }
 
 /** 1. Parcela → 2. Zasad → 3. Rad + slika + GPS */
-export default function FieldLogWizard() {
+export default function FieldLogWizard({ embedded = false }: { embedded?: boolean }) {
   const { t } = useTranslation();
   const dateLocale = useAppLocaleTag();
   const [step, setStep] = useState(1);
@@ -203,8 +203,10 @@ export default function FieldLogWizard() {
   const progressPct = step / STEPS;
 
   return (
-    <View style={growerUi.canvas}>
-      <GrowerStackHeader title={t('producer.tabs.fieldLog')} subtitle={headerSubtitle} />
+    <View style={[growerUi.canvas, embedded && styles.embeddedRoot]}>
+      {!embedded ? (
+        <GrowerStackHeader title={t('producer.tabs.fieldLog')} subtitle={headerSubtitle} />
+      ) : null}
 
       <View style={styles.progressWrap}>
         <View style={enterpriseUi.progressTrack}>
@@ -391,22 +393,23 @@ export default function FieldLogWizard() {
                   {showOptional ? (
                     <View style={[enterpriseUi.authPanel, styles.optionalBox]}>
                       {MATERIAL_ACTIVITIES.has(data.activityType as ActivityType) ? (
-                        <TouchableOpacity
-                          onPress={() => data.router.push('/(producer)/scanner')}
-                          style={styles.scanRow}
-                        >
-                          <ScanLine size={20} color={enterpriseColors.primary} strokeWidth={1.5} />
-                          <TextInput
-                            style={styles.scanInput}
-                            placeholder={t('producer.fieldLogForm.materialPlaceholder')}
-                            placeholderTextColor={enterpriseColors.gray600}
+                        <View style={styles.scanRow}>
+                          <TouchableOpacity
+                            onPress={() => data.router.push('/(producer)/scanner')}
+                            hitSlop={8}
+                            accessibilityRole="button"
+                          >
+                            <ScanLine size={20} color={enterpriseColors.primary} strokeWidth={1.5} />
+                          </TouchableOpacity>
+                          <EnterpriseTextField
                             value={data.materialID}
                             onChangeText={data.setMaterialID}
+                            placeholder={t('producer.fieldLogForm.materialPlaceholder')}
+                            containerStyle={styles.scanField}
                           />
-                        </TouchableOpacity>
+                        </View>
                       ) : null}
-                      <TextInput
-                        style={[growerUi.formInput, styles.notesInput]}
+                      <EnterpriseTextArea
                         value={data.journalNotes}
                         onChangeText={data.setJournalNotes}
                         placeholder={
@@ -414,8 +417,8 @@ export default function FieldLogWizard() {
                             ? t('producer.fieldLogForm.farmerNotesPlanting')
                             : t('producer.fieldLogForm.farmerNotesOptional')
                         }
-                        placeholderTextColor={enterpriseColors.gray600}
-                        multiline
+                        minRows={3}
+                        containerStyle={{ marginBottom: 0 }}
                       />
                     </View>
                   ) : null}
@@ -441,40 +444,31 @@ export default function FieldLogWizard() {
 
         <View style={styles.footer}>
           {step > 1 ? (
-            <TouchableOpacity onPress={() => setStep((s) => s - 1)} style={styles.footerBack}>
-              <Text style={styles.footerBackText}>{t('producer.fieldLogForm.wizardBack')}</Text>
-            </TouchableOpacity>
+            <EnterpriseButton
+              label={t('producer.fieldLogForm.wizardBack')}
+              onPress={() => setStep((s) => s - 1)}
+              variant="secondary"
+            />
           ) : (
             <View style={styles.footerSpacer} />
           )}
           {step < STEPS ? (
-            <TouchableOpacity
+            <EnterpriseButton
+              label={t('producer.fieldLogForm.farmerNext')}
               onPress={() => setStep((s) => s + 1)}
               disabled={step === 1 ? !step1Ok : !step2Ok}
-              style={[
-                enterpriseUi.authBtnPrimary,
-                styles.footerPrimary,
-                (step === 1 ? !step1Ok : !step2Ok) && styles.footerDisabled,
-              ]}
-            >
-              <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.fieldLogForm.farmerNext')}</Text>
-            </TouchableOpacity>
+              style={styles.footerPrimary}
+              size="large"
+            />
           ) : data.activityType ? (
-            <TouchableOpacity
+            <EnterpriseButton
+              label={t('producer.fieldLog.saveEntry')}
               onPress={() => void data.handleSubmit()}
-              disabled={data.saveBusy}
-              style={[
-                enterpriseUi.authBtnPrimary,
-                styles.footerPrimary,
-                (data.saveBusy || submitBlocked) && styles.footerDisabled,
-              ]}
-            >
-              {data.saveBusy ? (
-                <ActivityIndicator color={enterpriseColors.white} />
-              ) : (
-                <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.fieldLog.saveEntry')}</Text>
-              )}
-            </TouchableOpacity>
+              loading={data.saveBusy}
+              disabled={data.saveBusy || submitBlocked}
+              style={styles.footerPrimary}
+              size="large"
+            />
           ) : (
             <View style={styles.footerSpacer} />
           )}
@@ -609,20 +603,13 @@ const styles = StyleSheet.create({
   },
   scanRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: 10,
     marginBottom: 8,
   },
-  scanInput: {
+  scanField: {
     flex: 1,
-    fontSize: 16,
-    color: enterpriseColors.gray900,
-    minHeight: 44,
-  },
-  notesInput: {
     marginBottom: 0,
-    minHeight: 88,
-    textAlignVertical: 'top',
   },
   saveHint: {
     fontSize: 15,
@@ -652,22 +639,8 @@ const styles = StyleSheet.create({
   footerPrimary: {
     flex: 1,
   },
-  footerDisabled: {
-    opacity: 0.5,
-  },
-  footerBack: {
-    minHeight: 52,
-    paddingHorizontal: 18,
-    justifyContent: 'center',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
-    backgroundColor: enterpriseColors.white,
-  },
-  footerBackText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: enterpriseColors.gray900,
-    letterSpacing: -0.2,
+  embeddedRoot: {
+    flex: 1,
+    minHeight: 0,
   },
 });

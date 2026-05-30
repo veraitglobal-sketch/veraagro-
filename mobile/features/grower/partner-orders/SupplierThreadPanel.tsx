@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
@@ -15,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { Store } from 'lucide-react-native';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
+import { EnterpriseButton, EnterpriseTextArea } from '../../../design-system';
 import { b2bSuppliersAPI } from '../../../lib/api';
 import { apiErrorMessage } from '../../../lib/api-error';
 import { useAuth } from '../../../hooks/useAuth';
@@ -129,22 +129,21 @@ export function SupplierThreadPanel({ supplierUserId, threadIdFromLink, onOpenSt
       )}
 
       <View style={styles.composer}>
-        <TextInput
+        <EnterpriseTextArea
           value={text}
           onChangeText={setText}
           placeholder={t('b2bSupplier.store.messagePlaceholder')}
-          placeholderTextColor={enterpriseColors.gray600}
-          multiline
-          style={[growerUi.formInput, styles.composerInput]}
+          minRows={2}
+          containerStyle={styles.composerField}
         />
-        <TouchableOpacity
+        <EnterpriseButton
+          label={t('b2bSupplier.store.sendMessage')}
           onPress={() => void send()}
+          loading={sending}
           disabled={sending || !text.trim()}
-          activeOpacity={0.88}
-          style={[enterpriseUi.authBtnPrimary, styles.sendBtn, (sending || !text.trim()) && styles.sendDisabled]}
-        >
-          <Text style={enterpriseUi.authBtnPrimaryText}>{t('b2bSupplier.store.sendMessage')}</Text>
-        </TouchableOpacity>
+          fullWidth
+          size="large"
+        />
       </View>
     </KeyboardAvoidingView>
   );
@@ -189,17 +188,8 @@ const styles = StyleSheet.create({
     borderTopColor: enterpriseColors.gray200,
     backgroundColor: enterpriseColors.white,
   },
-  composerInput: {
-    minHeight: 48,
+  composerField: {
     marginBottom: 10,
-  },
-  sendBtn: {
-    minHeight: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sendDisabled: {
-    opacity: 0.5,
   },
   signInBtn: {
     marginTop: 16,

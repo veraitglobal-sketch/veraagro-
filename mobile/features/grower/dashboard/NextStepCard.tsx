@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { computeNextStep, type NextStep } from './computeNextStep';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerSheet, growerSheetCardStyle } from '../../../design-system/grower-sheet-styles';
 
 export interface NextStepCardProps {
   estateCount: number;
@@ -101,7 +102,7 @@ function labelAndCta(
 
 function NextStepSkeleton() {
   return (
-    <View style={[enterpriseUi.authPanel, styles.skeletonPanel]} accessibilityElementsHidden>
+    <View style={[styles.panel, styles.skeletonPanel]}>
       <View style={styles.skelLineWide} />
       <View style={styles.skelLine} />
       <View style={styles.skelCta} />
@@ -109,7 +110,7 @@ function NextStepSkeleton() {
   );
 }
 
-/** Hero action card — white panel + primary CTA (different from provenance ribbon). */
+/** Primary action card inside white sheet. */
 export default function NextStepCard(props: NextStepCardProps) {
   const { t } = useTranslation();
   if (!props.ready) {
@@ -133,9 +134,7 @@ export default function NextStepCard(props: NextStepCardProps) {
   const showSyncError = step.kind === 'sync_queue' && props.syncError;
 
   return (
-    <View style={[enterpriseUi.authPanel, styles.panel, styles.panelHero, styles.panelElevated]}>
-      <View style={styles.heroAccent} accessibilityElementsHidden />
-      <View style={styles.panelInner}>
+    <View style={styles.panel}>
       <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.dashboard.nextStep.eyebrow')}</Text>
       <Text style={styles.headline}>{title}</Text>
       <Text style={enterpriseUi.inAppLead} numberOfLines={3}>
@@ -159,43 +158,20 @@ export default function NextStepCard(props: NextStepCardProps) {
       >
         <Text style={[enterpriseUi.authSubmitText, styles.ctaText]}>{cta}</Text>
       </TouchableOpacity>
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   panel: {
-    marginBottom: 16,
-    overflow: 'hidden',
-  },
-  panelHero: {
-    position: 'relative',
-  },
-  panelElevated: {
-    shadowColor: '#111827',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.07,
-    shadowRadius: 14,
-    elevation: 3,
-  },
-  heroAccent: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: 3,
-    backgroundColor: enterpriseColors.primary,
-    borderTopLeftRadius: 16,
-    borderBottomLeftRadius: 16,
-  },
-  panelInner: {
-    paddingLeft: 4,
+    ...growerSheetCardStyle({ marginBottom: 18 }),
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
   headline: {
-    fontSize: 22,
+    fontSize: 23,
     fontWeight: '400',
-    color: enterpriseColors.gray900,
+    color: growerSheet.title,
     letterSpacing: -0.5,
     lineHeight: 28,
     marginTop: 4,
@@ -222,7 +198,6 @@ const styles = StyleSheet.create({
   },
   skeletonPanel: {
     gap: 10,
-    marginBottom: 12,
   },
   skelLineWide: {
     height: 18,

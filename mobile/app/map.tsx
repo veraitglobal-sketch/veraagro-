@@ -6,7 +6,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SuppliersMap from '../components/SuppliersMap';
 import { RetailLocation } from '../lib/api';
 import { theme } from '../lib/theme';
-import { ArrowLeft, MapPin, ShoppingBag, Sprout, X } from 'lucide-react-native';
+import { ArrowLeft, MapPin, X } from 'lucide-react-native';
+import { MapLocationPin } from '../components/map/MapLocationPin';
 
 /**
  * Retail Locations Map Page
@@ -63,12 +64,15 @@ export default function MapScreen() {
             }}>
               {t('map.title')}
             </Text>
-            <Text style={{
-              fontSize: 13,
-              fontWeight: '400',
-              color: 'rgba(255, 255, 255, 0.85)',
-              letterSpacing: 0.3,
-            }}>
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: '400',
+                color: 'rgba(255, 255, 255, 0.85)',
+                lineHeight: 18,
+              }}
+              numberOfLines={3}
+            >
               {t('map.subtitle')}
             </Text>
           </View>
@@ -131,19 +135,19 @@ export default function MapScreen() {
           >
             <View
               style={{
-                backgroundColor: isSupplierPin(selectedLocation) ? '#FFF7ED' : 'rgba(45, 90, 39, 0.08)',
+                backgroundColor: 'rgba(45, 90, 39, 0.08)',
                 paddingHorizontal: 10,
                 paddingVertical: 4,
                 borderRadius: theme.borderRadius.full,
                 borderWidth: 1,
-                borderColor: isSupplierPin(selectedLocation) ? 'rgba(234, 88, 12, 0.35)' : 'rgba(45, 90, 39, 0.2)',
+                borderColor: 'rgba(45, 90, 39, 0.2)',
               }}
             >
               <Text
                 style={{
                   fontSize: 14,
                   fontWeight: '600',
-                  color: isSupplierPin(selectedLocation) ? '#9A3412' : theme.colors.primary,
+                  color: theme.colors.primary,
                   letterSpacing: 0.2,
                 }}
               >
@@ -177,24 +181,8 @@ export default function MapScreen() {
             keyboardShouldPersistTaps="handled"
           >
             <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-              <View
-                style={{
-                  width: 52,
-                  height: 52,
-                  borderRadius: 26,
-                  backgroundColor: '#FFFFFF',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderWidth: 2,
-                  borderColor: isSupplierPin(selectedLocation) ? '#EA580C' : theme.colors.primary,
-                  marginRight: 14,
-                }}
-              >
-                {isSupplierPin(selectedLocation) ? (
-                  <Sprout size={22} color="#B45309" strokeWidth={2} />
-                ) : (
-                  <ShoppingBag size={22} color={theme.colors.primary} strokeWidth={2} />
-                )}
+              <View style={{ marginRight: 14 }}>
+                <MapLocationPin variant={isSupplierPin(selectedLocation) ? 'supplier' : 'retail'} />
               </View>
               <View style={{ flex: 1, minWidth: 0 }}>
                 <Text

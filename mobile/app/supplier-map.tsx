@@ -59,15 +59,17 @@ export default function SupplierMapScreen() {
                 marginBottom: 2,
               }}
             >
-              {t('growerJourney.step3.mapTitle')}
+              {t('map.title')}
             </Text>
             <Text
               style={{
                 fontSize: 13,
                 color: 'rgba(255, 255, 255, 0.85)',
+                lineHeight: 18,
               }}
+              numberOfLines={3}
             >
-              {t('growerJourney.step3.mapSubtitle')}
+              {t('map.subtitle')}
             </Text>
           </View>
         </View>

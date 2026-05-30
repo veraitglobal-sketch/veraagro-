@@ -453,7 +453,7 @@ export const syncService = {
           },
           { headers: { Authorization: token ? `Bearer ${token}` : '' } }
         );
-        await offlineStorage.removeCost(cost.id);
+        await offlineStorage.updateCostStatus(cost.id, 'synced');
         success++;
       } catch (err: unknown) {
         const status = axiosResponseStatus(err);

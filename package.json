@@ -3,7 +3,9 @@
   "name": "veraagrar",
   "scripts": {
     "parity:typecheck": "npm run typecheck --prefix web && npm run typecheck --prefix mobile",
-    "parity:backend": "npm run prisma:generate --prefix backend && npm run build --prefix backend"
+    "parity:backend": "npm run prisma:generate --prefix backend && npm run build --prefix backend",
+    "sync:tokens": "node scripts/sync-design-tokens.mjs",
+    "sync:tokens:check": "node scripts/sync-design-tokens.mjs --check"
   },
   "dependencies": {
     "@vercel/speed-insights": "^1.3.1"

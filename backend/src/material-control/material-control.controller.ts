@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { MaterialControlService } from './material-control.service';
 import { PurchaseMaterialDto, VerifyStickerRollDto, UploadCompliancePhotosDto, UpdateBioVeraStandardDto } from './dto/material-control.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -99,5 +99,23 @@ export class MaterialControlController {
     @GetUser() user: any,
   ) {
     return this.materialControlService.deductMaterialsOnShipment(batchId, user.id);
+  }
+
+  @Get('admin/compliance-photos')
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  async adminListCompliancePhotos(
+    @Query('partnerCode') partnerCode?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.materialControlService.listCompliancePhotosForAdmin({
+      partnerCode,
+      limit: limit ? parseInt(limit, 10) : undefined,
+    });
+  }
+
+  @Delete('admin/compliance-photos/:id')
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  async adminDeleteCompliancePhoto(@Param('id') id: string) {
+    return this.materialControlService.adminDeleteCompliancePhoto(id);
   }
 }

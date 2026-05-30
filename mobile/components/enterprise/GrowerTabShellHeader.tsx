@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BioVeraWordmark } from './BioVeraWordmark';
+import { GlassSurface } from '../../design-system/GlassSurface';
 import { enterpriseColors, enterpriseUi } from '../../lib/enterprise-ui';
 
 type Props = Readonly<{
@@ -14,7 +15,7 @@ type Props = Readonly<{
   footer?: ReactNode;
 }>;
 
-/** Grower tab header — puni brend samo na Početnoj; ostali tabovi kompaktni. */
+/** Grower tab header on hero backdrop — frosted glass card. */
 export function GrowerTabShellHeader({
   eyebrow,
   title,
@@ -26,7 +27,11 @@ export function GrowerTabShellHeader({
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.wrap, { paddingTop: insets.top + 8 }]}>
+    <GlassSurface
+      style={styles.shell}
+      contentStyle={[styles.content, { paddingTop: showBrandRow ? 12 : 4 }]}
+      blur={52}
+    >
       {showBrandRow ? (
         <View style={styles.topRow}>
           <View style={styles.leftSlot}>{leftSlot}</View>
@@ -43,20 +48,23 @@ export function GrowerTabShellHeader({
         {statusLine}
       </Text>
       {footer}
-    </View>
+    </GlassSurface>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: {
-    paddingHorizontal: 20,
+  shell: {
+    marginBottom: 14,
+  },
+  content: {
+    paddingHorizontal: 18,
     paddingBottom: 16,
   },
   topRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    marginBottom: 18,
+    marginBottom: 14,
     minHeight: 36,
   },
   leftSlot: {

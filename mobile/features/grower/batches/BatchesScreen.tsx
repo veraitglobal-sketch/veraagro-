@@ -111,7 +111,6 @@ export function BatchesScreen() {
                   if (detailRef) router.push(`/(producer)/batch/${detailRef}`);
                 }}
                 productFallback={t('producer.batches.product')}
-                harvestPrefix={t('producer.batches.harvestDate')}
               />
             ))}
           </View>
@@ -128,7 +127,6 @@ type BatchCardProps = {
   getStatusColor: (status: string | null | undefined) => { background: string; text: string };
   onPress: () => void;
   productFallback: string;
-  harvestPrefix: string;
 };
 
 function BatchCard({
@@ -138,20 +136,20 @@ function BatchCard({
   getStatusColor,
   onPress,
   productFallback,
-  harvestPrefix,
 }: BatchCardProps) {
   const product = batch.productName || productFallback;
   const qty =
     batch.quantity != null && Number(batch.quantity) > 0
       ? `${batch.quantity} ${batch.unit || 'kg'}`
       : null;
-  const harvestLine = batch.harvestDate
-    ? `${harvestPrefix}: ${formatAppDate(batch.harvestDate, dateLocale, {
+  const harvestShort = batch.harvestDate
+    ? formatAppDate(batch.harvestDate, dateLocale, {
         day: 'numeric',
         month: 'short',
         year: 'numeric',
-      })}`
+      })
     : null;
+  const metaLine = [qty, harvestShort].filter(Boolean).join(' · ');
   const statusColors = getStatusColor(batch.status);
   const statusLabel = getStatusLabel(batch.status);
 
@@ -166,9 +164,14 @@ function BatchCard({
             </View>
           ) : null}
         </View>
-        <Text style={styles.productText}>{product}</Text>
-        {qty ? <Text style={styles.metaText}>{qty}</Text> : null}
-        {harvestLine ? <Text style={styles.metaText}>{harvestLine}</Text> : null}
+        <Text style={styles.productText} numberOfLines={2}>
+          {product}
+        </Text>
+        {metaLine ? (
+          <Text style={styles.metaText} numberOfLines={1}>
+            {metaLine}
+          </Text>
+        ) : null}
       </View>
       <ChevronRight size={20} color={theme.colors.text.secondary} strokeWidth={1.5} />
     </TouchableOpacity>

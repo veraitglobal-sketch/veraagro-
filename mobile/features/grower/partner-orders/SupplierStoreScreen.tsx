@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
@@ -18,6 +17,7 @@ import { Package, MessageCircle, Send } from 'lucide-react-native';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
+import { EnterpriseButton, EnterpriseTextField, EnterpriseTextArea } from '../../../design-system';
 import { b2bSuppliersAPI } from '../../../lib/api';
 import { apiErrorMessage } from '../../../lib/api-error';
 import { partnerSignInHref } from '../../../lib/post-login-redirect';
@@ -264,29 +264,24 @@ export default function SupplierStoreScreen() {
                     </View>
                     <View style={styles.qtyRow}>
                       <Text style={styles.qtyLabel}>{t('b2bSupplier.store.qty')}</Text>
-                      <TextInput
+                      <EnterpriseTextField
                         value={quantities[line.id] ?? ''}
                         onChangeText={(v) => setQuantities((q) => ({ ...q, [line.id]: v }))}
                         placeholder={t('b2bSupplier.store.qtyPlaceholder')}
-                        placeholderTextColor={enterpriseColors.gray600}
                         keyboardType="decimal-pad"
-                        style={[growerUi.formInput, styles.qtyInput]}
+                        containerStyle={styles.qtyField}
                       />
                     </View>
                   </View>
                 ))
               )}
 
-              <Text style={[enterpriseUi.inAppSectionLabel, styles.noteSection]}>
-                {t('b2bSupplier.store.noteLabel')}
-              </Text>
-              <TextInput
+              <EnterpriseTextArea
+                label={t('b2bSupplier.store.noteLabel')}
                 value={note}
                 onChangeText={setNote}
                 placeholder={t('b2bSupplier.store.notePlaceholder')}
-                placeholderTextColor={enterpriseColors.gray600}
-                multiline
-                style={[growerUi.formInput, styles.noteInput]}
+                minRows={2}
               />
 
               {!token ? (
@@ -312,21 +307,15 @@ export default function SupplierStoreScreen() {
 
         {token && !successId ? (
           <View style={[styles.footer, { paddingBottom: Math.max(p.bottomInset, 12) }]}>
-            <TouchableOpacity
+            <EnterpriseButton
+              label={t('b2bSupplier.store.submit')}
               onPress={() => void onSubmit()}
+              loading={submitting}
               disabled={submitting}
-              activeOpacity={0.88}
-              style={[enterpriseUi.authBtnPrimary, styles.submitBtn, submitting && styles.submitDisabled]}
-            >
-              {submitting ? (
-                <ActivityIndicator color={enterpriseColors.white} />
-              ) : (
-                <>
-                  <Send size={20} color={enterpriseColors.white} strokeWidth={1.5} />
-                  <Text style={enterpriseUi.authBtnPrimaryText}>{t('b2bSupplier.store.submit')}</Text>
-                </>
-              )}
-            </TouchableOpacity>
+              fullWidth
+              size="large"
+              icon={<Send size={20} color={enterpriseColors.white} strokeWidth={1.5} />}
+            />
           </View>
         ) : null}
       </KeyboardAvoidingView>
@@ -414,17 +403,9 @@ const styles = StyleSheet.create({
     color: enterpriseColors.gray600,
     width: 40,
   },
-  qtyInput: {
+  qtyField: {
     flex: 1,
-    minHeight: 48,
     marginBottom: 0,
-  },
-  noteSection: {
-    marginTop: 8,
-  },
-  noteInput: {
-    minHeight: 88,
-    textAlignVertical: 'top',
   },
   signInBox: {
     padding: 16,
@@ -453,15 +434,5 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: enterpriseColors.gray200,
     backgroundColor: enterpriseColors.white,
-  },
-  submitBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    minHeight: 52,
-  },
-  submitDisabled: {
-    opacity: 0.6,
   },
 });

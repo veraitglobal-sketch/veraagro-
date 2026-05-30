@@ -17,4 +17,29 @@ module.exports = [
       'no-console': ['warn', { allow: ['warn', 'error'] }],
     },
   },
+  {
+    files: ['features/grower/**/*.ts', 'features/grower/**/*.tsx'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'react-native',
+              importNames: ['TextInput'],
+              message:
+                'Grower features must use EnterpriseTextField / EnterpriseTextArea from design-system, not raw TextInput.',
+            },
+          ],
+        },
+      ],
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "MemberExpression[object.name='growerUi'][property.name='formInput']",
+          message: 'Use EnterpriseTextField from design-system instead of growerUi.formInput.',
+        },
+      ],
+    },
+  },
 ];

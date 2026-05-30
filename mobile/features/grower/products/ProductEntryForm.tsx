@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { PendingProduct } from '../../../lib/offline-storage';
-import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
+import {
+  EnterpriseButton,
+  EnterpriseTextField,
+  EnterpriseTextArea,
+} from '../../../design-system';
 
 type Source = 'qr' | 'manual';
 
@@ -79,86 +84,74 @@ export default function ProductEntryForm({
       </View>
 
       {source === 'qr' ? (
-        <TextInput
-          style={growerUi.formInput}
+        <EnterpriseTextField
           placeholder={t('producer.products.qrPlaceholder')}
-          placeholderTextColor={enterpriseColors.gray600}
           value={qrCode}
           onChangeText={setQrCode}
           editable={!initialQrCode}
+          autoCapitalize="none"
         />
       ) : null}
 
-      <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.products.nameLabel')}</Text>
-      <TextInput
-        style={growerUi.formInput}
+      <EnterpriseTextField
+        label={t('producer.products.nameLabel')}
         placeholder={t('producer.products.namePlaceholder')}
-        placeholderTextColor={enterpriseColors.gray600}
         value={name}
         onChangeText={setName}
+        required
+        size="farmer"
       />
 
-      <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.products.contentsLabel')}</Text>
-      <TextInput
-        style={[growerUi.formInput, styles.textArea]}
+      <EnterpriseTextArea
+        label={t('producer.products.contentsLabel')}
         placeholder={t('producer.products.contentsPlaceholder')}
-        placeholderTextColor={enterpriseColors.gray600}
         value={contents}
         onChangeText={setContents}
-        multiline
-        numberOfLines={2}
+        minRows={2}
       />
 
-      <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.products.quantityLabel')}</Text>
-      <View style={styles.qtyRow}>
-        <TextInput
-          style={[growerUi.formInput, styles.qtyInput]}
-          placeholder={t('producer.products.quantityPlaceholder')}
-          placeholderTextColor={enterpriseColors.gray600}
-          value={quantity}
-          onChangeText={setQuantity}
-          keyboardType="decimal-pad"
-        />
-        <View style={styles.unitWrap}>
-          {UNITS.map((u) => {
-            const on = unit === u;
-            return (
-              <TouchableOpacity
-                key={u}
-                style={[growerUi.filterChip, styles.unitChip, on && growerUi.filterChipOn]}
-                onPress={() => setUnit(u)}
-              >
-                <Text style={[growerUi.filterChipText, on && growerUi.filterChipTextOn]}>{u}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+      <EnterpriseTextField
+        label={t('producer.products.quantityLabel')}
+        placeholder={t('producer.products.quantityPlaceholder')}
+        value={quantity}
+        onChangeText={setQuantity}
+        keyboardType="decimal-pad"
+        size="farmer"
+      />
+      <View style={styles.unitWrap}>
+        {UNITS.map((u) => {
+          const on = unit === u;
+          return (
+            <TouchableOpacity
+              key={u}
+              style={[growerUi.filterChip, styles.unitChip, on && growerUi.filterChipOn]}
+              onPress={() => setUnit(u)}
+            >
+              <Text style={[growerUi.filterChipText, on && growerUi.filterChipTextOn]}>{u}</Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
 
-      <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.products.parcelLabel')}</Text>
-      <TextInput
-        style={growerUi.formInput}
+      <EnterpriseTextField
+        label={t('producer.products.parcelLabel')}
         placeholder={t('producer.products.parcelPlaceholder')}
-        placeholderTextColor={enterpriseColors.gray600}
         value={parcelOrEstate}
         onChangeText={setParcelOrEstate}
+        size="farmer"
       />
 
       <View style={styles.actions}>
         {onCancel ? (
-          <TouchableOpacity onPress={onCancel} disabled={saving} style={styles.cancelBtn}>
-            <Text style={styles.cancelText}>{t('common.cancel')}</Text>
-          </TouchableOpacity>
+          <EnterpriseButton label={t('common.cancel')} onPress={onCancel} variant="ghost" disabled={saving} />
         ) : null}
-        <TouchableOpacity
-          style={[enterpriseUi.authBtnPrimary, styles.submitBtn, (!name.trim() || saving) && styles.disabled]}
+        <EnterpriseButton
+          label={saving ? t('producer.products.saving') : t('producer.products.saveToDevice')}
           onPress={() => void handleSubmit()}
+          loading={saving}
           disabled={!name.trim() || saving}
-        >
-          <Text style={enterpriseUi.authBtnPrimaryText}>
-            {saving ? t('producer.products.saving') : t('producer.products.saveToDevice')}
-          </Text>
-        </TouchableOpacity>
+          style={styles.submitBtn}
+        />
       </View>
     </View>
   );
@@ -170,20 +163,11 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 14,
   },
-  textArea: {
-    minHeight: 72,
-    textAlignVertical: 'top',
-  },
-  qtyRow: {
-    marginBottom: 4,
-  },
-  qtyInput: {
-    marginBottom: 10,
-  },
   unitWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
+    marginTop: -8,
     marginBottom: 12,
   },
   unitChip: {
@@ -197,21 +181,7 @@ const styles = StyleSheet.create({
     gap: 12,
     marginTop: 8,
   },
-  cancelBtn: {
-    minHeight: 48,
-    justifyContent: 'center',
-    paddingHorizontal: 8,
-  },
-  cancelText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: enterpriseColors.gray600,
-  },
   submitBtn: {
-    paddingHorizontal: 20,
-    minHeight: 48,
-  },
-  disabled: {
-    opacity: 0.5,
+    minWidth: 160,
   },
 });

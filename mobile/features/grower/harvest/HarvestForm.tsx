@@ -2,7 +2,6 @@ import {
   View,
   Text,
   ScrollView,
-  TextInput,
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
@@ -21,12 +20,18 @@ import { GrowerDateField } from '../../../components/grower/GrowerDateField';
 import { theme } from '../../../lib/theme';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
+import {
+  EnterpriseButton,
+  EnterpriseTextField,
+  EnterpriseTextArea,
+  dsColors,
+} from '../../../design-system';
 import { useHarvestData, CROP_TYPES } from './useHarvestData';
 import { useAppLocaleTag, formatAppDate } from '../../../lib/date-locale';
 
 const STEPS = 3;
 
-export default function HarvestForm() {
+export default function HarvestForm({ embedded = false }: { embedded?: boolean }) {
   const { t, i18n } = useTranslation();
   const dateLocale = useAppLocaleTag();
   const router = useRouter();
@@ -124,8 +129,10 @@ export default function HarvestForm() {
   const headerSubtitle = t('producer.fieldLogForm.wizardStepOf', { step, total: STEPS });
 
   return (
-    <View style={growerUi.canvas}>
-      <GrowerStackHeader title={t('producer.tabs.harvest')} subtitle={headerSubtitle} />
+    <View style={[growerUi.canvas, embedded && styles.embeddedRoot]}>
+      {!embedded ? (
+        <GrowerStackHeader title={t('producer.tabs.harvest')} subtitle={headerSubtitle} />
+      ) : null}
 
       <View style={styles.progressWrap}>
         <View style={enterpriseUi.progressTrack}>
@@ -295,39 +302,20 @@ export default function HarvestForm() {
             </View>
 
             {h.planMode === 'HARVEST' ? (
-              <View style={{ marginBottom: 16 }}>
-                <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
-                  {t('producer.harvest.estimatedQuantity')} <Text style={{ color: theme.colors.error }}>*</Text>
+              <View style={styles.fieldBlock}>
+                <Text style={styles.fieldLabel}>
+                  {t('producer.harvest.estimatedQuantity')} <Text style={styles.required}>*</Text>
                 </Text>
-                <View style={{ flexDirection: 'row', gap: 8 }}>
-                  <TextInput
+                <View style={styles.qtyRow}>
+                  <EnterpriseTextField
                     value={h.estimatedQuantity}
                     onChangeText={h.setEstimatedQuantity}
                     placeholder="0"
                     keyboardType="numeric"
-                    style={{
-                      flex: 1,
-                      fontSize: 14,
-                      paddingVertical: 12,
-                      paddingHorizontal: 16,
-                      borderWidth: 0.5,
-                      borderColor: theme.colors.border,
-                      borderRadius: 8,
-                      backgroundColor: theme.colors.background,
-                    }}
+                    containerStyle={styles.qtyField}
                   />
-                  <View
-                    style={{
-                      paddingHorizontal: 16,
-                      paddingVertical: 12,
-                      borderWidth: 0.5,
-                      borderColor: theme.colors.border,
-                      borderRadius: 8,
-                      backgroundColor: theme.colors.background,
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Text style={{ fontSize: 13, color: theme.colors.text.primary }}>{h.unit}</Text>
+                  <View style={styles.unitBadge}>
+                    <Text style={styles.unitText}>{h.unit}</Text>
                   </View>
                 </View>
               </View>
@@ -342,24 +330,13 @@ export default function HarvestForm() {
                   <GrowerDateField value={h.plannedLoadDate} onChange={h.setPlannedLoadDate} />
                 </View>
 
-                <View style={{ marginBottom: 16 }}>
-                  <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
-                    {t('producer.harvest.loadQuantity')}
-                  </Text>
-                  <TextInput
+                <View style={styles.fieldBlock}>
+                  <Text style={styles.fieldLabel}>{t('producer.harvest.loadQuantity')}</Text>
+                  <EnterpriseTextField
                     value={h.loadQuantity}
                     onChangeText={h.setLoadQuantity}
                     placeholder={t('producer.harvest.loadQuantityHint')}
                     keyboardType="numeric"
-                    style={{
-                      fontSize: 14,
-                      paddingVertical: 12,
-                      paddingHorizontal: 16,
-                      borderWidth: 0.5,
-                      borderColor: theme.colors.border,
-                      borderRadius: 8,
-                      backgroundColor: theme.colors.background,
-                    }}
                   />
                 </View>
 
@@ -387,71 +364,32 @@ export default function HarvestForm() {
                   </View>
                 </View>
 
-                <View style={{ marginBottom: 16 }}>
-                  <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
-                    {t('producer.harvest.qualityGrade')}
-                  </Text>
-                  <TextInput
+                <View style={styles.fieldBlock}>
+                  <Text style={styles.fieldLabel}>{t('producer.harvest.qualityGrade')}</Text>
+                  <EnterpriseTextField
                     value={h.qualityGrade}
                     onChangeText={h.setQualityGrade}
                     placeholder={t('producer.harvest.qualityPlaceholder')}
-                    style={{
-                      fontSize: 14,
-                      paddingVertical: 12,
-                      paddingHorizontal: 16,
-                      borderWidth: 0.5,
-                      borderColor: theme.colors.border,
-                      borderRadius: 8,
-                      backgroundColor: theme.colors.background,
-                    }}
                   />
                 </View>
 
-                <View style={{ marginBottom: 16 }}>
-                  <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
-                    {t('producer.harvest.sortingSpec')}
-                  </Text>
-                  <TextInput
-                    value={h.sortingSpec}
-                    onChangeText={h.setSortingSpec}
-                    placeholder={t('producer.harvest.sortingPlaceholder')}
-                    multiline
-                    style={{
-                      fontSize: 14,
-                      paddingVertical: 12,
-                      paddingHorizontal: 16,
-                      borderWidth: 0.5,
-                      borderColor: theme.colors.border,
-                      borderRadius: 8,
-                      backgroundColor: theme.colors.background,
-                      minHeight: 80,
-                    }}
-                  />
-                </View>
+                <EnterpriseTextArea
+                  label={t('producer.harvest.sortingSpec')}
+                  value={h.sortingSpec}
+                  onChangeText={h.setSortingSpec}
+                  placeholder={t('producer.harvest.sortingPlaceholder')}
+                  minRows={3}
+                />
               </>
             ) : null}
 
-            <View style={{ marginBottom: 16 }}>
-              <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
-                {t('producer.harvest.notesOptional')}
-              </Text>
-              <TextInput
-                value={h.growerNotes}
-                onChangeText={h.setGrowerNotes}
-                placeholder={t('producer.harvest.notesPlaceholder')}
-                multiline
-                style={{
-                  fontSize: 14,
-                  paddingVertical: 12,
-                  paddingHorizontal: 16,
-                  borderWidth: 0.5,
-                  borderColor: theme.colors.border,
-                  borderRadius: 8,
-                  backgroundColor: theme.colors.background,
-                  minHeight: 64,
-                }}
-              />
-            </View>
+            <EnterpriseTextArea
+              label={t('producer.harvest.notesOptional')}
+              value={h.growerNotes}
+              onChangeText={h.setGrowerNotes}
+              placeholder={t('producer.harvest.notesPlaceholder')}
+              minRows={2}
+            />
 
             <View style={{ marginBottom: 24 }}>
               <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginBottom: 8 }}>{t('producer.harvest.gpsOptional')}</Text>
@@ -488,44 +426,35 @@ export default function HarvestForm() {
 
         <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) + tabBarPad }]}>
           {step > 1 ? (
-            <TouchableOpacity onPress={() => setStep((s) => s - 1)} style={styles.footerBack}>
-              <Text style={styles.footerBackText}>{t('producer.fieldLogForm.wizardBack')}</Text>
-            </TouchableOpacity>
+            <EnterpriseButton
+              label={t('producer.fieldLogForm.wizardBack')}
+              onPress={() => setStep((s) => s - 1)}
+              variant="secondary"
+            />
           ) : (
             <View style={styles.footerSpacer} />
           )}
           {step < STEPS ? (
-            <TouchableOpacity
+            <EnterpriseButton
+              label={t('producer.fieldLogForm.farmerNext')}
               onPress={() => setStep((s) => s + 1)}
               disabled={step === 1 ? !step1Ok : !step2Ok}
-              style={[
-                enterpriseUi.authBtnPrimary,
-                styles.footerPrimary,
-                (step === 1 ? !step1Ok : !step2Ok) && styles.footerDisabled,
-              ]}
-              activeOpacity={0.88}
-            >
-              <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.fieldLogForm.farmerNext')}</Text>
-            </TouchableOpacity>
+              style={styles.footerPrimary}
+              size="large"
+            />
           ) : (
-            <TouchableOpacity
+            <EnterpriseButton
+              label={
+                h.planMode === 'PLANTING'
+                  ? t('producer.harvest.sendPlanPlanting')
+                  : t('producer.harvest.sendPlanHarvest')
+              }
               onPress={() => void h.handleSubmit()}
+              loading={h.loading}
               disabled={h.loading || !h.canSubmit}
-              style={[
-                enterpriseUi.authBtnPrimary,
-                styles.footerPrimary,
-                (!h.canSubmit || h.loading) && styles.footerDisabled,
-              ]}
-              activeOpacity={0.88}
-            >
-              {h.loading ? (
-                <ActivityIndicator color={enterpriseColors.white} />
-              ) : (
-                <Text style={enterpriseUi.authBtnPrimaryText}>
-                  {h.planMode === 'PLANTING' ? t('producer.harvest.sendPlanPlanting') : t('producer.harvest.sendPlanHarvest')}
-                </Text>
-              )}
-            </TouchableOpacity>
+              style={styles.footerPrimary}
+              size="large"
+            />
           )}
         </View>
       </KeyboardAvoidingView>
@@ -568,25 +497,46 @@ const styles = StyleSheet.create({
   },
   footerPrimary: {
     flex: 1,
-    minHeight: 52,
-    justifyContent: 'center',
   },
-  footerDisabled: {
-    opacity: 0.5,
+  fieldBlock: {
+    marginBottom: 16,
   },
-  footerBack: {
-    minHeight: 52,
-    paddingHorizontal: 18,
-    justifyContent: 'center',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
-    backgroundColor: enterpriseColors.white,
-  },
-  footerBackText: {
+  fieldLabel: {
     fontSize: 16,
-    fontWeight: '600',
-    color: enterpriseColors.gray900,
-    letterSpacing: -0.2,
+    fontWeight: '400',
+    color: dsColors.gray900,
+    marginBottom: 8,
+    letterSpacing: 0.5,
+  },
+  required: {
+    color: dsColors.destructive,
+  },
+  qtyRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+  },
+  qtyField: {
+    flex: 1,
+    marginBottom: 0,
+  },
+  unitBadge: {
+    marginTop: 0,
+    paddingHorizontal: 16,
+    minHeight: 48,
+    borderWidth: 1,
+    borderColor: dsColors.border,
+    borderRadius: 12,
+    backgroundColor: dsColors.surface,
+    justifyContent: 'center',
+  },
+  unitText: {
+    fontSize: 14,
+    color: dsColors.gray900,
+    fontWeight: '500',
+  },
+  embeddedRoot: {
+    flex: 1,
+    minHeight: 0,
   },
 });

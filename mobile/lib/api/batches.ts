@@ -194,13 +194,30 @@ export const packageBadgesAPI = {
     const response = await api.post('/package-badges/return-to-supplier', data);
     return response.data;
   },
-  supplierTransferToGrower: async (data: { rootSerial: string; newGrowerUserId: string }) => {
-    const response = await api.post('/package-badges/supplier/transfer-to-grower', data);
-    return response.data;
-  },
   scan: async (serial: string) => {
     const response = await api.get(`/package-badges/scan/${encodeURIComponent(serial)}`);
     return response.data;
+  },
+  supplierReceiveFromFactory: async (data: { rootSerial: string; printOrderId?: string }) => {
+    const response = await api.post('/package-badges/supplier/receive-from-factory', data);
+    return response.data;
+  },
+  supplierTransferToGrower: async (data: {
+    rootSerial: string;
+    newGrowerUserId?: string;
+    farmerQrCode?: string;
+    growerPartnerCode?: string;
+  }) => {
+    const response = await api.post('/package-badges/supplier/transfer-to-grower', data);
+    return response.data;
+  },
+  listSupplierStock: async () => {
+    const response = await api.get('/package-badges/supplier/stock');
+    return Array.isArray(response.data) ? response.data : [];
+  },
+  listMyPackages: async () => {
+    const response = await api.get('/package-badges/mine/packages');
+    return Array.isArray(response.data) ? response.data : [];
   },
   publicResolve: async (serial: string) => {
     const { data } = await axios.get(`${API_URL}/public/badges/${encodeURIComponent(serial)}`);

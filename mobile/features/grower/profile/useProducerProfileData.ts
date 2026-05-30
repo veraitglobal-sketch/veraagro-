@@ -6,6 +6,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { partnerSignInHref } from '../../../lib/post-login-redirect';
 import { tString } from '../../../lib/i18n-strings';
+import { farmerProfileAPI } from '../../../lib/api/grower';
 import { useWalletData } from '../wallet/useWalletData';
 
 export function useProducerProfileData() {
@@ -13,6 +14,7 @@ export function useProducerProfileData() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [pendingCount, setPendingCount] = useState(0);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const { wallet, transactions, loading: walletLoading, reload: reloadWallet } = useWalletData();
 
@@ -24,19 +26,29 @@ export function useProducerProfileData() {
     setPendingCount(entries.filter((e) => e.status === 'pending').length);
   }, []);
 
+  const refreshProfilePhoto = useCallback(async () => {
+    try {
+      const profile = await farmerProfileAPI.getMyProfile();
+      setProfilePhoto(profile.farmer?.photo ?? null);
+    } catch {
+      setProfilePhoto(null);
+    }
+  }, []);
+
   useEffect(() => {
     void refreshPending();
-  }, [refreshPending]);
+    void refreshProfilePhoto();
+  }, [refreshPending, refreshProfilePhoto]);
 
   const onRefresh = useCallback(async () => {
     if (refreshing) return;
     setRefreshing(true);
     try {
-      await Promise.all([refreshPending(), reloadWallet()]);
+      await Promise.all([refreshPending(), reloadWallet(), refreshProfilePhoto()]);
     } finally {
       setRefreshing(false);
     }
-  }, [refreshPending, reloadWallet, refreshing]);
+  }, [refreshPending, reloadWallet, refreshProfilePhoto, refreshing]);
 
   const moreItems = useMemo(
     () => [
@@ -76,6 +88,7 @@ export function useProducerProfileData() {
   return {
     user,
     displayName,
+    profilePhoto,
     wallet,
     walletLoading,
     lastTransaction,

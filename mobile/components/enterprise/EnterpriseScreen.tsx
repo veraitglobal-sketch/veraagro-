@@ -48,7 +48,10 @@ export function EnterpriseScreen({
       <ScrollView
         {...bioVeraScrollProps}
         contentContainerStyle={[
-          { paddingBottom: contentPaddingBottom, flexGrow: 1 },
+          {
+            paddingBottom: contentPaddingBottom,
+            ...(fillViewport ? { flexGrow: 1 } : {}),
+          },
           contentContainerStyle,
         ]}
         contentInsetAdjustmentBehavior="never"

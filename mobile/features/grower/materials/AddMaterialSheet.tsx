@@ -2,10 +2,8 @@ import { useState, useCallback } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
   Alert,
   ScrollView,
 } from 'react-native';
@@ -15,9 +13,13 @@ import { X, ScanLine } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { materialsAPI } from '../../../lib/api';
 import { apiErrorMessage } from '../../../lib/api-error';
-import { theme } from '../../../lib/theme';
 import type { MaterialFilterType } from './useMaterialsData';
 import { BioVeraBottomSheet } from '../../../components/enterprise/BioVeraBottomSheet';
+import {
+  EnterpriseButton,
+  EnterpriseTextField,
+  dsColors,
+} from '../../../design-system';
 
 /** Tap order: seed, fertilizer, pesticide, other — user picks before typing name / barcode. */
 const TYPE_VALUES: Array<Exclude<MaterialFilterType, 'all'>> = [
@@ -125,7 +127,7 @@ export function AddMaterialSheet({ visible, onClose, onSuccess }: Props) {
         <View style={styles.header}>
           <Text style={styles.title}>{t('producer.materials.addForm.title')}</Text>
           <TouchableOpacity onPress={handleClose} style={styles.closeBtn} hitSlop={10}>
-            <X size={24} color={theme.colors.text.secondary} />
+            <X size={24} color={dsColors.muted} />
           </TouchableOpacity>
         </View>
         <Text style={styles.lead}>{t('producer.materials.addForm.leadPickType')}</Text>
@@ -154,63 +156,61 @@ export function AddMaterialSheet({ visible, onClose, onSuccess }: Props) {
 
           <Text style={styles.subLead}>{t('producer.materials.addForm.thenDetails')}</Text>
 
-          <Text style={styles.label}>{t('producer.materials.addForm.name')}</Text>
-          <TextInput
+          <EnterpriseTextField
+            label={t('producer.materials.addForm.name')}
             value={name}
             onChangeText={setName}
             placeholder={namePlaceholder(type)}
-            placeholderTextColor={theme.colors.text.tertiary}
-            style={styles.input}
             autoCapitalize="words"
+            size="farmer"
           />
 
-          <Text style={styles.label}>{t('producer.materials.addForm.barcode')}</Text>
+          <Text style={styles.barcodeLabel}>{t('producer.materials.addForm.barcode')}</Text>
           <View style={styles.barcodeRow}>
-            <TextInput
-              value={barcode}
-              onChangeText={setBarcode}
-              placeholder={t('producer.materials.addForm.barcodePh')}
-              placeholderTextColor={theme.colors.text.tertiary}
-              style={[styles.input, styles.inputFlex]}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
+            <View style={styles.barcodeField}>
+              <EnterpriseTextField
+                value={barcode}
+                onChangeText={setBarcode}
+                placeholder={t('producer.materials.addForm.barcodePh')}
+                autoCapitalize="none"
+                autoCorrect={false}
+                containerStyle={styles.barcodeInputWrap}
+              />
+            </View>
             <TouchableOpacity
               style={styles.scanBtn}
               onPress={() =>
                 router.push({
                   pathname: '/(producer)/scanner',
                   params: { returnTo: 'material-add', materialKind: type },
-                } as any)
+                } as never)
               }
+              accessibilityRole="button"
+              accessibilityLabel={t('producer.materials.addForm.barcode')}
             >
-              <ScanLine size={22} color={theme.colors.primary} />
+              <ScanLine size={22} color={dsColors.primary} />
             </TouchableOpacity>
           </View>
           <Text style={styles.hint}>{t('producer.materials.addForm.barcodeHint')}</Text>
 
-          <Text style={styles.label}>{t('producer.materials.addForm.manufacturer')}</Text>
-          <TextInput
+          <EnterpriseTextField
+            label={t('producer.materials.addForm.manufacturer')}
             value={manufacturer}
             onChangeText={setManufacturer}
             placeholder={t('producer.materials.addForm.manufacturerPh')}
-            placeholderTextColor={theme.colors.text.tertiary}
-            style={styles.input}
             autoCapitalize="words"
+            size="farmer"
           />
 
-          <TouchableOpacity
-            style={[styles.saveBtn, saving && styles.saveBtnOff]}
+          <EnterpriseButton
+            label={t('producer.materials.addForm.save')}
             onPress={submit}
+            loading={saving}
             disabled={saving}
-            activeOpacity={0.85}
-          >
-            {saving ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.saveBtnText}>{t('producer.materials.addForm.save')}</Text>
-            )}
-          </TouchableOpacity>
+            fullWidth
+            size="large"
+            style={styles.saveBtn}
+          />
         </ScrollView>
       </View>
     </BioVeraBottomSheet>
@@ -218,94 +218,79 @@ export function AddMaterialSheet({ visible, onClose, onSuccess }: Props) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: theme.colors.background },
+  root: { flex: 1, backgroundColor: dsColors.canvas },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing.lg,
+    paddingHorizontal: 16,
     paddingTop: 12,
     paddingBottom: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: dsColors.border,
   },
-  title: { fontSize: 18, fontWeight: '600', color: theme.colors.text.primary, flex: 1 },
+  title: { fontSize: 18, fontWeight: '600', color: dsColors.gray900, flex: 1 },
   closeBtn: { padding: 4 },
   lead: {
     fontSize: 14,
-    color: theme.colors.text.secondary,
-    paddingHorizontal: theme.spacing.lg,
+    color: dsColors.muted,
+    paddingHorizontal: 16,
     paddingTop: 12,
     lineHeight: 20,
   },
   pickTypeHeading: {
     fontSize: 13,
     fontWeight: '700',
-    color: theme.colors.text.primary,
+    color: dsColors.gray900,
     marginBottom: 10,
     letterSpacing: 0.2,
   },
   subLead: {
     fontSize: 13,
-    color: theme.colors.text.secondary,
-    marginTop: theme.spacing.sm,
-    marginBottom: theme.spacing.sm,
+    color: dsColors.muted,
+    marginTop: 8,
+    marginBottom: 8,
     lineHeight: 18,
   },
   scroll: { flex: 1 },
-  scrollInner: { padding: theme.spacing.lg, paddingBottom: 40 },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.text.secondary,
+  scrollInner: { padding: 16, paddingBottom: 40 },
+  barcodeLabel: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: dsColors.gray700,
     marginBottom: 6,
-    marginTop: 4,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: theme.colors.text.primary,
-    backgroundColor: theme.colors.surface,
-  },
-  inputFlex: { flex: 1, marginBottom: 0 },
+  barcodeRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 4 },
+  barcodeField: { flex: 1 },
+  barcodeInputWrap: { marginBottom: 0 },
   typeRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 4 },
   typeChip: {
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    backgroundColor: theme.colors.background,
+    borderColor: dsColors.border,
+    backgroundColor: dsColors.surface,
   },
   typeChipOn: {
-    borderColor: theme.colors.primary,
-    backgroundColor: `${theme.colors.primary}12`,
+    borderColor: dsColors.primary,
+    backgroundColor: dsColors.primaryTint,
   },
-  typeChipText: { fontSize: 13, color: theme.colors.text.secondary, fontWeight: '500' },
-  typeChipTextOn: { color: theme.colors.primary },
-  barcodeRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  typeChipText: { fontSize: 13, color: dsColors.muted, fontWeight: '500' },
+  typeChipTextOn: { color: dsColors.primary },
   scanBtn: {
     width: 48,
     height: 48,
+    marginTop: 0,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: dsColors.border,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.colors.surface,
+    backgroundColor: dsColors.surface,
   },
-  hint: { fontSize: 16, color: theme.colors.text.tertiary, marginTop: 6, marginBottom: 8 },
+  hint: { fontSize: 14, color: dsColors.muted, marginTop: 4, marginBottom: 8, lineHeight: 20 },
   saveBtn: {
-    marginTop: 24,
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
+    marginTop: 8,
   },
-  saveBtnOff: { opacity: 0.6 },
-  saveBtnText: { fontSize: 16, fontWeight: '600', color: '#fff' },
 });

@@ -4,7 +4,8 @@ import MapView, { Marker } from 'react-native-maps';
 import { useTranslation } from 'react-i18next';
 import { retailLocationsAPI, b2bSuppliersAPI, RetailLocation } from '../lib/api';
 import { theme } from '../lib/theme';
-import { ShoppingBag, Sprout, Info } from 'lucide-react-native';
+import { Info } from 'lucide-react-native';
+import { MAP_PIN_ANCHOR, MapLocationPin } from './map/MapLocationPin';
 
 interface SuppliersMapProps {
   onMarkerPress?: (location: RetailLocation) => void;
@@ -79,7 +80,7 @@ export default function SuppliersMap({ onMarkerPress }: SuppliersMapProps) {
           color: theme.colors.text.secondary,
           letterSpacing: 0.3,
         }}>
-          Loading map...
+          {t('map.loading', 'Loading map…')}
         </Text>
       </View>
     );
@@ -103,6 +104,9 @@ export default function SuppliersMap({ onMarkerPress }: SuppliersMapProps) {
         initialRegion={region}
         showsUserLocation={false}
         showsMyLocationButton={false}
+        showsCompass={false}
+        showsScale={false}
+        toolbarEnabled={false}
       >
         {locations.map((location) => {
           if (!location.latitude || !location.longitude) return null;
@@ -116,23 +120,11 @@ export default function SuppliersMap({ onMarkerPress }: SuppliersMapProps) {
                 latitude: location.latitude,
                 longitude: location.longitude,
               }}
+              anchor={MAP_PIN_ANCHOR}
               tracksViewChanges={false}
               onPress={() => onMarkerPress?.(location)}
             >
-              <View style={styles.markerContainer}>
-                <View
-                  style={[
-                    styles.markerRing,
-                    isSupplier ? styles.markerRingSupplier : styles.markerRingRetail,
-                  ]}
-                >
-                  {isSupplier ? (
-                    <Sprout size={20} color="#B45309" strokeWidth={2} />
-                  ) : (
-                    <ShoppingBag size={20} color={theme.colors.primary} strokeWidth={2} />
-                  )}
-                </View>
-              </View>
+              <MapLocationPin variant={isSupplier ? 'supplier' : 'retail'} />
             </Marker>
           );
         })}
@@ -173,32 +165,5 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
-  },
-  markerContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  /** Classic Bio Vera look: white disc + crisp brand border (retail = green, supplier = amber) */
-  markerRing: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.14,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  markerRingRetail: {
-    borderWidth: 2,
-    borderColor: theme.colors.primary,
-  },
-  markerRingSupplier: {
-    borderWidth: 2,
-    borderColor: '#EA580C',
-    backgroundColor: '#FFFFFF',
   },
 });

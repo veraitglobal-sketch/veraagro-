@@ -73,8 +73,41 @@ export class TransferBadgesToGrowerDto {
   @IsString()
   rootSerial: string;
 
+  /** Direct grower user id (preferred when known). */
+  @IsOptional()
   @IsUUID()
-  newGrowerUserId: string;
+  newGrowerUserId?: string;
+
+  /** Scan grower QR e.g. FARMER-PARTNER001 */
+  @IsOptional()
+  @IsString()
+  farmerQrCode?: string;
+
+  /** Grower partner code when QR is not available */
+  @IsOptional()
+  @IsString()
+  growerPartnerCode?: string;
+}
+
+/** Supplier scans master sticker when stock arrives from the print factory. */
+export class ReceiveFromFactoryDto {
+  @IsString()
+  rootSerial: string;
+
+  /** Optional — speeds lookup when multiple print orders exist */
+  @IsOptional()
+  @IsString()
+  printOrderId?: string;
+
+  /** Override when no print order is on file */
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  childSerials?: string[];
+
+  @IsOptional()
+  @IsEnum(PackageBadgeType)
+  type?: PackageBadgeType;
 }
 
 /** Supplier confirms they received a badge tree back from a grower (replaces grower calling return-to-supplier in UI). */

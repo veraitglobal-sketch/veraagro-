@@ -5,18 +5,22 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { ChevronLeft } from 'lucide-react-native';
-import { AuthPanel, AuthScreenShell } from '../components/auth/AuthScreenShell';
+import { AuthScreenShell } from '../components/auth/AuthScreenShell';
+import { AuthBrandHero } from '../components/auth/AuthBrandHero';
+import { AuthFormHeader } from '../components/auth/AuthFormHeader';
 import AuthTextField from '../components/auth/AuthTextField';
+import { EnterpriseButton, EnterprisePanel } from '../design-system';
 import { enterpriseColors, enterpriseUi } from '../lib/enterprise-ui';
 import { markStepComplete } from '../lib/grower-journey';
 import { authAPI } from '../lib/api';
@@ -88,98 +92,95 @@ export default function RegisterScreen() {
       <AuthScreenShell footer={footer}>
         <KeyboardAvoidingView
           style={styles.flex}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         >
-          <ScrollView
-            contentContainerStyle={styles.scroll}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={styles.backRow}
-              hitSlop={12}
-              accessibilityLabel={t('common.back')}
-              activeOpacity={0.7}
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <ScrollView
+              contentContainerStyle={styles.scroll}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
             >
-              <ChevronLeft size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
-              <Text style={styles.backText}>{t('common.back')}</Text>
-            </TouchableOpacity>
-
-            <AuthPanel>
-              <View style={enterpriseUi.authPanelHeader}>
-                <View style={enterpriseUi.authRule} />
-                <Text style={enterpriseUi.authTitle} accessibilityRole="header">
-                  {t('register.title')}
-                </Text>
-                <Text style={enterpriseUi.authSubtitle}>{t('register.subtitle')}</Text>
-              </View>
-
-              <View style={styles.nameRow}>
-                <AuthTextField
-                  label={t('register.firstName')}
-                  value={firstName}
-                  onChangeText={setFirstName}
-                  placeholder={t('register.firstNamePlaceholder')}
-                  autoCapitalize="words"
-                  containerStyle={styles.nameCol}
-                />
-                <AuthTextField
-                  label={t('register.lastName')}
-                  value={lastName}
-                  onChangeText={setLastName}
-                  placeholder={t('register.lastNamePlaceholder')}
-                  autoCapitalize="words"
-                  containerStyle={styles.nameCol}
-                />
-              </View>
-
-              <AuthTextField
-                label={t('register.email')}
-                value={email}
-                onChangeText={setEmail}
-                placeholder={t('register.emailPlaceholder')}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-
-              <AuthTextField
-                label={t('register.hectares')}
-                hint={t('register.hectaresHint')}
-                value={hectares}
-                onChangeText={setHectares}
-                placeholder={t('register.hectaresPlaceholder')}
-                keyboardType="decimal-pad"
-              />
-
-              <AuthTextField
-                label={t('register.password')}
-                hint={t('register.passwordHint')}
-                value={password}
-                onChangeText={setPassword}
-                placeholder={t('register.passwordPlaceholder')}
-                secureTextEntry
-                containerStyle={styles.lastField}
-              />
-
               <TouchableOpacity
-                onPress={handleRegister}
-                disabled={loading}
-                activeOpacity={0.9}
-                style={[enterpriseUi.authSubmit, loading && styles.submitDisabled]}
-                accessibilityRole="button"
-                accessibilityState={{ busy: loading }}
+                onPress={() => router.back()}
+                style={styles.backRow}
+                hitSlop={12}
+                accessibilityLabel={t('common.back')}
+                activeOpacity={0.7}
               >
-                {loading ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={enterpriseUi.authSubmitText}>{t('register.submit')}</Text>
-                )}
+                <ChevronLeft size={20} color={enterpriseColors.gray600} strokeWidth={1.75} />
+                <Text style={styles.backText}>{t('common.back')}</Text>
               </TouchableOpacity>
-            </AuthPanel>
-          </ScrollView>
+
+              <AuthBrandHero compact />
+
+              <EnterprisePanel variant="premium" padding="lg">
+                <AuthFormHeader
+                  eyebrow={t('register.eyebrow')}
+                  title={t('register.title')}
+                  subtitle={t('register.subtitle')}
+                />
+
+                <View style={styles.nameRow}>
+                  <AuthTextField
+                    label={t('register.firstName')}
+                    value={firstName}
+                    onChangeText={setFirstName}
+                    placeholder={t('register.firstNamePlaceholder')}
+                    autoCapitalize="words"
+                    containerStyle={styles.nameCol}
+                  />
+                  <AuthTextField
+                    label={t('register.lastName')}
+                    value={lastName}
+                    onChangeText={setLastName}
+                    placeholder={t('register.lastNamePlaceholder')}
+                    autoCapitalize="words"
+                    containerStyle={styles.nameCol}
+                  />
+                </View>
+
+                <AuthTextField
+                  label={t('register.email')}
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder={t('register.emailPlaceholder')}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+
+                <AuthTextField
+                  label={t('register.hectares')}
+                  hint={t('register.hectaresHint')}
+                  value={hectares}
+                  onChangeText={setHectares}
+                  placeholder={t('register.hectaresPlaceholder')}
+                  keyboardType="decimal-pad"
+                />
+
+                <AuthTextField
+                  label={t('register.password')}
+                  hint={t('register.passwordHint')}
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder={t('register.passwordPlaceholder')}
+                  secureTextEntry
+                  containerStyle={styles.lastField}
+                />
+
+                <EnterpriseButton
+                  label={t('register.submit')}
+                  onPress={handleRegister}
+                  loading={loading}
+                  disabled={loading}
+                  size="large"
+                  fullWidth
+                  style={styles.submit}
+                />
+              </EnterprisePanel>
+            </ScrollView>
+          </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
       </AuthScreenShell>
     </SafeAreaView>
@@ -199,7 +200,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    marginBottom: 20,
+    marginBottom: 12,
     gap: 2,
   },
   backText: {
@@ -220,26 +221,28 @@ const styles = StyleSheet.create({
   lastField: {
     marginBottom: 0,
   },
-  submitDisabled: {
-    opacity: 0.65,
+  submit: {
+    marginTop: 20,
   },
   footer: {
     alignItems: 'center',
+    gap: 6,
     paddingTop: 4,
-    gap: 2,
   },
   footerLead: {
     fontSize: 14,
     fontWeight: '400',
     color: enterpriseColors.gray600,
+    textAlign: 'center',
   },
   footerBtn: {
     paddingVertical: 8,
     paddingHorizontal: 12,
   },
   footerAccent: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '500',
     color: enterpriseColors.primary,
+    textAlign: 'center',
   },
 });

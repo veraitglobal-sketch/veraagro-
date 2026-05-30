@@ -145,6 +145,25 @@ export default function SupplierDashboardScreen() {
       </TouchableOpacity>
 
       <TouchableOpacity
+        onPress={() => router.push('/(supplier)/badge-handover' as any)}
+        style={{
+          backgroundColor: theme.colors.surface,
+          borderRadius: theme.borderRadius.lg,
+          padding: 18,
+          marginBottom: 12,
+          borderWidth: 1,
+          borderColor: enterpriseColors.gray200,
+        }}
+      >
+        <Text style={{ fontSize: 15, fontWeight: '500', color: theme.colors.text.primary }}>
+          {t('supplier.badges.dashboardCard')}
+        </Text>
+        <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginTop: 4 }}>
+          {t('supplier.badges.dashboardHint')}
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
         onPress={() => router.push('/(supplier)/orders' as any)}
         style={{
           backgroundColor: theme.colors.surface,

@@ -24,6 +24,15 @@ export default function SupplierLayout() {
           <Stack.Screen name="catalog" options={{ title: t('supplier.screenCatalog') }} />
           <Stack.Screen name="orders" options={{ title: t('supplier.screenOrders') }} />
           <Stack.Screen name="messages" options={{ title: t('supplier.screenMessages') }} />
+          <Stack.Screen name="badge-handover" options={{ title: t('supplier.badges.screenTitle') }} />
+          <Stack.Screen
+            name="scanner"
+            options={{
+              ...bioVeraStackScreenOptions({ headerShown: true }),
+              headerTitle: t('navigation.scanBarcode'),
+              presentation: 'modal',
+            }}
+          />
         </Stack>
       </View>
     </AuthGuard>

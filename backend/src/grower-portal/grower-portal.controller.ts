@@ -42,6 +42,12 @@ export class GrowerPortalController {
     return this.growerPortalService.ingestMobileCost(user.id, dto);
   }
 
+  /** Mobile cost calculator: list ingested cost lines for this grower */
+  @Get('costs')
+  async listCosts(@GetUser() user: { id: string }) {
+    return this.growerPortalService.listMobileCosts(user.id);
+  }
+
   /** Mobile offline queue: certificate photo metadata (full binary upload to follow) */
   @Post('certificate-photos')
   async ingestCertificatePhoto(

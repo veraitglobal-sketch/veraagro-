@@ -4,13 +4,13 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  TextInput,
   TouchableWithoutFeedback,
   Keyboard,
+  StyleSheet,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react-native';
-import { theme } from '../../../lib/theme';
+import { dsColors, EnterpriseButton, EnterpriseTextField } from '../../../design-system';
 import { CROP_TYPES, CROP_STATUS_VALUES } from './constants';
 import type { Zone } from './types';
 import { BioVeraBottomSheet } from '../../../components/enterprise/BioVeraBottomSheet';
@@ -66,14 +66,14 @@ export function ZoneModal({
               style={{
                 fontSize: 16,
                 fontWeight: '400',
-                color: theme.colors.text.primary,
+                color: dsColors.gray900,
                 letterSpacing: 0.5,
               }}
             >
               {selectedZone?.name}
             </Text>
             <TouchableOpacity onPress={onClose}>
-              <X size={20} color={theme.colors.text.secondary} strokeWidth={1} />
+              <X size={20} color={dsColors.muted} strokeWidth={1} />
             </TouchableOpacity>
           </View>
 
@@ -84,7 +84,7 @@ export function ZoneModal({
                 style={{
                   fontSize: 14,
                   fontWeight: '400',
-                  color: theme.colors.text.secondary,
+                  color: dsColors.muted,
                   marginBottom: 6,
                 }}
               >
@@ -100,10 +100,10 @@ export function ZoneModal({
                         paddingHorizontal: 12,
                         paddingVertical: 8,
                         borderWidth: 0.5,
-                        borderColor: zoneCropType === crop ? theme.colors.primary : theme.colors.border,
+                        borderColor: zoneCropType === crop ? dsColors.primary : dsColors.border,
                         borderRadius: 6,
                         backgroundColor:
-                          zoneCropType === crop ? `${theme.colors.primary}10` : theme.colors.surface,
+                          zoneCropType === crop ? dsColors.primaryTint : dsColors.surface,
                       }}
                       activeOpacity={0.7}
                     >
@@ -111,7 +111,7 @@ export function ZoneModal({
                         style={{
                           fontSize: 14,
                           fontWeight: '400',
-                          color: zoneCropType === crop ? theme.colors.primary : theme.colors.text.secondary,
+                          color: zoneCropType === crop ? dsColors.primary : dsColors.muted,
                         }}
                       >
                         {crop}
@@ -122,46 +122,23 @@ export function ZoneModal({
               </ScrollView>
             </View>
 
-            <View style={{ marginBottom: 16 }}>
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: '400',
-                  color: theme.colors.text.secondary,
-                  marginBottom: 6,
-                }}
-              >
-                {t('producer.plotMapper.plantingDate')}
-              </Text>
-              <TextInput
-                value={zonePlantingDate.toISOString().split('T')[0]}
-                onChangeText={(text) => {
-                  const date = new Date(text);
-                  if (!isNaN(date.getTime())) setZonePlantingDate(date);
-                }}
-                placeholder="YYYY-MM-DD"
-                style={{
-                  padding: 12,
-                  borderWidth: 0.5,
-                  borderColor: theme.colors.border,
-                  borderRadius: 6,
-                  backgroundColor: theme.colors.surface,
-                  fontSize: 13,
-                  fontWeight: '400',
-                  color: theme.colors.text.primary,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 8,
-                }}
-              />
-            </View>
+            <EnterpriseTextField
+              label={t('producer.plotMapper.plantingDate')}
+              value={zonePlantingDate.toISOString().split('T')[0]}
+              onChangeText={(text) => {
+                const date = new Date(text);
+                if (!isNaN(date.getTime())) setZonePlantingDate(date);
+              }}
+              placeholder="YYYY-MM-DD"
+              autoCapitalize="none"
+            />
 
             <View style={{ marginBottom: 20 }}>
               <Text
                 style={{
                   fontSize: 14,
                   fontWeight: '400',
-                  color: theme.colors.text.secondary,
+                  color: dsColors.muted,
                   marginBottom: 6,
                 }}
               >
@@ -175,10 +152,10 @@ export function ZoneModal({
                     style={{
                       padding: 12,
                       borderWidth: 0.5,
-                      borderColor: zoneStatus === statusValue ? theme.colors.primary : theme.colors.border,
+                      borderColor: zoneStatus === statusValue ? dsColors.primary : dsColors.border,
                       borderRadius: 6,
                       backgroundColor:
-                        zoneStatus === statusValue ? `${theme.colors.primary}10` : theme.colors.surface,
+                        zoneStatus === statusValue ? dsColors.primaryTint : dsColors.surface,
                     }}
                     activeOpacity={0.7}
                   >
@@ -186,7 +163,7 @@ export function ZoneModal({
                       style={{
                         fontSize: 14,
                         fontWeight: '400',
-                        color: zoneStatus === statusValue ? theme.colors.primary : theme.colors.text.secondary,
+                        color: zoneStatus === statusValue ? dsColors.primary : dsColors.muted,
                       }}
                     >
                       {t(`producer.plotMapper.cropStatus.${statusValue}`)}
@@ -196,27 +173,12 @@ export function ZoneModal({
               </View>
             </View>
 
-            <TouchableOpacity
+            <EnterpriseButton
+              label={t('producer.plotMapper.saveZone')}
               onPress={handleSave}
-              style={{
-                backgroundColor: theme.colors.primary,
-                paddingVertical: 14,
-                borderRadius: 6,
-                alignItems: 'center',
-              }}
-              activeOpacity={0.7}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: '400',
-                  color: theme.colors.background,
-                  letterSpacing: 0.5,
-                }}
-              >
-                {t('producer.plotMapper.saveZone')}
-              </Text>
-            </TouchableOpacity>
+              fullWidth
+              size="large"
+            />
           </ScrollView>
             </TouchableWithoutFeedback>
         </View>

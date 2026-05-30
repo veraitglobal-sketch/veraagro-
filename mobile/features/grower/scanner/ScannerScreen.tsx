@@ -18,9 +18,11 @@ export default function ScannerScreen() {
   const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
   const router = useRouter();
-  const params = useLocalSearchParams<{ returnTo?: string; materialKind?: string }>();
+  const params = useLocalSearchParams<{ returnTo?: string; materialKind?: string; scanTarget?: string }>();
   const isForProducts = params.returnTo === 'products' || params.returnTo === 'seed-registration';
   const isMaterialAdd = params.returnTo === 'material-add';
+  const isSupplierBadge = params.returnTo === 'supplier-badge';
+  const supplierScanTarget = params.scanTarget === 'grower' ? 'grower' : 'badge';
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [barcode, setBarcode] = useState<string | null>(null);
@@ -69,6 +71,14 @@ export default function ScannerScreen() {
           return;
         }
         await AsyncStorage.setItem('last_material_barcode', data);
+        setValidating(false);
+        router.back();
+        return;
+      }
+      if (isSupplierBadge) {
+        const key =
+          supplierScanTarget === 'grower' ? 'last_supplier_grower_qr' : 'last_supplier_badge_serial';
+        await AsyncStorage.setItem(key, data.trim());
         setValidating(false);
         router.back();
         return;

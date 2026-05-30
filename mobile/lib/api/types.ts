@@ -432,6 +432,7 @@ export interface LabelRollRow {
   status: string;
   soldAt: string | null;
   productName: string;
+  source?: 'inventory' | 'package_badge';
 }
 
 /** GET /material-control/compliance-status/:batchId */
@@ -501,5 +502,21 @@ export interface PlotBlueprint {
     zones: PlotBlueprintZone[];
     partitions: PlotBlueprintPartition[];
   };
+}
+
+export interface FarmerProfileMeResponse {
+  farmer: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    photo?: string | null;
+    bio?: string | null;
+    generation?: string | null;
+    yearsOfExperience?: number | null;
+    isVeraPartner?: boolean;
+    partnerCode?: string | null;
+  };
+  farmerQrCode?: string;
+  farmerProfileUrl?: string;
 }
 

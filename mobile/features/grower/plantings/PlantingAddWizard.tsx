@@ -3,9 +3,7 @@ import {
   View,
   Text,
   ScrollView,
-  TextInput,
   TouchableOpacity,
-  ActivityIndicator,
   StyleSheet,
 } from 'react-native';
 import { BioVeraBottomSheet } from '../../../components/enterprise/BioVeraBottomSheet';
@@ -13,8 +11,8 @@ import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react-native';
 import { GrowerSelectField } from '../../../components/grower/GrowerSelectField';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
-import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
-import { growerUi } from '../../../lib/grower-ui';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { EnterpriseButton, EnterpriseTextField, EnterpriseTextArea } from '../../../design-system';
 import { CROP_CATALOG, cropTypeForLocale } from './crop-catalog';
 import type { ParcelAug } from './usePlantingsData';
 
@@ -177,37 +175,31 @@ export function PlantingAddWizard({
                       <Text style={styles.otherToggleText}>{t('producer.plantings.customCropHint')}</Text>
                     </TouchableOpacity>
                     {showOther ? (
-                      <TextInput
-                        style={growerUi.formInput}
+                      <EnterpriseTextField
                         value={customCrop}
                         onChangeText={(txt) => {
                           setCustomCrop(txt);
                           if (txt.trim()) setCropKey('');
                         }}
                         placeholder={t('producer.plantings.customCropPlaceholder')}
-                        placeholderTextColor={enterpriseColors.gray600}
                       />
                     ) : null}
 
-                    <Text style={growerUi.formLabel}>{t('producer.plantings.fieldDate')}</Text>
-                    <TextInput
-                      style={growerUi.formInput}
+                    <EnterpriseTextField
+                      label={t('producer.plantings.fieldDate')}
+                      hint={t('producer.plantings.fieldDateHint')}
                       value={date}
                       onChangeText={setDate}
                       placeholder={t('producer.plantings.fieldDatePlaceholder')}
-                      placeholderTextColor={enterpriseColors.gray600}
                       autoCapitalize="none"
                     />
-                    <Text style={styles.dateHint}>{t('producer.plantings.fieldDateHint')}</Text>
 
-                    <Text style={growerUi.formLabel}>{t('producer.plantings.fieldNotes')}</Text>
-                    <TextInput
-                      style={[growerUi.formInput, styles.notesInput]}
+                    <EnterpriseTextArea
+                      label={t('producer.plantings.fieldNotes')}
                       value={notes}
                       onChangeText={setNotes}
                       placeholder={t('producer.plantings.phCrop')}
-                      placeholderTextColor={enterpriseColors.gray600}
-                      multiline
+                      minRows={3}
                     />
                   </>
                 )}
@@ -215,7 +207,12 @@ export function PlantingAddWizard({
 
               <View style={[styles.footer, { paddingBottom: Math.max(p.bottomInset, 12) }]}>
                 {formErr ? <Text style={styles.formErr}>{formErr}</Text> : null}
-                <TouchableOpacity
+                <EnterpriseButton
+                  label={
+                    step === 1
+                      ? t('producer.fieldLogForm.farmerNext')
+                      : t('producer.plantings.submit')
+                  }
                   onPress={() => {
                     if (step === 1) {
                       if (!parcelId.trim()) return;
@@ -229,24 +226,11 @@ export function PlantingAddWizard({
                       notes,
                     });
                   }}
+                  loading={saving}
                   disabled={saving || (step === 1 ? !parcelId.trim() : !cropChosen || !date.trim())}
-                  style={[
-                    enterpriseUi.authBtnPrimary,
-                    styles.saveBtn,
-                    (saving || (step === 1 ? !parcelId.trim() : !cropChosen || !date.trim())) &&
-                      styles.saveBtnDisabled,
-                  ]}
-                >
-                  {saving ? (
-                    <ActivityIndicator color={enterpriseColors.white} />
-                  ) : (
-                    <Text style={enterpriseUi.authBtnPrimaryText}>
-                      {step === 1
-                        ? t('producer.fieldLogForm.farmerNext')
-                        : t('producer.plantings.submit')}
-                    </Text>
-                  )}
-                </TouchableOpacity>
+                  fullWidth
+                  size="large"
+                />
               </View>
             </>
           )}

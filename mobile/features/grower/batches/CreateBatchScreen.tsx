@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  TextInput,
   TouchableOpacity,
   ActivityIndicator,
   Alert,
@@ -21,11 +20,11 @@ import { isDeviceOnline } from '../../../lib/network-utils';
 import { parcelEligibleForHarvestPlan } from '../../../lib/parcel-eligible-for-harvest-plan';
 import { plantingFormDateToEstimatedIsoUtc } from '../plantings/planting-estimated-date';
 import { apiErrorMessage } from '../../../lib/api-error';
-import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
+import { EnterpriseButton, EnterpriseTextField } from '../../../design-system';
 import { normalizeHarvestParcelId } from '../harvest/useHarvestData';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 
@@ -426,14 +425,13 @@ export default function CreateBatchScreen() {
                   />
                   <Text style={styles.stepLead}>{t('producer.batches.createStepQtyLead')}</Text>
 
-                  <Text style={styles.fieldLabel}>{t('producer.batches.createQuantity')}</Text>
-                  <TextInput
-                    style={styles.qtyInput}
+                  <EnterpriseTextField
+                    label={t('producer.batches.createQuantity')}
                     value={quantity}
                     onChangeText={setQuantity}
                     keyboardType="decimal-pad"
                     placeholder="0"
-                    placeholderTextColor={enterpriseColors.gray600}
+                    size="farmer"
                   />
 
                   <Text style={[styles.fieldLabel, { marginTop: 16 }]}>{t('producer.batches.createUnit')}</Text>
@@ -459,32 +457,31 @@ export default function CreateBatchScreen() {
 
         <View style={styles.footer}>
           {step > 1 ? (
-            <TouchableOpacity onPress={() => setStep((s) => s - 1)} style={styles.footerSecondary}>
-              <Text style={styles.footerSecondaryText}>{t('producer.fieldLogForm.wizardBack')}</Text>
-            </TouchableOpacity>
+            <EnterpriseButton
+              label={t('producer.fieldLogForm.wizardBack')}
+              onPress={() => setStep((s) => s - 1)}
+              variant="secondary"
+            />
           ) : (
             <View style={styles.footerSpacer} />
           )}
           {step < STEPS ? (
-            <TouchableOpacity
+            <EnterpriseButton
+              label={t('producer.fieldLogForm.farmerNext')}
               onPress={() => setStep((s) => s + 1)}
               disabled={step === 1 ? !step1Ok : !step2Ok}
-              style={[styles.footerPrimary, (step === 1 ? !step1Ok : !step2Ok) && { opacity: 0.45 }]}
-            >
-              <Text style={styles.footerPrimaryText}>{t('producer.fieldLogForm.farmerNext')}</Text>
-            </TouchableOpacity>
+              style={styles.footerPrimaryBtn}
+              size="large"
+            />
           ) : (
-            <TouchableOpacity
+            <EnterpriseButton
+              label={t('producer.batches.createSubmit')}
               onPress={() => void submit()}
+              loading={saving}
               disabled={saving || !step3Ok}
-              style={[styles.footerPrimary, (saving || !step3Ok) && { opacity: 0.55 }]}
-            >
-              {saving ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.footerPrimaryText}>{t('producer.batches.createSubmit')}</Text>
-              )}
-            </TouchableOpacity>
+              style={styles.footerPrimaryBtn}
+              size="large"
+            />
           )}
         </View>
       </View>
@@ -606,23 +603,5 @@ const styles = StyleSheet.create({
     borderTopColor: enterpriseColors.gray200,
   },
   footerSpacer: { width: 72 },
-  footerPrimary: {
-    flex: 1,
-    backgroundColor: enterpriseColors.primary,
-    borderRadius: 14,
-    minHeight: 56,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  footerPrimaryText: { fontSize: 20, fontWeight: '700', color: '#fff' },
-  footerSecondary: {
-    minHeight: 56,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    borderRadius: 14,
-    borderWidth: 2,
-    borderColor: enterpriseColors.gray200,
-    backgroundColor: enterpriseColors.white,
-  },
-  footerSecondaryText: { fontSize: 18, fontWeight: '600', color: enterpriseColors.gray900 },
+  footerPrimaryBtn: { flex: 1 },
 });

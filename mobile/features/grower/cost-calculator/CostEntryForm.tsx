@@ -1,11 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { PendingCost } from '../../../lib/offline-storage';
 import type { GrowerParcelRow } from '../../../lib/load-grower-parcels';
 import { CostAllocationPicker, type CostPlantingOption } from './CostAllocationPicker';
-import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
-import { growerUi } from '../../../lib/grower-ui';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
+import {
+  EnterpriseButton,
+  EnterpriseTextField,
+  EnterpriseTextArea,
+} from '../../../design-system';
 
 interface CostEntryFormProps {
   parcels: GrowerParcelRow[];
@@ -126,62 +130,53 @@ export default function CostEntryForm({
         loading={allocationLoading}
       />
 
-      <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.costCalculator.costNameLabel')}</Text>
-      <TextInput
-        style={growerUi.formInput}
+      <EnterpriseTextField
+        label={t('producer.costCalculator.costNameLabel')}
         placeholder={t('producer.costCalculator.costNamePlaceholder')}
-        placeholderTextColor={enterpriseColors.gray600}
         value={label}
         onChangeText={setLabel}
+        size="farmer"
       />
-      <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.costCalculator.amountLabel')}</Text>
-      <TextInput
-        style={growerUi.formInput}
+      <EnterpriseTextField
+        label={t('producer.costCalculator.amountLabel')}
         placeholder={t('producer.costCalculator.amountPlaceholder')}
-        placeholderTextColor={enterpriseColors.gray600}
         value={amount}
         onChangeText={setAmount}
         keyboardType="decimal-pad"
+        size="farmer"
       />
-      <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.costCalculator.noteLabel')}</Text>
-      <TextInput
-        style={[growerUi.formInput, styles.noteInput]}
+      <EnterpriseTextArea
+        label={t('producer.costCalculator.noteLabel')}
         placeholder={t('producer.costCalculator.notePlaceholder')}
-        placeholderTextColor={enterpriseColors.gray600}
         value={note}
         onChangeText={setNote}
-        multiline
-        numberOfLines={2}
-        textAlignVertical="top"
+        minRows={2}
       />
 
       {formErr ? <Text style={styles.formErr}>{formErr}</Text> : null}
 
       <View style={styles.actions}>
         {onCancel ? (
-          <TouchableOpacity onPress={onCancel} disabled={saving} style={styles.cancelBtn}>
-            <Text style={styles.cancelText}>{t('common.cancel')}</Text>
-          </TouchableOpacity>
+          <EnterpriseButton
+            label={t('common.cancel')}
+            onPress={onCancel}
+            variant="ghost"
+            disabled={saving}
+          />
         ) : null}
-        <TouchableOpacity
-          style={[enterpriseUi.authBtnPrimary, styles.submitBtn, !canSubmit && styles.disabled]}
+        <EnterpriseButton
+          label={saving ? t('producer.costCalculator.saving') : t('producer.costCalculator.addCost')}
           onPress={() => void handleSubmit()}
+          loading={saving}
           disabled={!canSubmit}
-        >
-          <Text style={enterpriseUi.authBtnPrimaryText}>
-            {saving ? t('producer.costCalculator.saving') : t('producer.costCalculator.addCost')}
-          </Text>
-        </TouchableOpacity>
+          style={styles.submitBtn}
+        />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  noteInput: {
-    minHeight: 72,
-    paddingTop: 12,
-  },
   formErr: {
     fontSize: 14,
     color: enterpriseColors.destructive,
@@ -195,21 +190,7 @@ const styles = StyleSheet.create({
     gap: 12,
     marginTop: 8,
   },
-  cancelBtn: {
-    minHeight: 48,
-    justifyContent: 'center',
-    paddingHorizontal: 12,
-  },
-  cancelText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: enterpriseColors.gray600,
-  },
   submitBtn: {
-    minHeight: 48,
-    paddingHorizontal: 20,
-  },
-  disabled: {
-    opacity: 0.5,
+    minWidth: 140,
   },
 });

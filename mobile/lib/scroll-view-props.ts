@@ -1,4 +1,5 @@
 import type { ScrollViewProps } from 'react-native';
+import { getGrowerTabScrollPadding } from './grower-tab-bar-metrics';
 
 /** Standard vertical ScrollView props — no bounce/overscroll when content fits. */
 export const bioVeraScrollProps: Pick<
@@ -11,5 +12,5 @@ export const bioVeraScrollProps: Pick<
   showsVerticalScrollIndicator: false,
 };
 
-/** Tab-root bottom inset so last items clear the tab bar + safe area. */
-export const TAB_SCROLL_PADDING_BOTTOM = 100;
+/** Default tab-root bottom inset (no home indicator). Prefer getGrowerTabScrollPadding(insets.bottom). */
+export const TAB_SCROLL_PADDING_BOTTOM = getGrowerTabScrollPadding(0);

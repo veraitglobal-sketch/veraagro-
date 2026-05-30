@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { Settings } from 'lucide-react-native';
-import { EnterpriseNavSection } from '../../../components/enterprise/EnterpriseNavSection';
+import { EnterpriseNavSection } from '../../../design-system';
 
 /** Profile-only shortcuts — hub destinations live on Polje / Lanac / Nabavka tabs. */
 export function QuickAccessGrid() {

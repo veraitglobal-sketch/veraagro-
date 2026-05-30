@@ -26,7 +26,8 @@
 
 | Nivo | Gde | Skrol | Šta sme na ekranu |
 |------|-----|-------|-------------------|
-| **1 Tab root** | `(tabs)/index`, `field`, `chain`, `supplies`, `profile` | **Blagi skrol** ako ne stane | `TabRootBody` + `HubMetricsStrip` + `EnterpriseNavSection` (puni redovi 72px) |
+| **1 Tab root** | `(tabs)/index`, `field`, `chain`, `supplies`, `profile` | **Samo ako ne stane** | ≤4 hub kartice; `fillViewport: false`; bottom pad = tab bar visina |
+| **1b Sub-menü** | `cultivation`, `field-diary`, `post-harvest`, … | **Ne** | `GrowerMenuScaffold` — View, ne ScrollView |
 | **2 Lista / alat** | `batches`, `missions`, `field-log`, … | Dozvoljen | Filter + lista; paginacija ako >20 stavki |
 | **3 Forma / detalj** | `batch/[id]`, unos, wizard | Dozvoljen | Jedan zadatak; wizard = jedan korak po ekranu |
 

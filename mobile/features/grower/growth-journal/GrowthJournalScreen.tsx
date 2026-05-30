@@ -20,7 +20,7 @@ function scrollBottomInset(bottomInset: number): number {
   return footerBtn + footerChrome + Math.max(bottomInset, 12) + slack;
 }
 
-export default function GrowthJournalScreen() {
+export default function GrowthJournalScreen({ embedded = false }: { embedded?: boolean }) {
   const { t } = useTranslation();
   const router = useRouter();
   const routeParams = useLocalSearchParams<{ parcelId?: string; plantingId?: string }>();
@@ -94,12 +94,14 @@ export default function GrowthJournalScreen() {
       : t('producer.growthJournal.stepsReminder');
 
   return (
-    <View style={growerUi.canvas}>
-      <GrowerStackHeader
-        title={t('producer.growthJournal.title')}
-        subtitle={showIntroSubtitle ? t('producer.growthJournal.screenIntro') : undefined}
-        onBack={goBack}
-      />
+    <View style={[growerUi.canvas, embedded && styles.embeddedRoot]}>
+      {!embedded ? (
+        <GrowerStackHeader
+          title={t('producer.growthJournal.title')}
+          subtitle={showIntroSubtitle ? t('producer.growthJournal.screenIntro') : undefined}
+          onBack={goBack}
+        />
+      ) : null}
 
       <ScrollView
         style={styles.scroll}
@@ -228,5 +230,9 @@ const styles = StyleSheet.create({
   },
   addBtnBusy: {
     opacity: 0.55,
+  },
+  embeddedRoot: {
+    flex: 1,
+    minHeight: 0,
   },
 });

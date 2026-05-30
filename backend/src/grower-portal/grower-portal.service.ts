@@ -1084,6 +1084,38 @@ export class GrowerPortalService {
     return this.upsertMobileIngest(userId, 'COST', dto.clientReference, { ...dto } as object);
   }
 
+  async listMobileCosts(userId: string) {
+    const rows = await this.prisma.grower_mobile_ingest.findMany({
+      where: { userId, kind: 'COST' },
+      orderBy: { createdAt: 'desc' },
+    });
+    return rows.map((row) => {
+      const payload = (row.payload ?? {}) as Record<string, unknown>;
+      return {
+        id: row.clientReference,
+        type: payload.type === 'product' ? 'product' : 'manual',
+        productId: typeof payload.productId === 'string' ? payload.productId : undefined,
+        label: String(payload.label ?? ''),
+        amount: Number(payload.amount ?? 0),
+        currency: typeof payload.currency === 'string' ? payload.currency : 'EUR',
+        note: typeof payload.note === 'string' ? payload.note : undefined,
+        estateId: typeof payload.estateId === 'string' ? payload.estateId : undefined,
+        parcelId: typeof payload.parcelId === 'string' ? payload.parcelId : undefined,
+        harvestAnnouncementId:
+          typeof payload.harvestAnnouncementId === 'string'
+            ? payload.harvestAnnouncementId
+            : undefined,
+        parcelLabel: typeof payload.parcelLabel === 'string' ? payload.parcelLabel : undefined,
+        plantingLabel: typeof payload.plantingLabel === 'string' ? payload.plantingLabel : undefined,
+        timestamp:
+          typeof payload.timestamp === 'string' && payload.timestamp.trim()
+            ? payload.timestamp
+            : row.createdAt.toISOString(),
+        status: 'synced' as const,
+      };
+    });
+  }
+
   async ingestMobileCertificatePhoto(userId: string, dto: IngestMobileCertificatePhotoDto) {
     return this.upsertMobileIngest(userId, 'CERT_PHOTO', dto.clientReference, { ...dto } as object);
   }

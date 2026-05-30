@@ -15,8 +15,9 @@ import { CartProvider } from '../hooks/useCart';
 import '../i18n/config';
 import { applySavedLanguagePreference } from '../lib/i18n-language';
 import '../global.css';
-import { theme } from '../lib/theme';
 import { syncService } from '../lib/sync-service';
+import { BioVeraBoot } from '../shell/BioVeraBoot';
+import { growerNavigationTheme } from '../shell/navigation-theme';
 
 // RN 0.81+ deprecates built-in SafeAreaView; some deps still trigger this until they migrate.
 LogBox.ignoreLogs(['SafeAreaView has been deprecated']);
@@ -25,17 +26,9 @@ LogBox.ignoreLogs(['SafeAreaView has been deprecated']);
  * Expo Router’s Stack `screenOptions` types only allow a subset of header styles
  * (backgroundColor, etc.); we still want a thin border — cast avoids fighting the stub types.
  */
-const stackHeaderStyle = {
-  backgroundColor: theme.colors.background,
-  borderBottomWidth: 1,
-  borderBottomColor: theme.colors.border,
-} as const;
+const stackHeaderStyle = growerNavigationTheme.headerStyle;
 
-const stackHeaderTitleStyle = {
-  fontWeight: '400' as const,
-  fontSize: 18,
-  letterSpacing: -0.2,
-} as const;
+const stackHeaderTitleStyle = growerNavigationTheme.headerTitleStyle;
 
 export default function RootLayout() {
   useEffect(() => {
@@ -46,12 +39,13 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
     <SafeAreaProvider>
     <AuthProvider>
+    <BioVeraBoot>
     <PushNotificationHandler />
     <CartProvider>
       <Stack
         screenOptions={bioVeraStackScreenOptions({
           headerStyle: stackHeaderStyle as object,
-          headerTintColor: theme.colors.text.primary,
+          headerTintColor: growerNavigationTheme.headerTintColor,
           headerTitleStyle: stackHeaderTitleStyle as object,
         })}
       >
@@ -98,6 +92,7 @@ export default function RootLayout() {
         />
       </Stack>
     </CartProvider>
+    </BioVeraBoot>
     </AuthProvider>
     </SafeAreaProvider>
     </GestureHandlerRootView>

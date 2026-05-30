@@ -10,13 +10,15 @@ export const enterpriseColors = {
   primaryHover: '#23471f',
   primaryTint: 'rgba(45, 90, 39, 0.08)',
   primaryTintStrong: 'rgba(45, 90, 39, 0.12)',
-  canvas: '#F9FAFB',
+  canvas: '#f6f5f1',
   gray900: '#111827',
   gray700: '#374151',
   gray600: '#4B5563',
   gray200: '#E5E7EB',
   gray100: '#F3F4F6',
   white: '#FFFFFF',
+  border: '#e5e2db',
+  tint: '#f7faf6',
   /** Signature tint — ONLY BioVeraProvenanceRibbon (do not reuse on lists/menus). */
   premiumTintBg: 'rgba(45, 90, 39, 0.05)',
   premiumTintBorder: 'rgba(45, 90, 39, 0.14)',
@@ -201,28 +203,50 @@ export const enterpriseUi = {
     marginBottom: 8,
   } as TextStyle,
 
-  /** White panel on canvas — light elevation (enterprise, not flat). */
+  /** White panel on canvas — warm border + soft elevation. */
   inAppPanel: {
     width: '100%',
-    borderRadius: 16,
+    borderRadius: 18,
     borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
+    borderColor: enterpriseColors.border,
     backgroundColor: enterpriseColors.white,
     overflow: 'hidden',
-    shadowColor: '#111827',
+    shadowColor: '#2D5A27',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 14,
+    elevation: 3,
+  } as ViewStyle,
+
+  /** KPI / summary strip — tinted surface (not flat white). */
+  kpiSurface: {
+    width: '100%',
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: enterpriseColors.premiumTintBorder,
+    backgroundColor: enterpriseColors.premiumTintBg,
+    overflow: 'hidden',
+    shadowColor: '#2D5A27',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.045,
-    shadowRadius: 10,
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
     elevation: 2,
   } as ViewStyle,
 
+  kpiAccentBar: {
+    height: 3,
+    width: '100%',
+    backgroundColor: enterpriseColors.primary,
+    opacity: 0.85,
+  } as ViewStyle,
+
   navRowIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    backgroundColor: enterpriseColors.white,
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: enterpriseColors.primaryTint,
     borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
+    borderColor: enterpriseColors.premiumTintBorder,
     alignItems: 'center',
     justifyContent: 'center',
   } as ViewStyle,
@@ -562,24 +586,22 @@ export const enterpriseUi = {
   } as ViewStyle,
 };
 
-/** Shared Expo Router tab options for grower (and similar) apps. */
-export function growerTabScreenOptions(insets: { bottom: number }) {
-  return {
-    tabBarActiveTintColor: enterpriseColors.primary,
-    tabBarInactiveTintColor: enterpriseColors.gray600,
-    /** Height/padding handled by custom GrowerTabBar — avoid double spacing. */
-    tabBarStyle: {
-      position: 'absolute',
-      backgroundColor: 'transparent',
-      borderTopWidth: 0,
-      elevation: 0,
-      height: 58 + Math.max(insets.bottom, 6),
-    },
-    tabBarLabelStyle: enterpriseUi.tabBarLabel,
-    tabBarIconStyle: { marginTop: 0 },
-    headerShown: false,
-  } as const;
-}
+/** Shared Expo Router tab options — static; custom GrowerTabBar handles insets. */
+export const growerTabScreenOptions = {
+  tabBarActiveTintColor: enterpriseColors.primary,
+  tabBarInactiveTintColor: enterpriseColors.gray600,
+  tabBarStyle: {
+    position: 'absolute' as const,
+    backgroundColor: 'transparent',
+    borderTopWidth: 0,
+    elevation: 0,
+    /** Custom floating pill — prevent layout slot from re-measuring and looping updates. */
+    height: 0,
+  },
+  tabBarLabelStyle: enterpriseUi.tabBarLabel,
+  tabBarIconStyle: { marginTop: 0 },
+  headerShown: false,
+} as const;
 
 export const enterpriseStyles = StyleSheet.create({
   logo: {

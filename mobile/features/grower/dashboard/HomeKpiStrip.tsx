@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
+import { enterpriseUi } from '../../../lib/enterprise-ui';
+import { growerSheet, growerSheetCardStyle } from '../../../design-system/grower-sheet-styles';
 import type { OrdersFinancialSnapshot } from './fetchGrowerOrdersFinancial';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 
@@ -47,13 +48,15 @@ function KpiCell({
   label,
   value,
   accent,
+  bordered,
 }: {
   label: string;
   value: string;
   accent?: boolean;
+  bordered?: boolean;
 }) {
   return (
-    <View style={styles.cell}>
+    <View style={[styles.cell, bordered && styles.cellBorder]}>
       <Text style={enterpriseUi.kpiLabel} numberOfLines={2}>
         {label}
       </Text>
@@ -66,7 +69,7 @@ function KpiCell({
 
 function KpiSkeleton() {
   return (
-    <View style={[enterpriseUi.inAppPanel, styles.strip]} accessibilityElementsHidden>
+    <View style={styles.kpiWrap}>
       {[0, 1, 2].map((i) => (
         <View key={i} style={[styles.cell, i < 2 && styles.cellBorder]}>
           <View style={styles.skelLabel} />
@@ -77,7 +80,7 @@ function KpiSkeleton() {
   );
 }
 
-/** At-a-glance farm numbers — fintech-style strip on home only. */
+/** At-a-glance farm numbers — sheet stat strip on home. */
 export function HomeKpiStrip({
   loaded,
   estateCount,
@@ -113,16 +116,18 @@ export function HomeKpiStrip({
     escrow > 0 ? euroCompact(escrow, locale) : offlinePending > 0 ? String(offlinePending) : '0';
 
   return (
-    <View style={[enterpriseUi.inAppPanel, styles.strip]} accessibilityRole="summary">
+    <View style={styles.kpiWrap}>
       <KpiCell
         label={t('producer.dashboard.homeKpi.parcels')}
         value={parcelValue}
         accent={parcelAccent}
+        bordered
       />
       <KpiCell
         label={t('producer.dashboard.homeKpi.chain')}
         value={String(chain)}
         accent={chainAccent}
+        bordered
       />
       <KpiCell label={thirdLabel} value={thirdValue} accent={outboxAccent || escrow > 0} />
     </View>
@@ -130,12 +135,12 @@ export function HomeKpiStrip({
 }
 
 const styles = StyleSheet.create({
-  strip: {
+  kpiWrap: {
+    ...growerSheetCardStyle({ marginBottom: 18 }),
     flexDirection: 'row',
-    paddingVertical: 20,
+    paddingVertical: 22,
     paddingHorizontal: 10,
-    marginBottom: 16,
-    minHeight: 96,
+    minHeight: 100,
   },
   cell: {
     flex: 1,
@@ -146,19 +151,19 @@ const styles = StyleSheet.create({
   },
   cellBorder: {
     borderRightWidth: StyleSheet.hairlineWidth,
-    borderRightColor: enterpriseColors.gray200,
+    borderRightColor: 'rgba(45, 90, 39, 0.1)',
   },
   skelLabel: {
     width: 52,
     height: 10,
     borderRadius: 4,
-    backgroundColor: enterpriseColors.gray100,
+    backgroundColor: growerSheet.cardTint,
     marginBottom: 12,
   },
   skelValue: {
     width: 40,
     height: 22,
     borderRadius: 6,
-    backgroundColor: enterpriseColors.gray100,
+    backgroundColor: growerSheet.cardTint,
   },
 });

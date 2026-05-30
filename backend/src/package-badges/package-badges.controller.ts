@@ -4,6 +4,7 @@ import {
   CreatePrintOrderDto,
   PreviewPrintOrderDto,
   RegisterPackageBadgesDto,
+  ReceiveFromFactoryDto,
   ReceiveReturnFromGrowerDto,
   ReturnBadgesToSupplierDto,
   TransferBadgesToGrowerDto,
@@ -76,6 +77,24 @@ export class PackageBadgesController {
   @Roles('FARMER', 'GROWER', 'PARTNER', 'ADMIN', 'SUPER_ADMIN')
   async returnToSupplier(@Body() dto: ReturnBadgesToSupplierDto, @GetUser() user: { id: string }) {
     return this.service.returnTreeToSupplier(user.id, dto);
+  }
+
+  @Post('supplier/receive-from-factory')
+  @Roles('MATERIAL_SUPPLIER', 'ADMIN', 'SUPER_ADMIN')
+  async receiveFromFactory(@Body() dto: ReceiveFromFactoryDto, @GetUser() user: { id: string }) {
+    return this.service.supplierReceiveFromFactory(user.id, dto);
+  }
+
+  @Get('supplier/stock')
+  @Roles('MATERIAL_SUPPLIER', 'ADMIN', 'SUPER_ADMIN')
+  async listSupplierStock(@GetUser() user: { id: string }) {
+    return this.service.listSupplierStock(user.id);
+  }
+
+  @Get('mine/packages')
+  @Roles('FARMER', 'GROWER', 'PARTNER', 'ADMIN', 'SUPER_ADMIN')
+  async listMyPackages(@GetUser() user: { id: string }) {
+    return this.service.listGrowerPackages(user.id);
   }
 
   @Post('supplier/receive-from-grower')

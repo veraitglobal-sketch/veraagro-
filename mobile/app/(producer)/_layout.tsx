@@ -9,6 +9,7 @@ import { GrowerReconnectAutoSync } from '../../components/GrowerReconnectAutoSyn
 import { PostLoginPermissions } from '../../components/PostLoginPermissions';
 import { GrowerDashboardProvider } from '../../contexts/GrowerDashboardContext';
 import { WalletProvider } from '../../contexts/WalletContext';
+import { GROWER_SILENT_STACK_NAMES } from '../../shell/grower-screen-registry';
 
 /**
  * Producer Layout
@@ -61,14 +62,12 @@ export default function ProducerLayout() {
         <Stack.Screen name="quality-entry" />
         <Stack.Screen name="materials" />
         <Stack.Screen name="growth-journal" />
-        <Stack.Screen name="plantings" options={{ headerShown: false }} />
-        <Stack.Screen name="partner-orders" options={{ headerShown: false }} />
-        <Stack.Screen name="partner-order/[orderId]" options={{ headerShown: false }} />
+        {GROWER_SILENT_STACK_NAMES.map((name) => (
+          <Stack.Screen key={name} name={name} options={{ headerShown: false }} />
+        ))}
         <Stack.Screen name="vera-bag" />
         <Stack.Screen name="vera-insights" />
-        <Stack.Screen name="wallet" options={{ headerShown: false }} />
         <Stack.Screen name="plot-mapper" />
-        <Stack.Screen name="seed-registration" options={{ headerShown: false }} />
         <Stack.Screen name="packing-flow" options={{ title: i18n.t('navigation.packingFlow') }} />
         <Stack.Screen name="package-badges" options={{ title: i18n.t('navigation.packageBadges') }} />
         <Stack.Screen name="package-badges-print-order" />

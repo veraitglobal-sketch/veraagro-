@@ -44,6 +44,30 @@ export class MaterialControlService {
     }
   }
 
+  private async findOwnedBadgeRoot(stickerRollId: string, userId: string) {
+    const row = await this.prisma.package_badges.findUnique({
+      where: { serial: stickerRollId.trim() },
+    });
+    if (!row) return null;
+    let root = row;
+    while (root.parentId) {
+      const p = await this.prisma.package_badges.findUnique({ where: { id: root.parentId } });
+      if (!p) break;
+      root = p;
+    }
+    if (root.ownerUserId !== userId) return null;
+    if (root.lifecycle !== 'ACTIVE') return null;
+    return root;
+  }
+
+  private async badgeTreeIds(rootId: string): Promise<string[]> {
+    const kids = await this.prisma.package_badges.findMany({
+      where: { parentId: rootId },
+      select: { id: true },
+    });
+    return [rootId, ...kids.map((k) => k.id)];
+  }
+
   /**
    * Get available material types. If the catalog is empty (fresh DB / no seed), create the default
    * Bio Vera CRATE, LABEL, FILM products so the grower "Materials" page always has a dropdown.
@@ -272,14 +296,46 @@ export class MaterialControlService {
       include: { material_types: { select: { name: true } } },
       orderBy: { soldAt: 'desc' },
     });
-    return rows
+    type LabelRollListRow = {
+      serialNumber: string;
+      status: string;
+      soldAt: string | null;
+      productName: string;
+      source?: 'inventory' | 'package_badge';
+    };
+    const fromInventory: LabelRollListRow[] = rows
       .filter((r) => r.serialNumber)
       .map((r) => ({
         serialNumber: r.serialNumber as string,
         status: r.status,
         soldAt: r.soldAt?.toISOString() ?? null,
         productName: r.material_types?.name ?? 'Label roll',
+        source: 'inventory' as const,
       }));
+
+    const badgeRoots = await this.prisma.package_badges.findMany({
+      where: {
+        ownerUserId: userId,
+        parentId: null,
+        lifecycle: 'ACTIVE',
+        type: { in: ['ROLL_LINE', 'PALLET_MASTER'] },
+        batchId: null,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    const seen = new Set(fromInventory.map((r) => r.serialNumber));
+    for (const b of badgeRoots) {
+      if (seen.has(b.serial)) continue;
+      fromInventory.push({
+        serialNumber: b.serial,
+        status: 'AVAILABLE',
+        soldAt: b.createdAt.toISOString(),
+        productName: b.type === 'ROLL_LINE' ? 'Rola nalepnica' : 'Paleta / paket',
+        source: 'package_badge' as const,
+      });
+      seen.add(b.serial);
+    }
+    return fromInventory;
   }
 
   /**
@@ -299,8 +355,15 @@ export class MaterialControlService {
       include: { material_types: { select: { type: true } } },
     });
     const labelRow = usedForLot.find((r) => r.material_types?.type === 'LABEL') ?? null;
+    const badgeForLot = await this.prisma.package_badges.findFirst({
+      where: {
+        batchId: batchInternalId,
+        parentId: null,
+        type: { in: ['ROLL_LINE', 'PALLET_MASTER'] },
+      },
+    });
 
-    const complete = missing.length === 0 && labelRow != null;
+    const complete = missing.length === 0 && (labelRow != null || badgeForLot != null);
 
     return {
       publicBatchId: batch.batchId,
@@ -308,8 +371,8 @@ export class MaterialControlService {
       requiredPhotoTypes: required,
       uploadedPhotoTypes: uploadedTypes,
       missingPhotoTypes: missing,
-      stickerRollId: labelRow?.serialNumber != null ? labelRow.serialNumber : null,
-      stickerStatus: labelRow != null ? labelRow.status : null,
+      stickerRollId: labelRow?.serialNumber ?? badgeForLot?.serial ?? null,
+      stickerStatus: labelRow != null ? labelRow.status : badgeForLot != null ? 'USED' : null,
       lastComplianceAt: batch.compliance_photos[0]
         ? batch.compliance_photos[0].uploadedAt.toISOString()
         : null,
@@ -320,6 +383,23 @@ export class MaterialControlService {
    * Verify sticker roll ID for a lot (same access as `/batches`: owner OR harvester).
    */
   async verifyStickerRoll(userId: string, dto: VerifyStickerRollDto) {
+    const batch = await this.resolveGrowerBatch(dto.batchId, userId);
+    this.assertParcelMatchesBatchOptional(dto.parcelId, batch.parcelId);
+
+    const badgeRoot = await this.findOwnedBadgeRoot(dto.stickerRollId, userId);
+    if (badgeRoot) {
+      if (badgeRoot.batchId && badgeRoot.batchId !== batch.id) {
+        throw new BadRequestException('This sticker package is already linked to another lot');
+      }
+      return {
+        success: true,
+        verified: true,
+        stickerRollId: badgeRoot.serial,
+        batchId: batch.id,
+        source: 'package_badge' as const,
+      };
+    }
+
     const inventory = await this.prisma.material_inventory.findUnique({
       where: { serialNumber: dto.stickerRollId },
       include: {
@@ -339,9 +419,6 @@ export class MaterialControlService {
       throw new ForbiddenException('This sticker roll was not sold to you. Non-standard packaging detected.');
     }
 
-    const batch = await this.resolveGrowerBatch(dto.batchId, userId);
-    this.assertParcelMatchesBatchOptional(dto.parcelId, batch.parcelId);
-
     if (inventory.status === 'USED') {
       if (inventory.usedInBatchId === batch.id && inventory.soldToUserId === userId) {
         return {
@@ -349,6 +426,7 @@ export class MaterialControlService {
           verified: true,
           stickerRollId: dto.stickerRollId,
           batchId: batch.id,
+          source: 'inventory' as const,
         };
       }
       throw new BadRequestException('This sticker roll has already been used');
@@ -359,6 +437,7 @@ export class MaterialControlService {
       verified: true,
       stickerRollId: dto.stickerRollId,
       batchId: batch.id,
+      source: 'inventory' as const,
     };
   }
 
@@ -424,7 +503,14 @@ export class MaterialControlService {
         include: { material_types: { select: { type: true } } },
       });
       const labelRow = usedForLot.find((r) => r.material_types?.type === 'LABEL') ?? null;
-      if (!labelRow) {
+      const badgeLabel = await this.prisma.package_badges.findFirst({
+        where: {
+          batchId: batch.id,
+          parentId: null,
+          type: { in: ['ROLL_LINE', 'PALLET_MASTER'] },
+        },
+      });
+      if (!labelRow && !badgeLabel) {
         errors.push(
           'Official label roll is not registered for this lot. Complete compliance (verify sticker roll + photos) before requesting transport.'
         );
@@ -495,6 +581,20 @@ export class MaterialControlService {
       await this.prisma.material_inventory.update({
         where: { id: inv.id },
         data: { status: 'USED', usedInBatchId: internalBatchId, usedAt: new Date() },
+      });
+    }
+
+    const badgeRoot = await this.findOwnedBadgeRoot(dto.stickerRollId, userId);
+    if (badgeRoot) {
+      const grower = await this.prisma.users.findUnique({ where: { id: userId } });
+      const fq = grower?.farmerQrCode?.trim() || (grower ? `FARMER-${grower.partnerCode}` : null);
+      const ids = await this.badgeTreeIds(badgeRoot.id);
+      await this.prisma.package_badges.updateMany({
+        where: { id: { in: ids } },
+        data: {
+          batchId: internalBatchId,
+          ...(fq ? { farmerQrCode: fq } : {}),
+        },
       });
     }
 
@@ -606,5 +706,45 @@ export class MaterialControlService {
    */
   private generateHash(data: string): string {
     return crypto.createHash('sha256').update(data, 'utf8').digest('hex');
+  }
+
+  async listCompliancePhotosForAdmin(opts?: { partnerCode?: string; limit?: number }) {
+    const limit = Math.min(Math.max(opts?.limit ?? 100, 1), 200);
+    const partnerCode = opts?.partnerCode?.trim();
+    const where: {
+      batches?: {
+        users_batches_harvestedByUserIdTousers: { partnerCode: string };
+      };
+    } = {};
+    if (partnerCode) {
+      where.batches = {
+        users_batches_harvestedByUserIdTousers: { partnerCode },
+      };
+    }
+    return this.prisma.compliance_photos.findMany({
+      where,
+      orderBy: { uploadedAt: 'desc' },
+      take: limit,
+      include: {
+        batches: {
+          select: {
+            batchId: true,
+            productName: true,
+            users_batches_harvestedByUserIdTousers: {
+              select: { id: true, firstName: true, lastName: true, partnerCode: true },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async adminDeleteCompliancePhoto(id: string) {
+    const row = await this.prisma.compliance_photos.findUnique({ where: { id } });
+    if (!row) {
+      throw new NotFoundException('Compliance photo not found');
+    }
+    await this.prisma.compliance_photos.delete({ where: { id } });
+    return { ok: true, id };
   }
 }

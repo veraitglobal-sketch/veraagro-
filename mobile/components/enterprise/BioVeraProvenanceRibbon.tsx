@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck } from 'lucide-react-native';
+import { GlassSurface } from '../../design-system/GlassSurface';
 import { enterpriseColors, enterpriseUi } from '../../lib/enterprise-ui';
 
 /** Home trust strip — defines premium surface language for the grower app. */
@@ -8,7 +9,7 @@ export function BioVeraProvenanceRibbon({ compact = false }: { compact?: boolean
   const { t } = useTranslation();
 
   return (
-    <View style={[styles.wrap, compact && styles.wrapCompact]} accessibilityRole="text">
+    <GlassSurface style={[styles.wrap, compact && styles.wrapCompact]} contentStyle={styles.inner} blur={38}>
       <View style={enterpriseUi.premiumIconCircle}>
         <ShieldCheck size={16} color={enterpriseColors.primary} strokeWidth={1.5} />
       </View>
@@ -16,30 +17,25 @@ export function BioVeraProvenanceRibbon({ compact = false }: { compact?: boolean
         <Text style={enterpriseUi.premiumLead}>{t('producer.brand.ribbon')}</Text>
         <Text style={[enterpriseUi.premiumSub, styles.subGap]}>{t('producer.brand.ribbonSub')}</Text>
       </View>
-    </View>
+    </GlassSurface>
   );
 }
 
 const styles = StyleSheet.create({
   wrap: {
-    ...enterpriseUi.premiumSurface,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
     marginHorizontal: 20,
     marginBottom: 18,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    shadowColor: '#111827',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    elevation: 2,
   },
   wrapCompact: {
     marginHorizontal: 0,
     marginBottom: 20,
-    paddingVertical: 12,
+  },
+  inner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
   },
   copy: {
     flex: 1,

@@ -2,18 +2,21 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
-  ActivityIndicator,
   StyleSheet,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { X, Camera } from 'lucide-react-native';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
-import { growerUi } from '../../../lib/grower-ui';
 import { BioVeraBottomSheet } from '../../../components/enterprise/BioVeraBottomSheet';
+import {
+  EnterpriseButton,
+  EnterpriseTextField,
+  EnterpriseTextArea,
+  EnterprisePanel,
+} from '../../../design-system';
 import { GROWTH_STAGE_PRESET_KEYS, type GrowthStagePresetKey } from './GrowthJournalFilters';
 
 type Props = {
@@ -123,58 +126,43 @@ export function AddGrowthLogModal({
               </TouchableOpacity>
             </View>
             {growthStage === '__custom__' ? (
-              <TextInput
+              <EnterpriseTextField
                 value={customStage}
                 onChangeText={setCustomStage}
                 placeholder={t('producer.growthJournal.customStagePlaceholder')}
-                placeholderTextColor={enterpriseColors.gray600}
-                style={[growerUi.formInput, styles.fieldGap]}
               />
             ) : null}
 
-            <Text style={enterpriseUi.inAppSectionLabel}>
-              {t(
+            <EnterpriseTextArea
+              label={t(
                 strictPlantingProgress
                   ? 'producer.growthJournal.notesLabelPlanting'
                   : 'producer.growthJournal.notesLabel',
               )}
-            </Text>
-            <TextInput
               value={notes}
               onChangeText={setNotes}
               placeholder={t('producer.growthJournal.notesPlaceholder')}
-              placeholderTextColor={enterpriseColors.gray600}
-              multiline
-              numberOfLines={3}
-              style={[growerUi.formInput, styles.notesInput]}
+              minRows={3}
             />
 
-            <View style={styles.photoHint}>
+            <EnterprisePanel variant="tint" style={styles.photoHint}>
               <Text style={enterpriseUi.navRowTitle}>
                 {t('producer.growthJournal.photoRequiredLineTitle')}
               </Text>
               <Text style={[enterpriseUi.navRowSubtitle, { marginTop: 6 }]}>
                 {t('producer.growthJournal.photoRequiredLineBody')}
               </Text>
-            </View>
+            </EnterprisePanel>
 
-            <TouchableOpacity
+            <EnterpriseButton
+              label={t('producer.growthJournal.continueCta')}
               onPress={() => void submit()}
+              loading={busy}
               disabled={busy}
-              activeOpacity={0.88}
-              style={[enterpriseUi.authBtnPrimary, styles.submitBtn, busy && styles.submitBusy]}
-            >
-              {busy ? (
-                <ActivityIndicator color={enterpriseColors.white} />
-              ) : (
-                <>
-                  <Camera size={20} color={enterpriseColors.white} strokeWidth={1.5} />
-                  <Text style={enterpriseUi.authBtnPrimaryText}>
-                    {t('producer.growthJournal.continueCta')}
-                  </Text>
-                </>
-              )}
-            </TouchableOpacity>
+              fullWidth
+              size="large"
+              icon={<Camera size={20} color={enterpriseColors.white} strokeWidth={1.5} />}
+            />
             <Text style={styles.footerNote}>{t('producer.growthJournal.addLogFooter')}</Text>
           </ScrollView>
         </View>
@@ -228,31 +216,8 @@ const styles = StyleSheet.create({
     color: enterpriseColors.primary,
     fontWeight: '600',
   },
-  fieldGap: {
-    marginBottom: 12,
-  },
-  notesInput: {
-    minHeight: 88,
-    textAlignVertical: 'top',
-    marginBottom: 14,
-  },
   photoHint: {
-    borderWidth: 1,
-    borderColor: enterpriseColors.primaryTintStrong,
-    backgroundColor: enterpriseColors.primaryTint,
-    borderRadius: 12,
-    padding: 14,
     marginBottom: 14,
-  },
-  submitBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    minHeight: 52,
-  },
-  submitBusy: {
-    opacity: 0.6,
   },
   footerNote: {
     fontSize: 14,

@@ -9,7 +9,7 @@
     "userInterfaceStyle": "light",
     "icon": "./assets/icon.png",
     "splash": {
-      "backgroundColor": "#FFFFFF",
+      "backgroundColor": "#f6f5f1",
       "image": "./assets/splash.png",
       "resizeMode": "contain"
     },
@@ -20,7 +20,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.biovera.app",
       "splash": {
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#f6f5f1"
       },
       "infoPlist": {
         "NSCameraUsageDescription": "Bio Vera needs camera access to capture growth evidence with GPS metadata.",
@@ -32,11 +32,11 @@
     },
     "android": {
       "splash": {
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#f6f5f1"
       },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#2D5A27"
       },
       "package": "com.biovera.app",
       "permissions": [

@@ -558,6 +558,17 @@ export const growthLogsAPI = {
   },
 };
 
+export const materialControlAdminAPI = {
+  listCompliancePhotos: async (params?: { partnerCode?: string; limit?: number }) => {
+    const response = await api.get('/material-control/admin/compliance-photos', { params });
+    return response.data || [];
+  },
+  deleteCompliancePhoto: async (id: string) => {
+    const response = await api.delete(`/material-control/admin/compliance-photos/${encodeURIComponent(id)}`);
+    return response.data;
+  },
+};
+
 // Smart Lock API
 export const smartLockAPI = {
   scanSeed: async (data: {

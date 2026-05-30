@@ -1,9 +1,10 @@
-import { View, TextInput, TouchableOpacity, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, ScrollView, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react-native';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
+import { EnterpriseTextField } from '../../../design-system';
 import type { MaterialFilterType } from './useMaterialsData';
 
 export interface WhitelistSearchProps {
@@ -45,13 +46,14 @@ export function WhitelistSearch({
     <View style={styles.wrap}>
       <View style={[styles.searchRow, { paddingHorizontal: p.screenPaddingLeft }]}>
         <Search size={18} color={enterpriseColors.gray600} strokeWidth={1.5} />
-        <TextInput
+        <EnterpriseTextField
           value={searchQuery}
           onChangeText={setSearchQuery}
           placeholder={t('producer.materials.searchPlaceholder')}
-          placeholderTextColor={enterpriseColors.gray600}
-          style={styles.searchInput}
           accessibilityLabel={t('producer.materials.searchPlaceholder')}
+          containerStyle={styles.searchField}
+          autoCapitalize="none"
+          autoCorrect={false}
         />
       </View>
 
@@ -90,18 +92,14 @@ const styles = StyleSheet.create({
   },
   searchRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
+    alignItems: 'flex-start',
+    gap: 8,
     paddingTop: 12,
-    paddingBottom: 10,
+    paddingBottom: 4,
   },
-  searchInput: {
+  searchField: {
     flex: 1,
-    fontSize: 16,
-    fontWeight: '400',
-    color: enterpriseColors.gray900,
-    paddingVertical: 10,
-    letterSpacing: -0.15,
+    marginBottom: 0,
   },
   filterScroll: {
     flexGrow: 0,

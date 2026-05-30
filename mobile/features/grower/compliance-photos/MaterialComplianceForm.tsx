@@ -3,7 +3,6 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  TextInput,
   Image,
   ActivityIndicator,
 } from 'react-native';
@@ -17,6 +16,7 @@ import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScree
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { complianceUi, complianceStyles } from '../../../lib/compliance-ui';
+import { EnterpriseButton, EnterpriseTextField } from '../../../design-system';
 import {
   COMPLIANCE_PHOTO_TYPES,
   type CompliancePhotoType,
@@ -49,26 +49,11 @@ export function MaterialComplianceForm() {
       header={
         <GrowerStackHeader
           title={t('producer.compliance.title')}
-          subtitle={t('producer.compliance.batchForm.intro')}
+          subtitle={t('producer.compliance.batchForm.headerSubtitle')}
         />
       }
     >
       <View style={growerUi.scrollContent}>
-        <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.compliance.batchForm.checklistHeading')}</Text>
-        <Text style={complianceUi.body}>
-          {t('producer.compliance.batchForm.intro')}{' '}
-          <Text onPress={() => router.push('/(producer)/materials')} style={complianceUi.link}>
-            {t('producer.compliance.batchForm.materialsLink')}
-          </Text>
-        </Text>
-
-        <View style={complianceUi.panel}>
-          <Text style={complianceUi.panelTitle}>{t('producer.compliance.batchForm.explainerTitle')}</Text>
-          <Text style={complianceUi.bullet}>• {t('producer.compliance.batchForm.explainerBullet0')}</Text>
-          <Text style={complianceUi.bullet}>• {t('producer.compliance.batchForm.explainerBullet1')}</Text>
-          <Text style={complianceUi.bullet}>• {t('producer.compliance.batchForm.explainerBullet2')}</Text>
-        </View>
-
         {c.batchesLoading ? (
           <ActivityIndicator color={enterpriseColors.primary} style={{ marginVertical: 24 }} />
         ) : c.totalBatchCount === 0 ? (
@@ -88,6 +73,8 @@ export function MaterialComplianceForm() {
             selectedBatchId={c.selectedBatchId}
             setSelectedBatchId={c.setSelectedBatchId}
             loading={c.batchesLoading}
+            parcelLabel={t('producer.compliance.batchForm.parcelLabel')}
+            batchLabel={t('producer.compliance.batchForm.lotLabel')}
           />
         )}
 
@@ -139,18 +126,19 @@ export function MaterialComplianceForm() {
           <View>
             <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.compliance.batchForm.stickerRollLabel')}</Text>
             <Text style={[complianceUi.body, { marginBottom: 12 }]}>
-              {t('producer.compliance.batchForm.labelRollLogicHint')}
+              {t('producer.compliance.batchForm.stickerHintShort')}{' '}
+              <Text onPress={() => router.push('/(producer)/materials')} style={complianceUi.link}>
+                {t('producer.compliance.batchForm.materialsLink')}
+              </Text>
             </Text>
             {c.pickableRolls.length > 12 ? (
               <>
-                <TextInput
+                <EnterpriseTextField
                   value={c.labelRollFilter}
                   onChangeText={c.setLabelRollFilter}
                   placeholder={t('producer.compliance.batchForm.labelRollSearchPlaceholder')}
-                  placeholderTextColor={enterpriseColors.gray600}
                   autoCapitalize="none"
                   autoCorrect={false}
-                  style={[complianceUi.input, { marginBottom: 8, flex: undefined }]}
                 />
                 {c.stickerRollListMeta.mode === 'search' ? (
                   <Text style={[complianceUi.body, { fontSize: 14, marginBottom: 8 }]}>
@@ -198,26 +186,22 @@ export function MaterialComplianceForm() {
               <Text style={complianceUi.warnText}>{t('producer.compliance.batchForm.labelRollNoneAvailable')}</Text>
             ) : null}
             <View style={complianceStyles.inputRow}>
-              <TextInput
-                value={c.stickerRollId}
-                onChangeText={c.setStickerRollId}
-                placeholder={t('producer.compliance.batchForm.stickerInputPlaceholder')}
-                placeholderTextColor={enterpriseColors.gray600}
-                autoCapitalize="characters"
-                style={[complianceUi.input, { flex: 1 }]}
-              />
-              <TouchableOpacity
+              <View style={{ flex: 1 }}>
+                <EnterpriseTextField
+                  value={c.stickerRollId}
+                  onChangeText={c.setStickerRollId}
+                  placeholder={t('producer.compliance.batchForm.stickerInputPlaceholder')}
+                  autoCapitalize="characters"
+                  containerStyle={{ marginBottom: 0 }}
+                />
+              </View>
+              <EnterpriseButton
+                label={t('producer.compliance.batchForm.verify')}
                 onPress={c.onVerifySticker}
+                loading={c.verifying}
                 disabled={c.verifying}
-                activeOpacity={0.88}
-                style={[complianceUi.verifyBtn, c.verifying && { opacity: 0.6 }]}
-              >
-                {c.verifying ? (
-                  <ActivityIndicator size="small" color={enterpriseColors.white} />
-                ) : (
-                  <Text style={complianceUi.verifyBtnText}>{t('producer.compliance.batchForm.verify')}</Text>
-                )}
-              </TouchableOpacity>
+                size="default"
+              />
             </View>
             <Text style={[complianceUi.body, { fontSize: 14, marginBottom: 20 }]}>
               {t('producer.compliance.batchForm.stickerHelp')}
@@ -250,18 +234,15 @@ export function MaterialComplianceForm() {
               </TouchableOpacity>
             ) : null}
 
-            <TouchableOpacity
+            <EnterpriseButton
+              label={t('producer.compliance.batchForm.saveSubmit')}
               onPress={c.onSave}
+              loading={c.saving}
               disabled={c.saving}
-              activeOpacity={0.88}
-              style={[complianceUi.saveBtn, c.saving && { opacity: 0.5 }, { marginTop: 8 }]}
-            >
-              {c.saving ? (
-                <ActivityIndicator color={enterpriseColors.white} />
-              ) : (
-                <Text style={complianceUi.saveBtnText}>{t('producer.compliance.batchForm.saveSubmit')}</Text>
-              )}
-            </TouchableOpacity>
+              fullWidth
+              size="large"
+              style={{ marginTop: 8 }}
+            />
             {c.showReplaceForm && c.selectedBatch ? (
               <Text style={[complianceUi.warnText, { marginTop: 12 }]}>
                 {t('producer.compliance.batchForm.replaceWarning', { batchId: c.selectedBatch.batchId })}
