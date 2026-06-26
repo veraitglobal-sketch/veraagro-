@@ -124,12 +124,12 @@ export default function CookieConsent() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg print:hidden"
+          className="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-200 shadow-lg print:hidden pb-[max(0px,env(safe-area-inset-bottom))]"
         >
-          <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 max-h-[min(85dvh,100%)] overflow-y-auto">
             {!showSettings ? (
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
                     <Cookie className="w-5 h-5 text-[#2D5A27]" />
                     <h3 className="text-base font-light text-gray-900">
@@ -147,28 +147,28 @@ export default function CookieConsent() {
                     />
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-col gap-2.5 w-full md:flex-row md:flex-wrap md:w-auto md:gap-3 shrink-0">
                   <button
                     type="button"
-                    onClick={() => setShowSettings(true)}
-                    className="px-4 py-2 text-sm font-light text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+                    onClick={handleAcceptAll}
+                    className="w-full md:w-auto min-h-[48px] px-4 py-2.5 text-sm font-medium text-white bg-[#2D5A27] rounded-lg hover:bg-[#23471f] transition-colors"
                   >
-                    <Settings className="w-4 h-4" />
-                    {t('cookieConsent.customize')}
+                    {t('cookieConsent.acceptAll')}
                   </button>
                   <button
                     type="button"
                     onClick={handleRejectAll}
-                    className="px-4 py-2 text-sm font-light text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="w-full md:w-auto min-h-[48px] px-4 py-2 text-sm font-light text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     {t('cookieConsent.rejectAll')}
                   </button>
                   <button
                     type="button"
-                    onClick={handleAcceptAll}
-                    className="px-4 py-2 text-sm font-medium text-white bg-[#2D5A27] rounded-lg hover:bg-[#23471f] transition-colors"
+                    onClick={() => setShowSettings(true)}
+                    className="w-full md:w-auto min-h-[48px] px-4 py-2 text-sm font-light text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
                   >
-                    {t('cookieConsent.acceptAll')}
+                    <Settings className="w-4 h-4" />
+                    {t('cookieConsent.customize')}
                   </button>
                 </div>
               </div>
@@ -308,26 +308,26 @@ export default function CookieConsent() {
                     }}
                   />
                 </p>
-                <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:gap-3 pt-4 border-t border-gray-200">
+                  <button
+                    type="button"
+                    onClick={handleSavePreferences}
+                    className="w-full sm:w-auto min-h-[48px] px-4 py-2.5 text-sm font-medium text-white bg-[#2D5A27] rounded-lg hover:bg-[#23471f] transition-colors order-first sm:order-last"
+                  >
+                    {t('cookieConsent.savePrefs')}
+                  </button>
                   <Link
                     href={loc('/cookies')}
-                    className="px-4 py-2 text-sm font-light text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="w-full sm:w-auto min-h-[48px] px-4 py-2 text-sm font-light text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center"
                   >
                     {t('cookieConsent.fullPolicyLink')}
                   </Link>
                   <button
                     type="button"
                     onClick={handleRejectAll}
-                    className="px-4 py-2 text-sm font-light text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="w-full sm:w-auto min-h-[48px] px-4 py-2 text-sm font-light text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     {t('cookieConsent.rejectAll')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSavePreferences}
-                    className="px-4 py-2 text-sm font-medium text-white bg-[#2D5A27] rounded-lg hover:bg-[#23471f] transition-colors"
-                  >
-                    {t('cookieConsent.savePrefs')}
                   </button>
                 </div>
               </div>
