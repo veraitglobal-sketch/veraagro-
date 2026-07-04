@@ -1,9 +1,11 @@
 import type { MetadataRoute } from 'next';
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.biovera.app').replace(/\/$/, '');
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://biovera.app').replace(/\/$/, '');
 
 type ChangeFreq = NonNullable<MetadataRoute.Sitemap[number]['changeFrequency']>;
 type SitemapLocale = 'en' | 'sr';
+
+const SITEMAP_LOCALES: SitemapLocale[] = ['en', 'sr'];
 
 type MarketingPage = {
   /** Path segment after locale; empty string = homepage. */
@@ -16,10 +18,10 @@ type MarketingPage = {
 const MARKETING_PAGES: MarketingPage[] = [
   { segment: '', changeFrequency: 'weekly', priority: 1.0 },
   { segment: 'for-buyers', changeFrequency: 'weekly', priority: 0.9 },
-  { segment: 'growers', changeFrequency: 'weekly', priority: 0.9 },
-  { segment: 'suppliers', changeFrequency: 'monthly', priority: 0.8 },
-  { segment: 'logistics', changeFrequency: 'monthly', priority: 0.8 },
-  { segment: 'biovera-fresh', changeFrequency: 'monthly', priority: 0.8 },
+  { segment: 'for-growers', changeFrequency: 'weekly', priority: 0.9 },
+  { segment: 'for-suppliers', changeFrequency: 'monthly', priority: 0.8 },
+  { segment: 'for-logistics', changeFrequency: 'monthly', priority: 0.8 },
+  { segment: 'fresh-concept', changeFrequency: 'monthly', priority: 0.8 },
   { segment: 'about', changeFrequency: 'monthly', priority: 0.7 },
   { segment: 'contact', changeFrequency: 'monthly', priority: 0.7 },
   { segment: 'faq', changeFrequency: 'monthly', priority: 0.7 },
@@ -33,12 +35,10 @@ const MARKETING_PAGES: MarketingPage[] = [
   { segment: 'terms', changeFrequency: 'yearly', priority: 0.3 },
   { segment: 'privacy', changeFrequency: 'yearly', priority: 0.3 },
   { segment: 'cookies', changeFrequency: 'yearly', priority: 0.3 },
+  { segment: 'data-consent-declaration', changeFrequency: 'yearly', priority: 0.3 },
 ];
 
 function resolvePath(locale: SitemapLocale, segment: string): string {
-  if (segment === 'logistics') {
-    return locale === 'en' ? '/en/logistics' : '/logistics-partner';
-  }
   return segment ? `/${locale}/${segment}` : `/${locale}`;
 }
 
@@ -52,23 +52,16 @@ function hreflangAlternates(segment: string): MetadataRoute.Sitemap[number]['alt
   };
 }
 
-export async function generateSitemaps() {
-  return [{ id: 'en' }, { id: 'sr' }];
-}
-
-export default async function sitemap({
-  id,
-}: {
-  id: Promise<string>;
-}): Promise<MetadataRoute.Sitemap> {
-  const locale = (await id) as SitemapLocale;
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
 
-  return MARKETING_PAGES.map(({ segment, changeFrequency, priority }) => ({
-    url: `${siteUrl}${resolvePath(locale, segment)}`,
-    lastModified,
-    changeFrequency,
-    priority,
-    alternates: hreflangAlternates(segment),
-  }));
+  return SITEMAP_LOCALES.flatMap((locale) =>
+    MARKETING_PAGES.map(({ segment, changeFrequency, priority }) => ({
+      url: `${siteUrl}${resolvePath(locale, segment)}`,
+      lastModified,
+      changeFrequency,
+      priority,
+      alternates: hreflangAlternates(segment),
+    }))
+  );
 }
