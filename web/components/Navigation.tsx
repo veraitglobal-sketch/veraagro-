@@ -34,10 +34,10 @@ export default function Navigation() {
       return [
         { href: loc('/'), label: t('nav.home') },
         { href: loc('/for-buyers'), label: t('nav.forBuyers') },
-        { href: loc('/growers'), label: t('nav.forGrowers') },
-        { href: loc('/suppliers'), label: t('nav.forSuppliers') },
-        { href: '/logistics-partner', label: t('nav.forLogistics') },
-        { href: loc('/biovera-fresh'), label: t('nav.freshConcept') },
+        { href: loc('/for-growers'), label: t('nav.forGrowers') },
+        { href: loc('/for-suppliers'), label: t('nav.forSuppliers') },
+        { href: loc('/for-logistics'), label: t('nav.forLogistics') },
+        { href: loc('/fresh-concept'), label: t('nav.freshConcept') },
         { href: loc('/contact'), label: t('nav.contact') },
       ];
     }

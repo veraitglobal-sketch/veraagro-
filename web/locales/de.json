@@ -43,6 +43,7 @@
     "cookiePolicy": "Cookie-Richtlinie",
     "manageCookies": "Cookies verwalten",
     "copyright": "© {{year}} Bio Vera. Alle Rechte vorbehalten.",
+    "techCredit": "Software & KI von <1>Vera IT</1>, Hamburg.",
     "appApple": "Apple",
     "appAndroid": "Android",
     "logoAlt": "Bio Vera",
@@ -2382,7 +2383,9 @@
     "cardPrivacyTitle": "Datenschutzrichtlinie",
     "cardPrivacyDesc": "Erfahren Sie, wie wir Ihre persönlichen Daten sammeln, verwenden und schützen.",
     "cardCookiesTitle": "Cookie-Richtlinie",
-    "cardCookiesDesc": "Verstehen Sie, wie wir Cookies und ähnliche Technologien auf unseren Websites und Apps verwenden."
+    "cardCookiesDesc": "Verstehen Sie, wie wir Cookies und ähnliche Technologien auf unseren Websites und Apps verwenden.",
+    "sectionTechTitle": "Technische Umsetzung",
+    "techImplementation": "Technische Umsetzung / Software von <1>Vera IT</1>."
   },
   "supplierStatusPage": {
     "title": "Bewerbungsstatus",
@@ -2510,6 +2513,7 @@
     "metaDescription": "Bio Vera betreibt die gesamte Lieferkette: Vertragsanbau, Qualitätssicherung, Verpackung und Kühllogistik bis zum deutschen Einzelhandel. Lückenlose Chargenrückverfolgung.",
     "heroTitle": "Über Bio Vera",
     "heroSubtitle": "Bio Vera organisiert landwirtschaftliche Produktion über Vertragserzeuger, führt Qualitätsprüfungen im Feld durch, verpackt und liefert Markenware direkt an den Einzelhandel — mit einem Chargendossier pro Lieferung.",
+    "techPartnerLine": "Die Bio-Vera-Plattform wird von <1>Vera IT</1> in Hamburg entwickelt und betrieben — Technologiepartner innerhalb der Vera Group.",
     "missionTitle": "Mission",
     "missionP1": "Dieselben Daten für Betrieb und Vertrieb. Erzeuger produzieren in unserem System, Einkäufer handeln mit Bio Vera, Verbraucher sehen prüfbare Herkunft.",
     "missionP2": "",
@@ -2517,7 +2521,7 @@
     "visionP1": "Europas führende vertikal integrierte Frischekorridore mit Rückverfolgbarkeit, die Einkäufer am Regal erkennen.",
     "visionP2": "",
     "protocol360Title": "Protocol 360",
-    "protocol360Body": "Bodenanalyse im Feld, Scanning bei Verpackung, Kühlkettenüberwachung. GlobalG.A.P. IFA v6 Gruppenzertifizierung. Konform mit Verordnung (EG) 178/2002 und Lieferkettengesetz (LkSG).",
+    "protocol360Body": "Protocol 360 ist Bio Veras End-to-End-Qualitätssystem. Von der Bodenanalyse auf Parzellenebene über biometrisches Scannen bei der Verpackung bis zur Kühlkettenüberwachung im Transport — jeder Qualitätscheck wird im Chargen-Dossier dokumentiert und mit dem EU-Digitalpassport des Produkts verknüpft.",
     "valuesTitle": "",
     "valueCards": [],
     "whatWeDoTitle": "",

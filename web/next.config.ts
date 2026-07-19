@@ -138,22 +138,42 @@ const nextConfig: NextConfig = {
         destination: "/:locale/grower/mobile-app-guide",
         permanent: false,
       },
-      /** Sitemap / SEO alias for logistics partner marketing page (locale-free app lives at /logistics-partner). */
+      /** Legacy marketing slugs → canonical for-* pages */
       {
-        source: "/:locale/logistics",
-        destination: "/logistics-partner",
+        source: "/:locale/growers",
+        destination: "/:locale/for-growers",
         permanent: true,
       },
-      /** SR-friendly marketing slug → canonical logistics partner page */
+      {
+        source: "/:locale/suppliers",
+        destination: "/:locale/for-suppliers",
+        permanent: true,
+      },
+      {
+        source: "/:locale/biovera-fresh",
+        destination: "/:locale/fresh-concept",
+        permanent: true,
+      },
+      {
+        source: "/:locale/logistics",
+        destination: "/:locale/for-logistics",
+        permanent: true,
+      },
+      {
+        source: "/logistics-partner",
+        destination: "/en/for-logistics",
+        permanent: true,
+      },
+      /** SR-friendly marketing slug → canonical logistics page */
       {
         source: "/sr/logistika",
-        destination: "/logistics-partner",
+        destination: "/sr/for-logistics",
         permanent: true,
       },
       /** SR-friendly marketing slug → canonical growers page */
       {
         source: "/sr/proizvodjaci",
-        destination: "/sr/growers",
+        destination: "/sr/for-growers",
         permanent: true,
       },
       /** SR-friendly marketing slug → canonical for-buyers page */
@@ -165,7 +185,7 @@ const nextConfig: NextConfig = {
       /** SR-friendly marketing slug → canonical suppliers page */
       {
         source: "/sr/dobavljaci",
-        destination: "/sr/suppliers",
+        destination: "/sr/for-suppliers",
         permanent: true,
       },
       /** SR-friendly marketing slug → canonical about page */
@@ -183,19 +203,19 @@ const nextConfig: NextConfig = {
       /** DE-friendly marketing slug → canonical growers page */
       {
         source: "/de/erzeuger",
-        destination: "/de/growers",
+        destination: "/de/for-growers",
         permanent: true,
       },
       /** DE-friendly marketing slug → canonical suppliers page */
       {
         source: "/de/lieferanten",
-        destination: "/de/suppliers",
+        destination: "/de/for-suppliers",
         permanent: true,
       },
       /** DE-friendly marketing slug → canonical logistics partner page */
       {
         source: "/de/logistik",
-        destination: "/logistics-partner",
+        destination: "/de/for-logistics",
         permanent: true,
       },
       /** DE-friendly marketing slug → canonical about page */

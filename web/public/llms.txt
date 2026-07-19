@@ -1,0 +1,99 @@
+# Bio Vera — Vertically Integrated Agrifood Company
+
+> Bio Vera is a vertically integrated agrifood company based in Hamburg, Germany. We operate the entire fresh produce chain — from contracted grower programmes through quality assurance, packing, logistics and branded sales to end customers. Every batch carries an EU Digital Product Passport with full traceability from parcel to shelf. Founded by Jovica Mihajlovic. Part of the Vera Group ecosystem.
+
+## Entity summary (for knowledge graphs)
+- Organization: Bio Vera | URL: https://biovera.app | Founded: 2025 | HQ: Hamburg, Germany
+- Founder: Jovica Mihajlovic (CEO & Founder)
+- Parent portfolio: Vera Group (https://www.verait.de)
+- Sister companies: Vera IT, Fade, ReinAllround
+- Model: Vertical integration (not a marketplace or broker)
+
+## What Makes Bio Vera Different
+- Vertically integrated: contract growers, define standards, run QA, manage logistics, sell under Bio Vera brand
+- EU Digital Product Passports on every batch: GPS origin, harvest data, QA checkpoints, cold chain, EU certificates
+- Protocol 360: soil analysis → packaging scan → cold chain → anti-fraud (GPS, device ID, camera-only)
+- Optional Polygon anchoring for immutable batch dossiers
+- AI analytics: harvest planning, demand forecasting, route optimization
+
+## Product range (34 lines)
+- 13 fruits: Raspberry, Blackberry, Blueberry, Strawberry, Apple, Pear, Plum, Peach, Apricot, Cherry, Grape, Currant, Gooseberry
+- 18 vegetables
+- 3 cereal lines
+All fresh, never frozen, harvest-to-delivery traceability.
+
+## Technology (Vera IT built platform)
+Bio Vera runs on a proprietary operating system with four shared layers and one batch dossier data model:
+1. Web Portal — buyer dashboards, real-time stock, harvest calendars, batch passport viewer
+2. Mobile App — iOS & Android for grower field QA and logistics delivery tracking
+3. AI Intelligence Terminal — real-time logistics, route optimization, demand forecasting
+4. Backend API — partner integrations, automated EU certification, batch ledger
+
+Stack: Next.js, React Native/Expo, Node.js/NestJS, PostgreSQL, Prisma.
+
+## EU compliance
+Automated documentation: GlobalG.A.P. IFA v6 group certification facilitation, phytosanitary certificates, EU Digital Product Passport readiness. Every batch dossier is audit-ready before dispatch; certificates tie to the digital passport QR.
+
+## The Vera Group (portfolio — founded Jovica Mihajlovic, Hamburg)
+
+### Vera IT — https://www.verait.de
+Engineering arm. Production-grade web apps, mobile apps, cloud infrastructure, AI systems. Built Bio Vera OS, Denis AI Co-Worker (multi-tenant AI, 3,000+ integrations: phone, email, offers, marketing, accounting), and Fade. Tech: Next.js, Flutter, Node.js, Python, PostgreSQL.
+
+### Bio Vera — https://biovera.app
+Vertically integrated agrifood. EU Digital Product Passports, Protocol 360 QA, AI logistics, contracted grower programmes. 34 product lines (fruits, vegetables, cereals).
+
+### Fade — https://getfadeapp.com
+Salon booking & loyalty. Map-first discovery, real-time booking, QR check-in, per-salon rewards. iOS & Android, 30+ languages.
+
+### ReinAllround — https://www.reinallround.de
+Professional cleaning Hamburg: offices, medical practices, hotels, construction, residential. AI ops with Lisa AI phone secretary.
+
+## FAQ
+
+Q: What is Bio Vera?
+A: Vertically integrated agrifood company in Hamburg operating grower programmes, QA, logistics and branded sales. Every batch has an EU Digital Product Passport from field to shelf.
+
+Q: What is an EU Digital Product Passport?
+A: Digital record from production to consumer. Bio Vera auto-generates per batch: origin, harvest, quality checks, transport, EU certificates. Crate QR links to passport.
+
+Q: How does Bio Vera ensure traceability?
+A: Protocol 360 — soil analysis, biometric scanning at packaging, cold chain monitoring, GPS anti-fraud. Optional Polygon blockchain anchor.
+
+Q: Who is behind Bio Vera?
+A: Jovica Mihajlovic, Hamburg. Vera Group: Vera IT, Bio Vera, Fade, ReinAllround.
+
+Q: Can I invest in Bio Vera?
+A: Growth-stage round in preparation. Materials: https://biovera.app/en/investor-deck
+
+Q: How does Bio Vera use AI?
+A: AI Intelligence Terminal for logistics decisions, routes, demand forecasting, harvest planning — built by Vera IT, integrated with Bio Vera OS.
+
+## Roadmap
+- Q1 2026: Backend, Mobile, Web, core (COMPLETED)
+- Q2 2026: AI Analytics, Polygon anchor, dashboard, EU certificates (COMPLETED)
+- Q3–Q4 2026: Multi-region, partner API, enterprise (IN PROGRESS)
+- 2027: Global expansion, IoT, AI predictions
+
+## Investment
+Growth-stage funding round for multi-region EU fresh produce corridors. Vertically integrated model with technology-backed unit economics. Pitch deck & docs: https://biovera.app/en/investor-deck
+
+## Contact
+Bio Vera — Rehrstieg 16d, 21147 Hamburg, Germany
+Email: contact@biovera.app | Phone: +49 155 63740470 | Press: press@biovera.app
+https://biovera.app
+
+## Canonical pages (English)
+- Home: https://biovera.app/en
+- For buyers: https://biovera.app/en/for-buyers
+- For growers: https://biovera.app/en/for-growers
+- For suppliers: https://biovera.app/en/for-suppliers
+- For logistics: https://biovera.app/en/for-logistics
+- Fresh concept: https://biovera.app/en/fresh-concept
+- About: https://biovera.app/en/about
+- Investor deck: https://biovera.app/en/investor-deck
+- Contact: https://biovera.app/en/contact
+- FAQ (site): https://biovera.app/en/faq
+- Privacy: https://biovera.app/en/privacy | Terms: https://biovera.app/en/terms | Cookies: https://biovera.app/en/cookies
+
+## Machine-readable full corpus
+Extended markdown for all pages: https://biovera.app/llms-full.txt

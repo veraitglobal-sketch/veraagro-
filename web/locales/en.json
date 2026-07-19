@@ -43,6 +43,7 @@
     "cookiePolicy": "Cookie Policy",
     "manageCookies": "Manage cookies",
     "copyright": "© {{year}} Bio Vera. All rights reserved.",
+    "techCredit": "Built by <1>Vera IT</1>, Hamburg.",
     "appApple": "Apple",
     "appAndroid": "Android",
     "logoAlt": "Bio Vera",
@@ -3490,6 +3491,36 @@
       "becomeProducer": "Become a Vera grower",
       "startShopping": "Start Shopping"
     },
+    "faq": {
+      "title": "Frequently asked questions",
+      "subtitle": "What Bio Vera is, how traceability works, and who stands behind the platform.",
+      "items": [
+        {
+          "question": "What is Bio Vera?",
+          "answer": "Bio Vera is a vertically integrated agrifood company based in Hamburg, Germany. We operate the complete fresh produce chain — from contracted grower programmes through quality assurance, logistics and branded sales to end customers. Every batch carries an EU Digital Product Passport with full traceability from field to shelf."
+        },
+        {
+          "question": "What is an EU Digital Product Passport?",
+          "answer": "An EU Digital Product Passport is a digital record that accompanies a product from production to the consumer. Bio Vera generates these automatically for every batch — documenting origin, harvest data, quality checks, transport conditions, and EU compliance certificates. The QR code on every crate links to its passport."
+        },
+        {
+          "question": "How does Bio Vera ensure food traceability?",
+          "answer": "Bio Vera uses Protocol 360 — an end-to-end quality system with soil analysis, biometric scanning at packaging, cold chain monitoring, and GPS-verified anti-fraud protection. Every checkpoint is recorded in the batch dossier. Optionally, dossiers are anchored to Polygon blockchain for immutable verification."
+        },
+        {
+          "question": "Who is behind Bio Vera?",
+          "answer": "Bio Vera was founded by Jovica Mihajlovic in Hamburg. It is part of the Vera Group, which also includes Vera IT (software engineering — built Denis AI Co-Worker, Fade, and the Bio Vera platform), Fade (global salon booking app for iOS & Android), and ReinAllround (professional cleaning in Hamburg)."
+        },
+        {
+          "question": "Can I invest in Bio Vera?",
+          "answer": "Bio Vera is preparing for a growth-stage investment round. Investor materials, pitch deck, and project documentation are available at biovera.app/investor-deck."
+        },
+        {
+          "question": "How does Bio Vera use AI?",
+          "answer": "Bio Vera's AI Intelligence Terminal provides real-time logistics decisions, route optimization, demand forecasting, and harvest planning. The AI system was developed by Vera IT and integrates with the Bio Vera operating system for predictive supply chain management."
+        }
+      ]
+    },
     "help": "Questions? We’re here to help."
   },
   "forBuyersPage": {
@@ -3920,7 +3951,9 @@
     "cardPrivacyTitle": "Privacy policy",
     "cardPrivacyDesc": "Learn how we collect, use, and protect your personal information.",
     "cardCookiesTitle": "Cookie policy",
-    "cardCookiesDesc": "Understand how we use cookies and similar technologies on our websites and apps."
+    "cardCookiesDesc": "Understand how we use cookies and similar technologies on our websites and apps.",
+    "sectionTechTitle": "Technical implementation",
+    "techImplementation": "Technical implementation and software by <1>Vera IT</1>."
   },
   "supplierStatusPage": {
     "title": "Application status",
@@ -4091,6 +4124,7 @@
     "metaDescription": "Bio Vera transforms agriculture through vertical integration. Grower programmes, field QA, packing and cold logistics to EU retailers with full batch traceability.",
     "heroTitle": "About Bio Vera",
     "heroSubtitle": "Bio Vera organises agricultural production across contract growers who follow our standards and inputs, runs field QA, packing and logistics, and sells branded produce to end customers — all on a single batch dossier per load.",
+    "techPartnerLine": "The Bio Vera platform is built and maintained by <1>Vera IT</1>, Hamburg — the technology partner within the Vera Group.",
     "missionTitle": "Our Mission",
     "missionP1": "We use technology so the same records serve operations and sales: growers stay producers inside our system, buyers contract with Bio Vera, and end customers see verifiable origin and quality.",
     "missionP2": "",
@@ -4138,7 +4172,9 @@
     "ctaTitle": "Become Part of the Vera Corridor",
     "ctaBody": "Whether you grow under our programme, supply inputs, move freight for us, or buy from Bio Vera — the playbook from parcel to payout stays the same.",
     "ctaProducer": "Become a Vera grower",
-    "ctaContact": "Contact us"
+    "ctaContact": "Contact us",
+    "protocol360Title": "Protocol 360",
+    "protocol360Body": "Protocol 360 is Bio Vera's end-to-end quality assurance system. From soil analysis at the parcel level through biometric scanning at packaging to cold chain monitoring during transport — every quality checkpoint is documented in the batch dossier and tied to the product's EU Digital Passport."
   },
   "investorDeckPage": {
     "pageTitle": "Investor materials",

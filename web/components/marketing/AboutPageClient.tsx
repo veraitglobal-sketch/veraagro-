@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Target, Users, Award, Globe, Shield, Leaf } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
 import MarketingHero from '@/components/marketing/MarketingHero';
@@ -89,6 +89,20 @@ export default function AboutPageClient() {
             lead={t('aboutPage.heroSubtitle')}
             sectionClassName="!pt-0 pb-14 !px-0"
           />
+
+          <p className="text-sm text-gray-500 font-light leading-relaxed mb-14 -mt-8">
+            <Trans
+              i18nKey="aboutPage.techPartnerLine"
+              components={{
+                1: (
+                  <a
+                    href="https://www.verait.de"
+                    className="text-gray-600 hover:text-[#2D5A27] transition-colors"
+                  />
+                ),
+              }}
+            />
+          </p>
 
           <section className="mb-14">
             <div className="bg-[#2D5A27]/10 border border-[#2D5A27]/30 rounded-xl p-6 sm:p-8">

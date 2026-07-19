@@ -43,6 +43,7 @@
     "cookiePolicy": "Politique en matière de cookies",
     "manageCookies": "Gérer les cookies",
     "copyright": "© {{year}} Bio Vera. Tous droits réservés.",
+    "techCredit": "Logiciel et IA par <1>Vera IT</1>, Hamburg.",
     "appApple": "Apple",
     "appAndroid": "Androïde",
     "logoAlt": "Bio Vera",
@@ -2436,7 +2437,9 @@
     "cardPrivacyTitle": "Politique de confidentialité",
     "cardPrivacyDesc": "Découvrez comment nous collectons, utilisons et protégeons vos informations personnelles.",
     "cardCookiesTitle": "Politique de cookies",
-    "cardCookiesDesc": "Comprendre comment nous utilisons les cookies et technologies similaires sur nos sites Web et applications."
+    "cardCookiesDesc": "Comprendre comment nous utilisons les cookies et technologies similaires sur nos sites Web et applications.",
+    "sectionTechTitle": "Réalisation technique",
+    "techImplementation": "Réalisation technique / logiciel par <1>Vera IT</1>."
   },
   "investorDeckPage": {
     "pageTitle": "Investor materials",
@@ -2571,6 +2574,7 @@
   "aboutPage": {
     "heroTitle": "À propos de Bio Vera",
     "heroSubtitle": "Transformer l'agriculture grâce à la technologie, à la transparence et à la confiance",
+    "techPartnerLine": "La plateforme Bio Vera est développée et maintenue par <1>Vera IT</1>, Hamburg — partenaire technologique au sein du Vera Group.",
     "missionTitle": "Notre mission",
     "missionP1": "Bio Vera s'efforce de renforcer les chaînes d'approvisionnement agricoles en connectant directement les producteurs du monde entier aux marchés, en garantissant des normes claires, une assurance qualité et une rémunération équitable à chaque étape.",
     "missionP2": "Nous pensons que la technologie peut combler le fossé entre l'agriculture traditionnelle et les demandes du marché moderne, en créant un écosystème durable où les agriculteurs prospèrent, où les acheteurs ont confiance et où les consommateurs bénéficient de produits véritablement traçables et de haute qualité.",
@@ -2618,7 +2622,9 @@
     "ctaTitle": "Rejoignez-nous dans ce voyage",
     "ctaBody": "Que vous soyez producteur, fournisseur, partenaire logistique ou acheteur, Bio Vera offre une place dans un réseau agricole unique, avec des processus clairs du champ à l'installation.",
     "ctaProducer": "Devenez producteur",
-    "ctaContact": "Contactez-nous"
+    "ctaContact": "Contactez-nous",
+    "protocol360Title": "Protocol 360",
+    "protocol360Body": "Protocol 360 is Bio Vera's end-to-end quality assurance system. From soil analysis at the parcel level through biometric scanning at packaging to cold chain monitoring during transport — every quality checkpoint is documented in the batch dossier and tied to the product's EU Digital Passport."
   },
   "helpCenterPage": {
     "title": "Centre d'aide",

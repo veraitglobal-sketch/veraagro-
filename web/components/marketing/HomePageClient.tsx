@@ -477,7 +477,7 @@ export default function HomePageClient({
             <p className="text-lg text-gray-600 mb-8">{t('home.cta.body')}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href={loc('/growers')}
+                href={loc('/for-growers')}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg"
               >
                 {t('home.cta.becomeProducer')}

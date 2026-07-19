@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
 import { LegalDocumentsCardGrid } from '@/components/legal/LegalDocumentsCardGrid';
@@ -45,6 +45,23 @@ export default function LegalPage() {
               <p className="text-gray-600 mb-6 font-light">{t('legalPage.sectionDocumentsLead')}</p>
 
               <LegalDocumentsCardGrid />
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-light text-gray-900 mb-4">{t('legalPage.sectionTechTitle')}</h2>
+              <p className="text-gray-600 font-light leading-relaxed">
+                <Trans
+                  i18nKey="legalPage.techImplementation"
+                  components={{
+                    1: (
+                      <a
+                        href="https://www.verait.de"
+                        className="text-[#2D5A27] hover:underline transition-colors"
+                      />
+                    ),
+                  }}
+                />
+              </p>
             </div>
           </div>
         </div>

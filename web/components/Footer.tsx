@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 /**
@@ -92,24 +92,23 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href={loc('/growers')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
+                <Link href={loc('/for-growers')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
                   {t('nav.forGrowers')}
                 </Link>
               </li>
               <li>
-                <Link href={loc('/suppliers')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
+                <Link href={loc('/for-suppliers')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
                   {t('nav.forSuppliers')}
                 </Link>
               </li>
               <li>
-                {/* App route (locale-free), same pattern as /grower — do not use loc() */}
-                <Link href="/logistics-partner" className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
+                <Link href={loc('/for-logistics')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
                   {t('nav.forLogistics')}
                 </Link>
               </li>
               <li>
                 <Link
-                  href={loc('/biovera-fresh')}
+                  href={loc('/fresh-concept')}
                   className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors"
                 >
                   {t('nav.freshConcept')}
@@ -225,6 +224,19 @@ export default function Footer() {
         </div>
         <div className="border-t border-gray-200 pt-6 md:pt-8 text-center text-xs sm:text-sm text-gray-500">
           <p>{t('footer.copyright', { year: new Date().getFullYear() })}</p>
+          <p className="mt-2 text-xs text-gray-400 font-light">
+            <Trans
+              i18nKey="footer.techCredit"
+              components={{
+                1: (
+                  <a
+                    href="https://www.verait.de"
+                    className="text-gray-500 hover:text-[#2D5A27] transition-colors"
+                  />
+                ),
+              }}
+            />
+          </p>
         </div>
       </div>
     </footer>

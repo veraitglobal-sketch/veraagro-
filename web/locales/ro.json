@@ -43,6 +43,7 @@
     "cookiePolicy": "Politica de cookie-uri",
     "manageCookies": "Gestionați cookie-urile",
     "copyright": "© {{year}} Bio Vera. Toate drepturile rezervate.",
+    "techCredit": "Software și IA de <1>Vera IT</1>, Hamburg.",
     "appApple": "Apple",
     "appAndroid": "Android",
     "logoAlt": "Bio Vera",
@@ -2436,7 +2437,9 @@
     "cardPrivacyTitle": "Politica de confidențialitate",
     "cardPrivacyDesc": "Aflați cum colectăm, utilizăm și vă protejăm informațiile personale.",
     "cardCookiesTitle": "Politica de cookie-uri",
-    "cardCookiesDesc": "Înțelegeți cum folosim module cookie și tehnologii similare pe site-urile și aplicațiile noastre."
+    "cardCookiesDesc": "Înțelegeți cum folosim module cookie și tehnologii similare pe site-urile și aplicațiile noastre.",
+    "sectionTechTitle": "Implementare tehnică",
+    "techImplementation": "Implementare tehnică / software de <1>Vera IT</1>."
   },
   "investorDeckPage": {
     "pageTitle": "Investor materials",
@@ -2571,6 +2574,7 @@
   "aboutPage": {
     "heroTitle": "Despre Bio Vera",
     "heroSubtitle": "Transformarea agriculturii prin tehnologie, transparență și încredere",
+    "techPartnerLine": "Platforma Bio Vera este dezvoltată și întreținută de <1>Vera IT</1>, Hamburg — partenerul tehnologic din cadrul Vera Group.",
     "missionTitle": "Misiunea noastră",
     "missionP1": "Bio Vera lucrează pentru a consolida lanțurile de aprovizionare agricole prin conectarea producătorilor din întreaga lume direct cu piețele, asigurând standarde clare, asigurare a calității și compensare echitabilă la fiecare pas.",
     "missionP2": "Credem că tehnologia poate reduce decalajul dintre agricultura tradițională și cerințele pieței moderne, creând un ecosistem durabil în care fermierii prosperă, cumpărătorii au încredere, iar consumatorii beneficiază de produse cu adevărat trasabile și de înaltă calitate.",
@@ -2618,7 +2622,9 @@
     "ctaTitle": "Alăturați-vă nouă în această călătorie",
     "ctaBody": "Indiferent dacă sunteți cultivator, furnizor, partener logistic sau cumpărător, Bio Vera oferă un loc într-o singură rețea agricolă - cu procese clare de la câmp până la așezare.",
     "ctaProducer": "Deveniți producător",
-    "ctaContact": "Contactaţi-ne"
+    "ctaContact": "Contactaţi-ne",
+    "protocol360Title": "Protocol 360",
+    "protocol360Body": "Protocol 360 is Bio Vera's end-to-end quality assurance system. From soil analysis at the parcel level through biometric scanning at packaging to cold chain monitoring during transport — every quality checkpoint is documented in the batch dossier and tied to the product's EU Digital Passport."
   },
   "helpCenterPage": {
     "title": "Centru de ajutor",

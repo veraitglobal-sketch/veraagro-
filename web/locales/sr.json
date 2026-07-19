@@ -43,6 +43,7 @@
     "cookiePolicy": "Politika kolačića",
     "manageCookies": "Upravljaj kolačićima",
     "copyright": "© {{year}} Bio Vera. Sva prava zadržana.",
+    "techCredit": "Softver i AI od <1>Vera IT</1>, Hamburg.",
     "appApple": "Apple",
     "appAndroid": "Android",
     "logoAlt": "Bio Vera",
@@ -3491,6 +3492,36 @@
       "becomeProducer": "Postanite Vera proizvođač",
       "startShopping": "Započni kupovinu"
     },
+    "faq": {
+      "title": "Često postavljana pitanja",
+      "subtitle": "Šta je Bio Vera, kako radi sledljivost i ko stoji iza platforme.",
+      "items": [
+        {
+          "question": "Šta je Bio Vera?",
+          "answer": "Bio Vera je vertikalno integrisana agrifood kompanija sa sedištem u Hamburgu, Nemačka. Vodimo ceo lanac svežih proizvoda — od ugovornih programa proizvođača, preko kontrole kvaliteta i logistike, do brendirane prodaje krajnjim kupcima. Svaka serija ima EU digitalni pasoš proizvoda sa punom sledljivošću od njive do police."
+        },
+        {
+          "question": "Šta je EU digitalni pasoš proizvoda?",
+          "answer": "EU digitalni pasoš proizvoda je digitalni zapis koji prati proizvod od proizvodnje do potrošača. Bio Vera ih automatski generiše za svaku seriju — dokumentuje poreklo, podatke o berbi, kontrole kvaliteta, uslove transporta i EU sertifikate. QR kod na svakoj gajbi vodi na pasoš te serije."
+        },
+        {
+          "question": "Kako Bio Vera obezbeđuje sledljivost hrane?",
+          "answer": "Bio Vera koristi Protocol 360 — sistem kvaliteta od njive do police sa analizom zemljišta, biometrijskim skeniranjem pri pakovanju, monitoringom hladnog lanca i GPS-verifikovanom zaštitom od prevara. Svaka kontrolna tačka upisuje se u dosije serije. Po izboru, dosijei se sidre na Polygon blockchain radi nepromenljive verifikacije."
+        },
+        {
+          "question": "Ko stoji iza Bio Vere?",
+          "answer": "Bio Veru je osnovao Jovica Mihajlovic u Hamburgu. Deo je Vera Group ekosistema: Vera IT (softverski inženjering — Denis AI Co-Worker, Fade i Bio Vera platforma), Fade (globalna aplikacija za salone, iOS i Android) i ReinAllround (profesionalno čišćenje u Hamburgu)."
+        },
+        {
+          "question": "Mogu li da investiram u Bio Veru?",
+          "answer": "Bio Vera se priprema za investicionu rundu u fazi rasta. Materijali za investitore, pitch deck i projektna dokumentacija dostupni su na biovera.app/investor-deck."
+        },
+        {
+          "question": "Kako Bio Vera koristi veštačku inteligenciju?",
+          "answer": "Bio Vera AI Intelligence Terminal donosi odluke o logistici u realnom vremenu, optimizaciju ruta, prognozu potražnje i planiranje berbe. AI sistem je razvio Vera IT i integrisan je sa Bio Vera operativnim sistemom za prediktivno upravljanje lancem snabdevanja."
+        }
+      ]
+    },
     "help": "Pitanja? Tu smo da pomognemo."
   },
   "forBuyersPage": {
@@ -3904,7 +3935,9 @@
     "cardPrivacyTitle": "Politika privatnosti",
     "cardPrivacyDesc": "Saznajte kako prikupljamo, koristimo i štitimo vaše lične podatke.",
     "cardCookiesTitle": "Politika kolačića",
-    "cardCookiesDesc": "Kako koristimo kolačiće i slične tehnologije na sajtovima i u aplikacijama."
+    "cardCookiesDesc": "Kako koristimo kolačiće i slične tehnologije na sajtovima i u aplikacijama.",
+    "sectionTechTitle": "Tehnička realizacija",
+    "techImplementation": "Tehnička realizacija / softver: <1>Vera IT</1>."
   },
   "supplierStatusPage": {
     "title": "Status prijave",
@@ -4075,6 +4108,7 @@
     "metaDescription": "Bio Vera organizuje proizvodnju, kontrolu kvaliteta, pakovanje i hladjeni transport svežeg voća i povrća od njive do EU maloprodaje. Sedište u Hamburgu, program otvoren za proizvođače širom sveta.",
     "heroTitle": "O Bio Veri",
     "heroSubtitle": "Bio Vera organizuje poljoprivrednu proizvodnju kroz ugovorne proizvođače, sprovodi terensku kontrolu kvaliteta, pakuje i isporučuje brendiranu hranu direktno EU maloprodajnim lancima. Jedan dosije serije prati svaki tovar od njive do police.",
+    "techPartnerLine": "Bio Vera platformu razvija i održava <1>Vera IT</1> iz Hamburga — tehnološki partner u okviru Vera Group.",
     "missionTitle": "Naša misija",
     "missionP1": "Koristimo tehnologiju da isti zapisi služe operacijama i prodaji. Proizvođači proizvode unutar našeg sistema, kupci ugovaraju sa Bio Verom, potrošači vide proverljivo poreklo i kvalitet.",
     "missionP2": "",
@@ -4122,7 +4156,9 @@
     "ctaTitle": "Postanite deo Bio Vera koridora",
     "ctaBody": "Bilo da proizvodite, isporučujete inpute, prevozite ili kupujete — pravila od parcele do isplate su ista.",
     "ctaProducer": "Postanite Vera proizvođač",
-    "ctaContact": "Kontaktirajte nas"
+    "ctaContact": "Kontaktirajte nas",
+    "protocol360Title": "Protocol 360",
+    "protocol360Body": "Protocol 360 je Bio Verin sistem kontrole kvaliteta od njive do police. Analiza zemljišta na nivou parcele, biometrijsko skeniranje pri pakovanju i monitoring hladnog lanca u transportu — svaka kontrolna tačka je u dosijeu serije i povezana sa EU digitalnim pasošem proizvoda."
   },
   "investorDeckPage": {
     "pageTitle": "Materijali za investitore",

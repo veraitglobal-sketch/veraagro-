@@ -1,0 +1,325 @@
+# Bio Vera — Vertically Integrated Agrifood Company
+
+> Bio Vera is a vertically integrated agrifood company based in Hamburg, Germany. We operate the entire fresh produce chain — from contracted grower programmes through quality assurance, packing, logistics and branded sales to end customers. Every batch carries an EU Digital Product Passport with full traceability from parcel to shelf. Founded by Jovica Mihajlovic. Part of the Vera Group ecosystem.
+
+## Entity summary (for knowledge graphs)
+- Organization: Bio Vera | URL: https://biovera.app | Founded: 2025 | HQ: Hamburg, Germany
+- Founder: Jovica Mihajlovic (CEO & Founder)
+- Parent portfolio: Vera Group (https://www.verait.de)
+- Sister companies: Vera IT, Fade, ReinAllround
+- Model: Vertical integration (not a marketplace or broker)
+
+## What Makes Bio Vera Different
+- Vertically integrated: not a marketplace or broker. We contract growers, define standards, run QA, manage logistics, and sell under our own brand.
+- EU Digital Product Passports: Every batch gets a passport with GPS-verified origin, harvest data, QA checkpoints, cold chain records, and EU compliance certificates.
+- Protocol 360: End-to-end quality — soil analysis, biometric scanning at packaging, cold chain monitoring, anti-fraud (GPS timestamp, device ID, camera-only capture).
+- Optional Polygon Anchoring: Batch dossiers anchored to Polygon blockchain for immutable verification.
+- AI Analytics: Predictive harvest planning, demand forecasting, supply chain optimization.
+
+## Product Range
+- 13 fruit varieties: Raspberry, Blackberry, Blueberry, Strawberry, Apple, Pear, Plum, Peach, Apricot, Cherry, Grape, Currant, Gooseberry
+- 18 vegetable varieties
+- 3 cereal lines
+All fresh, never frozen, with harvest-to-delivery traceability.
+
+## Technology Platform (built by Vera IT)
+- Web Portal: Buyer dashboards, real-time stock, harvest calendars, batch passport viewer
+- Mobile App: iOS & Android for field QA, logistics tracking, grower operations
+- AI Intelligence Terminal: Real-time logistics decisions, route optimization, demand forecasting
+- Backend API: Partner integrations, automated EU certification, batch ledger management
+
+## Roadmap
+- Q1 2026: Backend, Mobile, Web, core features (COMPLETED)
+- Q2 2026: AI Analytics, Polygon anchor, dashboard, EU certificates (COMPLETED)
+- Q3-Q4 2026: Multi-region, partner API, enterprise features (IN PROGRESS)
+- 2027: Global expansion, IoT sensors, AI predictions
+
+## Investment
+Bio Vera is preparing for a growth-stage funding round. Materials at biovera.app/investor-deck.
+
+## Contact
+Bio Vera — Rehrstieg 16d, 21147 Hamburg, Germany
+Email: contact@biovera.app | Phone: +49 155 63740470
+https://biovera.app
+
+---
+
+# Full site content (English marketing pages)
+
+## Home — https://biovera.app/en
+
+Bio Vera connects Balkan and European growers with Hamburg retail through a vertically integrated fresh produce corridor. Contract farming, Protocol 360 quality assurance, EU Digital Product Passports per batch, and refrigerated logistics under one operator — not a marketplace.
+
+---
+
+## Technology — Bio Vera operating system (built by Vera IT)
+
+Bio Vera runs on a proprietary operating system built by Vera IT. The platform connects four layers: a **Web Portal** for buyers with real-time stock, harvest calendars, and batch passport viewer; a **Mobile App** for iOS and Android used by growers for field QA and logistics teams for delivery tracking; an **AI Intelligence Terminal** for real-time logistics decisions, route optimization, and demand forecasting; and a **Backend API** that handles partner integrations, automated EU certification, and batch ledger management.
+
+All four layers share one data model — the same batch dossier that starts at the parcel runs through to the buyer's delivery confirmation. Technology stack includes Next.js (web), React Native/Expo (mobile), NestJS (API), PostgreSQL with Prisma ORM, offline-first field capture, and integrity guard (barcode + GPS validation).
+
+---
+
+## EU Compliance
+
+Bio Vera automates EU compliance documentation including GlobalG.A.P. IFA v6 group certification facilitation, phytosanitary certificates, and the upcoming EU Digital Product Passport regulation. Every batch dossier is audit-ready before goods leave the packing station. Certificates are generated automatically and tied to the batch's digital passport QR on each crate.
+
+Compliance photos (punnet, labeling, palletization) and official label roll registration are required per lot before transport booking. Cold chain temperature logs support retail buyer verification.
+
+---
+
+## The Vera Group — portfolio (Hamburg)
+
+Bio Vera operates within a portfolio of technology and service companies founded by **Jovica Mihajlovic** in Hamburg. Entity relationships:
+
+### 1. Vera IT — https://www.verait.de
+The engineering arm. Software company that builds production-grade web applications, mobile apps, cloud infrastructure, and AI systems. Vera IT developed the Bio Vera operating system, the Denis AI Co-Worker (multi-tenant AI with 3,000+ integrations handling phone, email, offers, marketing, and accounting), and the Fade salon platform. Tech: Next.js, Flutter, Node.js, Python, PostgreSQL.
+
+### 2. Bio Vera — https://biovera.app
+Vertically integrated agrifood company. EU Digital Product Passports, Protocol 360 QA, AI-powered logistics, contracted grower programmes. 34 product lines across fruits, vegetables, and cereals.
+
+### 3. Fade — https://getfadeapp.com
+Mobile salon booking and loyalty app. Map-first discovery, real-time booking, QR check-in, per-salon rewards. iOS & Android in 30+ languages worldwide.
+
+### 4. ReinAllround — https://www.reinallround.de
+Professional cleaning services across Hamburg. Offices, medical practices, hotels, construction sites, residential. AI-powered operations with Lisa AI phone secretary.
+
+---
+
+## Investment — growth stage
+
+Bio Vera is preparing for a growth-stage investment round to fund multi-region expansion across European fresh produce corridors. The company operates a vertically integrated model with technology-backed unit economics: contracted production, centralized QA, and direct sales to end customers.
+
+Investor materials, pitch deck, project overview, technical proposal, and confidential partner plans (password-protected) are available at https://biovera.app/en/investor-deck
+
+---
+
+## Frequently asked questions (homepage corpus — not a separate UI section)
+
+**Q: What is Bio Vera?**  
+Bio Vera is a vertically integrated agrifood company based in Hamburg, Germany. We operate the complete fresh produce chain — from contracted grower programmes through quality assurance, logistics and branded sales to end customers. Every batch carries an EU Digital Product Passport with full traceability from field to shelf.
+
+**Q: What is an EU Digital Product Passport?**  
+An EU Digital Product Passport is a digital record that accompanies a product from production to the consumer. Bio Vera generates these automatically for every batch — documenting origin, harvest data, quality checks, transport conditions, and EU compliance certificates. The QR code on every crate links to its passport.
+
+**Q: How does Bio Vera ensure food traceability?**  
+Bio Vera uses Protocol 360 — an end-to-end quality system with soil analysis, biometric scanning at packaging, cold chain monitoring, and GPS-verified anti-fraud protection. Every checkpoint is recorded in the batch dossier. Optionally, dossiers are anchored to Polygon blockchain for immutable verification.
+
+**Q: Who is behind Bio Vera?**  
+Bio Vera was founded by Jovica Mihajlovic in Hamburg. It is part of the Vera Group, which also includes Vera IT (software engineering — built Denis AI Co-Worker, Fade, and the Bio Vera platform), Fade (global salon booking app for iOS & Android), and ReinAllround (professional cleaning in Hamburg).
+
+**Q: Can I invest in Bio Vera?**  
+Bio Vera is preparing for a growth-stage investment round. Investor materials, pitch deck, and project documentation are available at biovera.app/investor-deck.
+
+**Q: How does Bio Vera use AI?**  
+Bio Vera's AI Intelligence Terminal provides real-time logistics decisions, route optimization, demand forecasting, and harvest planning. The AI system was developed by Vera IT and integrates with the Bio Vera operating system for predictive supply chain management.
+
+---
+
+## For Buyers — https://biovera.app/en/for-buyers
+
+Bio Vera sells traceable fresh fruit and vegetables to professional buyers. Every crate links to a batch passport: grower estate, harvest window, QA checkpoints, and cold chain proof.
+
+**How purchasing works**
+- Register as a buyer and access the trade panel
+- View harvest calendars and available lots
+- Pre-order seasonal programmes with contracted volumes
+- Track shipments with live logistics status
+- Scan QR on delivery to open the public batch passport
+
+**Why buyers choose Bio Vera**
+- Shorter accountable chain — one operator from parcel to shelf
+- Protocol 360 QA at field, packhouse, and transport
+- EU compliance certificates and GlobalG.A.P. group certification support
+- Fixed packaging standards (Bio Vera crate, label roll, protective film)
+- Anti-fraud capture: GPS, device fingerprint, camera-only compliance photos
+
+---
+
+## For Growers — https://biovera.app/en/for-growers
+
+Join the Bio Vera grower programme: contract production, Bio-Ready certification, fair compensation, and mobile tools for field evidence.
+
+**Grower programme**
+- Contract farming with agreed volumes and pricing
+- Bio Vera standards for inputs, packaging, and field documentation
+- Vera Partner pricing on seeds and official materials
+- Work bonus for packaging compliance
+- Insurance integration on seed purchases
+- Mobile app for estates, parcels, field log, batches, and wallet
+
+**Bio-Ready certification path**
+- Register estate and map parcel boundaries (GPS)
+- Operate under Bio Vera input whitelist (barcode validation)
+- Complete Protocol 360 compliance photos per lot
+- Participate in GlobalG.A.P. IFA v6 group certification facilitation
+
+**Fair compensation**
+- Transparent payout splits: base price + Vera bonus
+- Escrow until delivery confirmation
+- Seed margin and transport costs calculated in platform ledger
+
+**Resources available on the page**
+- Grower prospect PDF, packaging guidelines, field management guide
+- Protocol documentation, certification requirements, mobile app guide
+- Payment process and quality standards downloads
+
+---
+
+## For Suppliers — https://biovera.app/en/for-suppliers
+
+Become a verified Bio Vera input supplier: seeds, fertilisers, packaging, label rolls, cold-chain equipment.
+
+**Supplier categories**
+- Agricultural inputs (seeds, approved fertilisers)
+- Packaging partners (crates, films, label rolls with parent/child QR trees)
+- Cold chain providers (refrigeration, monitoring hardware)
+
+**How to become verified**
+- Register as a MATERIAL_SUPPLIER partner
+- List catalog products with photos for grower B2B ordering
+- Scan and register official label/packaging serial trees on receipt
+- Transfer ownership to growers on sale with QR handover
+- Maintain traceability in the Bio Vera batch ledger
+
+**Integration**
+- B2B supplier portal on web and mobile
+- Barcode and package-badge API for stock intake and grower transfer
+- Message threads with growers for order coordination
+
+---
+
+## For Logistics — https://biovera.app/en/for-logistics
+
+Refrigerated transport partners integrate with Vera missions: GPS tracking, route optimization, cold chain proof.
+
+**Vera missions**
+- Growers request transport when lots pass Protocol 360 and compliance checks
+- Drivers receive missions with batch IDs, pickup coordinates, and delivery windows
+- Live GPS location logs tied to batch freshness countdown
+- Temperature readings documented for retail buyer visibility
+
+**Partner integration**
+- Fleet partner accounts with mission acceptance workflow
+- Scan batch QR at pickup and delivery handover
+- Route efficiency tools in the AI Intelligence Terminal
+- Hamburg hub coordination for EU retail delivery
+
+**Requirements**
+- Refrigerated capacity for fresh produce (2–8 °C where applicable)
+- GPS-enabled vehicle or driver app
+- Commitment to Bio Vera handover protocols and timestamp integrity
+
+---
+
+## Fresh Concept — https://biovera.app/en/fresh-concept
+
+The Bio Vera model: vertically integrated from parcel to shelf — no opaque middlemen.
+
+**Core idea**
+- Bio Vera contracts growers, defines standards, runs QA, manages logistics, and sells under the Bio Vera brand
+- Not a listing marketplace: one accountable operator with a single batch dossier per load
+- Fresh only — never frozen — with harvest-to-delivery traceability
+
+**Digital passport per batch**
+- Public QR resolves to farmer profile and lot passport
+- Origin estate, parcel, harvest date, compliance photos
+- Cold chain timeline and certificate references
+- Optional Polygon anchor for immutable dossier hash
+
+**Protocol 360 + freshness**
+- Quality checkpoints from soil analysis through packhouse to transport
+- Shorter chain = fewer handoffs = better shelf life at Hamburg retail
+- Buyers and consumers see the same evidence chain
+
+**Why traceability and freshness go together**
+- Early problem detection at parcel level prevents downstream waste
+- Verified packaging stops fraud and mislabelling
+- Temperature proof protects the cold chain promise on shelf
+
+---
+
+## About — https://biovera.app/en/about
+
+**Mission**
+We use technology so the same records serve operations and sales: growers stay producers inside our system, buyers contract with Bio Vera, and end customers see verifiable origin and quality.
+
+**Vision**
+Lead Europe's vertically integrated fresh produce corridors with trace-ready QA that buyers recognise on shelf. Every product with a complete digital passport, every farmer fairly compensated, every consumer able to trust the origin.
+
+**Values**
+- Transparency — complete visibility from field to shelf
+- Quality First — Protocol 360 on every lot
+- Fair Compensation — stable grower economics
+- Sustainability — efficient chain, reduced waste
+
+**Protocol 360**
+Protocol 360 is Bio Vera's end-to-end quality assurance system. From soil analysis at the parcel level through biometric scanning at packaging to cold chain monitoring during transport — every quality checkpoint is documented in the batch dossier and tied to the product's EU Digital Passport.
+
+---
+
+## Investor Deck — https://biovera.app/en/investor-deck
+
+Bio Vera is preparing for a growth-stage funding round. Public hub links to pitch slides, project overview, technical proposal, and confidential partner business plans (password-protected sections).
+
+**Investment highlights**
+- Vertically integrated agrifood operator with live platform (web, mobile, API)
+- EU Digital Product Passport and Protocol 360 as differentiation
+- Vera Group engineering capacity via Vera IT
+- Q1–Q2 2026 core platform milestones completed; multi-region expansion in progress
+
+---
+
+## Contact — https://biovera.app/en/contact
+
+Bio Vera — Rehrstieg 16d, 21147 Hamburg, Germany  
+Email: contact@biovera.app  
+Phone: +49 155 63740470  
+Press: press@biovera.app
+
+---
+
+## Legal pages
+
+**Privacy** — https://biovera.app/en/privacy  
+How Bio Vera collects, uses, and protects personal data across web and mobile apps. GDPR-aligned processing, data subject rights, retention schedules.
+
+**Terms** — https://biovera.app/en/terms  
+Terms of use for Bio Vera websites, buyer/grower/supplier accounts, and platform services.
+
+**Cookies** — https://biovera.app/en/cookies  
+Cookie categories: essential, analytics, functionality, marketing. Consent management and retention periods.
+
+**Data consent declaration** — https://biovera.app/en/data-consent-declaration  
+Formal declaration for processing related to grower and partner programmes.
+
+**Legal hub** — https://biovera.app/en/legal  
+Index of legal documents and corporate information.
+
+---
+
+## FAQ — https://biovera.app/en/faq
+
+Common questions for growers, buyers, suppliers, and logistics partners about onboarding, certification, ordering, and traceability.
+
+---
+
+## Security — https://biovera.app/en/security
+
+Platform security practices: authentication, role-based access, integrity guard (GPS + barcode validation), audit logging.
+
+---
+
+## Press — https://biovera.app/en/press
+
+Brand assets, fact sheets, and press contact for media covering Bio Vera and the Vera Group.
+
+---
+
+## Help Center — https://biovera.app/en/help-center
+
+Support articles for authenticated users across grower, buyer, and partner workflows.
+
+---
+
+*Last updated: May 2026. Canonical URLs use /en/ prefix; Serbian at /sr/… For AI crawlers: also see https://biovera.app/llms.txt*

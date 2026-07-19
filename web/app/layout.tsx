@@ -8,7 +8,8 @@ import Navigation from "@/components/Navigation";
 import CookieConsent from "@/components/CookieConsent";
 import VeraAIChatbotWrapper from "@/components/VeraAIChatbotWrapper";
 import { defaultMetadata } from "./metadata";
-import en from "@/locales/en.json";
+import { JsonLd } from "@/components/JsonLd";
+import { buildBioVeraOrganizationGraph, getSiteUrl } from "@/lib/schema/biovera-jsonld";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -30,7 +31,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = defaultMetadata;
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://biovera.app";
+const organizationGraph = buildBioVeraOrganizationGraph(getSiteUrl());
 
 export default function RootLayout({
   children,
@@ -40,26 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: en.brand.name,
-              url: siteUrl,
-              logo: `${siteUrl}/logo1.png`,
-              description: en.metadata.ldJsonDescription,
-              sameAs: [],
-              contactPoint: {
-                "@type": "ContactPoint",
-                contactType: en.metadata.ldJsonContactType,
-                email: "contact@biovera.app",
-                telephone: "+4915563740470",
-              },
-            }),
-          }}
-        />
+        <JsonLd data={organizationGraph} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
