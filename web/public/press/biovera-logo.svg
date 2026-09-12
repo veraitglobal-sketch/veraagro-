@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Wraps `/press/biovera-logo.png` (848×240) for vector-friendly workflows; raster is master. -->
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 848 240" width="848" height="240" role="img" aria-label="Bio Vera">
+<!-- Wraps `/press/biovera-logo.png` (848×424) for vector-friendly workflows; raster is master. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 848 424" width="848" height="424" role="img" aria-label="Bio Vera">
   <title>Bio Vera</title>
   <image
     href="biovera-logo.png"
     xlink:href="biovera-logo.png"
     width="848"
-    height="240"
+    height="424"
     preserveAspectRatio="xMidYMid meet"
   />
 </svg>
