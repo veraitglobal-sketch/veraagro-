@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsBoolean, IsArray, IsOptional, ValidateNested, IsEnum } from 'class-validator';
+import { IsString, IsInt, Min, IsNumber, IsObject, IsArray, IsOptional, ValidateNested, IsEnum, ArrayMinSize, ArrayMaxSize, MaxLength, IsDefined } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export enum HandoverStatus {
@@ -29,6 +29,8 @@ export class QualityCheckDto {
   temperature: number; // Temperature pri istovaru
 
   @IsArray()
+  @ArrayMinSize(2)
+  @ArrayMaxSize(6)
   @IsString({ each: true })
   photoUrls: string[]; // 2 fotografije gajbica
 
@@ -38,13 +40,17 @@ export class QualityCheckDto {
 
   @IsString()
   @IsOptional()
+  @MaxLength(8000)
   notes?: string;
 }
 
 export class CompleteHandoverDto {
+  @IsOptional() @IsInt() @Min(0) revision?: number;
   @IsString()
   handoverId: string;
 
+  @IsDefined()
+  @IsObject()
   @ValidateNested()
   @Type(() => QualityCheckDto)
   qualityCheck: QualityCheckDto;

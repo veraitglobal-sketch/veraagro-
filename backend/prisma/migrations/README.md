@@ -1,14 +1,10 @@
 # Prisma migracije (PostgreSQL)
 
-Ovaj folder je **izvor istine u gitu** za šemu baze: svaka podfolder-migracija ima `migration.sql` koja se primeni **jednom** po okruženju, redom po imenu foldera (timestamp prefiks).
+Za deployment koristiti `npm run prisma:deploy`. Postojeća istorija sadrži migracije koje prethode squash-u, a zavise od tabela koje on tek kreira. Zato direktno izvršavanje ovog niza na praznoj bazi nije podržano.
 
-## Šta je „squash“ baseline?
+Wrapper inicijalizuje isključivo praznu šemu iz proverenog snapshot-a u `../bootstrap`, zatim pokreće standardni Prisma deploy za nove migracije. Postojeće podatke i istoriju ne prepisuje. Detalji i test komande: [MIGRATIONS.md](../../MIGRATIONS.md).
 
-| Folder | Značenje |
-|--------|----------|
-| `20260426200000_squash_baseline` | **Jedan veliki SQL** koji podiže kompletan početni šemu (enums, tabele, indeksi, FK). Istorija *pre* squash-a **nije** kao niz malih fajlova u ovom repou — to je namera squasha (manje šuma, jedan „ground zero“). |
-
-Sve migracije **posle** squash-a su **małe, imenovane** i vidi se tačno šta se menja ako otvoriš `migration.sql`.
+Istorijske SQL fajlove ne menjati; buduće izmene dodavati kao nove migracije.
 
 ## Redosled svih migracija (primena = leksikografski po imenu foldera)
 
@@ -46,6 +42,8 @@ Sve migracije **posle** squash-a su **małe, imenovane** i vidi se tačno šta s
 | `20260705120000_deliveries_buyer_pickup_confirmed_at` | Dostave — potvrda pickup-a kupca |
 | `20260718120000_ensure_harvest_announcements_table` | Idempotentno kreira `harvest_announcements` + missions FK ako nedostaju |
 | `20260720120000_ensure_bio_white_list_columns` | `bio_white_list`: `phiDays`, `mrlLimit`, `materialType` (legacy/Railway drift) |
+| `20260926230000_order_stock_reservations` | Porudžbina — konkretna rezervacija, izdavanje i oslobađanje zalihe |
+| `20260926233000_checkout_idempotency` | Checkout — jedinstveni zahtev po kupcu i hash originalnih podataka |
 
 ## Kako proveriti šta je zaista primenjeno na serveru
 

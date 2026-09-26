@@ -200,17 +200,14 @@ export class MaterialControlService {
     });
 
     if (!balance) {
-      balance = await this.prisma.farmer_material_balances.create({
-        data: {
-          id: crypto.randomUUID(),
-          userId,
-          crateBalance: 0,
-          labelRollBalance: 0,
-          filmMeterBalance: 0,
-          totalPurchased: {},
-          updatedAt: new Date(),
-        },
+      // Two first-time transport requests may initialize the same farmer at once.
+      // Preserve the winner's balances and return its row instead of failing uniqueness.
+      await this.prisma.farmer_material_balances.createMany({
+        data: [{ id: crypto.randomUUID(), userId, crateBalance: 0, labelRollBalance: 0,
+          filmMeterBalance: 0, totalPurchased: {}, updatedAt: new Date() }],
+        skipDuplicates: true,
       });
+      balance = await this.prisma.farmer_material_balances.findUniqueOrThrow({ where: { userId } });
     }
 
     return balance;

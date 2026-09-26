@@ -9,6 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { WalletsService } from '../wallets/wallets.service';
 import { ConfigService } from '@nestjs/config';
 import { getFarmerOwnerUserId } from '../orders/order-fulfillment.util';
+import { Prisma } from '@prisma/client';
 
 /**
  * Payments Service
@@ -54,16 +55,20 @@ export class PaymentsService {
       paymentMethod: string;
       transactionId?: string;
     },
+    db: Prisma.TransactionClient = this.prisma,
   ) {
     const splitSum =
       this.farmerPercentage + this.driverPercentage + this.platformFeePercentage;
-    if (Math.abs(splitSum - 100) > 0.02) {
+    if (![this.farmerPercentage, this.driverPercentage, this.platformFeePercentage].every((value) => Number.isFinite(value) && value >= 0 && value <= 100) || Math.abs(splitSum - 100) > 0.02) {
       throw new BadRequestException(
         `PAYMENT_FARMER_PERCENTAGE + PAYMENT_DRIVER_PERCENTAGE + PAYMENT_PLATFORM_FEE must equal 100 (currently ${splitSum})`,
       );
     }
 
-    const order = await this.prisma.orders.findUnique({
+    if (!Number.isFinite(totalAmount) || totalAmount <= 0) {
+      throw new BadRequestException('Payment amount must be positive and finite');
+    }
+    const order = await db.orders.findUnique({
       where: { id: orderId },
       include: { 
         users: true,
@@ -81,10 +86,22 @@ export class PaymentsService {
       throw new BadRequestException('Cannot resolve farmer user to credit for this order');
     }
 
-    // Calculate split amounts
-    const farmerAmount = (totalAmount * this.farmerPercentage) / 100;
-    const driverAmount = (totalAmount * this.driverPercentage) / 100;
-    const platformFee = (totalAmount * this.platformFeePercentage) / 100;
+    // Allocate whole cents, giving remaining cents to the largest fractional
+    // shares. The three credits must sum to the amount actually received.
+    const cents = new Prisma.Decimal(totalAmount).mul(100);
+    if (!cents.isInteger() || cents.gt(Number.MAX_SAFE_INTEGER)) {
+      throw new BadRequestException('Payment amount must be representable in whole cents');
+    }
+    const shares = [this.farmerPercentage, this.driverPercentage, this.platformFeePercentage]
+      .map((percentage, index) => {
+        const exact = cents.mul(percentage).div(splitSum);
+        return { index, cents: exact.floor().toNumber(), fraction: exact.minus(exact.floor()).toNumber() };
+      });
+    let remainder = cents.toNumber() - shares.reduce((sum, share) => sum + share.cents, 0);
+    for (const share of [...shares].sort((a, b) => b.fraction - a.fraction || a.index - b.index)) {
+      if (remainder-- > 0) share.cents += 1;
+    }
+    const [farmerAmount, driverAmount, platformFee] = shares.map((share) => share.cents / 100);
 
     const splitDetails = {
       farmer: {
@@ -107,7 +124,7 @@ export class PaymentsService {
     };
 
     // Create payment in escrow
-    const payment = await this.prisma.payments.create({
+    const payment = await db.payments.create({
       data: {
         id: crypto.randomUUID(),
         orderId,
@@ -202,7 +219,8 @@ export class PaymentsService {
 
     const missions = order.missions ?? [];
     const missionForColdChain =
-      missions.find((m) => (m.temperature_logs?.length ?? 0) > 0) ?? missions[0];
+      delivery.missionId ? missions.find((m) => m.id === delivery.missionId)
+        : missions.find((m) => (m.temperature_logs?.length ?? 0) > 0) ?? missions[0];
     const temperatureLogs = missionForColdChain?.temperature_logs ?? [];
 
     const buyerQrConfirmed =
@@ -269,6 +287,10 @@ export class PaymentsService {
     }
 
     return this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM payments WHERE id = ${payment.id} FOR UPDATE`;
+      if (await tx.delivery_refunds.findUnique({ where: { paymentId: payment.id }, select: { id: true } })) {
+        throw new BadRequestException('Payment is reserved for an approved refund and cannot be released');
+      }
       const updateResult = await tx.payments.updateMany({
         where: { id: payment.id, status: 'IN_ESCROW' },
         data: {
@@ -359,9 +381,23 @@ export class PaymentsService {
   /**
    * Get payment details
    */
-  async getPayment(orderId: string) {
-    const payment = await this.prisma.payments.findUnique({
-      where: { orderId },
+  async getPayment(orderId: string, user: { id: string; roles: string[] }) {
+    const isAdmin = user.roles.some((role) => role === 'ADMIN' || role === 'SUPER_ADMIN');
+    const payment = await this.prisma.payments.findFirst({
+      where: {
+        orderId,
+        // Scope the query itself: an unrelated user cannot read payment details.
+        ...(isAdmin ? {} : {
+          orders: {
+            OR: [
+              { buyerId: user.id },
+              { estates: { ownerId: user.id } },
+              { fulfilling_estate: { ownerId: user.id } },
+              { deliveries: { driverId: user.id } },
+            ],
+          },
+        }),
+      },
       include: {
         orders: {
           include: {

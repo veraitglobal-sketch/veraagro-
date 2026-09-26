@@ -2,6 +2,10 @@ import { PrismaClient, UserRole, UserStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 
+if (!['development', 'test'].includes(process.env.NODE_ENV ?? '')) {
+  throw new Error('Test users may only be seeded with NODE_ENV=development or NODE_ENV=test against a test database.');
+}
+
 const prisma = new PrismaClient();
 
 async function createTestUsers() {

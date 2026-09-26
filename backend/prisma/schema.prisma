@@ -59,6 +59,8 @@ model batches {
   batchId                                    String                 @unique
   estateId                                   String
   parcelId                                   String?
+  harvestAnnouncementId                      String?
+  harvest_announcement                       harvest_announcements? @relation(fields: [harvestAnnouncementId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   harvestedByUserId                          String?
   currentHubId                               String?
   transportedByDriverId                      String?
@@ -90,6 +92,7 @@ model batches {
   temperature_logs                           temperature_logs[]
   package_badges                             package_badges[]
 
+  @@index([harvestAnnouncementId])
   @@index([batchId])
   @@index([currentHubId])
   @@index([estateId])
@@ -256,6 +259,10 @@ model compliance_photos {
 }
 
 model deliveries {
+  returnCase        delivery_returns?
+  refund            delivery_refunds?
+  missionId         String? @unique
+  mission           missions? @relation(fields: [missionId], references: [id], onDelete: Restrict)
   id                String             @id
   deliveryNumber    String             @unique
   orderId           String             @unique
@@ -293,6 +300,14 @@ model deliveries {
 }
 
 model buyer_delivery_issues {
+  returnCase        delivery_returns?
+  status      String @default("PENDING")
+  resolution  String?
+  outcome     String?
+  resolvedBy  String?
+  resolvedAt  DateTime?
+  revision    Int @default(0)
+  updatedAt   DateTime @default(now()) @updatedAt
   id          String      @id @default(uuid())
   deliveryId String
   buyerId    String
@@ -492,6 +507,8 @@ model hubs {
 }
 
 model inventory {
+  orderReservations order_stock_reservations[]
+  returnDispositionCounts return_dispositions[]
   id                    String          @id
   hubId                 String
   estateId              String
@@ -700,6 +717,7 @@ model material_types {
 }
 
 model missions {
+  delivery                                 deliveries?
   id                                       String                 @id
   missionNumber                            String                 @unique
   growerId                                 String
@@ -818,6 +836,11 @@ model order_items {
 }
 
 model orders {
+  clientRequestId String?
+  requestHash String?
+  @@unique([buyerId, clientRequestId])
+  sourceCatalogId String?
+  stockReservation order_stock_reservations?
   id                   String                 @id
   orderNumber          String                 @unique
   buyerId              String
@@ -894,6 +917,9 @@ model parcels {
 
 model harvest_announcements {
   id                  String    @id
+  sourcePlantingId    String?
+  source_planting     harvest_announcements? @relation("PlantingHarvests", fields: [sourcePlantingId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  harvests            harvest_announcements[] @relation("PlantingHarvests")
   parcelId            String
   userId              String
   announcementType    String
@@ -918,8 +944,10 @@ model harvest_announcements {
   growth_logs         growth_logs[]
   parcel              parcels   @relation(fields: [parcelId], references: [id])
   user                users     @relation(fields: [userId], references: [id])
+  batches             batches[]
   mission             missions?
 
+  @@index([sourcePlantingId])
   @@index([parcelId])
   @@index([userId])
   @@index([estimatedDate])
@@ -928,6 +956,7 @@ model harvest_announcements {
 }
 
 model payments {
+  refund            delivery_refunds?
   id                String        @id
   orderId           String        @unique
   totalAmount       Float
@@ -1500,6 +1529,8 @@ model vera_insights {
 }
 
 model wallet_transactions {
+  refundRecoverySource refund_reconciliation_entries? @relation("RefundRecoverySource")
+  refundRecoveryDebit refund_reconciliation_entries? @relation("RefundRecoveryDebit")
   id          String                  @id
   walletId    String
   type        WalletTransactionType
@@ -1547,6 +1578,7 @@ model waybills {
 }
 
 model digital_handovers {
+  revision          Int @default(0)
   id            String                @id @default(uuid())
   deliveryId    String                @unique
   driverId      String
@@ -1574,6 +1606,9 @@ model digital_handovers {
 }
 
 model disputes {
+  returnCase        delivery_returns?
+  outcome           String?
+  revision          Int @default(0)
   id                String            @id @default(uuid())
   handoverId        String
   reason            String
@@ -1955,4 +1990,139 @@ model grower_mobile_ingest {
   @@unique([userId, kind, clientReference])
   @@index([userId])
   @@index([createdAt])
+}
+
+/// Full-shipment return; pickup and receipt have distinct actors and evidence.
+model delivery_returns {
+  stockStatus String @default("QUARANTINED")
+  stockRevision Int @default(0)
+  dispositions return_dispositions[]
+  id String @id @default(uuid())
+  deliveryId String @unique
+  issueId String? @unique
+  disputeId String? @unique
+  status String @default("PLANNED")
+  carrierUserId String
+  receiverUserId String
+  destinationAddress String
+  instructions String
+  createdBy String
+  collectedBy String?
+  receivedBy String?
+  collectedAt DateTime?
+  receivedAt DateTime?
+  collectionPhotos String[] @default([])
+  receiptPhotos String[] @default([])
+  collectionNotes String?
+  receiptNotes String?
+  revision Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  delivery deliveries @relation(fields: [deliveryId], references: [id], onDelete: Restrict)
+  issue buyer_delivery_issues? @relation(fields: [issueId], references: [id], onDelete: Restrict)
+  dispute disputes? @relation(fields: [disputeId], references: [id], onDelete: Restrict)
+  refund delivery_refunds?
+  @@index([carrierUserId, status])
+  @@index([receiverUserId, status])
+}
+
+/// Records an authorized external bank refund; does not send money or reverse recipient wallets.
+model delivery_refunds {
+  reconciliation refund_reconciliations?
+  id String @id @default(uuid())
+  deliveryId String @unique
+  paymentId String @unique
+  returnId String @unique
+  status String @default("APPROVED")
+  amountCents Int
+  currency String
+  originalPaymentStatus String
+  reconciliationRequired Boolean @default(false)
+  approvedBy String
+  approvedAt DateTime @default(now())
+  confirmedBy String?
+  confirmedAt DateTime?
+  bankReference String? @unique
+  bankPaidAt DateTime?
+  bankEvidence String?
+  reason String
+  revision Int @default(0)
+  delivery deliveries @relation(fields: [deliveryId], references: [id], onDelete: Restrict)
+  payment payments @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  returnCase delivery_returns @relation(fields: [returnId], references: [id], onDelete: Restrict)
+  @@index([status])
+}
+
+/// An explicit, immutable decision after the buyer's bank refund has been recorded.
+model refund_reconciliations {
+  id String @id @default(uuid())
+  refundId String @unique
+  amountCents Int
+  currency String
+  recoveredCents Int
+  platformCostCents Int
+  reason String
+  createdBy String
+  createdAt DateTime @default(now())
+  requestHash String
+  refund delivery_refunds @relation(fields: [refundId], references: [id], onDelete: Restrict)
+  entries refund_reconciliation_entries[]
+}
+
+model refund_reconciliation_entries {
+  id String @id @default(uuid())
+  reconciliationId String
+  sourceKey String
+  creditId String? @unique
+  debitId String? @unique
+  recipientUserId String?
+  amountCents Int
+  method String
+  reconciliation refund_reconciliations @relation(fields: [reconciliationId], references: [id], onDelete: Restrict)
+  credit wallet_transactions? @relation("RefundRecoverySource", fields: [creditId], references: [id], onDelete: Restrict)
+  debit wallet_transactions? @relation("RefundRecoveryDebit", fields: [debitId], references: [id], onDelete: Restrict)
+  @@unique([reconciliationId, sourceKey])
+  @@index([recipientUserId])
+}
+
+/// Inspection decisions; RESTOCK sets a verified physical count, never blind +return quantity.
+model return_dispositions {
+  id String @id @default(uuid())
+  returnId String
+  revision Int
+  action String
+  quantity Float
+  unit String
+  notes String
+  photos String[] @default([])
+  createdBy String
+  createdAt DateTime @default(now())
+  requestHash String
+  inventoryId String?
+  previousQuantity Float?
+  countedQuantity Float?
+  previousInventoryStatus String?
+  previousExpiresAt DateTime?
+  restockExpiresAt DateTime?
+  returnCase delivery_returns @relation(fields: [returnId], references: [id], onDelete: Restrict)
+  inventory inventory? @relation(fields: [inventoryId], references: [id], onDelete: Restrict)
+  @@unique([returnId, revision])
+  @@index([inventoryId])
+}
+
+/// inventory.quantity is free stock: reserve subtracts once, issue does not subtract again.
+model order_stock_reservations {
+  id String @id @default(uuid())
+  orderId String @unique
+  inventoryId String
+  quantity Float
+  unit String
+  status String @default("RESERVED")
+  reservedBy String
+  reservedAt DateTime @default(now())
+  issuedAt DateTime?
+  releasedAt DateTime?
+  order orders @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  inventory inventory @relation(fields: [inventoryId], references: [id], onDelete: Restrict)
+  @@index([inventoryId, status])
 }

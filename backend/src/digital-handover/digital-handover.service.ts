@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
+import { durableImage } from '../common/durable-image';
+import { Injectable, ConflictException, NotFoundException, BadRequestException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
@@ -61,22 +62,13 @@ export class DigitalHandoverService {
     }
 
     // Create handover record
-    const handover = await this.prisma.digital_handovers.create({
-      data: {
-        deliveryId: dto.deliveryId,
-        driverId,
-        storeQrCode: dto.qrCode,
-        status: HandoverStatus.INITIATED,
-        initiatedAt: new Date(),
-      },
-      include: {
-        deliveries: {
-          include: {
-            orders: true,
-          },
-        },
-      },
+    const created = await this.prisma.digital_handovers.createMany({
+      data: [{ deliveryId: dto.deliveryId, driverId, storeQrCode: dto.qrCode,
+        status: HandoverStatus.INITIATED, initiatedAt: new Date() }],
+      skipDuplicates: true,
     });
+    const handover = await this.prisma.digital_handovers.findUniqueOrThrow({ where: { deliveryId: dto.deliveryId } });
+    if (!created.count) return handover;
 
     // Notify store manager (in production, find manager by store QR code)
     // For now, we'll notify admin
@@ -86,7 +78,7 @@ export class DigitalHandoverService {
       title: 'Handover Initiated',
       message: `Driver ${delivery.users.firstName} ${delivery.users.lastName} has arrived. Please complete quality audit.`,
       actionUrl: `/buyer-portal/handover/${handover.id}`,
-    });
+    }).catch((error) => console.error('Handover notification failed', error));
 
     // Real-time notification
     try {
@@ -132,10 +124,6 @@ export class DigitalHandoverService {
       throw new NotFoundException('Handover not found');
     }
 
-    if (handover.status !== HandoverStatus.INITIATED && handover.status !== HandoverStatus.IN_PROGRESS) {
-      throw new BadRequestException('Handover already completed or disputed');
-    }
-
     const roles = callerRoles ?? [];
     const elevated = roles.includes('SUPER_ADMIN') || roles.includes('ADMIN');
     const linkedBuyerId = handover.deliveries.orders.buyerId;
@@ -145,57 +133,49 @@ export class DigitalHandoverService {
       );
     }
 
-    // Validate photos (must have 2)
-    if (dto.qualityCheck.photoUrls.length < 2) {
-      throw new BadRequestException('At least 2 photos are required');
+    if ((dto.revision ?? 0) !== handover.revision) throw new ConflictException('Handover changed. Reload before submitting evidence.');
+    if (handover.status === 'COMPLETED' || handover.status === 'DISPUTED') return this.getHandover(handover.id, managerId, roles);
+    if (!Array.isArray(dto.qualityCheck.photoUrls) || dto.qualityCheck.photoUrls.length < 2 || dto.qualityCheck.photoUrls.length > 6) {
+      throw new BadRequestException('Between 2 and 6 photos are required');
     }
-
-    const sig = (dto.qualityCheck.signature ?? '').trim();
-    if (dto.qualityCheck.visualCheck === QualityStatus.FRESH && sig.length < 80) {
-      throw new BadRequestException(
-        'Recipient digital signature is required to complete handover without a dispute (draw or capture signature, then submit).',
-      );
+    const photos = await Promise.all(dto.qualityCheck.photoUrls.map((photo) => durableImage(photo)));
+    const signature = dto.qualityCheck.signature ? await durableImage(dto.qualityCheck.signature, true) : null;
+    if (dto.qualityCheck.visualCheck === QualityStatus.FRESH && !signature) {
+      throw new BadRequestException('Recipient digital signature is required');
     }
-
-    // Update handover
-    const updated = await this.prisma.digital_handovers.update({
-      where: { id: dto.handoverId },
-      data: {
-        status: dto.qualityCheck.visualCheck === QualityStatus.DAMAGED 
-          ? HandoverStatus.DISPUTED 
-          : HandoverStatus.COMPLETED,
-        qualityStatus: dto.qualityCheck.visualCheck,
-        temperature: dto.qualityCheck.temperature,
-        photoUrls: dto.qualityCheck.photoUrls,
-        signature: dto.qualityCheck.signature,
-        notes: dto.qualityCheck.notes,
-        completedBy: managerId,
-        completedAt: new Date(),
-      },
+    const outcome = await this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM digital_handovers WHERE id = ${handover.id} FOR UPDATE`;
+      const current = await tx.digital_handovers.findUniqueOrThrow({ where: { id: handover.id } });
+      if ((dto.revision ?? 0) !== current.revision) throw new ConflictException('Handover changed. Reload before submitting evidence.');
+      if (current.status === 'COMPLETED' || current.status === 'DISPUTED') return { updated: current, changed: false };
+      await tx.$queryRaw`SELECT id FROM orders WHERE id = ${handover.deliveries.orderId} FOR UPDATE`;
+      const delivery = await tx.deliveries.findUniqueOrThrow({ where: { id: handover.deliveryId } });
+      if (delivery.status !== 'IN_TRANSIT') throw new BadRequestException('Delivery must be in transit for handover');
+      const damaged = dto.qualityCheck.visualCheck === QualityStatus.DAMAGED;
+      const updated = await tx.digital_handovers.update({ where: { id: handover.id }, data: {
+        status: damaged ? 'DISPUTED' : 'COMPLETED', qualityStatus: dto.qualityCheck.visualCheck,
+        temperature: dto.qualityCheck.temperature, photoUrls: photos, signature,
+        notes: dto.qualityCheck.notes, completedBy: managerId, completedAt: new Date(),
+      } });
+      if (damaged) {
+        await tx.disputes.create({ data: { handoverId: handover.id, reason: dto.qualityCheck.notes || 'Quality issue reported',
+          evidencePhotos: photos, status: 'PENDING' } });
+      } else {
+        await tx.deliveries.update({ where: { id: handover.deliveryId }, data: { status: 'DELIVERED', deliveredAt: new Date() } });
+        await tx.orders.update({ where: { id: handover.deliveries.orderId }, data: { status: 'DELIVERED' } });
+      }
+      return { updated, changed: true };
     });
-
-    // If damaged, trigger dispute protocol
-    if (dto.qualityCheck.visualCheck === QualityStatus.DAMAGED) {
-      await this.triggerDisputeProtocol(handover.id, dto.qualityCheck.notes || 'Quality issue reported');
+    const { updated } = outcome;
+    if (!outcome.changed) return updated;
+    if (updated.status === 'DISPUTED') {
+      await this.triggerDisputeProtocol(handover.id, dto.qualityCheck.notes || 'Quality issue reported').catch((error) => console.error('Dispute notification failed', error));
       return updated;
     }
-
-    // Generate PDF receipt
-    const pdfPath = await this.generateDeliveryReceipt(handover.id);
-
-    // Update delivery status
-    await this.prisma.deliveries.update({
-      where: { id: handover.deliveryId },
-      data: {
-        status: 'DELIVERED',
-        deliveredAt: new Date(),
-      },
-    });
-
-    // Update order status
-    await this.prisma.orders.update({
-      where: { id: handover.deliveries.orderId },
-      data: { status: 'DELIVERED' },
+    // Optional receipt generation must not turn a committed handover into a failed request.
+    const pdfPath = await this.generateDeliveryReceipt(handover.id).catch((error) => {
+      console.error('Receipt generation failed', error);
+      return undefined;
     });
 
     const nowIso = new Date().toISOString();
@@ -232,7 +212,7 @@ export class DigitalHandoverService {
     });
 
     const storeName = handover.deliveries.deliveryAddress 
-      ? JSON.parse(handover.deliveries.deliveryAddress).city || 'Unknown'
+      ? (() => { try { return JSON.parse(handover.deliveries.deliveryAddress).city || 'Unknown'; } catch { return 'Unknown'; } })()
       : 'Unknown';
 
     for (const admin of adminUsers) {
@@ -240,16 +220,16 @@ export class DigitalHandoverService {
         userId: admin.id,
         type: 'SYSTEM',
         title: 'Delivery Completed',
-        message: `Delivery for Aldi ${storeName} completed successfully. Quality confirmed.`,
+        message: `Delivery for ${storeName} completed successfully. Quality confirmed.`,
         actionUrl: `/deliveries/${handover.deliveryId}`,
-      });
+      }).catch((error) => console.error('Delivery notification failed', error));
 
       // Real-time notification
       try {
         await this.notificationsGateway.sendNotificationToUser(admin.id, {
           type: 'SYSTEM',
           title: 'Delivery Completed',
-          message: `Delivery for Aldi ${storeName} completed successfully. Quality confirmed.`,
+          message: `Delivery for ${storeName} completed successfully. Quality confirmed.`,
           actionUrl: `/deliveries/${handover.deliveryId}`,
         });
       } catch (error) {
@@ -262,9 +242,9 @@ export class DigitalHandoverService {
       userId: handover.driverId,
       type: 'SYSTEM',
       title: 'Handover Completed',
-      message: `Handover completed successfully. Delivery receipt generated.`,
+      message: `Handover completed successfully. Evidence saved.`,
       actionUrl: `/deliveries/${handover.deliveryId}`,
-    });
+    }).catch((error) => console.error('Driver notification failed', error));
 
     return {
       ...updated,
@@ -287,16 +267,6 @@ export class DigitalHandoverService {
       },
     });
 
-    // Create dispute record
-    await this.prisma.disputes.create({
-      data: {
-        handoverId,
-        reason,
-        status: 'PENDING',
-        createdAt: new Date(),
-      },
-    });
-
     // Notify all admins
     const adminUsers = await this.prisma.users.findMany({
       where: {
@@ -312,7 +282,7 @@ export class DigitalHandoverService {
         type: 'ALERT',
         title: 'Quality Dispute',
         message: `Quality issue reported for delivery ${handover.deliveries.orders.orderNumber}. Immediate action required.`,
-        actionUrl: `/disputes/${handoverId}`,
+        actionUrl: '/admin/delivery-issues',
       });
 
       // Real-time notification
@@ -321,7 +291,7 @@ export class DigitalHandoverService {
           type: 'ALERT',
           title: 'Quality Dispute',
           message: `Quality issue reported. Immediate action required.`,
-          actionUrl: `/disputes/${handoverId}`,
+          actionUrl: '/admin/delivery-issues',
         });
       } catch (error) {
         console.error('Error sending real-time notification:', error);
@@ -418,17 +388,18 @@ export class DigitalHandoverService {
   /**
    * Get handover by ID
    */
-  async getHandover(handoverId: string) {
-    return this.prisma.digital_handovers.findUnique({
+  async getHandover(handoverId: string, userId: string, roles: string[] = []) {
+    const handover = await this.prisma.digital_handovers.findUnique({
       where: { id: handoverId },
-      include: {
-        deliveries: {
-          include: {
-            orders: true,
-            users: true,
-          },
-        },
-      },
+      include: { deliveries: { select: { id: true, orderId: true, deliveryNumber: true, status: true,
+        orders: { select: { buyerId: true, orderNumber: true } } } },
+        disputes: { select: { id: true, status: true, reason: true, resolution: true, resolvedAt: true } } },
     });
+    if (!handover) throw new NotFoundException('Handover not found');
+    if (!roles.some((r) => r === 'ADMIN' || r === 'SUPER_ADMIN') &&
+        handover.driverId !== userId && handover.deliveries.orders.buyerId !== userId) {
+      throw new ForbiddenException('You do not have access to this handover');
+    }
+    return handover;
   }
 }

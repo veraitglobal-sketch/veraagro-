@@ -1,3 +1,9 @@
+import { issueOrderStock, requireOrderStock } from '../orders/order-stock';
+import { returnSummarySelect } from './returns.service';
+import { linkMissionDelivery } from './mission-delivery';
+import { reviewDelivery } from './delivery-review';
+import { ReviewDeliveryDto } from './dto/delivery-workflow.dto';
+import { durableImage } from '../common/durable-image';
 import {
   Injectable,
   NotFoundException,
@@ -33,172 +39,79 @@ export class DeliveriesService {
    * Assign delivery to driver
    */
   async assignDelivery(orderId: string, driverId: string) {
-    const order = await this.prisma.orders.findUnique({
-      where: { id: orderId },
-      include: {
-        estates: true,
-        fulfilling_estate: true,
-        payments: true,
-      },
-    });
-
-    if (!order) {
-      throw new NotFoundException('Order not found');
-    }
-
-    if (order.status !== 'PAID') {
-      throw new BadRequestException('Order must be paid before assigning delivery');
-    }
-
-    const pickup = getPickupEstate(order);
-    if (!pickup) {
-      throw new BadRequestException(
-        'Cannot assign delivery: in admin, link the fulfilling estate to this order, or the buyer may not be tied to a real estate (legacy record).',
-      );
-    }
-
-    // Generate unique QR code for delivery confirmation
-    const deliveryQRCode = this.generateDeliveryQRCode(orderId);
-
-    // Create delivery
-    const delivery = await this.prisma.deliveries.create({
-      data: {
-        id: crypto.randomUUID(),
-        deliveryNumber: `DEL-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
-        orderId,
-        driverId,
-        pickupLocation: pickup.polygonCoordinates,
-        pickupAddress: `Estate: ${pickup.name}`,
-        deliveryLocation: order.deliveryAddress,
-        deliveryAddress: JSON.stringify(order.deliveryAddress),
-        status: 'ASSIGNED',
-        deliveryQRCode,
-        assignedAt: new Date(),
-        updatedAt: new Date(),
-      },
-    });
-
-    // Generate waybill automatically
-    await this.waybillsService.generateWaybill(delivery.id);
-
-    // Generate invoice automatically
-    await this.invoicesService.generateInvoice(orderId, delivery.id);
-
-    // Notify driver
-    await this.notificationsService.create({
-      userId: driverId,
-      type: 'ACTION_REQUIRED',
-      title: 'New run assigned',
-      message: `New delivery: ${order.orderNumber}. Van arriving in ~20 minutes.`,
-      actionUrl: `/deliveries/${delivery.id}`,
-    });
-
-    // Notify farmer
-    await this.notificationsService.create({
-      userId: pickup.ownerId,
-      type: 'REMINDER',
-      title: 'Van on the way',
-      message: `Driver ${driverId} will arrive in ~20 minutes to pick up the load.`,
-      actionUrl: `/orders/${orderId}`,
-    });
-
-    // Update order status
-    await this.prisma.orders.update({
-      where: { id: orderId },
-      data: { status: 'CONFIRMED' },
-    });
-
-    return delivery;
-  }
-
-  /**
-   * Mark delivery as picked up
-   */
-  async markPickedUp(deliveryId: string, driverId: string) {
-    const delivery = await this.prisma.deliveries.findUnique({
-      where: { id: deliveryId },
-      include: { orders: { include: { estates: true } } },
-    });
-
-    if (!delivery) {
-      throw new NotFoundException('Delivery not found');
-    }
-
-    if (delivery.driverId !== driverId) {
-      throw new BadRequestException('Access denied');
-    }
-
-    if (delivery.status !== 'ASSIGNED') {
-      throw new BadRequestException('Delivery must be assigned first');
-    }
-
-    // Update delivery
-    const updated = await this.prisma.deliveries.update({
-      where: { id: deliveryId },
-      data: {
-        status: 'PICKED_UP',
-        pickedUpAt: new Date(),
-        pickupSignature: crypto.randomBytes(16).toString('hex'), // Digital signature
-      },
-    });
-
-    // Update order
-    await this.prisma.orders.update({
-      where: { id: delivery.orderId },
-      data: { status: 'PICKED_UP' },
-    });
-
-    // Notify buyer
-    await this.notificationsService.create({
-      userId: delivery.orders.buyerId,
-      type: 'SYSTEM',
-      title: 'Order picked up',
-      message: `Your Bio Vera order is packed and in transit.`,
-      actionUrl: `/orders/${delivery.orderId}`,
-    });
-
-    return updated;
-  }
-
-  /**
-   * Mark delivery as in transit
-   */
-  async markInTransit(deliveryId: string, driverId: string) {
-    const delivery = await this.prisma.deliveries.findUnique({
-      where: { id: deliveryId },
-    });
-
-    if (!delivery || delivery.driverId !== driverId) {
-      throw new BadRequestException('Access denied');
-    }
-
-    const updated = await this.prisma.deliveries.update({
-      where: { id: deliveryId },
-      data: {
-        status: 'IN_TRANSIT',
-        inTransitAt: new Date(),
-      },
-    });
-    try {
-      const order = await this.prisma.orders.findUnique({
-        where: { id: updated.orderId },
-        select: { status: true },
-      });
-      const s = order?.status;
-      if (s && !['CANCELLED', 'REFUNDED', 'DELIVERED', 'COMPLETED'].includes(s)) {
-        await this.prisma.orders.update({
-          where: { id: updated.orderId },
-          data: { status: 'IN_TRANSIT' },
-        });
+    const result = await this.prisma.$transaction(async tx => {
+      await tx.$queryRaw`SELECT id FROM orders WHERE id = ${orderId} FOR UPDATE`;
+      const order = await tx.orders.findUnique({ where: { id: orderId }, include: { estates: true, fulfilling_estate: true, payments: true, deliveries: true } });
+      if (!order) throw new NotFoundException('Order not found');
+      if (order.deliveries) {
+        if (order.deliveries.driverId !== driverId || order.deliveries.missionId) throw new BadRequestException('Order already has a different delivery assignment');
+        return { delivery: order.deliveries, order, pickup: getPickupEstate(order), created: false };
       }
-    } catch (e) {
-      this.logger.warn(
-        `markInTransit: optional order bump failed for delivery ${deliveryId}: ${
-          e instanceof Error ? e.message : String(e)
-        }`,
-      );
+      if (order.status !== 'PAID' || order.payments?.status !== 'IN_ESCROW') throw new BadRequestException('Order must be paid and held in escrow before assigning delivery');
+      await requireOrderStock(tx, orderId);
+      const pickup = getPickupEstate(order);
+      if (!pickup) throw new BadRequestException('Assign a fulfilling estate first');
+      const driver = await tx.users.findUnique({ where: { id: driverId } });
+      if (!driver || driver.status !== 'ACTIVE' || !driver.roles.some(role => ['DRIVER', 'LOGISTICS_PARTNER'].includes(role))) throw new BadRequestException('Assign an active logistics account');
+      const delivery = await tx.deliveries.create({ data: {
+        id: crypto.randomUUID(), deliveryNumber: `DEL-${crypto.randomUUID()}`, orderId, driverId,
+        pickupLocation: pickup.polygonCoordinates, pickupAddress: `Estate: ${pickup.name}`,
+        deliveryLocation: order.deliveryAddress, deliveryAddress: JSON.stringify(order.deliveryAddress),
+        status: 'ASSIGNED', deliveryQRCode: this.generateDeliveryQRCode(orderId), assignedAt: new Date(), updatedAt: new Date(),
+      } });
+      await tx.orders.update({ where: { id: orderId }, data: { status: 'CONFIRMED', updatedAt: new Date() } });
+      return { delivery, order, pickup, created: true };
+    });
+    // Documents can be retried without duplicating the persisted assignment.
+    for (const create of [() => this.waybillsService.generateWaybill(result.delivery.id), () => this.invoicesService.generateInvoice(orderId, result.delivery.id)]) {
+      try { await create(); } catch (error) { this.logger.warn(`Delivery document pending: ${error instanceof Error ? error.message : String(error)}`); }
     }
-    return updated;
+    if (result.created) {
+      try {
+        await this.notificationsService.create({ userId: driverId, type: 'ACTION_REQUIRED', title: 'New run assigned', message: `New delivery: ${result.order.orderNumber}.`, actionUrl: `/deliveries/${result.delivery.id}` });
+        await this.notificationsService.create({ userId: result.pickup.ownerId, type: 'REMINDER', title: 'Van on the way', message: 'A driver has been assigned to collect the load.', actionUrl: `/orders/${orderId}` });
+      } catch (error) { this.logger.warn('Delivery assignment notification pending'); }
+    }
+    return result.delivery;
+  }
+
+  async markPickedUp(deliveryId: string, driverId: string) {
+    return this.advanceDirectDelivery(deliveryId, driverId, 'PICKED_UP');
+  }
+
+  async markInTransit(deliveryId: string, driverId: string) {
+    return this.advanceDirectDelivery(deliveryId, driverId, 'IN_TRANSIT');
+  }
+
+  private async advanceDirectDelivery(deliveryId: string, driverId: string, target: 'PICKED_UP' | 'IN_TRANSIT') {
+    const reference = await this.prisma.deliveries.findUnique({ where: { id: deliveryId } });
+    if (!reference || reference.driverId !== driverId) throw new BadRequestException('Access denied');
+    const result = await this.prisma.$transaction(async tx => {
+      await tx.$queryRaw`SELECT id FROM orders WHERE id = ${reference.orderId} FOR UPDATE`;
+      const delivery = await tx.deliveries.findUniqueOrThrow({ where: { id: deliveryId }, include: { orders: true } });
+      if (delivery.driverId !== driverId) throw new BadRequestException('Access denied');
+      if (delivery.missionId) throw new BadRequestException('Advance the linked mission to record departure and transit');
+      if (['CANCELLED', 'REFUNDED'].includes(delivery.orders.status)) throw new BadRequestException('Order is cancelled or refunded');
+      const ranks = { ASSIGNED: 0, PICKED_UP: 1, IN_TRANSIT: 2, DELIVERED: 3, CONFIRMED: 4, COMPLETED: 5 };
+      if ((ranks[delivery.status] ?? -1) >= ranks[target]) return { delivery, changed: false };
+      if (delivery.status !== (target === 'PICKED_UP' ? 'ASSIGNED' : 'PICKED_UP')) throw new BadRequestException('Complete the preceding delivery step first');
+      if (target === 'PICKED_UP') await issueOrderStock(tx, delivery.orderId, driverId);
+      else {
+        // Historical shipments already on the road have no reservation ledger; never debit them retroactively.
+        const reservation = await tx.order_stock_reservations.findUnique({ where: { orderId: delivery.orderId } });
+        if (reservation && reservation.status !== 'ISSUED') throw new BadRequestException('Record stock issue at pickup first');
+      }
+      const updated = await tx.deliveries.update({ where: { id: deliveryId }, data: { status: target, updatedAt: new Date(),
+        ...(target === 'PICKED_UP' ? { pickedUpAt: new Date(), pickupSignature: crypto.randomBytes(16).toString('hex') } : { inTransitAt: new Date() }) } });
+      await tx.orders.update({ where: { id: delivery.orderId }, data: { status: target, updatedAt: new Date() } });
+      return { delivery: { ...updated, orders: delivery.orders }, changed: true };
+    });
+    if (result.changed && target === 'PICKED_UP') {
+      try { await this.notificationsService.create({ userId: result.delivery.orders.buyerId, type: 'SYSTEM', title: 'Order picked up', message: 'Your Bio Vera order has been collected.', actionUrl: `/orders/${reference.orderId}` }); }
+      catch { this.logger.warn('Pickup notification pending'); }
+    }
+    const { orders, ...delivery } = result.delivery;
+    return delivery;
   }
 
   /**
@@ -227,8 +140,17 @@ export class DeliveriesService {
       throw new BadRequestException('This QR code is not for your order');
     }
 
+    // A legacy QR must not bypass the quality/signature gate or reset the receipt clock.
+    const handover = await this.prisma.digital_handovers.findUnique({ where: { deliveryId: delivery.id }, select: { id: true } });
+    if (handover) return this.confirmBuyerPickup(delivery.id, buyerId);
+    if (delivery.missionId) throw new BadRequestException('Complete digital handover before confirming a mission delivery');
+
     if (delivery.status === 'CONFIRMED' || delivery.status === 'COMPLETED') {
       throw new BadRequestException('Delivery already confirmed');
+    }
+
+    if (!['IN_TRANSIT', 'DELIVERED'].includes(delivery.status)) {
+      throw new BadRequestException('Delivery must be in transit or delivered before receipt can be confirmed');
     }
 
     const now = new Date();
@@ -348,7 +270,7 @@ export class DeliveriesService {
       throw new BadRequestException('This delivery is not linked to your buyer account.');
     }
     if (delivery.buyerPickupConfirmedAt) {
-      throw new BadRequestException('Pickup has already been confirmed for this shipment.');
+      return { message: 'Pickup already confirmed.', delivery };
     }
     if (delivery.status !== 'DELIVERED') {
       throw new BadRequestException(
@@ -365,8 +287,8 @@ export class DeliveriesService {
     await this.paymentsService.releaseEscrowPayment(delivery.orderId);
 
     const now = new Date();
-    const updated = await this.prisma.deliveries.update({
-      where: { id: delivery.id },
+    const receipt = await this.prisma.deliveries.updateMany({
+      where: { id: delivery.id, buyerPickupConfirmedAt: null },
       data: {
         status: 'CONFIRMED',
         buyerPickupConfirmedAt: now,
@@ -377,6 +299,9 @@ export class DeliveriesService {
       },
     });
 
+    const updated = await this.prisma.deliveries.findUniqueOrThrow({ where: { id: delivery.id } });
+    if (!receipt.count) return { message: 'Pickup already confirmed.', delivery: updated };
+
     const farmerUid = getFarmerOwnerUserId(delivery.orders);
     if (farmerUid) {
       await this.notificationsService.create({
@@ -384,7 +309,7 @@ export class DeliveriesService {
         type: 'SYSTEM',
         title: 'Delivery confirmed',
         message: `Payment released for order ${delivery.orders.orderNumber}.`,
-      });
+      }).catch((error) => this.logger.warn(`Receipt notification failed: ${error}`));
     }
 
     await this.notificationsService.create({
@@ -392,15 +317,15 @@ export class DeliveriesService {
       type: 'SYSTEM',
       title: 'Delivery completed',
       message: `Payment released for delivery ${delivery.deliveryNumber}.`,
-    });
+    }).catch((error) => this.logger.warn(`Receipt notification failed: ${error}`));
 
     await this.notificationsService.create({
       userId: buyerId,
       type: 'SYSTEM',
       title: 'Preuzimanje potvrđeno',
       message: `Za porudžbinu ${delivery.orders.orderNumber} zabeležena je potvrda preuzimanja: u roku od 24 sata možete prijaviti primedbu uz fotografije.`,
-      actionUrl: '/buyer-portal/deliveries',
-    });
+      actionUrl: `/buyer-portal/orders/${delivery.orderId}`,
+    }).catch((error) => this.logger.warn(`Receipt notification failed: ${error}`));
 
     return {
       message:
@@ -499,6 +424,8 @@ export class DeliveriesService {
     return this.prisma.deliveries.findMany({
       where,
       include: {
+        returnCase: { select: returnSummarySelect },
+        buyer_delivery_issues: { orderBy: { createdAt: 'desc' }, select: { id: true, description: true, status: true, outcome: true, resolution: true, resolvedAt: true } },
         waybills: {
           select: {
             id: true,
@@ -511,6 +438,7 @@ export class DeliveriesService {
           select: {
             id: true,
             status: true,
+            disputes: { orderBy: { createdAt: 'desc' }, select: { id: true, reason: true, status: true, outcome: true, resolution: true, resolvedAt: true } },
           },
         },
         orders: {
@@ -555,6 +483,12 @@ export class DeliveriesService {
   /**
    * Get delivery by order ID (for buyer)
    */
+  async getBuyerShipment(id: string, buyerId: string) {
+    const delivery = await this.prisma.deliveries.findFirst({ where: { id, orders: { buyerId } }, select: { orderId: true } });
+    if (!delivery) throw new NotFoundException('Delivery not found');
+    return this.getDeliveryByOrder(delivery.orderId, buyerId);
+  }
+
   async getDeliveryByOrder(orderId: string, buyerId: string) {
     // First verify that the order belongs to this buyer
     const order = await this.prisma.orders.findUnique({
@@ -571,8 +505,10 @@ export class DeliveriesService {
         orderId,
       },
       include: {
+        returnCase: { select: returnSummarySelect },
+        buyer_delivery_issues: { orderBy: { createdAt: 'desc' } },
         digital_handovers: {
-          select: { id: true, status: true },
+          select: { id: true, status: true, disputes: { orderBy: { createdAt: 'desc' }, select: { id: true, status: true, reason: true, outcome: true, resolution: true, resolvedAt: true } } },
         },
         orders: {
           include: {
@@ -673,18 +609,14 @@ export class DeliveriesService {
       );
     }
 
-    const issueId = crypto.randomUUID();
-    const photoUrls = await this.persistBuyerIssuePhotos(delivery.id, issueId, rawPhotos);
-
-    await this.prisma.buyer_delivery_issues.create({
-      data: {
-        id: issueId,
-        deliveryId: delivery.id,
-        buyerId,
-        description: desc,
-        photoUrls: photoUrls as unknown as object,
-      },
+    const photoUrls = await Promise.all(rawPhotos.map((photo) => durableImage(photo)));
+    const digest = crypto.createHash('sha256').update(JSON.stringify([delivery.id, buyerId, desc, photoUrls])).digest('hex');
+    const issueId = `${digest.slice(0, 8)}-${digest.slice(8, 12)}-${digest.slice(12, 16)}-${digest.slice(16, 20)}-${digest.slice(20, 32)}`;
+    await this.prisma.buyer_delivery_issues.createMany({
+      data: [{ id: issueId, deliveryId: delivery.id, buyerId, description: desc, photoUrls }],
+      skipDuplicates: true,
     });
+    // The review inbox is queryable even when a push/email service is unavailable.
 
     this.logger.log(
       `buyer_delivery_issue created id=${issueId} delivery=${delivery.deliveryNumber} order=${delivery.orders.orderNumber} buyer=${buyerId} photos=${photoUrls.length}`,
@@ -696,68 +628,69 @@ export class DeliveriesService {
     };
   }
 
-  private decodeBuyerIssuePhotoBase64(raw: string): Buffer {
-    const s = raw.trim();
-    let b64 = s;
-    const dataMatch = /^data:image\/(?:jpeg|jpg|png|webp);base64,(.+)$/i.exec(s);
-    if (dataMatch) {
-      b64 = dataMatch[1];
-    }
-    let buf: Buffer;
+  async linkMission(actor: string, missionId: string, orderId: string) {
+    const delivery = await linkMissionDelivery(this.prisma, actor, missionId, orderId);
+    // The durable link survives optional document generation; repeating the action repairs missing documents.
     try {
-      buf = Buffer.from(b64, 'base64');
-    } catch {
-      throw new BadRequestException('Invalid photo encoding.');
-    }
-    if (buf.length < 80) {
-      throw new BadRequestException('Invalid or empty image.');
-    }
-    const maxBytes = 1_800_000;
-    if (buf.length > maxBytes) {
-      throw new BadRequestException(`Each photo must be under ${Math.round(maxBytes / 1024)} KB.`);
-    }
-    return buf;
-  }
-
-  private async persistBuyerIssuePhotos(
-    deliveryId: string,
-    issueId: string,
-    base64Photos: string[],
-  ): Promise<string[]> {
-    const urls: string[] = [];
-    const token = (process.env.BLOB_READ_WRITE_TOKEN || '').trim();
-
-    for (let i = 0; i < base64Photos.length; i++) {
-      const buf = this.decodeBuyerIssuePhotoBase64(base64Photos[i]);
-      if (token) {
-        const { put } = await import('@vercel/blob');
-        const ext = DeliveriesService.guessBuyerIssueImageExt(buf);
-        const out = await put(`buyer-delivery-issue/${deliveryId}/${issueId}-${i}.${ext}`, buf, {
-          access: 'public',
-          token,
-        });
-        urls.push(out.url);
-      } else {
-        urls.push(`data:image/jpeg;base64,${buf.toString('base64')}`);
+      if (!await this.prisma.waybills.findUnique({ where: { deliveryId: delivery.id } })) {
+        await this.waybillsService.generateWaybill(delivery.id);
       }
-    }
-
-    return urls;
+    } catch (e) { this.logger.warn(`Linked delivery waybill pending: ${e}`); }
+    try { await this.invoicesService.generateInvoice(orderId, delivery.id); }
+    catch (e) { this.logger.warn(`Linked delivery invoice pending: ${e}`); }
+    const [waybill, invoice] = await Promise.all([
+      this.prisma.waybills.findUnique({ where: { deliveryId: delivery.id }, select: { id: true } }),
+      this.prisma.invoices.findUnique({ where: { deliveryId: delivery.id }, select: { id: true } }),
+    ]);
+    return { ...delivery, documentsReady: !!waybill && !!invoice };
   }
 
-  private static guessBuyerIssueImageExt(buf: Buffer): string {
-    if (buf.length >= 2 && buf[0] === 0xff && buf[1] === 0xd8) {
-      return 'jpg';
-    }
-    if (
-      buf.length >= 8 &&
-      buf[0] === 0x89 &&
-      buf[1] === 0x50 &&
-      buf[2] === 0x4e &&
-      buf[3] === 0x47
-    ) {
-      return 'png';
-    }
-    return 'webp';
+  async review(actor: string, kind: string, id: string, dto: ReviewDeliveryDto) {
+    const row = await reviewDelivery(this.prisma, actor, kind, id, dto);
+    try {
+      const issue = kind === 'issue' ? await this.prisma.buyer_delivery_issues.findUnique({ where: { id }, include: { deliveries: { select: { orderId: true } } } }) : null;
+      const dispute = kind === 'dispute' ? await this.prisma.disputes.findUnique({ where: { id }, include: { digital_handovers: { include: { deliveries: { select: { orderId: true, orders: { select: { buyerId: true } } } } } } } }) : null;
+      const buyerId = issue?.buyerId || dispute?.digital_handovers.deliveries.orders.buyerId;
+      const orderId = issue?.deliveries.orderId || dispute?.digital_handovers.deliveries.orderId;
+      if (buyerId) await this.notificationsService.create({ userId: buyerId, type: 'SYSTEM', title: 'Delivery report updated',
+        message: dto.action === 'RESOLVE' ? 'The decision and explanation are available on your delivery.' : 'Operations is reviewing your report.',
+        actionUrl: `/buyer-portal/orders/${orderId}` }).catch((e) => this.logger.warn(`Review notification failed: ${e}`));
+    } catch (e) { this.logger.warn(`Review notification pending: ${e}`); }
+    return row;
+  }
+
+  async getLinkOptions() {
+    const [missions, orders, pendingDocuments] = await Promise.all([
+      this.prisma.missions.findMany({ where: { logisticsPartnerId: { not: null }, delivery: null,
+        status: { in: ['ASSIGNED', 'ACCEPTED', 'IN_PROGRESS', 'READY_FOR_LOADING', 'PICKED_UP', 'IN_TRANSIT'] } }, take: 200, orderBy: { createdAt: 'desc' },
+        select: { id: true, missionNumber: true, growerId: true, orderId: true, status: true, pickupAddress: true,
+          batches: { select: { batchId: true, productName: true } } } }),
+      this.prisma.orders.findMany({ where: { status: { in: ['PAID', 'CONFIRMED', 'PICKED_UP', 'IN_TRANSIT'] }, payments: { status: 'IN_ESCROW' } },
+        take: 200, orderBy: { createdAt: 'desc' }, select: { id: true, orderNumber: true, productName: true, quantity: true, unit: true,
+          estates: { select: { ownerId: true, name: true } }, fulfilling_estate: { select: { ownerId: true, name: true } } } }),
+      this.prisma.deliveries.findMany({ where: { missionId: { not: null }, OR: [{ waybills: null }, { invoices: null }] },
+        take: 200, orderBy: { createdAt: 'desc' }, select: { id: true, missionId: true, orderId: true, deliveryNumber: true } }),
+    ]);
+    return { missions, orders, pendingDocuments };
+  }
+
+  async getDeliveryReviewEvidence(kind: string, id: string) {
+    const row = kind === 'issue'
+      ? await this.prisma.buyer_delivery_issues.findUnique({ where: { id }, select: { id: true, description: true, photoUrls: true, createdAt: true, status: true, resolution: true, outcome: true, resolvedAt: true, resolvedBy: true, revision: true } })
+      : kind === 'dispute' ? await this.prisma.disputes.findUnique({ where: { id }, select: { id: true, reason: true, evidencePhotos: true, status: true, createdAt: true, resolution: true, outcome: true, resolvedAt: true, resolvedBy: true, revision: true } }) : null;
+    if (!row) throw new NotFoundException('Delivery report not found');
+    return row;
+  }
+
+  async getDeliveryReviewInbox() {
+    const [issues, disputes] = await Promise.all([
+      this.prisma.buyer_delivery_issues.findMany({ orderBy: { createdAt: 'desc' }, take: 100,
+        select: { id: true, description: true, createdAt: true, deliveryId: true, status: true, resolution: true, outcome: true, resolvedAt: true, resolvedBy: true, revision: true,
+          deliveries: { select: { deliveryNumber: true, orderId: true } } } }),
+      this.prisma.disputes.findMany({ orderBy: { createdAt: 'desc' }, take: 100,
+        select: { id: true, reason: true, status: true, createdAt: true, resolution: true, outcome: true, resolvedAt: true, resolvedBy: true, revision: true,
+          digital_handovers: { select: { deliveryId: true, deliveries: { select: { deliveryNumber: true, orderId: true } } } } } }),
+    ]);
+    return { issues, disputes };
   }
 }

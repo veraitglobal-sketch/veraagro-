@@ -37,6 +37,11 @@ export class HarvestAnnouncementsController {
   /**
    * Get grower's announcements (scoped by parcel → estate ownership, same as HarvestAnnouncementsService.getFarmerAnnouncements).
    */
+  @Post(':id/retry-transport')
+  async retryTransport(@Request() req, @Param('id') id: string) {
+    return this.announcementsService.retryTransport(req.user.id, id);
+  }
+
   @Get('my-announcements')
   async getMyAnnouncements(@Request() req) {
     return this.announcementsService.getFarmerAnnouncements(req.user.id);

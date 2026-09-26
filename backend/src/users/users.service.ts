@@ -98,6 +98,31 @@ export class UsersService {
     return user;
   }
 
+  /** ADMIN may manage ordinary accounts, but cannot grant or modify SUPER_ADMIN. */
+  async assertCanManageUser(
+    actorRoles: UserRole[],
+    requestedRoles?: UserRole[],
+    targetUserId?: string,
+  ) {
+    if (actorRoles.includes(UserRole.SUPER_ADMIN)) return;
+    if (!actorRoles.includes(UserRole.ADMIN)) {
+      throw new ForbiddenException('Administrator access required');
+    }
+    if (requestedRoles?.includes(UserRole.SUPER_ADMIN)) {
+      throw new ForbiddenException('Only a super admin can grant the super admin role');
+    }
+    if (targetUserId) {
+      const target = await this.prisma.users.findUnique({
+        where: { id: targetUserId },
+        select: { roles: true },
+      });
+      if (!target) throw new NotFoundException('User not found');
+      if (target.roles.includes(UserRole.SUPER_ADMIN)) {
+        throw new ForbiddenException('Only a super admin can modify a super admin account');
+      }
+    }
+  }
+
   async create(data: {
     partnerCode: string;
     email?: string;
@@ -421,7 +446,7 @@ export class UsersService {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
     let temporaryPassword = '';
     for (let i = 0; i < 12; i++) {
-      temporaryPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+      temporaryPassword += chars.charAt(crypto.randomInt(chars.length));
     }
     const passwordHash = await bcrypt.hash(temporaryPassword, 10);
     await this.prisma.users.update({

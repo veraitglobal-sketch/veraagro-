@@ -52,6 +52,7 @@ export class HarvestAnnouncementsService {
 
   private buildSafeHarvestCreateResponse(announcement: {
     id: string;
+    sourcePlantingId?: string | null;
     parcelId: string;
     userId: string;
     announcementType: string;
@@ -115,6 +116,7 @@ export class HarvestAnnouncementsService {
 
     return {
       id: announcement.id,
+      sourcePlantingId: announcement.sourcePlantingId ?? null,
       parcelId: announcement.parcelId,
       userId: announcement.userId,
       announcementType: announcement.announcementType,
@@ -190,6 +192,16 @@ export class HarvestAnnouncementsService {
     }
     if (!dto.cropType?.trim()) {
       throw new BadRequestException('Crop / product type is required.');
+    }
+
+    if (dto.sourcePlantingId) {
+      const planting = await this.prisma.harvest_announcements.findFirst({
+        where: { id: dto.sourcePlantingId, userId, parcelId: dto.parcelId,
+          announcementType: 'PLANTING', status: { notIn: ['CANCELLED', 'REJECTED'] } },
+      });
+      if (dto.announcementType !== 'HARVEST' || !planting) {
+        throw new BadRequestException('Selected planting must belong to this grower and parcel.');
+      }
     }
 
     const normalizedEstimatedQty =
@@ -285,6 +297,7 @@ export class HarvestAnnouncementsService {
           id: crypto.randomUUID(),
           parcelId: dto.parcelId,
           userId,
+          sourcePlantingId: dto.sourcePlantingId || null,
           announcementType: dto.announcementType,
           cropType: dto.cropType.trim(),
           estimatedDate: harvestDate,
@@ -350,10 +363,11 @@ export class HarvestAnnouncementsService {
       console.error('Error notifying admins:', err);
     });
 
+    let transportMission: { id: string; missionNumber: string; status: string } | null = null;
     // 5. HARVEST plan → open a logistics mission (tura) so partners see pickup in missions list
     if (dto.announcementType === 'HARVEST') {
       try {
-        await this.missionsService.createMissionFromHarvestAnnouncement(announcement.id, userId);
+        transportMission = await this.missionsService.createMissionFromHarvestAnnouncement(announcement.id, userId);
       } catch (err) {
         this.logger.error(
           `Could not create logistics mission for harvest announcement ${announcement.id}`,
@@ -363,7 +377,10 @@ export class HarvestAnnouncementsService {
     }
 
     try {
-      return this.buildSafeHarvestCreateResponse(announcement);
+      return { ...this.buildSafeHarvestCreateResponse(announcement),
+        mission: transportMission ? { id: transportMission.id, missionNumber: transportMission.missionNumber, status: transportMission.status } : null,
+        transportStatus: dto.announcementType === 'HARVEST' ? (transportMission ? 'CREATED' : 'RETRY_REQUIRED') : null,
+      };
     } catch (serializeErr) {
       this.logger.error(
         `harvest create: response serialization failed for ${announcement.id}: ${
@@ -377,9 +394,15 @@ export class HarvestAnnouncementsService {
         userId: announcement.userId,
         announcementType: announcement.announcementType,
         status: announcement.status,
-        mission: null as null,
+        mission: transportMission ? { id: transportMission.id, missionNumber: transportMission.missionNumber, status: transportMission.status } : null,
+        transportStatus: dto.announcementType === 'HARVEST' ? (transportMission ? 'CREATED' : 'RETRY_REQUIRED') : null,
       };
     }
+  }
+
+  async retryTransport(userId: string, announcementId: string) {
+    const mission = await this.missionsService.createMissionFromHarvestAnnouncement(announcementId, userId);
+    return { id: mission.id, missionNumber: mission.missionNumber, status: mission.status };
   }
 
   /**
@@ -399,6 +422,8 @@ export class HarvestAnnouncementsService {
         },
       },
       include: {
+        mission: { select: { id: true, missionNumber: true, status: true, batchId: true } },
+        batches: { where: { harvestedByUserId: userId }, select: { id: true, batchId: true, status: true }, orderBy: { createdAt: 'desc' } },
         parcel: {
           include: {
             estates: true,
@@ -462,7 +487,7 @@ export class HarvestAnnouncementsService {
           this.logger.warn(`computePlantingProgress failed for plan ${a.id}: ${msg}`);
         }
       }
-      return { ...a, plantingProgress };
+      return { ...a, plantingProgress, transportStatus: a.announcementType === 'HARVEST' ? (a.mission ? 'CREATED' : 'RETRY_REQUIRED') : null };
     });
   }
 
@@ -477,6 +502,8 @@ export class HarvestAnnouncementsService {
     return this.prisma.harvest_announcements.findMany({
       where: filters || {},
       include: {
+        mission: { select: { id: true, missionNumber: true, status: true } },
+        batches: { select: { id: true, batchId: true, status: true } },
         parcel: {
           include: {
             estates: {
@@ -540,6 +567,9 @@ export class HarvestAnnouncementsService {
       throw new BadRequestException('Cannot delete: a transport mission is linked to this plan.');
     }
 
+    if (await this.prisma.harvest_announcements.count({ where: { sourcePlantingId: announcementId } })) {
+      throw new BadRequestException('Cannot delete a planting with linked harvests; its history must remain available.');
+    }
     await this.prisma.harvest_announcements.delete({ where: { id: announcementId } });
 
     try {

@@ -1,105 +1,53 @@
-# Prisma migracije (squash baseline)
+# Prisma migracije i podizanje prazne baze
 
-Stari niz od ~14 migracija imao je pogrešan leksikografski red (npr. `init` nakon tabela koje zavise od baze) i davao duple FK / nedostajuće tabele. Sada u `prisma/migrations` postoji **jedna** migracija generisana iz `schema.prisma`:
+## Zašto postoji poseban početni snapshot
 
-- `20260426200000_squash_baseline/`
+Istorija trenutno sadrži 35 migracija. Neke migracije menjaju tabele pre nego što ih kasniji `20260426200000_squash_baseline` kreira. Zbog toga direktan `prisma migrate deploy` na praznoj bazi pada sa P3018 / 42P01. Postojeći SQL fajlovi i njihova imena nisu menjani.
 
-Kreirana je komandom:  
-`npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script`
+Za novu bazu koristi se zamrznuti snapshot `prisma/bootstrap/20260926.sql`. Manifest čuva SHA-256 snapshot-a i svih istorijskih migracija koje snapshot obuhvata. Snapshot je generisan iz trenutnog schema.prisma, a slaganje se proverava na stvarnom PostgreSQL-u.
 
-## Nova / prazna baza
+## Pokretanje
 
-```bash
-cd backend
-unset DATABASE_URL
-npx prisma migrate deploy
+Podesi DATABASE_URL za nameravano okruženje. Eksplicitna promenljiva ima prednost nad backend/.env.
+
+```sh
+npm run prisma:deploy
 ```
 
-(Prisma učitava `backend/.env` — koristi **javni** `DATABASE_URL` sa Railway-ja, ne `*.railway.internal`.)
+- Ako je ciljna šema prazna, wrapper u jednoj transakciji kreira šemu iz snapshot-a i upisuje odgovarajuću početnu evidenciju migracija. Advisory lock sprečava istovremenu inicijalizaciju iste šeme.
+- Ako šema već sadrži tabele, sekvence, poglede, funkcije, enum ili domain tipove, početna inicijalizacija se preskače. Podaci i postojeća evidencija se ne prepisuju.
+- Zatim standardni Prisma migrate deploy primenjuje eventualne nove migracije. Njegove greške prekidaju komandu.
 
-## Lokalni dev sa starom bazom (pre squash-a u git-u)
+`npm run db:init-empty` izvršava samo početnu inicijalizaciju i odbija nepraznu šemu. Ne služi za popravku postojećih baza.
 
-Ako lokalno imaš `_prisma_migrations` sa starih imena, a povukao si novi kod sa jednom migracijom, Prisma će se žaliti da zapis u bazi nema odgovarajući folder. Najčišće:
+Produkcioni start u main.ts koristi isti wrapper; start:release pokreće Nest, bez duplog poziva migracija. Postojeća pravila prekidanja starta pri neuspehu migracija ostaju na snazi.
 
-- **Izbriši lokalne podatke** (samo dev): `npx prisma migrate reset`  
-  ili
-- Tretiraj kao **proizvodnju** (vidi ispod): jednokratni baseline.
+## Postojeća baza sa neuspelom ili nepotpunom istorijom
 
-## Produkcija (Railway) — OBAVEZNO pre prvog deploy-a ovog commita
+Wrapper ne popravlja prethodno neuspele migracije niti drift postojeće šeme. Ako je raniji neuspeh već napravio `_prisma_migrations`, baza više nije prazna i automatska inicijalizacija se neće izvršiti. Pregledati stvarnu šemu i migracionu evidenciju na tačno određenom okruženju pre odabira ciljane popravke.
 
-Ako baza **već** odgovara trenutnom `prisma/schema.prisma` (što jesu postojeći Railway uobičajeno), ne sme se pokrenuti `migrate deploy` koji bi izvršio ceo `20260426200000` SQL na punoj bazi (duplirani tipovi/tabanje). Umjesto toga, samo ažuriraj istoriju Prisme:
+Ne brisati evidenciju migracija radi prividnog uspeha deploy-a. Stare repair/truncate skripte u repozitorijumu nisu deo ovog postupka. Produkciona baza nije pregledana niti menjana tokom lokalnog testiranja 26.09.2026.
 
-1. **Backup** baze (Railway snapshot / `pg_dump`).
-2. Poveži se (npr. `railway link` → backend servis u istom projektu kao Postgres).
-3. **Ne koristi** `psql "$DATABASE_URL"` lokalno — `$` se zameni ispred `railway run` i može pogađati pogrešnu bazu. Umjesto toga, iz `backend` foldera:
+## Buduće izmene šeme
 
-   ```bash
-   railway run npx prisma db execute --schema prisma/schema.prisma --file scripts/truncate-prisma-migrations.sql
-   ```
+Dodavati nove imenovane migracije posle postojećih. Ne prepisivati zamrznuti snapshot, manifest ili istorijske migracije prilikom uobičajenih izmena. Nova baza dobija snapshot pa nove migracije; postojeća baza dobija samo migracije koje joj nedostaju.
 
-   (Ako pita servis, izaberi onaj gde stoji `DATABASE_URL` ka ovoj bazi, obično **backend**.)  
-   (Alternativa) `railway run sh -c 'psql "$DATABASE_URL" -c "TRUNCATE TABLE \"_prisma_migrations\";"'` — samo u **jednostrukim** navodnicima oko `sh -c` da se `$DATABASE_URL` **ne** zameni lokalno.
+## Automatske provere
 
-4. Oznaka da je squash već "primijenjen" (bez SQL izvršavanja), preko **istog** Railway okruženja:
+```sh
+npm run test:migrations
+npm run test:integration
+```
 
-   ```bash
-   cd backend
-   railway run npx prisma migrate resolve --applied 20260426200000_squash_baseline
-   ```
+Runner pravi privremeni PostgreSQL klaster, eksplicitno zamenjuje DATABASE_URL, pokreće isti deployment wrapper i proverava odsustvo razlike u odnosu na schema.prisma. Nakon provera zaustavlja i uklanja klaster. Potrebni su PostgreSQL binarni alati (`pg_config --bindir`, ili PG_BIN).
 
-5. Provjera:
+Testovi proveravaju tačne checksum vrednosti i završene migracije, odbijanje ponovne inicijalizacije uz očuvanje podataka i istorije, istovremenu inicijalizaciju i primenu nove migracije dodate posle snapshot-a. Integraciona komanda uključuje ove provere i poslovne HTTP testove; nema db push zaobilaženja migracija.
 
-   ```bash
-   railway run npx prisma migrate status
-   ```
 
-   Ako lokalni `backend/.env` meša, pre `railway run` uradi `unset DATABASE_URL`.
+## Veza lota sa planom berbe — 26.09.2026.
 
-   Očekivano: baza u skladu s migracijama; nema pending migracija.
+Migracija `20260926120000_link_batch_harvest_plan` dodaje opcioni strani ključ `batches.harvestAnnouncementId` i indeks. Istorijski lotovi ostaju `NULL`; nema automatskog pogađanja plana niti prepisivanja postojećih podataka. Brisanje povezanog plana je ograničeno stranim ključem. Migracija mora prethoditi novom backendu. `npm run test:harvest` proverava taj tok sa stvarnim HTTP zahtevima i privremenom PostgreSQL bazom; produkcija nije menjana.
 
-6. Tek onda **deploy** backenda (Railway pokreće `prisma migrate deploy` — biće no-op). Ako preskočiš ovo i deploy pokuša da izvrši ceo squash na punoj bazi, migracija će puknu — backend sada u produkciji **izlazi s kodom 1** ako `migrate deploy` ne uspije (ne radi „nastavi uprkos“).
+## Veza berbe sa zasadom — 26.09.2026.
 
-Ako baza i shema nisu u skladu, prvo uskladi: `prisma db pull` / ručni SQL / podrška, pa onda gornje korake.
-
-### Ako nakon `resolve --applied` vidiš P3009 / failed `20260210...` i greške u logu: `column ... buyerCompanyProfile does not exist`
-
-Baza nije bila ažurirana stvarnim SQL-om; zapis o squashu je samo u `_prisma_migrations`. Onda:
-
-1. Ako nisi već, **backup** baze.
-2. Iz `backend` (npr. `unset DATABASE_URL` pa):
-
-   ```bash
-   railway run npx prisma db execute --schema prisma/schema.prisma --file scripts/railway-baseline-cleanup.sql
-   railway run npx prisma migrate resolve --applied 20260426200000_squash_baseline
-   railway run npx prisma migrate status
-   ```
-
-   Skripta: `TRUNCATE "_prisma_migrations"` (čisti P3009) + `ADD COLUMN` za `users.buyerCompanyProfile` (što trenutna produkcijska baza fali).
-
-3. `railway run npx prisma migrate deploy` — obično no-op.
-
-Stari `vera_insights_*_fkey` „already exists” u logu obično je posledica pokušaja da se ponove parcijalne migracije; posle ujednačenja gornjim koracima to prestaje. Greške `orders ... PRE-ORDER` / `estates` su poslovno (env / seed estate), nisu Prisma migracija.
-
-## Stare migracije u git istoriji
-
-Prethodni folderi su uklonjeni iz trenutnog stabla; vidi `git log -- backend/prisma/migrations` da pronađeš commit prije squash-a.
-
-## `migrate deploy` kaže „No pending“, ali mobilna app i dalje puca
-
-1. **Provjeri stvarnu šemu** (ne samo `migrate status`):
-
-   ```bash
-   cd backend
-   npm run db:verify-mobile
-   ```
-
-2. **Dupli redovi u `_prisma_migrations`** (jedan `finished_at` OK, jedan `rolled_back_at` / `finished_at` NULL) — deploy misli da je sve primijenjeno, ali Prisma/P3009 i logovi pokazuju failed migracije. Kolone često **postoje** (ručni SQL / repair). Očisti duplikate:
-
-   ```bash
-   npx prisma db execute --schema prisma/schema.prisma --file scripts/repair-prisma-migration-zombies.sql
-   npm run db:verify-mobile
-   ```
-
-3. **Isti `DATABASE_URL`** mora biti na Railway backend servisu, lokalnom `backend/.env` i u `psql` — inače „popravljaš“ pogrešnu bazu.
-
-4. API više **ne startuje** ako `migrate deploy` padne (osim `ALLOW_START_WITHOUT_MIGRATE=true` za hitan lokalni debug).
+Migracija `20260926234500_link_harvest_planting` dodaje opcioni `harvest_announcements.sourcePlantingId`, indeks i strani ključ ka izvornom zasadu. Istorijski podaci ostaju `NULL`; nema pogađanja zasada. Brisanje zasada sa povezanim berbama je ograničeno. Migracija mora prethoditi novom backendu. Proverena je na izdvojenoj PostgreSQL bazi zajedno sa HTTP tokom zasad → berba → lot i proverom odsustva razlike u šemi. Produkcija nije menjana.

@@ -41,7 +41,7 @@ export class DigitalHandoverController {
    * Get handover by ID
    */
   @Get(':id')
-  async getHandover(@Param('id') id: string) {
-    return this.handoverService.getHandover(id);
+  async getHandover(@Param('id') id: string, @GetUser() user: any) {
+    return this.handoverService.getHandover(id, user.id, user.roles ?? []);
   }
 }

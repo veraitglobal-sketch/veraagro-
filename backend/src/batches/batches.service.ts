@@ -33,12 +33,26 @@ export class BatchesService {
   async createBatch(data: {
     estateId: string;
     parcelId?: string;
+    harvestAnnouncementId?: string;
     harvestedByUserId: string;
     productName: string;
     quantity: number;
     unit: string;
     harvestDate: Date;
   }) {
+    const estate = await this.prisma.estates.findFirst({
+      where: { id: data.estateId, ownerId: data.harvestedByUserId },
+    });
+    if (!estate) throw new ForbiddenException('Estate not found or access denied');
+    if (data.harvestAnnouncementId) {
+      const plan = await this.prisma.harvest_announcements.findFirst({
+        where: { id: data.harvestAnnouncementId, userId: data.harvestedByUserId,
+          announcementType: 'HARVEST', parcelId: data.parcelId || '' },
+      });
+      if (!plan || plan.status === 'CANCELLED') {
+        throw new BadRequestException('Harvest plan must belong to you and the selected parcel, and must not be cancelled.');
+      }
+    }
     if (data.parcelId) {
       const parcel = await this.prisma.parcels.findFirst({
         where: { id: data.parcelId, estateId: data.estateId },
@@ -81,6 +95,7 @@ export class BatchesService {
         batchId,
         estateId: data.estateId,
         parcelId: data.parcelId,
+        harvestAnnouncementId: data.harvestAnnouncementId || null,
         harvestedByUserId: data.harvestedByUserId,
         productName: data.productName,
         quantity: data.quantity,
@@ -354,6 +369,23 @@ export class BatchesService {
   /**
    * Get batch traceability (one-click view)
    */
+  /** Private workflow context: never expose plan/mission metadata on the public QR endpoint. */
+  async getBatchWorkflow(userId: string, batchRef: string) {
+    const batch = await this.prisma.batches.findFirst({
+      where: { OR: [{ id: batchRef }, { batchId: batchRef }], harvestedByUserId: userId },
+      include: {
+        harvest_announcement: { select: { id: true, parcelId: true, sourcePlantingId: true, cropType: true, estimatedDate: true, status: true,
+          mission: { select: { id: true, missionNumber: true, status: true, batchId: true } } } },
+        missions: { orderBy: { createdAt: 'desc' }, take: 1,
+          select: { id: true, missionNumber: true, status: true, batchId: true } },
+      },
+    });
+    if (!batch) throw new NotFoundException('Batch not found or access denied');
+    const { mission: plannedMission, ...plan } = batch.harvest_announcement || { mission: null };
+    return { harvestPlan: batch.harvest_announcement ? plan : null,
+      mission: batch.missions[0] || plannedMission || null };
+  }
+
   async getBatchTraceability(batchId: string) {
     const batch = await this.prisma.batches.findFirst({
       where: { OR: [{ id: batchId }, { batchId: batchId }] },
@@ -380,7 +412,18 @@ export class BatchesService {
       throw new NotFoundException('Batch not found');
     }
 
-    const displayStatus = await this.syncBatchStatusIfMissionCompleted(batch);
+    const [displayStatus, packingRecord] = await Promise.all([
+      this.syncBatchStatusIfMissionCompleted(batch),
+      this.prisma.audit_trails.findFirst({
+        where: {
+          batchId: batch.id,
+          eventType: 'QUALITY_CHECK',
+          newValue: { path: ['source'], equals: 'mobile_packing_flow' },
+        },
+        orderBy: { timestamp: 'desc' },
+        select: { timestamp: true },
+      }),
+    ]);
 
     const formatUserDisplay = (u: { id: string; firstName?: string | null; lastName?: string | null } | null | undefined) => {
       if (!u) return null;
@@ -397,6 +440,7 @@ export class BatchesService {
 
     return {
       batch: {
+        id: batch.id,
         batchId: batch.batchId,
         productName: batch.productName,
         quantity: batch.quantity,
@@ -405,6 +449,7 @@ export class BatchesService {
         status: displayStatus,
       },
       traceability: {
+        packing: packingRecord ? { completedAt: packingRecord.timestamp } : null,
         origin: {
           estate: estate
             ? {

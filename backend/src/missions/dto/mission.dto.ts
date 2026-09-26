@@ -56,7 +56,7 @@ export class CreateMissionDto {
   @MaxLength(2000)
   loadInstructions?: string;
 
-  /** Optional: link to grower harvest plan row (berba) — usually auto-set from batch parcel */
+  /** Optional explicit harvest plan (berba); a lot's persisted plan takes precedence and must match */
   @IsOptional()
   @IsString()
   @MaxLength(64)

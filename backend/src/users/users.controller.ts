@@ -80,7 +80,7 @@ export class UsersController {
   @Post('admin')
   @UseGuards(RolesGuard)
   @Roles('SUPER_ADMIN', 'ADMIN')
-  async createUser(@Body() body: {
+  async createUser(@Request() req: any, @Body() body: {
     partnerCode: string;
     email?: string;
     phone?: string;
@@ -93,6 +93,10 @@ export class UsersController {
     autoGeneratePassword?: boolean; // If true, generate password automatically
     sendEmail?: boolean; // If true, send welcome email
   }) {
+    await this.usersService.assertCanManageUser(
+      req.user.roles,
+      body.roles || (body.role ? [body.role] : undefined),
+    );
     // Generate password if not provided or if autoGeneratePassword is true
     let password = body.password;
     let generatedPassword = false;
@@ -102,7 +106,7 @@ export class UsersController {
       const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
       password = '';
       for (let i = 0; i < 12; i++) {
-        password += chars.charAt(Math.floor(Math.random() * chars.length));
+        password += chars.charAt(crypto.randomInt(chars.length));
       }
       generatedPassword = true;
     }
@@ -154,6 +158,7 @@ export class UsersController {
   @UseGuards(RolesGuard)
   @Roles('SUPER_ADMIN', 'ADMIN')
   async updateUser(
+    @Request() req: any,
     @Param('id') id: string,
     @Body() body: {
       email?: string;
@@ -174,6 +179,7 @@ export class UsersController {
       } | null;
     },
   ) {
+    await this.usersService.assertCanManageUser(req.user.roles, body.roles, id);
     return this.usersService.update(id, body);
   }
 

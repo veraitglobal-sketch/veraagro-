@@ -36,7 +36,6 @@ export class RolesGuard implements CanActivate {
     const roleMapping: Record<string, string> = {
       'FARMER': 'GROWER',
       'PARTNER': 'LOGISTICS_PARTNER',
-      'ADMIN': 'SUPER_ADMIN',
       'DRIVER': 'LOGISTICS_PARTNER',
     };
 

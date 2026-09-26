@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private configService: ConfigService) {
+  constructor(private configService: ConfigService, private prisma: PrismaService) {
     const secret = configService.get<string>('JWT_SECRET');
     if (!secret) {
       throw new Error(
@@ -21,11 +22,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    return { 
-      id: payload.sub, 
-      partnerCode: payload.partnerCode,
-      roles: payload.roles || (payload.role ? [payload.role] : []), // Support both formats
-      role: payload.role, // Backward compatibility
+    if (typeof payload?.sub !== 'string' || !payload.sub.trim()) {
+      throw new UnauthorizedException('Invalid session');
+    }
+    const user = await this.prisma.users.findUnique({
+      where: { id: payload.sub },
+      select: { id: true, partnerCode: true, roles: true, status: true },
+    });
+    if (!user || user.status !== 'ACTIVE') {
+      throw new UnauthorizedException('Account is not active');
+    }
+    // Authorize against current database roles, never stale claims in a token.
+    return {
+      id: user.id,
+      partnerCode: user.partnerCode,
+      roles: user.roles,
+      role: user.roles[0], // Backward compatibility
     };
   }
 }

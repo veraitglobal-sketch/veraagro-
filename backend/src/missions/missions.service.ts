@@ -1,3 +1,4 @@
+import { syncMissionDelivery } from '../deliveries/mission-delivery';
 import {
   Injectable,
   NotFoundException,
@@ -9,7 +10,7 @@ import {
   forwardRef,
   Logger,
 } from '@nestjs/common';
-import { OrderStatus, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CreateMissionDto,
@@ -24,6 +25,7 @@ import * as crypto from 'crypto';
 import { AuditTrailService } from '../audit-trail/audit-trail.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
 import { NotificationsService } from '../notifications/notifications.service';
+import { saveWorkflowMission } from './save-workflow-mission';
 import { BatchesService } from '../batches/batches.service';
 
 @Injectable()
@@ -307,99 +309,33 @@ export class MissionsService {
     return process.env.MISSIONS_REQUIRE_CONFIRMED_HARVEST_PLAN === 'true';
   }
 
-  /**
-   * Resolves which harvest_announcement to attach (1:1 with mission when set). Second transport for same
-   * plan leaves link null so the unique constraint is not violated.
-   */
+  /** Use the lot's persisted plan, never guess from the latest plan on its parcel. */
   private async resolveHarvestAnnouncementIdForCreate(
     growerId: string,
-    batch: { id: string; parcelId: string | null } | null,
+    batch: { id: string; parcelId: string | null; harvestAnnouncementId?: string | null } | null,
     dto: CreateMissionDto,
   ): Promise<string | null> {
-    try {
-      return await this.resolveHarvestAnnouncementIdForCreateInner(growerId, batch, dto);
-    } catch (e: unknown) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      if (!MissionsService.isHarvestAnnouncementsSchemaError(e)) {
-        throw e;
-      }
-      const explicit = dto.harvestAnnouncementId?.trim();
-      if (explicit || this.requireConfirmedHarvestPlan()) {
-        throw MissionsService.harvestSchemaUnavailableException(e);
-      }
-      this.logger.warn(
-        'harvest_announcements unavailable (schema drift); transport will be created without harvest plan link',
-      );
-      return null;
+    const explicit = dto.harvestAnnouncementId?.trim();
+    if (batch?.harvestAnnouncementId && explicit && explicit !== batch.harvestAnnouncementId) {
+      throw new BadRequestException('Harvest plan does not match the plan saved on this lot.');
     }
-  }
-
-  private async resolveHarvestAnnouncementIdForCreateInner(
-    growerId: string,
-    batch: { id: string; parcelId: string | null } | null,
-    dto: CreateMissionDto,
-  ): Promise<string | null> {
-    if (dto.harvestAnnouncementId?.trim()) {
-      const id = dto.harvestAnnouncementId.trim();
-      const ann = await this.prisma.harvest_announcements.findFirst({
-        where: { id, userId: growerId },
-        include: { parcel: { select: { estateId: true } } },
-      });
-      if (!ann) {
-        throw new BadRequestException('Invalid harvest plan id (not found or not yours).');
-      }
-      if (batch?.parcelId && ann.parcelId !== batch.parcelId) {
-        throw new BadRequestException('Harvest plan does not match the selected batch parcel.');
-      }
-      if (this.requireConfirmedHarvestPlan() && ann.status !== 'CONFIRMED') {
-        throw new BadRequestException(
-          'Operations must confirm the harvest plan first (admin: Harvest plans → status CONFIRMED) before transport.',
-        );
-      }
-      const taken = await this.prisma.missions.findFirst({ where: { harvestAnnouncementId: id } });
-      if (taken) {
-        return null;
-      }
-      return id;
-    }
-
-    if (!batch?.parcelId) {
-      if (this.requireConfirmedHarvestPlan()) {
-        this.logger.warn(
-          `missions: batch ${batch?.id} has no parcelId; cannot require CONFIRMED harvest (MISSIONS_REQUIRE_CONFIRMED_HARVEST_PLAN)`,
-        );
+    const id = batch?.harvestAnnouncementId || explicit;
+    if (!id) {
+      if (batch?.parcelId && this.requireConfirmedHarvestPlan()) {
+        throw new BadRequestException('This lot needs an explicitly linked, confirmed harvest plan before transport. Contact operations.');
       }
       return null;
     }
-
     const plan = await this.prisma.harvest_announcements.findFirst({
-      where: {
-        parcelId: batch.parcelId,
-        userId: growerId,
-        announcementType: 'HARVEST',
-        status: 'CONFIRMED',
-      },
-      orderBy: { createdAt: 'desc' },
+      where: { id, userId: growerId, announcementType: 'HARVEST' },
     });
-
-    if (!plan) {
-      if (this.requireConfirmedHarvestPlan()) {
-        throw new BadRequestException(
-          'Transport is only available after operations confirms your harvest plan. ' +
-            'Submit your harvest plan in the app, then wait for confirmation — or ask your contact at Vera. ' +
-            'Admin: Harvest plans → Confirm.',
-        );
-      }
-      return null;
+    if (!plan || (batch && plan.parcelId !== batch.parcelId) || plan.status === 'CANCELLED') {
+      throw new BadRequestException('Harvest plan is unavailable or does not match this lot.');
     }
-
-    const already = await this.prisma.missions.findFirst({ where: { harvestAnnouncementId: plan.id } });
-    if (already) {
-      return null;
+    if (this.requireConfirmedHarvestPlan() && plan.status !== 'CONFIRMED') {
+      throw new BadRequestException('Operations must confirm this harvest plan before transport.');
     }
-    return plan.id;
+    return id;
   }
 
   /** DB uses FARMER (default) and/or GROWER; both may create transport missions. */
@@ -505,41 +441,35 @@ export class MissionsService {
 
       const linkedHarvestId = await this.resolveHarvestAnnouncementIdForCreate(
         growerId,
-        batch ? { id: batch.id, parcelId: batch.parcelId } : null,
+        batch ? { id: batch.id, parcelId: batch.parcelId, harvestAnnouncementId: batch.harvestAnnouncementId } : null,
         dto,
       );
       const missionNumber = await this.generateMissionNumber();
-      mission = await this.prisma.missions.create({
-        data: {
-          id: crypto.randomUUID(),
-          missionNumber,
-          growerId,
-          batchId: batch?.id ?? null,
-          harvestAnnouncementId: linkedHarvestId,
-          pickupLocation: pickupLocation as any,
-          pickupAddress: (dto.pickupAddress || '').trim() || '—',
-          destinationAddress: dto.destinationAddress?.trim() || null,
-          destinationCity: dto.destinationCity?.trim() || null,
-          loadInstructions: dto.loadInstructions?.trim() || null,
-          optimalRoute: routeWithDest,
-          estimatedPickupTime: MissionsService.toSafeDateTime(routeCalc.estimatedArrival),
-          status: needsApproval
-            ? 'AWAITING_APPROVAL'
-            : logisticsPartner
-              ? 'ASSIGNED'
-              : 'PENDING',
-          assignedAt: !needsApproval && logisticsPartner ? new Date() : null,
-          logisticsPartnerId: needsApproval ? null : logisticsPartner?.id ?? null,
-          vehicleId: needsApproval ? null : logisticsPartner?.vehicleId ?? null,
-          updatedAt: new Date(),
-        },
-        include: {
-          users_missions_growerIdTousers: true,
-          users_missions_logisticsPartnerIdTousers: true,
-          vehicles: true,
-          batches: true,
-        },
+      const saved = await saveWorkflowMission(this.prisma, {
+        id: crypto.randomUUID(),
+        missionNumber,
+        growerId,
+        batchId: batch?.id ?? null,
+        harvestAnnouncementId: linkedHarvestId,
+        pickupLocation: pickupLocation as any,
+        pickupAddress: (dto.pickupAddress || '').trim() || '—',
+        destinationAddress: dto.destinationAddress?.trim() || null,
+        destinationCity: dto.destinationCity?.trim() || null,
+        loadInstructions: dto.loadInstructions?.trim() || null,
+        optimalRoute: routeWithDest,
+        estimatedPickupTime: MissionsService.toSafeDateTime(routeCalc.estimatedArrival),
+        status: needsApproval
+          ? 'AWAITING_APPROVAL'
+          : logisticsPartner
+            ? 'ASSIGNED'
+            : 'PENDING',
+        assignedAt: !needsApproval && logisticsPartner ? new Date() : null,
+        logisticsPartnerId: needsApproval ? null : logisticsPartner?.id ?? null,
+        vehicleId: needsApproval ? null : logisticsPartner?.vehicleId ?? null,
+        updatedAt: new Date(),
       });
+      mission = saved.mission;
+      if (!saved.created && !saved.attached) return MissionsService.missionCreateHttpPayload(mission as unknown as Record<string, unknown>);
     } catch (e: unknown) {
       if (e instanceof HttpException) {
         throw e;
@@ -964,20 +894,21 @@ export class MissionsService {
         include: { parcel: { include: { estates: true } } },
       });
       if (!ann) {
-        return null;
+        throw new NotFoundException('Harvest plan not found or access denied');
       }
 
       const existing = await this.prisma.missions.findFirst({
         where: { harvestAnnouncementId: announcementId },
       });
       if (existing) {
+        if (existing.growerId !== growerId) throw new ForbiddenException('Mission belongs to another grower');
         return existing;
       }
 
       const estate = ann.parcel?.estates;
       if (!estate) {
         this.logger.warn(`Harvest mission skipped: no estate on parcel for announcement ${announcementId}`);
-        return null;
+        throw new BadRequestException('Harvest parcel has no estate. Correct the parcel before retrying transport.');
       }
 
       const pickup = MissionsService.centroidFromEstatePolygon(estate.polygonCoordinates);
@@ -989,15 +920,17 @@ export class MissionsService {
         this.logger.warn(
           `Harvest mission skipped: invalid pickup centroid for estate ${estate.id} (announcement ${announcementId})`,
         );
-        return null;
+        throw new BadRequestException('The farm needs valid map coordinates before transport can be requested.');
       }
 
       const grower = await this.prisma.users.findUnique({ where: { id: growerId } });
       if (!grower || !this.isGrowerAccount(grower.roles as string[])) {
-        return null;
+        throw new ForbiddenException('Only growers can request harvest transport');
       }
 
-      const autoAssign = this.shouldAutoAssignLogistics();
+      if (ann.status === 'CANCELLED' || ann.status === 'COMPLETED') throw new BadRequestException('This harvest plan is closed.');
+      const needsApproval = this.requireAdminTransportApproval();
+      const autoAssign = !needsApproval && this.shouldAutoAssignLogistics();
       const logisticsPartner = autoAssign
         ? await this.findNearestLogisticsPartner(pickup.lat, pickup.lng)
         : null;
@@ -1028,34 +961,27 @@ export class MissionsService {
           ? `Harvest plan: ~${qtyNum.toFixed(0)} kg ${ann.cropType} (confirm dock & time with buyer/hub)`
           : `Harvest plan: ${ann.cropType} (confirm quantity and drop-off)`;
 
-      const mission = await this.prisma.missions.create({
-        data: {
-          id: crypto.randomUUID(),
-          missionNumber,
-          growerId,
-          batchId: null,
-          harvestAnnouncementId: ann.id,
-          pickupLocation: pickup as any,
-          pickupAddress,
-          destinationAddress: destAddr,
-          destinationCity: destCity,
-          loadInstructions,
-          logisticsPartnerId: logisticsPartner?.id ?? null,
-          vehicleId: logisticsPartner?.vehicleId ?? null,
-          optimalRoute: optimalRouteWithDest,
-          estimatedPickupTime,
-          status: logisticsPartner ? 'ASSIGNED' : 'PENDING',
-          assignedAt: logisticsPartner ? new Date() : null,
-          updatedAt: new Date(),
-        },
-        include: {
-          users_missions_growerIdTousers: true,
-          users_missions_logisticsPartnerIdTousers: true,
-          vehicles: true,
-          batches: true,
-          harvest_announcement: true,
-        },
+      const saved = await saveWorkflowMission(this.prisma, {
+        id: crypto.randomUUID(),
+        missionNumber,
+        growerId,
+        batchId: null,
+        harvestAnnouncementId: ann.id,
+        pickupLocation: pickup as any,
+        pickupAddress,
+        destinationAddress: destAddr,
+        destinationCity: destCity,
+        loadInstructions,
+        logisticsPartnerId: logisticsPartner?.id ?? null,
+        vehicleId: logisticsPartner?.vehicleId ?? null,
+        optimalRoute: optimalRouteWithDest,
+        estimatedPickupTime,
+        status: needsApproval ? 'AWAITING_APPROVAL' : logisticsPartner ? 'ASSIGNED' : 'PENDING',
+        assignedAt: logisticsPartner ? new Date() : null,
+        updatedAt: new Date(),
       });
+      const mission = saved.mission;
+      if (!saved.created) return mission;
 
       try {
         await this.auditTrailService.createAuditTrail({
@@ -1084,7 +1010,7 @@ export class MissionsService {
         this.logger.warn(`notifyMissionUpdate failed: ${(error as Error).message}`);
       }
 
-      if (mission.status === 'PENDING' && !mission.logisticsPartnerId) {
+      if (mission.status === 'AWAITING_APPROVAL' || (mission.status === 'PENDING' && !mission.logisticsPartnerId)) {
         try {
           const g = mission.users_missions_growerIdTousers;
           const growerLabel = g
@@ -1111,7 +1037,7 @@ export class MissionsService {
         }`,
         e instanceof Error ? e.stack : undefined,
       );
-      return null;
+      throw e;
     }
   }
 
@@ -1225,115 +1151,6 @@ export class MissionsService {
   }
 
   /**
-   * When a mission is tied to a buyer order (`missions.orderId`), advance the buyer-facing
-   * order status alongside logistics lifecycle so the portal order timeline stays meaningful.
-   * Best-effort: does not downgrade or touch terminal/refunded orders; syncs matching `deliveries` row if present.
-   */
-  private async syncLinkedBuyerOrderAfterMissionLifecycle(
-    orderId: string | null | undefined,
-    step: 'DEPART_FARM' | 'START_TRANSIT' | 'COMPLETE_DELIVERY',
-    at: Date,
-  ): Promise<void> {
-    if (!orderId?.trim()) {
-      return;
-    }
-    const RANK: Record<string, number> = {
-      PENDING: 10,
-      APPROVED: 20,
-      PAID: 30,
-      CONFIRMED: 40,
-      PICKED_UP: 50,
-      IN_TRANSIT: 60,
-      DELIVERED: 80,
-      COMPLETED: 90,
-      CANCELLED: -1,
-      REFUNDED: -1,
-    };
-    let desired: OrderStatus | null = null;
-    if (step === 'DEPART_FARM') {
-      desired = 'PICKED_UP';
-    } else if (step === 'START_TRANSIT' || step === 'COMPLETE_DELIVERY') {
-      desired = 'IN_TRANSIT';
-    }
-    if (!desired) {
-      return;
-    }
-
-    try {
-      const order = await this.prisma.orders.findUnique({
-        where: { id: orderId },
-        select: { id: true, buyerId: true, status: true, orderNumber: true },
-      });
-      if (!order) {
-        return;
-      }
-      const cur = String(order.status || '');
-      if (cur === 'CANCELLED' || cur === 'REFUNDED') {
-        return;
-      }
-      if (RANK[cur] >= RANK.DELIVERED || RANK[cur] < 0) {
-        return;
-      }
-      const nextRank = RANK[desired] ?? 0;
-      const curRank = RANK[cur] ?? 0;
-      if (nextRank <= curRank) {
-        // Already at least this far along (e.g. repeat calls)
-      } else {
-        await this.prisma.orders.update({
-          where: { id: order.id },
-          data: { status: desired, updatedAt: at },
-        });
-        try {
-          await this.notificationsService.create({
-            userId: order.buyerId,
-            type: 'SYSTEM',
-            title:
-              desired === 'PICKED_UP'
-                ? 'Order picked up from farm'
-                : 'Order moving toward destination',
-            message:
-              desired === 'PICKED_UP'
-                ? `${order.orderNumber}: load has departed the fulfilling farm — you will see Picked up / In transit on your order.`
-                : `${order.orderNumber}: cold-chain leg is progressing — status updated to In transit.`,
-            actionUrl: `/buyer-portal/orders`,
-          });
-        } catch (e) {
-          this.logger.warn(
-            `Buyer notification failed for mission→order sync (order=${order.orderNumber}): ${
-              e instanceof Error ? e.message : String(e)
-            }`,
-          );
-        }
-      }
-
-      const delivery = await this.prisma.deliveries.findUnique({
-        where: { orderId: order.id },
-      });
-      if (!delivery) {
-        return;
-      }
-      const dPatch: Prisma.deliveriesUpdateInput = { updatedAt: at };
-      if (step === 'DEPART_FARM') {
-        dPatch.status = 'PICKED_UP';
-        dPatch.pickedUpAt = at;
-      } else if (step === 'START_TRANSIT' || step === 'COMPLETE_DELIVERY') {
-        dPatch.status = 'IN_TRANSIT';
-        dPatch.inTransitAt = at;
-      }
-      await this.prisma.deliveries.update({
-        where: { id: delivery.id },
-        data: dPatch,
-      });
-    } catch (e) {
-      this.logger.warn(
-        `syncLinkedBuyerOrderAfterMissionLifecycle failed (orderId=${orderId}, step=${step}): ${
-          e instanceof Error ? e.message : String(e)
-        }`,
-      );
-    }
-  }
-
-  /**
    * Logistics: move mission forward after loading handover and while en route.
    * Keeps grower portal milestones (pickedUpAt, IN_TRANSIT, COMPLETED) in sync.
    */
@@ -1342,64 +1159,79 @@ export class MissionsService {
     missionId: string,
     step: 'DEPART_FARM' | 'START_TRANSIT' | 'COMPLETE_DELIVERY',
   ) {
-    const mission = await this.prisma.missions.findUnique({
-      where: { id: missionId },
-      include: { logistics_handovers: true },
+    const { updated, mission, oldStatus, changed } = await this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM missions WHERE id = ${missionId} FOR UPDATE`;
+      const mission = await tx.missions.findUnique({
+        where: { id: missionId },
+        include: { logistics_handovers: true },
+      });
+
+      if (!mission) {
+        throw new NotFoundException(`Mission with ID ${missionId} not found`);
+      }
+      if (mission.logisticsPartnerId !== logisticsPartnerId) {
+        throw new BadRequestException('Mission not assigned to this logistics partner');
+      }
+      if (mission.status === 'CANCELLED') {
+        throw new BadRequestException('This mission is cancelled');
+      }
+
+      const reached = { READY_FOR_LOADING: 0, PICKED_UP: 1, IN_TRANSIT: 2, COMPLETED: 3 };
+      const requested = { DEPART_FARM: 1, START_TRANSIT: 2, COMPLETE_DELIVERY: 3 }[step];
+      if (reached[mission.status] >= requested) {
+        const updated = await tx.missions.findUniqueOrThrow({ where: { id: missionId }, include: MissionsService.missionDetailInclude });
+        return { updated, mission, oldStatus: mission.status, changed: false };
+      }
+      const now = new Date();
+      const patch: Prisma.missionsUpdateInput = { updatedAt: now };
+
+      if (step === 'DEPART_FARM') {
+        if (mission.status !== 'READY_FOR_LOADING') {
+          throw new BadRequestException(
+            `Leave farm is only allowed when status is READY_FOR_LOADING (after loading handover). Current: ${mission.status}`,
+          );
+        }
+        if (!mission.logistics_handovers) {
+          throw new BadRequestException('Complete loading handover on this mission before marking departure.');
+        }
+        patch.pickedUpAt = now;
+        patch.status = 'PICKED_UP';
+      } else if (step === 'START_TRANSIT') {
+        if (mission.status !== 'PICKED_UP') {
+          throw new BadRequestException(
+            `Start EU transit requires status PICKED_UP (truck left farm). Current: ${mission.status}`,
+          );
+        }
+        patch.status = 'IN_TRANSIT';
+      } else {
+        if (mission.status !== 'IN_TRANSIT') {
+          throw new BadRequestException(
+            `Mark delivered requires status IN_TRANSIT. Current: ${mission.status}`,
+          );
+        }
+        patch.status = 'COMPLETED';
+        patch.completedAt = now;
+      }
+
+      await syncMissionDelivery(tx, mission, step, now);
+      const oldStatus = mission.status;
+      const updated = await tx.missions.update({
+        where: { id: missionId },
+        data: patch,
+        include: {
+          users_missions_growerIdTousers: true,
+          users_missions_logisticsPartnerIdTousers: true,
+          vehicles: true,
+          batches: true,
+          assigned_logistics_driver: true,
+        },
+      });
+
+      await tx.audit_trails.create({ data: { id: crypto.randomUUID(), eventType: 'STATUS_CHANGE', entityType: 'Mission', entityId: mission.id,
+        performedByUserId: logisticsPartnerId, oldValue: { status: oldStatus, step }, newValue: { status: updated.status, step } } });
+      return { updated, mission, oldStatus, changed: true };
     });
-
-    if (!mission) {
-      throw new NotFoundException(`Mission with ID ${missionId} not found`);
-    }
-    if (mission.logisticsPartnerId !== logisticsPartnerId) {
-      throw new BadRequestException('Mission not assigned to this logistics partner');
-    }
-    if (mission.status === 'CANCELLED') {
-      throw new BadRequestException('This mission is cancelled');
-    }
-
-    const now = new Date();
-    const patch: Prisma.missionsUpdateInput = { updatedAt: now };
-
-    if (step === 'DEPART_FARM') {
-      if (mission.status !== 'READY_FOR_LOADING') {
-        throw new BadRequestException(
-          `Leave farm is only allowed when status is READY_FOR_LOADING (after loading handover). Current: ${mission.status}`,
-        );
-      }
-      if (!mission.logistics_handovers) {
-        throw new BadRequestException('Complete loading handover on this mission before marking departure.');
-      }
-      patch.pickedUpAt = now;
-      patch.status = 'PICKED_UP';
-    } else if (step === 'START_TRANSIT') {
-      if (mission.status !== 'PICKED_UP') {
-        throw new BadRequestException(
-          `Start EU transit requires status PICKED_UP (truck left farm). Current: ${mission.status}`,
-        );
-      }
-      patch.status = 'IN_TRANSIT';
-    } else {
-      if (mission.status !== 'IN_TRANSIT') {
-        throw new BadRequestException(
-          `Mark delivered requires status IN_TRANSIT. Current: ${mission.status}`,
-        );
-      }
-      patch.status = 'COMPLETED';
-      patch.completedAt = now;
-    }
-
-    const oldStatus = mission.status;
-    const updated = await this.prisma.missions.update({
-      where: { id: missionId },
-      data: patch,
-      include: {
-        users_missions_growerIdTousers: true,
-        users_missions_logisticsPartnerIdTousers: true,
-        vehicles: true,
-        batches: true,
-        assigned_logistics_driver: true,
-      },
-    });
+    if (!changed) return updated;
 
     try {
       await this.notificationsGateway.notifyMissionUpdate(mission.growerId, updated);
@@ -1407,16 +1239,8 @@ export class MissionsService {
       this.logger.warn(`notifyMissionUpdate failed for lifecycle ${missionId}: ${(error as Error)?.message}`);
     }
 
-    await this.auditTrailService.createAuditTrail({
-      eventType: 'STATUS_CHANGE',
-      entityType: 'Mission',
-      entityId: mission.id,
-      performedByUserId: logisticsPartnerId,
-      oldValue: { status: oldStatus, step },
-      newValue: { status: updated.status, step },
-    });
 
-    await this.syncLinkedBuyerOrderAfterMissionLifecycle(updated.orderId, step, now);
+
 
     if (updated.orderId && step === 'COMPLETE_DELIVERY') {
       void this.notifyLinkedBuyerShipmentMilestone(
@@ -1580,6 +1404,7 @@ export class MissionsService {
   }
 
   private static readonly missionDetailInclude = {
+    delivery: { select: { id: true, status: true, deliveryNumber: true, digital_handovers: { select: { id: true, status: true } } } },
     users_missions_growerIdTousers: true,
     users_missions_logisticsPartnerIdTousers: true,
     assigned_logistics_driver: {

@@ -1077,7 +1077,29 @@ export class GrowerPortalService {
    * Same clientReference re-sent returns 200 with duplicate: true (mobile can drop local copy).
    */
   async ingestMobileProduct(userId: string, dto: IngestMobileProductDto) {
+    if (dto.clientReference.startsWith('supplier-order:')) throw new BadRequestException('Reserved product reference');
     return this.upsertMobileIngest(userId, 'PRODUCT', dto.clientReference, { ...dto } as object);
+  }
+
+  async listMobileProducts(userId: string) {
+    const rows = await this.prisma.grower_mobile_ingest.findMany({
+      where: { userId, kind: 'PRODUCT' }, orderBy: { createdAt: 'desc' },
+    });
+    return rows.map(row => {
+      const payload = (row.payload ?? {}) as Record<string, unknown>;
+      return {
+        id: row.clientReference,
+        source: payload.source === 'qr' ? 'qr' : 'manual',
+        qrCode: typeof payload.qrCode === 'string' ? payload.qrCode : undefined,
+        sourceOrderId: typeof payload.sourceOrderId === 'string' ? payload.sourceOrderId : undefined,
+        name: String(payload.name ?? ''), contents: String(payload.contents ?? ''),
+        quantity: Number(payload.quantity ?? 0), unit: String(payload.unit ?? ''),
+        parcelOrEstate: typeof payload.parcelOrEstate === 'string' ? payload.parcelOrEstate : undefined,
+        timestamp: typeof payload.timestamp === 'string' && payload.timestamp.trim()
+          ? payload.timestamp : row.createdAt.toISOString(),
+        status: 'synced' as const,
+      };
+    });
   }
 
   async ingestMobileCost(userId: string, dto: IngestMobileCostDto) {

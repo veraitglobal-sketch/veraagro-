@@ -18,6 +18,11 @@ export class CreateHarvestAnnouncementDto {
   @IsNotEmpty()
   parcelId: string;
 
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  sourcePlantingId?: string;
+
   @IsIn(['HARVEST', 'PLANTING'])
   announcementType: 'HARVEST' | 'PLANTING';
 

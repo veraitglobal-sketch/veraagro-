@@ -36,6 +36,11 @@ export class GrowerPortalController {
     return this.growerPortalService.ingestMobileProduct(user.id, dto);
   }
 
+  @Get('products')
+  async listProducts(@GetUser() user: { id: string }) {
+    return this.growerPortalService.listMobileProducts(user.id);
+  }
+
   /** Mobile offline queue: cost line */
   @Post('costs')
   async ingestCost(@GetUser() user: { id: string }, @Body() dto: IngestMobileCostDto) {

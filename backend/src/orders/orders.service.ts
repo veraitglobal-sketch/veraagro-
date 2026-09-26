@@ -1,7 +1,10 @@
+import { reserveOrderStock, releaseOrderStock, requireOrderStock, stockSummarySelect } from './order-stock';
 import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
+  ConflictException,
   Logger,
 } from '@nestjs/common';
 import { OrderStatus } from '@prisma/client';
@@ -12,6 +15,8 @@ import { EmailService } from '../email/email.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { ensureVeraPlatformEstateId, isSystemEstateId } from './order-fulfillment.util';
 import { InvoicesService } from '../invoices/invoices.service';
+import { CreateOrderDto } from './dto/create-order.dto';
+import { resolveOrderPrice } from './order-pricing';
 
 @Injectable()
 export class OrdersService {
@@ -37,9 +42,10 @@ export class OrdersService {
     };
 
     try {
+      const linkedDelivery = await this.prisma.deliveries.findUnique({ where: { orderId }, select: { missionId: true } });
       const [mission, delivery] = await Promise.all([
         this.prisma.missions.findFirst({
-          where: { orderId },
+          where: linkedDelivery?.missionId ? { id: linkedDelivery.missionId } : { orderId },
           orderBy: { createdAt: 'desc' },
           include: {
             logistics_handovers: { select: { timestamp: true } },
@@ -123,59 +129,45 @@ export class OrdersService {
     private invoicesService: InvoicesService,
   ) {}
 
-  async create(buyerId: string, data: {
-    /** Buyer/intent: farm or product origin (optional). Line seller FK is always the Vera platform estate. */
-    estateId?: string;
-    parcelId?: string;
-    productName: string;
-    quantity: number;
-    unit: string;
-    unitPrice: number;
-    deliveryAddress: any;
-    deliveryNotes?: string;
-  }) {
+  async create(buyerId: string, data: CreateOrderDto) {
+    // Canonical field order: JSON object property order must not change request identity.
+    const requestHash = data.clientRequestId ? crypto.createHash('sha256').update(JSON.stringify({
+      productId: data.productId ?? null, estateId: data.estateId ?? null, productName: data.productName,
+      quantity: data.quantity, unit: data.unit, unitPrice: data.unitPrice,
+      deliveryAddress: { street: data.deliveryAddress.street, city: data.deliveryAddress.city,
+        postalCode: data.deliveryAddress.postalCode ?? null, country: data.deliveryAddress.country },
+      deliveryNotes: data.deliveryNotes ?? null,
+    })).digest('hex') : null;
     const platformEstateId = await ensureVeraPlatformEstateId(this.prisma);
-
-    let deliveryNotes = data.deliveryNotes;
-    if (data.estateId) {
-      const ref = await this.prisma.estates.findUnique({
-        where: { id: data.estateId },
-        select: { id: true, name: true },
-      });
-      const line = ref
-        ? `Ops: requested estate/parcel: ${ref.name} (${ref.id}).`
-        : `Ops: request references estate ${data.estateId} (not found in system).`;
-      deliveryNotes = [line, data.deliveryNotes].filter(Boolean).join(' ');
-    }
-
-    // `parcelId` must belong to `orders.estateId`; line seller is platform, so do not wire buyer parcel here.
-    const parcelId: string | undefined = undefined;
-
-    // Generate order number
-    const orderNumber = `BIOVERA-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-
-    const totalAmount = data.quantity * data.unitPrice;
-
-    // Create order (seller = Vera; fulfilling farm is set later in admin)
-    const order = await this.prisma.orders.create({
-      data: {
-        id: crypto.randomUUID(),
-        orderNumber,
-        buyerId,
-        estateId: platformEstateId,
-        fulfillingEstateId: null,
-        parcelId,
-        productName: data.productName,
-        quantity: data.quantity,
-        unit: data.unit,
-        unitPrice: data.unitPrice,
-        totalAmount,
-        deliveryAddress: data.deliveryAddress,
-        deliveryNotes,
-        status: 'PENDING',
-        updatedAt: new Date(),
-      },
+    const result = await this.prisma.$transaction(async (tx) => {
+      if (data.clientRequestId) {
+        // Lock even when no order exists yet. Collision only serializes unrelated requests.
+        const lockKey = JSON.stringify(['order-checkout', buyerId, data.clientRequestId]);
+        await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`;
+        const existing = await tx.orders.findUnique({ where: { buyerId_clientRequestId: { buyerId, clientRequestId: data.clientRequestId } }, include: { stockReservation: { select: stockSummarySelect } } });
+        if (existing) {
+          if (existing.requestHash !== requestHash) throw new ConflictException({ code: 'ORDER_REQUEST_MISMATCH', message: 'This checkout attempt already created an order with different details. Recover that order before placing another.' });
+          return { order: existing, replay: true };
+        }
+      }
+      const priced = await resolveOrderPrice(tx, data);
+      const orderId = crypto.randomUUID();
+      await tx.orders.create({ data: { id: orderId,
+        orderNumber: `BIOVERA-${Date.now()}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,
+        buyerId, clientRequestId: data.clientRequestId, requestHash, estateId: platformEstateId, fulfillingEstateId: priced.estateId || null,
+        sourceCatalogId: priced.productId, productName: data.productName, quantity: data.quantity, unit: data.unit,
+        unitPrice: priced.unitPrice, totalAmount: priced.totalAmount, deliveryAddress: { ...data.deliveryAddress },
+        deliveryNotes: data.deliveryNotes, status: 'PENDING', updatedAt: new Date(),
+        order_items: { create: { id: crypto.randomUUID(), productName: data.productName, quantity: data.quantity,
+          unitPrice: priced.unitPrice, batchId: priced.batchId } },
+      } });
+      // Link item.inventoryId only under the stock lock; early FK key-share locks can deadlock concurrent checkouts.
+      if (priced.inventoryId) await reserveOrderStock(tx, orderId, priced.inventoryId, buyerId);
+      return { order: await tx.orders.findUniqueOrThrow({ where: { id: orderId }, include: { stockReservation: { select: stockSummarySelect } } }), replay: false };
     });
+    const { order } = result;
+    if (result.replay) return { ...order, checkoutReplay: true };
+    const orderNumber = order.orderNumber, totalAmount = order.totalAmount, deliveryNotes = order.deliveryNotes;
 
     const buyer = await this.prisma.users.findUnique({
       where: { id: buyerId },
@@ -230,41 +222,63 @@ export class OrdersService {
    * Admin: assign the physical farm that will fulfill the order (pickup, farmer payout, notifications).
    */
   async updateFulfillmentByAdmin(orderId: string, fulfillingEstateId: string | null) {
-    const order = await this.prisma.orders.findUnique({ where: { id: orderId } });
-    if (!order) {
-      throw new NotFoundException('Order not found');
-    }
-    if (fulfillingEstateId) {
-      if (isSystemEstateId(fulfillingEstateId)) {
-        throw new BadRequestException(
-          'Fulfilling estate must be a real farm, not a system / platform record.',
-        );
+    return this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM orders WHERE id = ${orderId} FOR UPDATE`;
+      const order = await tx.orders.findUnique({ where: { id: orderId }, include: { stockReservation: { include: { inventory: true } } } });
+      if (!order) throw new NotFoundException('Order not found');
+      if (['CANCELLED', 'REFUNDED'].includes(order.status)) throw new BadRequestException('Closed orders cannot change farm');
+      if (order.stockReservation && fulfillingEstateId !== order.stockReservation.inventory.estateId) throw new BadRequestException('The fulfilling farm must match the reserved stock');
+      if (fulfillingEstateId) {
+        if (isSystemEstateId(fulfillingEstateId)) throw new BadRequestException('Choose a real fulfilling farm');
+        if (!await tx.estates.findUnique({ where: { id: fulfillingEstateId } })) throw new NotFoundException('Estate not found');
       }
-      const e = await this.prisma.estates.findUnique({
-        where: { id: fulfillingEstateId },
-        select: { id: true },
-      });
-      if (!e) {
-        throw new NotFoundException('Estate not found');
-      }
-    }
-    return this.prisma.orders.update({
-      where: { id: orderId },
-      data: {
-        fulfillingEstateId: fulfillingEstateId ?? null,
-        updatedAt: new Date(),
-      },
-      include: {
-        fulfilling_estate: { select: { id: true, name: true } },
-        estates: { select: { id: true, name: true } },
-      },
+      return tx.orders.update({ where: { id: orderId }, data: { fulfillingEstateId, updatedAt: new Date() },
+        include: { fulfilling_estate: { select: { id: true, name: true } }, estates: { select: { id: true, name: true } } } });
     });
+  }
+
+  async stockOptions(orderId: string) {
+    const order = await this.prisma.orders.findUnique({ where: { id: orderId }, include: { stockReservation: { select: stockSummarySelect }, order_items: true } });
+    if (!order) throw new NotFoundException('Order not found');
+    const batchId = order.order_items.find(i => i.batchId)?.batchId;
+    const candidates = !order.stockReservation && ['PENDING', 'APPROVED', 'PAID', 'CONFIRMED'].includes(order.status)
+      ? await this.prisma.inventory.findMany({ where: { productName: order.productName, unit: order.unit,
+          ...(order.fulfillingEstateId ? { estateId: order.fulfillingEstateId } : {}), ...(batchId ? { batches: { some: { id: batchId } } } : {}),
+          status: 'AVAILABLE', quantity: { gte: order.quantity }, OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] }, take: 200,
+          select: { id: true, quantity: true, unit: true, expiresAt: true, estates: { select: { name: true } }, hubs: { select: { name: true, city: true } } } }) : [];
+    return { orderId, reservation: order.stockReservation, quantity: order.quantity, unit: order.unit, candidates };
+  }
+  async reserveStock(orderId: string, inventoryId: string, actor: string) {
+    return this.prisma.$transaction(tx => reserveOrderStock(tx, orderId, inventoryId, actor));
+  }
+  private async cancelTx(tx: import('@prisma/client').Prisma.TransactionClient, orderId: string, actor: string) {
+    const order = await tx.orders.findUnique({ where: { id: orderId }, include: { payments: true, deliveries: true } });
+    if (!order) throw new NotFoundException('Order not found');
+    if (order.status === 'CANCELLED') return order;
+    if (!['PENDING', 'APPROVED'].includes(order.status) || order.payments || order.deliveries) throw new BadRequestException('Only unpaid, undispatched orders can be cancelled here. Paid orders require finance review.');
+    await releaseOrderStock(tx, orderId, actor);
+    return tx.orders.update({ where: { id: orderId }, data: { status: 'CANCELLED', updatedAt: new Date() } });
+  }
+  async cancelByBuyer(orderId: string, buyerId: string) {
+    return this.prisma.$transaction(async tx => {
+      await tx.$queryRaw`SELECT id FROM orders WHERE id = ${orderId} FOR UPDATE`;
+      const order = await tx.orders.findUnique({ where: { id: orderId } });
+      if (!order || order.buyerId !== buyerId) throw new NotFoundException('Order not found');
+      return this.cancelTx(tx, orderId, buyerId);
+    });
+  }
+
+  async findByCheckoutRequest(clientRequestId: string, buyerId: string) {
+    const order = await this.prisma.orders.findUnique({ where: { buyerId_clientRequestId: { buyerId, clientRequestId } }, include: { stockReservation: { select: stockSummarySelect } } });
+    if (!order) throw new NotFoundException('Order not found');
+    return { ...order, checkoutReplay: true };
   }
 
   async findAllByBuyer(buyerId: string) {
     return this.prisma.orders.findMany({
       where: { buyerId },
       include: {
+        stockReservation: { select: stockSummarySelect },
         estates: true,
         fulfilling_estate: true,
         payments: true,
@@ -311,6 +325,7 @@ export class OrdersService {
     return this.prisma.orders.findMany({
       where,
       include: {
+        stockReservation: { select: stockSummarySelect },
         users: {
           select: {
             id: true,
@@ -360,47 +375,50 @@ export class OrdersService {
 
   /**
    * Admin / accounting: money visible on the bank account → record escrow + mark order PAID (for planning delivery).
-   * Use after APPROVED, when the buyer’s wire is reconciled. Idempotent: fails if a payment already exists.
+   * Use after APPROVED, when the buyer’s wire is reconciled. Retries with the same
+   * bank reference return the existing record; a different payment conflicts.
    */
   async confirmBankPaymentByAdmin(
     orderId: string,
     body?: { transactionId?: string },
   ) {
-    const order = await this.prisma.orders.findUnique({
-      where: { id: orderId },
-      include: { payments: true },
+    const reference = body?.transactionId?.trim() || undefined;
+    const created = await this.prisma.$transaction(async (tx) => {
+      // Serialize confirmations of the same order, including concurrent retries.
+      await tx.$queryRaw`SELECT id FROM orders WHERE id = ${orderId} FOR UPDATE`;
+      const order = await tx.orders.findUnique({ where: { id: orderId }, include: { payments: true } });
+      if (!order) throw new NotFoundException('Order not found');
+      if (order.payments) {
+        if (
+          !['CANCELLED', 'REFUNDED'].includes(order.status) &&
+          ['IN_ESCROW', 'RELEASED'].includes(order.payments.status) &&
+          order.payments.paymentMethod === 'BANK_TRANSFER' &&
+          (order.payments.transactionId || undefined) === reference
+        ) return false;
+        throw new ConflictException('A different payment is already registered for this order');
+      }
+      if (order.status !== 'APPROVED') {
+        throw new BadRequestException(`Bank transfer can only be confirmed when the order is APPROVED (current: ${order.status})`);
+      }
+      await requireOrderStock(tx, orderId);
+      await this.paymentsService.createEscrowPayment(orderId, order.totalAmount, {
+        paymentMethod: 'BANK_TRANSFER', transactionId: reference,
+      }, tx);
+      await tx.orders.update({ where: { id: orderId }, data: { status: 'PAID', updatedAt: new Date() } });
+      return true;
     });
-    if (!order) {
-      throw new NotFoundException('Order not found');
-    }
-    if (order.status !== 'APPROVED') {
-      throw new BadRequestException(
-        `Bank transfer can only be confirmed when the order is APPROVED (current: ${order.status})`,
-      );
-    }
-    if (order.payments) {
-      throw new BadRequestException(
-        'A payment is already registered for this order. Use the existing payment record.',
-      );
-    }
-    const tx = body?.transactionId?.trim() || undefined;
-    await this.paymentsService.createEscrowPayment(orderId, order.totalAmount, {
-      paymentMethod: 'BANK_TRANSFER',
-      transactionId: tx,
-    });
-    await this.prisma.orders.update({
-      where: { id: orderId },
-      data: { status: 'PAID', updatedAt: new Date() },
-    });
-    try {
-      await this.invoicesService.generateInvoice(orderId);
-    } catch (e: unknown) {
-      const detail = e instanceof Error ? e.message : String(e);
-      this.logger.error(`generateInvoice after bank payment failed for ${orderId}: ${detail}`);
+    if (created) {
+      try {
+        await this.invoicesService.generateInvoice(orderId);
+      } catch (e: unknown) {
+        const detail = e instanceof Error ? e.message : String(e);
+        this.logger.error(`generateInvoice after bank payment failed for ${orderId}: ${detail}`);
+      }
     }
     const withRelations = await this.prisma.orders.findUnique({
       where: { id: orderId },
       include: {
+        stockReservation: { select: stockSummarySelect },
         users: {
           select: {
             id: true,
@@ -433,30 +451,21 @@ export class OrdersService {
    * Admin: accept a placed order (PENDING → APPROVED). Buyer can pay only after this.
    */
   async approveOrderByAdmin(orderId: string) {
-    const order = await this.prisma.orders.findUnique({ where: { id: orderId } });
-    if (!order) {
-      throw new NotFoundException('Order not found');
-    }
-    if (order.status !== 'PENDING') {
-      throw new BadRequestException(
-        `Order can only be approved from PENDING (current: ${order.status})`,
-      );
-    }
-    return this.prisma.orders.update({
-      where: { id: orderId },
-      data: { status: 'APPROVED', updatedAt: new Date() },
-      include: {
-        users: { select: { id: true, email: true, firstName: true, lastName: true } },
-        estates: { select: { id: true, name: true } },
-        fulfilling_estate: { select: { id: true, name: true } },
-      },
+    return this.prisma.$transaction(async tx => {
+      await tx.$queryRaw`SELECT id FROM orders WHERE id = ${orderId} FOR UPDATE`;
+      const order = await tx.orders.findUnique({ where: { id: orderId } });
+      if (!order) throw new NotFoundException('Order not found');
+      if (order.status === 'APPROVED') return order;
+      if (order.status !== 'PENDING') throw new BadRequestException(`Order can only be approved from PENDING (current: ${order.status})`);
+      await requireOrderStock(tx, orderId);
+      return tx.orders.update({ where: { id: orderId }, data: { status: 'APPROVED', updatedAt: new Date() } });
     });
   }
 
   /**
-   * Admin: set order status (manual override, e.g. PENDING → CONFIRMED, or CANCELLED).
+   * Admin: retain the status endpoint for approval and unpaid cancellation only.
    */
-  async updateStatusByAdmin(orderId: string, status: string) {
+  async updateStatusByAdmin(orderId: string, status: string, actor: string) {
     if (typeof status !== 'string' || !status.trim()) {
       throw new BadRequestException('status is required');
     }
@@ -466,18 +475,14 @@ export class OrdersService {
         `Invalid status. Use one of: ${Object.values(OrderStatus).join(', ')}`,
       );
     }
-    const order = await this.prisma.orders.findUnique({ where: { id: orderId } });
-    if (!order) {
-      throw new NotFoundException('Order not found');
-    }
-    return this.prisma.orders.update({
-      where: { id: orderId },
-      data: {
-        status: next,
-        updatedAt: new Date(),
-        completedAt:
-          next === 'COMPLETED' ? new Date() : next === 'CANCELLED' || next === 'REFUNDED' ? null : order.completedAt,
-      },
+    if (next === 'APPROVED') return this.approveOrderByAdmin(orderId);
+    return this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM orders WHERE id = ${orderId} FOR UPDATE`;
+      const order = await tx.orders.findUnique({ where: { id: orderId } });
+      if (!order) throw new NotFoundException('Order not found');
+      if (next === 'CANCELLED') return this.cancelTx(tx, orderId, actor);
+      if (next === order.status) return order;
+      throw new BadRequestException('Use approval, bank confirmation, dispatch, receipt or refund workflows to change this status');
     });
   }
 
@@ -485,6 +490,7 @@ export class OrdersService {
     const order = await this.prisma.orders.findUnique({
       where: { id: orderId },
       include: {
+        stockReservation: { select: stockSummarySelect },
         estates: true,
         fulfilling_estate: true,
         parcels: true,
@@ -514,40 +520,14 @@ export class OrdersService {
     return { ...order, shipmentTracking };
   }
 
-  async initiatePayment(orderId: string, buyerId: string, paymentData: {
+  async initiatePayment(_orderId: string, _buyerId: string, _paymentData: {
     paymentMethod: string;
     transactionId?: string;
   }) {
-    const order = await this.findOne(orderId, buyerId);
-
-    if (order.status !== 'APPROVED') {
-      throw new BadRequestException(
-        order.status === 'PENDING'
-          ? 'Vera has not yet accepted this order. You can pay after we confirm (status will change to “approved”).'
-          : 'This order cannot be paid in its current state.',
-      );
-    }
-
-    // Create payment in escrow
-    const payment = await this.paymentsService.createEscrowPayment(
-      orderId,
-      order.totalAmount,
-      paymentData,
+    // Keep the legacy route explicit for old clients, but never accept a client
+    // supplied transaction ID as proof that funds have arrived.
+    throw new ForbiddenException(
+      'Payments are confirmed by Vera after the bank transfer is received. A buyer cannot confirm payment.',
     );
-
-    // Update order status
-    await this.prisma.orders.update({
-      where: { id: orderId },
-      data: { status: 'PAID' },
-    });
-
-    try {
-      await this.invoicesService.generateInvoice(orderId);
-    } catch (e: unknown) {
-      const detail = e instanceof Error ? e.message : String(e);
-      this.logger.error(`generateInvoice after buyer payment failed for ${orderId}: ${detail}`);
-    }
-
-    return payment;
   }
 }

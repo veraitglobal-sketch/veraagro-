@@ -1,3 +1,4 @@
+import { ReserveStockDto } from './dto/reserve-stock.dto';
 import {
   Controller,
   Get,
@@ -13,6 +14,7 @@ import { OrdersService } from './orders.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { CreateOrderDto } from './dto/create-order.dto';
 
 @Controller('orders')
 @UseGuards(JwtAuthGuard)
@@ -37,8 +39,9 @@ export class OrdersController {
   async updateOrderStatus(
     @Param('id') id: string,
     @Body() body: { status: string },
+    @Request() req: any,
   ) {
-    return this.ordersService.updateStatusByAdmin(id, body.status);
+    return this.ordersService.updateStatusByAdmin(id, body.status, req.user.id);
   }
 
   @Post('admin/:id/approve')
@@ -72,14 +75,28 @@ export class OrdersController {
     );
   }
 
+  @Get('admin/:id/stock-options') @UseGuards(RolesGuard) @Roles('ADMIN', 'SUPER_ADMIN')
+  stockOptions(@Param('id') id: string) { return this.ordersService.stockOptions(id); }
+  @Post('admin/:id/reserve-stock') @UseGuards(RolesGuard) @Roles('ADMIN', 'SUPER_ADMIN')
+  reserveStock(@Param('id') id: string, @Body() body: ReserveStockDto, @Request() req: any) { return this.ordersService.reserveStock(id, body.inventoryId, req.user.id); }
+  @Post(':id/cancel')
+  cancel(@Param('id') id: string, @Request() req: any) { return this.ordersService.cancelByBuyer(id, req.user.id); }
+
   @Post()
-  async create(@Body() body: any, @Request() req: any) {
+  @UseGuards(RolesGuard)
+  @Roles('BUYER', 'ADMIN', 'SUPER_ADMIN')
+  async create(@Body() body: CreateOrderDto, @Request() req: any) {
     return this.ordersService.create(req.user.id, body);
   }
 
   @Get()
   async findAll(@Request() req: any) {
     return this.ordersService.findAllByBuyer(req.user.id);
+  }
+
+  @Get('checkout/:requestId')
+  findByCheckout(@Param('requestId') requestId: string, @Request() req: any) {
+    return this.ordersService.findByCheckoutRequest(requestId, req.user.id);
   }
 
   @Get(':id')

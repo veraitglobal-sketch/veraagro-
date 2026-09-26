@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GeometryUtil } from '../common/utils/geometry.util';
+import { currentMarketPriceWhere } from '../orders/order-pricing';
 
 function hubJsonToCoords(location: unknown): { lat: number; lng: number } | null {
   if (!location || typeof location !== 'object') return null;
@@ -82,7 +83,8 @@ export class InventoryService {
     try {
       inventory = await this.prisma.inventory.findMany({
         where: {
-          status: 'AVAILABLE',
+          status: 'AVAILABLE', quantity: { gt: 0 },
+          OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
         },
         include: {
           hubs: true,
@@ -298,9 +300,7 @@ export class InventoryService {
       if (inventory.length === 0) {
         try {
           const marketPrices = await this.prisma.market_prices.findMany({
-            where: {
-              isActive: true,
-            },
+            where: currentMarketPriceWhere(),
             orderBy: {
               createdAt: 'desc',
             },
@@ -345,9 +345,8 @@ export class InventoryService {
     let marketPrices: Map<string, number> = new Map();
     try {
       const prices = await this.prisma.market_prices.findMany({
-        orderBy: {
-          createdAt: 'desc',
-        },
+        where: currentMarketPriceWhere(),
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
       });
       // Group by cropType, taking the latest price
       prices.forEach((price) => {
@@ -360,7 +359,8 @@ export class InventoryService {
     }
 
     // Calculate availability for each product and ensure category is set
-    const products = inventory.map((item) => {
+    const products = inventory.map((rawItem) => {
+      const item = { ...rawItem, hub: rawItem.hub ?? rawItem.hubs, estate: rawItem.estate ?? rawItem.estates, parcel: rawItem.parcel ?? rawItem.parcels };
       // Ensure category is set (if not already set from batches/market prices)
       if (!item.category && item.productName) {
         item.category = this.categorizeProduct(item.productName);
@@ -486,24 +486,17 @@ export class InventoryService {
    * Reserve inventory for order
    */
   async reserveInventory(inventoryId: string, quantity: number) {
-    const inventory = await this.prisma.inventory.findUnique({
-      where: { id: inventoryId },
-    });
-
-    if (!inventory) {
-      throw new NotFoundException('Inventory not found');
-    }
-
-    if (inventory.quantity < quantity) {
-      throw new Error('Insufficient inventory');
-    }
-
-    return this.prisma.inventory.update({
-      where: { id: inventoryId },
-      data: {
-        quantity: inventory.quantity - quantity,
-        status: inventory.quantity - quantity === 0 ? 'RESERVED' : 'AVAILABLE',
-      },
+    if (!Number.isFinite(quantity) || quantity <= 0) throw new BadRequestException('Reserve a positive quantity');
+    return this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM inventory WHERE id = ${inventoryId} FOR UPDATE`;
+      const inventory = await tx.inventory.findUnique({ where: { id: inventoryId } });
+      if (!inventory) throw new NotFoundException('Inventory not found');
+      if (inventory.status !== 'AVAILABLE' || inventory.expiresAt && inventory.expiresAt <= new Date() || inventory.quantity < quantity) {
+        throw new BadRequestException('Insufficient available, unexpired inventory');
+      }
+      const remaining = inventory.quantity - quantity;
+      return tx.inventory.update({ where: { id: inventoryId }, data: { quantity: remaining,
+        status: remaining === 0 ? 'RESERVED' : 'AVAILABLE', updatedAt: new Date(Math.max(Date.now(), inventory.updatedAt.getTime() + 1)) } });
     });
   }
 

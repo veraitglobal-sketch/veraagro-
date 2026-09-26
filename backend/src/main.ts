@@ -11,7 +11,7 @@ async function bootstrap() {
   try {
     console.log('Running Prisma migrations...');
     try {
-      execSync('npx prisma migrate deploy', {
+      execSync('npm run prisma:deploy', {
         stdio: 'inherit',
         env: process.env,
       });
@@ -21,7 +21,7 @@ async function bootstrap() {
       const allowStartWithoutMigrate = process.env.ALLOW_START_WITHOUT_MIGRATE === 'true';
       console.error('Migration deploy failed:', msg);
       console.error(
-        'Fix: cd backend && npx prisma migrate deploy (same DATABASE_URL as this API).',
+        'Fix: cd backend && npm run prisma:deploy (same DATABASE_URL as this API).',
       );
       console.error(
         'Verify: npx ts-node scripts/verify-db-schema-for-mobile.ts',
@@ -34,21 +34,7 @@ async function bootstrap() {
       }
     }
 
-    // Create test users if database is empty (only in production for initial setup)
-    if (process.env.NODE_ENV === 'production' && process.env.CREATE_TEST_USERS !== 'false') {
-      try {
-        console.log('Checking if test users need to be created...');
-        execSync('npm run create:users', {
-          stdio: 'inherit',
-          env: process.env,
-          cwd: process.cwd(),
-        });
-        console.log('Test users check completed');
-      } catch (error) {
-        // Script uses upsert, so it's safe to run multiple times
-        console.log('Test users script completed (users may already exist)');
-      }
-    }
+    // Test accounts are created only by the explicit development seed command.
   } catch (error) {
     console.error('Migration failed:', error);
     if (process.env.NODE_ENV === 'production') {

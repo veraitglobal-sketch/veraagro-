@@ -1,0 +1,146 @@
+{
+  "snapshot": "20260926.sql",
+  "snapshotSha256": "48d4d0143a276202b59d03ec00da61ca049c745efa4ae8785b782415edc8af18",
+  "migrations": [
+    {
+      "name": "20260203120000_logistics_drivers_pickup_proof",
+      "sha256": "9749aab40edca8fedd8dda58d01840618c26408911377b6d542bdf9760fce2b8"
+    },
+    {
+      "name": "20260426120000_supplier_material_barcodes",
+      "sha256": "b8c3d0a68ec8459f12c71aa2ca10a46a27ee9994e510c030738d4f7f005d58ef"
+    },
+    {
+      "name": "20260426200000_squash_baseline",
+      "sha256": "e8790671e28c3ea34a6cb405567ae3e287f1aab59fc1a3448ffd8c6822dc230a"
+    },
+    {
+      "name": "20260427120000_order_fulfilling_estate",
+      "sha256": "a2f1c15e1268202ade33f86151403b1243217f2e11786b00bc498ad7871d6a95"
+    },
+    {
+      "name": "20260427140000_growth_log_harvest_announcement",
+      "sha256": "c4dd4c510df377c84d2d634a5b92affc9a9c447cb578d4b33f451dcbe03ad1dc"
+    },
+    {
+      "name": "20260428100000_order_status_approved",
+      "sha256": "9cb810410be8399af9b91867853c636966817163af09078b0782e151fa74792d"
+    },
+    {
+      "name": "20260428120000_logistics_handover_photos",
+      "sha256": "137ed288abbc09256c3f672aec91a529879d57b4cbe9f5017700c271048058e1"
+    },
+    {
+      "name": "20260429090000_b2b_material_suppliers",
+      "sha256": "1a43789ec3030220902528a867bf68ac8c1c368f68a4dfe37dfcc67d762dc308"
+    },
+    {
+      "name": "20260430120000_partner_applications",
+      "sha256": "6568283131969688e228781f8c92cb60891e25ec3470b75998e912db8e0e7a52"
+    },
+    {
+      "name": "20260501100000_supplier_address_postal",
+      "sha256": "660998c9edc31496f0cc019c7bc354dc2dd84b3896f4e94be337ed7832f9222b"
+    },
+    {
+      "name": "20260502120000_commercial_agent_assignment",
+      "sha256": "dcbc39b61d9271f6046b23f4d706b2bc78095246e29b8d9fcbf227c2493bc888"
+    },
+    {
+      "name": "20260502140000_wallet_transaction_platform_fee",
+      "sha256": "94551ef2817e54a6918dde1e9c69a2fc7bf4d828ebad86d17b36d2f0140d491d"
+    },
+    {
+      "name": "20260502180000_ensure_handover_pickup_columns",
+      "sha256": "792d8d69317a9e6729506c679a6b9aefbfe9796b07b77201a48e4a8cfe35786b"
+    },
+    {
+      "name": "20260502190000_ensure_logistics_handover_status_enum",
+      "sha256": "c52f9c18388fcf53f703c18115ee3e578f68113c03bb4d9ae2b2b2056671acc7"
+    },
+    {
+      "name": "20260503120000_supplier_catalog_items",
+      "sha256": "b68db96fb9d60ac14638ebc5e21906d99f97df661bb2a40a4b6dddd633f00668"
+    },
+    {
+      "name": "20260503140000_supplier_catalog_image",
+      "sha256": "fe03d5bf3176128eea3f69c6eb2175577104628d6b5e7e6ea9c4b8de7aa517a7"
+    },
+    {
+      "name": "20260503180000_buyer_delivery_issues",
+      "sha256": "6bf8e662f15066e3cb917ee83cc2f45be6d11039ae4ec37285ba296d3156087d"
+    },
+    {
+      "name": "20260504120000_supplier_store_self_service_fields",
+      "sha256": "b307cba77dfb45cb5497d7a2c13aafa7f31b5d2c24cee1c106a53c0d1dbf05d8"
+    },
+    {
+      "name": "20260505120000_grower_mobile_ingest",
+      "sha256": "02295e12d330d54cfdf9ad068e39b88242f0d81ed0eb425e45cd1a5b2ba5d212"
+    },
+    {
+      "name": "20260505130000_missions_harvest_announcement",
+      "sha256": "46ebf1b5634c12ffc9d37a09f2764620d91e2d885318c693297f44aa461b58fd"
+    },
+    {
+      "name": "20260520120000_growth_logs_material_barcode",
+      "sha256": "153a9b849dc455797a34407ab67fc68873a7ba72f8bc233f728a15b822c9c7de"
+    },
+    {
+      "name": "20260526200000_quality_entries_score",
+      "sha256": "bb16cfa2560eabb451b242aaba6b56ddb5678f302fdac15e1d9fc94da15d2bcc"
+    },
+    {
+      "name": "20260527120000_supplier_order_farmer_received",
+      "sha256": "1d633917f3d2fea646d0600184c5d71e9081987a246c44f1682c803817a0b01d"
+    },
+    {
+      "name": "20260528140000_parcels_public_code",
+      "sha256": "ad539a25023a8509c927147ca6393c769b9d6f352738dc3c00852c06a93a3843"
+    },
+    {
+      "name": "20260601120000_missions_destination_fields",
+      "sha256": "1156b96a3213ca3bbbfbced4f5c8767edb181e2dbfb6adc5426ad41ee42dd030"
+    },
+    {
+      "name": "20260602120000_package_badges_handover_receiver",
+      "sha256": "719071a91f6fd46eaa00475f4dae7f1b13c6113a1a24e549cf29552e0a0c5543"
+    },
+    {
+      "name": "20260626120000_badge_print_orders_lifecycle",
+      "sha256": "73f8f5d1789176ae55fe1f8b28cc030bb01bf4e2834c2caa2c1299bfed1f888c"
+    },
+    {
+      "name": "20260702120000_missions_order_id",
+      "sha256": "326bb32dc9568a6e6bb561c8332c551fcad01c351561d07b76b0a4597c903a93"
+    },
+    {
+      "name": "20260703120000_bio_white_list_material_type",
+      "sha256": "6ba588c25bce147688fafaa73eb3d72fc5b15dadd273053453832500e7e3ce8f"
+    },
+    {
+      "name": "20260704120000_align_logistics_handover_status_column",
+      "sha256": "70c4f592ac4e67e1304fb6c93d7c1cff74aaae01ec5e68bf71c03bfa0053df89"
+    },
+    {
+      "name": "20260705120000_deliveries_buyer_pickup_confirmed_at",
+      "sha256": "4fb125ba3bd3765149ca3867e93680b56c8edefa60f8cf096a4fe803e04094b7"
+    },
+    {
+      "name": "20260718120000_ensure_harvest_announcements_table",
+      "sha256": "ededd413fdeb488a9abcd0d00e98f584e2f7d493b4ebcb48a18218e368708476"
+    },
+    {
+      "name": "20260720120000_ensure_bio_white_list_columns",
+      "sha256": "3995f2004c227035f1a29e00029e7752819a57f7bc87d1545d29881434d03858"
+    },
+    {
+      "name": "20260819120000_user_push_devices",
+      "sha256": "198d1059160557bc5fdce6e34a122d5a29569f6d7fbee1c2a5648bdfad17c93a"
+    },
+    {
+      "name": "20260820120000_admin_grower_moderation",
+      "sha256": "edc3d2672fff71c944c89be33ef71337dbc019e4abee4db88f40f96e8674e3ea"
+    }
+  ]
+}

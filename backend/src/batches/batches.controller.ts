@@ -14,6 +14,7 @@ import {
 import type { Response } from 'express';
 import * as fs from 'fs';
 import { BatchesService } from './batches.service';
+import { CreateBatchDto } from './dto/create-batch.dto';
 import { PackingFlowBodyDto } from './dto/packing-flow.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -23,9 +24,10 @@ export class BatchesController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async createBatch(@Body() body: any, @Request() req: any) {
+  async createBatch(@Body() body: CreateBatchDto, @Request() req: any) {
     return this.batchesService.createBatch({
       ...body,
+      harvestDate: new Date(body.harvestDate),
       harvestedByUserId: req.user.id,
     });
   }
@@ -82,6 +84,12 @@ export class BatchesController {
       type: mime,
       disposition: `inline; filename="${out.fileName}"`,
     });
+  }
+
+  @Get(':batchId/workflow')
+  @UseGuards(JwtAuthGuard)
+  async getWorkflow(@Param('batchId') batchId: string, @Request() req: any) {
+    return this.batchesService.getBatchWorkflow(req.user.id, batchId);
   }
 
   @Get(':batchId/traceability')

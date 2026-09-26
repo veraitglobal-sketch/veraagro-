@@ -642,26 +642,30 @@ export class B2bSuppliersService {
    */
   async markFarmerReceived(farmerId: string, orderId: string) {
     this.assertGrower((await this.prisma.users.findUniqueOrThrow({ where: { id: farmerId } })).roles);
-    const o = await this.prisma.supplier_direct_orders.findFirst({
-      where: { id: orderId, farmerId },
-    });
-    if (!o) {
-      throw new NotFoundException('Order not found');
-    }
-    if (o.status === 'PENDING') {
-      throw new BadRequestException(
-        'The supplier has not confirmed this order yet. Wait for status CONFIRMED (or FULFILLED) before marking receipt.',
-      );
-    }
-    if (o.status === 'REJECTED' || o.status === 'CANCELLED') {
-      throw new BadRequestException('This order was not fulfilled; you cannot mark receipt.');
-    }
-    if (o.farmerReceivedAt) {
-      return o;
-    }
-    return this.prisma.supplier_direct_orders.update({
-      where: { id: orderId },
-      data: { farmerReceivedAt: new Date() },
+    return this.prisma.$transaction(async tx => {
+      // Serialize repeat receipts and concurrent supplier status changes on this order.
+      await tx.$queryRaw`SELECT id FROM supplier_direct_orders WHERE id = ${orderId} AND "farmerId" = ${farmerId} FOR UPDATE`;
+      const order = await tx.supplier_direct_orders.findFirst({ where: { id: orderId, farmerId } });
+      if (!order) throw new NotFoundException('Order not found');
+      if (!['CONFIRMED', 'FULFILLED'].includes(order.status)) {
+        throw new BadRequestException('Only a confirmed or fulfilled supplier order can be received.');
+      }
+      const receivedAt = order.farmerReceivedAt ?? new Date();
+      const items = Array.isArray(order.items) ? order.items : [];
+      const products = items.flatMap((item, index) => {
+        if (!item || typeof item !== 'object' || Array.isArray(item)) return [];
+        const name = typeof item.label === 'string' ? item.label.trim() : '';
+        const quantity = typeof item.quantity === 'number' ? item.quantity : NaN;
+        const unit = typeof item.unit === 'string' ? item.unit : '';
+        // Conversation/inquiry placeholders are not physical stock lines.
+        if (!name || !Number.isFinite(quantity) || quantity <= 0 || ['order', 'inquiry'].includes(unit)) return [];
+        return [{ userId: farmerId, kind: 'PRODUCT', clientReference: `supplier-order:${orderId}:${index}`,
+          payload: { source: 'manual', name, contents: '', quantity, unit,
+            sourceOrderId: orderId, supplierUserId: order.supplierUserId, timestamp: receivedAt.toISOString() } }];
+      });
+      if (products.length) await tx.grower_mobile_ingest.createMany({ data: products, skipDuplicates: true });
+      if (order.farmerReceivedAt) return order;
+      return tx.supplier_direct_orders.update({ where: { id: orderId }, data: { farmerReceivedAt: receivedAt } });
     });
   }
 
