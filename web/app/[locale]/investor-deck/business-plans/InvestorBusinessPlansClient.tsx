@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
+import BrandLogo from '@/components/BrandLogo';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, ExternalLink, Eye, EyeOff, FileText, Lock, X } from 'lucide-react';
 import type { FormEvent } from 'react';
@@ -348,17 +348,7 @@ export default function InvestorBusinessPlansClient() {
       <header
         className={`fixed top-0 z-50 w-full border-b backdrop-blur-sm ${gateActive ? 'border-gray-100 bg-white/95' : 'border-gray-200 bg-white/80'}`}
       >
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href={loc('/')} className="flex items-center gap-2 transition-opacity hover:opacity-80">
-            <Image
-              src="/logo1.png"
-              alt={t('footer.logoAlt')}
-              width={56}
-              height={20}
-              className="h-4 w-auto"
-              priority
-            />
-          </Link>
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-end px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-6">
             {bundleUnlocked ? (
               <button
@@ -512,14 +502,7 @@ export default function InvestorBusinessPlansClient() {
                   href={loc('/')}
                   className="flex w-full justify-center transition-opacity hover:opacity-90"
                 >
-                  <Image
-                    src="/logo1.png"
-                    alt={t('footer.logoAlt')}
-                    width={112}
-                    height={40}
-                    className="h-9 w-auto sm:h-10"
-                    priority
-                  />
+                  <BrandLogo alt={t('footer.logoAlt')} priority />
                 </Link>
                 <form
                   className="flex w-full flex-col gap-3"

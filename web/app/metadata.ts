@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import en from "@/locales/en.json";
+import { getSiteUrl } from "@/lib/site-url";
+
+export { generatePageMetadata, generateLocaleMetadata } from "@/lib/seo-metadata";
 
 const m = en.metadata;
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://biovera.app";
-const siteImage = `${siteUrl}/logo1.png`;
+const siteUrl = getSiteUrl();
+const siteImage = `${siteUrl}/biovera-logo.png`;
 
 export const defaultMetadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -24,7 +27,7 @@ export const defaultMetadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: siteUrl,
+    url: `${siteUrl}/en`,
     siteName: m.siteName,
     title: m.siteName,
     description: m.siteDescription,
@@ -57,37 +60,3 @@ export const defaultMetadata: Metadata = {
   },
   verification: {},
 };
-
-export function generatePageMetadata(
-  title: string,
-  description: string,
-  path: string = "",
-  image?: string,
-): Metadata {
-  return {
-    title,
-    description,
-    openGraph: {
-      ...defaultMetadata.openGraph,
-      title,
-      description,
-      url: `${siteUrl}${path}`,
-      images: image
-        ? [
-            {
-              url: image,
-              width: 1200,
-              height: 630,
-              alt: title,
-            },
-          ]
-        : defaultMetadata.openGraph?.images,
-    },
-    twitter: {
-      ...defaultMetadata.twitter,
-      title,
-      description,
-      images: image ? [image] : defaultMetadata.twitter?.images,
-    },
-  };
-}

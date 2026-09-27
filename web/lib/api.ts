@@ -140,6 +140,8 @@ export const inventoryAPI = {
 
 /** Same contract as Nest `OrdersService.create` (buyer POST /orders); aligns with mobile `ordersAPI.create`. */
 export interface BuyerOrderCreatePayload {
+  clientRequestId: string;
+  productId: string;
   estateId?: string;
   productName: string;
   quantity: number;
@@ -152,8 +154,14 @@ export interface BuyerOrderCreatePayload {
 // Orders API
 export const ordersAPI = {
   create: async (orderData: BuyerOrderCreatePayload) => {
-    const response = await api.post('/orders', orderData);
-    return response.data;
+    try { return (await api.post('/orders', orderData)).data; }
+    catch (error) {
+      const code = (error as { response?: { data?: { code?: string } } }).response?.data?.code;
+      if (orderData.clientRequestId && code === 'ORDER_REQUEST_MISMATCH') {
+        return (await api.get(`/orders/checkout/${encodeURIComponent(orderData.clientRequestId)}`)).data;
+      }
+      throw error;
+    }
   },
   getAll: async () => {
     const response = await api.get('/orders');
@@ -409,6 +417,7 @@ export const digitalHandoverAPI = {
   },
   complete: async (body: {
     handoverId: string;
+    revision?: number;
     qualityCheck: {
       visualCheck: 'FRESH' | 'DAMAGED';
       temperature: number;

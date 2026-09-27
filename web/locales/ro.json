@@ -243,8 +243,28 @@
     "items": [
       {
         "category": "general",
+        "q": "Cine stă în spatele Bio Vera?",
+        "a": "Bio Vera a fost fondată de Jovica Mihajlovic și are sediul în Hamburg. Face parte din portofoliul Vera Group; platforma este construită de Vera IT."
+      },
+      {
+        "category": "general",
+        "q": "Cine poate deveni producător în program?",
+        "a": "Programul este deschis producătorilor din toată Europa dispuși să respecte standardele Bio Vera de producție și documentare. Certificarea existentă nu este, prin ea însăși, o barieră la aplicare."
+      },
+      {
+        "category": "general",
+        "q": "Sunteți un marketplace?",
+        "a": "Nu. Bio Vera este operatorul programului și vinde conform standardelor proprii. Nu suntem un site de anunțuri."
+      },
+      {
+        "category": "general",
+        "q": "Ce este un pașaport digital de produs?",
+        "a": "Pașaportul digital de produs este o înregistrare structurată a traseului și dovezilor unui lot. La Bio Vera, fiecare lot poate fi legat prin QR de un dosar cu origine, context de recoltare, verificări de calitate, dovezi de lanț frigorific și certificate de program, după caz."
+      },
+      {
+        "category": "general",
         "q": "Ce este Bio Vera?",
-        "a": "Bio Vera este o rețea agricolă integrată vertical: conectăm producătorii cu piețele sub un singur model de operare - trasabilitate, asigurare a calității și conformitate de la câmp la cumpărător, la nivel mondial."
+        "a": "Bio Vera este o companie agrifood integrată vertical, cu sediul în Hamburg. Contractăm producători din toată Europa, asigurăm controlul calității și ambalarea, organizăm logistica frigorifică și vindem produse proaspete în programul propriu. Fiecare lot poartă un pașaport digital documentat de la parcelă până la livrare. Bio Vera nu este un marketplace care doar conectează străini."
       },
       {
         "category": "general",
@@ -257,62 +277,62 @@
         "a": "Facilităm GlobalG.A.P. Certificarea grupului IFA v6 și asigurați-vă că toate produsele îndeplinesc standardele internaționale și ale pieței UE. Sistemele noastre acceptă managementul certificării și urmărirea conformității la nivel global."
       },
       {
-        "category": "cultivatori",
+        "category": "growers",
         "q": "Cum devin producător Bio Vera?",
         "a": "Puteți aplica prin pagina noastră de Cultivatori. Procesul de aplicare include furnizarea de informații despre ferma dvs., certificări și capacitatea de producție. Echipa noastră vă va examina cererea și vă va ghida prin integrare."
       },
       {
-        "category": "cultivatori",
+        "category": "growers",
         "q": "Care sunt cerințele pentru a deveni producător?",
         "a": "Producătorii trebuie să aibă operațiuni agricole valabile, să respecte standardele UE și să fie dispuși să implementeze protocoalele noastre de control al calității. GlobalG.A.P. certificarea este de preferat, dar vă putem ajuta să o obțineți."
       },
       {
-        "category": "cultivatori",
+        "category": "growers",
         "q": "Cum sunt procesate plățile?",
         "a": "Plățile sunt procesate automat după verificarea cu succes a livrării. Folosim un sistem escrow pentru a asigura tranzacții sigure. Fermierii primesc plata în 3-5 zile lucrătoare de la confirmarea livrării."
       },
       {
-        "category": "cumpărători",
+        "category": "buyers",
         "q": "Cum plasez o comandă?",
         "a": "Creați un cont de cumpărător, răsfoiți produsele disponibile și plasați comenzi prin Bio Vera. Puteți urmări comenzile în timp real și puteți primi certificate digitale pentru fiecare livrare."
       },
       {
-        "category": "cumpărători",
+        "category": "buyers",
         "q": "Care este cantitatea minimă de comandă?",
         "a": "Cantitățile minime de comandă variază în funcție de produs și producător. Puteți vedea cerințe specifice atunci când răsfoiți produse. Suportăm atât comenzile cu amănuntul, cât și cu ridicata."
       },
       {
-        "category": "cumpărători",
+        "category": "buyers",
         "q": "Cum pot verifica autenticitatea produsului?",
         "a": "Fiecare produs are un cod QR care face legătura cu pașaportul său digital. Scanați codul pentru a vedea informații complete de trasabilitate, inclusiv originea, detaliile fermierului, certificările de calitate și istoricul transportului."
       },
       {
-        "category": "logistică",
+        "category": "logistics",
         "q": "Cum devin partener logistic?",
         "a": "Aplicați prin pagina noastră de parteneri logistici. Primim șoferi independenți, dube mici și companii de transport mai mari. Cerințele includ licențe valide, capacitatea de urmărire prin GPS și angajamentul de a respecta lanțul de frig."
       },
       {
-        "category": "logistică",
+        "category": "logistics",
         "q": "Ce este programul Bio Vera: De la livada la raft?",
         "a": "Acest program presupune ca partenerii logistici să-și asume responsabilitatea de la capăt la cap pentru transport, de la ridicarea din fermă până la livrarea finală. Asigurați integritatea completă a lanțului de frig, urmărirea prin GPS și transferul digital în fiecare etapă."
       },
       {
-        "category": "logistică",
+        "category": "logistics",
         "q": "Cum sunt compensați partenerii logistici?",
         "a": "Partenerii primesc plăți automate după verificarea livrării cu succes. Sumele de plată se bazează pe distanță, tipul de marfă și cerințele de livrare. Toate plățile sunt procesate digital, fără întârzieri de documente."
       },
       {
-        "category": "tehnic",
+        "category": "technical",
         "q": "Există o aplicație mobilă?",
         "a": "Da, avem aplicații mobile pentru cultivatori și parteneri logistici. Aplicațiile acceptă funcționalitatea offline, urmărirea GPS, scanarea codurilor de bare și sincronizarea în timp real atunci când sunt online."
       },
       {
-        "category": "tehnic",
+        "category": "technical",
         "q": "Cum funcționează sistemul de trasabilitate?",
         "a": "Sistemul nostru folosește înregistrări digitale imuabile, marcaje de timp GPS, amprentarea dispozitivului și coduri QR pentru a crea un lanț de custodie de neîntrerupt. Fiecare pas de la câmp la raft este înregistrat și verificabil."
       },
       {
-        "category": "tehnic",
+        "category": "technical",
         "q": "Ce măsuri de securitate sunt în vigoare?",
         "a": "Folosim criptare end-to-end, controale de acces bazate pe roluri, autentificare cu mai mulți factori și audituri regulate de securitate. Toate datele sunt stocate în siguranță și respectă reglementările GDPR."
       }
@@ -1846,7 +1866,7 @@
       "Trasabilitate",
       "Certificat",
       "Monitorizare",
-      "Cazuri de fraudă",
+      "Niveluri QA",
       "Trasabilitate blockchain publică pe Polygon când este activată"
     ],
     "partnersLine": "De încredere în fiecare zi de către organizațiile agricole de top",
@@ -2097,13 +2117,13 @@
   },
   "growersPage": {
     "metaTitle": "Program pentru producători | Bio Vera — Certificare, condiții garantate, acces la piața UE",
-    "metaDescription": "Program pentru producători: condiții garantate, certificare de grup GlobalG.A.P. IFA v6 gratuită, plată în 48 h, logistică coordonată și acces la piața UE. Deschis producătorilor din UE și Balcanii de Vest.",
+    "metaDescription": "Program pentru producători: condiții garantate, certificare de grup GlobalG.A.P. IFA v6 gratuită, plată în 48 h, logistică coordonată și acces la piața UE. Deschis producătorilor din UE și Europa.",
     "title": "Program pentru producători",
     "heroLead": "Alăturați-vă unei rețele de producători certificați. Bio Vera asigură standarde de calitate, certificare de grup GlobalG.A.P., coordonare logistică și acces la cumpărători europeni — fără costuri de certificare pentru producător.",
     "downloadProspectCta": "Descărcați PDF prospect",
     "downloadProspectError": "Nu s-a putut descărca prospectul. Vă rugăm să încercați din nou.",
     "whoCanApplyTitle": "Cine poate aplica",
-    "whoCanApplyLead": "Programul este deschis producătorilor de toate dimensiunile — de la mici ferme de familie la exploatații comerciale mari. Acceptăm candidaturi din toate țările Uniunii Europene și Balcanii de Vest, inclusiv Serbia, Bosnia și Herțegovina, Muntenegru, Macedonia de Nord, Croația și Albania. Singura condiție: disponibilitatea de a respecta standardele de producție Bio Vera — statutul actual de certificare nu este un obstacol.",
+    "whoCanApplyLead": "Programul este deschis producătorilor de toate dimensiunile — de la mici ferme de familie la exploatații comerciale mari. Acceptăm candidaturi de la producători din toată Europa dispuși să respecte standardele de producție Bio Vera. Statutul actual de certificare nu este un obstacol.",
     "countriesLine": "",
     "valuePropositionTitle": "Propunerea de valoare",
     "valuePropositionLead": "Ceea ce oferim",
@@ -2473,6 +2493,15 @@
     "loading": "Încărcare…"
   },
   "careersPage": {
+    "headerAd": "Recrutăm reprezentanți comerciali · Bio Vera",
+    "featuredAd": {
+      "eyebrow": "Posturi deschise · teren · Serbia",
+      "title": "Căutăm reprezentanți comerciali",
+      "lead": "Alătură-te programului Vera — vizitează producători, încheie volume contractuale și construiește rețeaua Bio Vera de la parcelă la Hamburg.",
+      "regionSouthCentral": "Serbia de Sud și Centru",
+      "regionVojvodina": "Voivodina",
+      "degreeNote": "De preferință: diplomă de facultate agricolă (agronomie, pomicultură, protecția plantelor sau similar)."
+    },
     "heroTitle": "Alătură-te echipei Bio Vera",
     "heroSubtitle": "Ajutați-ne să transformăm agricultura prin tehnologie. Construim viitorul lanțurilor de aprovizionare cu alimente transparente și durabile.",
     "whyTitle": "De ce să lucrezi cu noi",
@@ -2495,12 +2524,13 @@
       },
       {
         "title": "Impact global",
-        "description": "Alăturați-vă unei echipe care transformă agricultura din întreaga lume."
+        "description": "Alăturați-vă unei echipe care transformă agricultura din toată Europa."
       }
     ],
     "openPositions": "Poziții deschise",
     "requirements": "Cerințe",
     "benefits": "Beneficii",
+    "traits": "Calitățile pe care le apreciem",
     "applyNow": "Aplica acum",
     "employmentFullTime": "Cu normă întreagă",
     "ctaTitle": "Nu vezi un rol care se potrivește?",
@@ -2509,6 +2539,80 @@
     "applySubject": "Cerere de angajare: {{role}}",
     "generalApplicationSubject": "Aplicație generală",
     "jobs": {
+      "salesSouthCentral": {
+        "title": "Reprezentant comercial — Serbia de Sud și Centru",
+        "department": "Vânzări",
+        "location": "Serbia de Sud și Centrală (teren)",
+        "description": "Căutăm un reprezentant comercial de teren pentru programul Vera în sud-vestul și centrul Serbiei. Vizitați producători de fructe și legume și cooperative, prezentați producția contractuală conform standardelor Bio Vera și urmăriți conformitatea de la parcelă la predare.",
+        "requirements": [
+          "De preferință: diplomă de facultate agricolă (agronomie, pomicultură, protecția plantelor sau similar)",
+          "Experiență în vânzarea de inputuri agricole, comercializare sau producție contractuală",
+          "Permis categoria B și disponibilitate pentru vizite zilnice de teren",
+          "Cunoașterea producătorilor, zadruga și cooperativelor locale",
+          "Engleză de bază (germană este un plus)"
+        ],
+        "traits": [
+          "Energic și persistent — nu renunță după primul refuz",
+          "Empatic — ascultă producătorul înainte de a propune",
+          "Organizat — ține note de teren și respectă termenele",
+          "De încredere — își ține cuvântul și construiește încredere pe termen lung",
+          "Spirit de echipă — coordonează cu sediul din Hamburg"
+        ],
+        "benefits": [
+          "Salariu de bază + comision pe volume contractate",
+          "Buget de călătorii și teren",
+          "Aplicație mobilă Bio Vera și instruire",
+          "Perspectivă de lead regional de vânzări",
+          "Brand integrat vertical cu trasabilitate completă"
+        ]
+      },
+      "salesVojvodina": {
+        "title": "Reprezentant comercial — Voivodina",
+        "department": "Vânzări",
+        "location": "Provincia Autonomă Voivodina (teren)",
+        "description": "Căutăm un reprezentant comercial pentru Voivodina — producție intensivă de fructe și cereale, cooperative și gospodării familiale. Prezentați programul Vera, încheiați contracte sezoniere și ajutați producătorii să respecte standardele de ambalare și documentație Bio Vera.",
+        "requirements": [
+          "De preferință: diplomă de facultate agricolă",
+          "Experiență în vânzări sau consultanță agricolă în nordul Serbiei",
+          "Permis B — deplasări în comunele din Voivodina",
+          "Cunoașterea rețelei de producători, camere frigorifice și puncte de achiziție",
+          "Sârbă plus maghiară sau engleză (cel puțin o limbă suplimentară este un plus)"
+        ],
+        "traits": [
+          "Comunicativ și sensibil la comunități agricole diverse",
+          "Răbdător — explică standardele fără presiune",
+          "Proactiv — caută parcele noi și programe sezoniere",
+          "Precis — urmărește cantitățile contractate și ferestrele de recoltă",
+          "Orientat spre rezultate — motivat de comision și parteneriate pe termen lung"
+        ],
+        "benefits": [
+          "Salariu de bază + comision pe volume contractate",
+          "Buget de călătorii și teren",
+          "Instrumente mobile Bio Vera și instruire",
+          "Creștere profesională odată cu extinderea coridorului",
+          "Suport QA și operațiuni din Hamburg"
+        ]
+      },
+      "salesRetail": {
+        "title": "Reprezentant comercial — Germania și retail UE",
+        "department": "Vânzări",
+        "location": "Hamburg, Germania (+ călătorii DACH / UE)",
+        "description": "Vindeți fructe și legume trasabile către angrosiști, food service și echipe de achiziții retail. Prezentați pașapoarte de lot, calendare de recoltă și Protocol 360 QA — închideți programe în care Bio Vera este vânzătorul.",
+        "requirements": [
+          "2+ ani vânzări B2B în alimente, retail sau angro",
+          "Germană și engleză fluente",
+          "Experiență cu produse proaspete sau lanț frigorific — plus",
+          "Confortabil cu cicluri de achiziție, listări și planificare sezonieră",
+          "Permis de muncă UE sau eligibilitate în Germania"
+        ],
+        "benefits": [
+          "Salariu de bază + comision pe programe închise",
+          "Mașină de serviciu sau buget mobilitate",
+          "Asigurare medicală și bonusuri de performanță",
+          "Stoc și recoltă live prin portalul cumpărător Bio Vera",
+          "Legătură directă cu operațiuni, QA și logistică în Hamburg"
+        ]
+      },
       "dev": {
         "title": "Dezvoltator senior Full-Stack",
         "department": "Inginerie",
@@ -2532,18 +2636,18 @@
       "agritech": {
         "title": "Specialist în tehnologie agricolă",
         "department": "Produs",
-        "location": "Telecomanda (UE/în întreaga lume)",
+        "location": "Telecomanda (UE/în toată Europa)",
         "description": "Alăturați-vă echipei noastre de produse pentru a ajuta la modelarea viitorului tehnologiei agricole. Veți lucra îndeaproape cu fermierii, veți înțelege nevoile acestora și le veți traduce în caracteristici ale produsului.",
         "requirements": [
           "Antecedente în agricultură, tehnologie agroalimentară sau în domeniul conexe",
           "Înțelegerea reglementărilor și certificărilor agricole ale UE",
           "Experiență cu sisteme de management al fermelor",
           "Abilități analitice și de comunicare puternice",
-          "Dorința de a călători în ferme și parteneri din întreaga lume"
+          "Dorința de a călători în ferme și parteneri din toată Europa"
         ],
         "benefits": [
           "Salariu competitiv",
-          "Oportunități de călătorie în întreaga lume",
+          "Oportunități de călătorie în toată Europa",
           "Impact direct asupra inovației agricole",
           "Asigurare de sanatate",
           "Oportunități de învățare și dezvoltare"
@@ -2553,7 +2657,7 @@
         "title": "Manager Dezvoltare Afaceri",
         "department": "Vânzări",
         "location": "Hamburg, Germania",
-        "description": "Căutăm un manager de dezvoltare a afacerilor pentru a ne extinde rețeaua de cultivatori, furnizori și cumpărători din întreaga lume. Veți fi responsabil pentru construirea de parteneriate strategice.",
+        "description": "Căutăm un manager de dezvoltare a afacerilor pentru a ne extinde rețeaua de cultivatori, furnizori și cumpărători din toată Europa. Veți fi responsabil pentru construirea de parteneriate strategice.",
         "requirements": [
           "3+ ani de experiență în vânzări B2B sau dezvoltare de afaceri",
           "Experiență în agricultură, industria alimentară sau logistică",
@@ -2624,7 +2728,9 @@
     "ctaProducer": "Deveniți producător",
     "ctaContact": "Contactaţi-ne",
     "protocol360Title": "Protocol 360",
-    "protocol360Body": "Protocol 360 is Bio Vera's end-to-end quality assurance system. From soil analysis at the parcel level through biometric scanning at packaging to cold chain monitoring during transport — every quality checkpoint is documented in the batch dossier and tied to the product's EU Digital Passport."
+    "protocol360Body": "Protocol 360 is Bio Vera's end-to-end quality assurance system. From soil analysis at the parcel level through biometric scanning at packaging to cold chain monitoring during transport — every quality checkpoint is documented in the batch dossier and tied to the product's EU Digital Passport.",
+    "metaTitle": "Despre Bio Vera | Companie agrifood integrată vertical, Hamburg",
+    "metaDescription": "Bio Vera este o companie agrifood integrată vertical din Hamburg: producători din toată Europa, QA de program, lanț frigorific și pașapoarte digitale pe lot — nu marketplace."
   },
   "helpCenterPage": {
     "title": "Centru de ajutor",
@@ -2653,7 +2759,7 @@
         },
         {
           "title": "Beneficiile și avantajele cumpărătorului",
-          "content": "Bucurați-vă de prețuri competitive, prospețime garantată, transparență completă și acces direct la producătorii din întreaga lume. Creați încredere cu clienții dvs. prin calitate verificată."
+          "content": "Bucurați-vă de prețuri competitive, prospețime garantată, transparență completă și acces direct la producătorii din toată Europa. Creați încredere cu clienții dvs. prin calitate verificată."
         },
         {
           "title": "Termeni și condiții",

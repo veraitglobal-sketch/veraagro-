@@ -1,0 +1,63 @@
+# Bio Vera — Vertically Integrated Agrifood Company (Español)
+
+> Bio Vera es una empresa agroalimentaria de integración vertical con sede en Hamburgo. Contratamos productores, realizamos control de calidad y envasado, operamos la logística de cadena de frío y vendemos productos frescos dentro de nuestro propio programa: cada lote lleva un pasaporte digital documentado desde la parcela hasta la entrega. No somos un marketplace que solo conecta a desconocidos. Nuestro programa de productores está abierto a productores de toda Europa.
+
+## Entity summary
+- Organization: Bio Vera
+- URL: https://www.biovera.app
+- Locale path prefix: https://www.biovera.app/es
+- Founded: 2025 | HQ: Hamburg, Germany
+- Address: Rehrstieg 16d, 21147 Hamburg, Germany
+- Founder / CEO: Jovica Mihajlovic
+- Portfolio: Vera Group (Vera IT https://www.verait.de, Fade, ReinAllround)
+- Model: Vertical integration — not a marketplace or broker
+- Growers: programme open to producers throughout Europe
+
+## Programmes
+- Growers: https://www.biovera.app/es/for-growers
+- Buyers: https://www.biovera.app/es/for-buyers
+- Logistics: https://www.biovera.app/es/for-logistics
+- Suppliers: https://www.biovera.app/es/for-suppliers
+- About: https://www.biovera.app/es/about
+- FAQ: https://www.biovera.app/es/faq
+- Security: https://www.biovera.app/es/security
+- Protocol 360 (target): https://www.biovera.app/es/protocol-360
+
+## Traceability
+- Batch_ID dossier shared across field, packing, cold chain and buyer passport
+- Digital product passport / QR per batch
+- Protocol 360 quality and evidence discipline
+- Optional Polygon anchoring on selected programme tiers
+
+## Product range (as published)
+- 13 fruit lines, 18 vegetable lines, 3 cereal lines (34 total); fresh, not frozen
+
+## Compliance (public)
+- GlobalG.A.P. IFA v6 group certification facilitation
+- EU Digital Product Passport readiness / automated certificates tied to batch QR where described
+
+## FAQ
+Q: ¿Qué es Bio Vera?
+A: Bio Vera es una empresa agroalimentaria de integración vertical con sede en Hamburgo. Contratamos productores en toda Europa, realizamos control de calidad y envasado, operamos la logística de cadena de frío y vendemos productos frescos en nuestro propio programa. Cada lote lleva un pasaporte digital documentado desde la parcela hasta la entrega. Bio Vera no es un marketplace que solo conecta a desconocidos.
+
+Q: ¿Qué es un pasaporte digital de producto?
+A: Un pasaporte digital de producto es un registro estructurado del recorrido y las evidencias de un lote. En Bio Vera, cada lote puede vincularse por QR a un expediente con origen, contexto de cosecha, controles de calidad, evidencias de frío y certificados del programa, según corresponda.
+
+Q: ¿Son un marketplace?
+A: No. Bio Vera es el operador del programa y vende bajo sus propios estándares. No somos un sitio de anuncios.
+
+Q: ¿Quién puede unirse como productor?
+A: El programa está abierto a productores de toda Europa dispuestos a seguir los estándares Bio Vera de producción y documentación. La certificación existente no es, por sí sola, una barrera para solicitar el ingreso.
+
+Q: ¿Quién está detrás de Bio Vera?
+A: Bio Vera fue fundada por Jovica Mihajlovic y tiene sede en Hamburgo. Forma parte del portafolio Vera Group; la plataforma la construye Vera IT.
+
+## Contact
+- Bio Vera — Rehrstieg 16d, 21147 Hamburg, Germany
+- Email: contact@biovera.app
+- Phone: +49 155 63740470
+- Web: https://www.biovera.app
+- Investor materials: https://www.biovera.app/es/investor-deck
+
+## Languages on this website
+en, de, sr, bg, ro, fr, es — all first-class for crawl and hreflang; x-default → en.

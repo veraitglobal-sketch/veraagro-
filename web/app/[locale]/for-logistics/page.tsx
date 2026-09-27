@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { SiteLocale } from '@/i18n/config';
 import { isSiteLocale } from '@/lib/i18n-routing';
-import { generatePageMetadata } from '@/app/metadata';
+import { marketingRouteMetadata } from '@/lib/marketing-route-metadata';
 import en from '@/locales/en.json';
 import sr from '@/locales/sr.json';
 import de from '@/locales/de.json';
@@ -10,6 +10,7 @@ import bg from '@/locales/bg.json';
 import fr from '@/locales/fr.json';
 import es from '@/locales/es.json';
 import LogisticsPartnerPageClient from '@/components/marketing/LogisticsPartnerPageClient';
+import { MarketingBreadcrumbJsonLd } from '@/components/marketing/MarketingBreadcrumbJsonLd';
 
 type LocaleBundle = {
   logisticsPartnerPage: {
@@ -30,13 +31,15 @@ const bundles: Record<SiteLocale, LocaleBundle> = {
   es: es as LocaleBundle,
 };
 
-function logisticsMetadata(locale: SiteLocale): Pick<Metadata, 'title' | 'description'> {
+function logisticsMetadata(locale: SiteLocale): Metadata {
   const b = bundles[locale] ?? bundles.en;
   const lp = b.logisticsPartnerPage;
-  const title = lp.metaTitle ?? `${lp.title} | Bio Vera`;
-  const description = lp.metaDescription ?? lp.heroLead;
-  const path = locale === 'en' ? '/for-logistics' : `/${locale}/for-logistics`;
-  return generatePageMetadata(title, description, path);
+  return marketingRouteMetadata(locale, 'for-logistics', {
+    metaTitle: lp.metaTitle,
+    metaDescription: lp.metaDescription,
+    title: lp.title,
+    descriptionFallback: lp.heroLead,
+  });
 }
 
 export async function generateMetadata({
@@ -49,6 +52,21 @@ export async function generateMetadata({
   return logisticsMetadata(locale);
 }
 
-export default function ForLogisticsPage() {
-  return <LogisticsPartnerPageClient />;
+export default async function ForLogisticsPage({
+  params,
+}: Readonly<{
+  params: Promise<{ locale: string }>;
+}>) {
+  const { locale: loc } = await params;
+  const locale: SiteLocale = isSiteLocale(loc) ? loc : 'en';
+  const lp = (bundles[locale] ?? bundles.en).logisticsPartnerPage;
+  return (
+    <>
+      <MarketingBreadcrumbJsonLd
+        locale={locale}
+        items={[{ name: lp.title, segment: 'for-logistics' }]}
+      />
+      <LogisticsPartnerPageClient />
+    </>
+  );
 }

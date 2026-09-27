@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { SiteLocale } from '@/i18n/config';
 import { isSiteLocale } from '@/lib/i18n-routing';
-import { generatePageMetadata } from '@/app/metadata';
+import { generateLocaleMetadata } from '@/app/metadata';
 import en from '@/locales/en.json';
 import sr from '@/locales/sr.json';
 import de from '@/locales/de.json';
@@ -48,12 +48,18 @@ function homeHero(locale: SiteLocale): HomeHeroInitial {
   };
 }
 
-function homeMetadata(locale: SiteLocale): Pick<Metadata, 'title' | 'description'> {
+function homeMetadata(locale: SiteLocale): Metadata {
   const b = bundles[locale] ?? bundles.en;
-  const title = b.metadata.homeTitle ?? `${b.metadata.siteName} | Traceable Fresh Produce — Field to Shelf`;
+  const title =
+    b.metadata.homeTitle?.replace(/\s*\|\s*Bio Vera\s*$/i, '') ??
+    'Traceable Fresh Produce — Field to Shelf';
   const description = b.metadata.siteDescription;
-  const path = locale === 'en' ? '/' : `/${locale}`;
-  return generatePageMetadata(title, description, path);
+  return generateLocaleMetadata({
+    locale,
+    title,
+    description,
+    segment: '',
+  });
 }
 
 export async function generateMetadata({

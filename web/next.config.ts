@@ -22,6 +22,8 @@ if (isProd) {
 }
 
 const nextConfig: NextConfig = {
+  /** Marketing URLs: no trailing slash — sitemap locs and canonicals match this form. */
+  trailingSlash: false,
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },

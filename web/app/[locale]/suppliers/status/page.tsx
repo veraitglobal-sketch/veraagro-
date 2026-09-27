@@ -2,7 +2,6 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, Suspense, useMemo } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
@@ -59,18 +58,10 @@ function StatusInner() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="border-b border-gray-200">
-        <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href={loc('/')} className="flex items-center gap-2">
-            <Image src="/logo1.png" alt={t('footer.logoAlt')} width={56} height={20} className="h-4 w-auto" />
-          </Link>
-          <Link href={loc('/suppliers')} className="text-sm text-[#2D5A27]">
-            {t('supplierStatusPage.linkSuppliers')}
-          </Link>
-        </div>
-      </header>
-
-      <main className="max-w-lg mx-auto px-6 py-12">
+      <main className="max-w-lg mx-auto px-6 pt-12 pb-12">
+        <Link href={loc('/suppliers')} className="mb-6 inline-block text-sm text-[#2D5A27] hover:underline">
+          {t('supplierStatusPage.linkSuppliers')}
+        </Link>
         <h1 className="text-2xl font-light text-gray-900 mb-2">{t('supplierStatusPage.title')}</h1>
         <p className="text-sm text-gray-600 mb-6">{t('supplierStatusPage.lead')}</p>
         <div className="flex gap-2 mb-6">

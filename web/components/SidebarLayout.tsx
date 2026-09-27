@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import { stripLeadingSiteLocale } from '@/lib/i18n-routing';
 import { useAuth } from '@/lib/auth';
-import Image from 'next/image';
 import dynamic from 'next/dynamic';
+import BrandLogo from '@/components/BrandLogo';
 
 const NotificationCenter = dynamic(() => import('@/components/NotificationCenter'), { ssr: false });
 
@@ -52,13 +52,7 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
       {/* Logo */}
       <div className="h-16 border-b border-gray-200 flex items-center px-6 flex-shrink-0">
         <Link href={loc('/')} className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
-          <Image
-            src="/logo1.png"
-            alt="Bio Vera"
-            width={56}
-            height={20}
-            className="h-4 w-auto"
-          />
+          <BrandLogo alt="Bio Vera" />
         </Link>
       </div>
 

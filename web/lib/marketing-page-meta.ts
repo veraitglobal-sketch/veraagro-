@@ -7,12 +7,14 @@ import ro from "@/locales/ro.json";
 import bg from "@/locales/bg.json";
 import fr from "@/locales/fr.json";
 import es from "@/locales/es.json";
+import { generateLocaleMetadata } from "@/lib/seo-metadata";
 
-/** Subset of each locale file — JSON files differ slightly; we only read these keys. */
 type MarketingStrings = {
   contactPage: { heroTitle: string; heroSubtitle: string };
   faqPage: { title: string; subtitle: string };
   pressPage: { title: string; subtitle: string };
+  helpCenterPage?: { title: string; subtitle: string };
+  securityPage?: { heroTitle: string; heroLead: string };
 };
 
 function stringsFor(localeFile: unknown): MarketingStrings {
@@ -29,26 +31,53 @@ const bundles: Record<SiteLocale, MarketingStrings> = {
   es: stringsFor(es),
 };
 
-const BRAND = "Bio Vera";
+export type MarketingMetaPage = "contact" | "faq" | "press" | "help-center" | "security";
 
-export type MarketingMetaPage = "contact" | "faq" | "press";
-
-export function marketingPageMetadata(locale: SiteLocale, page: MarketingMetaPage): Pick<Metadata, "title" | "description"> {
+export function marketingPageMetadata(locale: SiteLocale, page: MarketingMetaPage): Metadata {
   const b = bundles[locale] ?? stringsFor(en);
+
   if (page === "contact") {
-    return {
-      title: `${b.contactPage.heroTitle} | ${BRAND}`,
+    return generateLocaleMetadata({
+      locale,
+      title: b.contactPage.heroTitle,
       description: b.contactPage.heroSubtitle,
-    };
+      segment: "contact",
+    });
   }
   if (page === "faq") {
-    return {
-      title: `${b.faqPage.title} | ${BRAND}`,
+    return generateLocaleMetadata({
+      locale,
+      title: b.faqPage.title,
       description: b.faqPage.subtitle,
-    };
+      segment: "faq",
+    });
   }
-  return {
-    title: `${b.pressPage.title} | ${BRAND}`,
+  if (page === "help-center") {
+    const hc = b.helpCenterPage ?? bundles.en.helpCenterPage!;
+    const metaDescription =
+      (hc as { subtitle?: string; metaDescription?: string }).metaDescription ??
+      (hc as { subtitle?: string }).subtitle ??
+      "Guidance for buyers, growers, drivers, and partners on Bio Vera workflows, quality, and traceability.";
+    return generateLocaleMetadata({
+      locale,
+      title: hc.title,
+      description: metaDescription,
+      segment: "help-center",
+    });
+  }
+  if (page === "security") {
+    const sec = b.securityPage ?? bundles.en.securityPage!;
+    return generateLocaleMetadata({
+      locale,
+      title: sec.heroTitle,
+      description: sec.heroLead,
+      segment: "security",
+    });
+  }
+  return generateLocaleMetadata({
+    locale,
+    title: b.pressPage.title,
     description: b.pressPage.subtitle,
-  };
+    segment: "press",
+  });
 }

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, MessageSquare } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -105,29 +104,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href={loc('/')} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <Image
-                src="/logo1.png"
-                alt={t('footer.logoAlt')}
-                width={56}
-                height={20}
-                className="h-4 w-auto"
-                priority
-              />
-            </Link>
-            <nav className="flex gap-8 items-center">
-              <Link href={loc('/')} className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
-                {t('nav.home')}
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      <main className="pt-32 pb-24 px-6 lg:px-8">
+      <main className="pt-24 pb-24 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -215,7 +192,7 @@ export default function ContactPage() {
                     </Link>
                   </li>
                   <li>
-                    <Link href={loc('/growers')} className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
+                    <Link href={loc('/for-growers')} className="text-sm text-gray-600 font-light hover:text-[#2D5A27] transition-colors">
                       {t('nav.forGrowers')}
                     </Link>
                   </li>

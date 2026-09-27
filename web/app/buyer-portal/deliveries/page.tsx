@@ -358,6 +358,18 @@ export default function DeliveriesPage() {
                   key={delivery.id}
                   className="border-b border-green-200/50 pb-6 hover:border-green-300/50 transition-colors"
                 >
+                  {delivery.returnCase ? <div className="mb-4 rounded border p-3">
+                    <p>{t('returnFlow.title')}: {t(`returnFlow.states.${delivery.returnCase.status}`)}</p>
+                    {delivery.returnCase.status === 'RECEIVED' && delivery.returnCase.stockStatus ? <p>{t('returnDisposition.title')}: {t(`returnDisposition.states.${delivery.returnCase.stockStatus}`)}</p> : null}
+                    {delivery.returnCase.refund ? <p>{t(`returnFlow.refundStates.${delivery.returnCase.refund.status}`)} · {(delivery.returnCase.refund.amountCents / 100).toFixed(2)} {delivery.returnCase.refund.currency}</p> : null}
+                  </div> : null}
+                  {[...(delivery.buyer_delivery_issues || []), ...(delivery.digital_handovers?.disputes || [])].map((review: { id: string; description?: string; reason?: string; status: string; outcome?: string; resolution?: string; resolvedAt?: string }) => <div key={review.id} className="mb-4 rounded border border-amber-200 p-3 space-y-2">
+                    <p>{review.description || review.reason}</p>
+                    <p>{t(`deliveryReview.states.${review.status}`, { defaultValue: review.status })}</p>
+                    {review.outcome ? <p>{t(`deliveryReview.outcomes.${review.outcome}`)}</p> : null}
+                    {review.resolution ? <p className="whitespace-pre-wrap">{review.resolution}</p> : null}
+                    {review.resolvedAt ? <p>{new Date(review.resolvedAt).toLocaleString()}</p> : null}
+                  </div>)}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">

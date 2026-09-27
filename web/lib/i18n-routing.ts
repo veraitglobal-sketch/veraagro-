@@ -28,6 +28,9 @@ export const LOCALIZED_FIRST_SEGMENTS = new Set([
   "eic-part-b",
   "help-center",
   "security",
+  "protocol-360",
+  "guides",
+  "produce",
   "language",
 ]);
 
@@ -59,7 +62,6 @@ export const LOCALE_FREE_FIRST_SEGMENTS = new Set([
   "hub-manager",
   "aeo-dashboard",
   "operations-center",
-  "protocol-360",
   "distributor-network",
   "login",
   "coordinator",

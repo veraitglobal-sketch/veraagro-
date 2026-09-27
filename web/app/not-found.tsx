@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Home, ArrowLeft } from 'lucide-react';
+import BrandLogo from '@/components/BrandLogo';
 
 export const metadata = {
   title: '404 - Page Not Found | Bio Vera',
@@ -12,18 +12,13 @@ export default function NotFound() {
     <div className="min-h-screen bg-white flex items-center justify-center px-6">
       <div className="max-w-2xl mx-auto text-center">
         <div className="mb-8">
-          <Image
-            src="/logo1.png"
-            alt="Bio Vera"
-            width={56}
-            height={20}
-            className="h-4 w-auto mx-auto mb-8"
-            priority
-          />
+          <div className="mb-8 flex justify-center">
+            <BrandLogo alt="Bio Vera" priority />
+          </div>
           <h1 className="text-9xl font-light text-gray-200 mb-4">404</h1>
           <h2 className="text-3xl font-light text-gray-900 mb-4">Page Not Found</h2>
           <p className="text-lg text-gray-600 font-light mb-8 leading-relaxed">
-            The page you're looking for doesn't exist or has been moved.
+            The page you&apos;re looking for doesn&apos;t exist or has been moved.
           </p>
         </div>
 

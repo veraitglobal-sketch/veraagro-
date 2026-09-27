@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
+import BrandLogo from '@/components/BrandLogo';
 import { useAuth } from '@/lib/auth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Package, ShoppingBag, Printer, Building2, User, Phone, Mail, Calendar, ChevronDown, ChevronRight } from 'lucide-react';
@@ -273,25 +273,6 @@ export default function PreOrder2026Page() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header – same as For Buyers / Growers / Suppliers: logo + Home only */}
-      <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <Image src="/logo1.png" alt="Bio Vera" width={56} height={20} className="h-4 w-auto" priority />
-            </Link>
-            <nav className="flex gap-8 items-center">
-              <Link
-                href="/"
-                className="text-sm text-gray-600 hover:text-[#2D5A27] hover:bg-[#2D5A27]/10 px-3 py-2 rounded-full transition-colors"
-              >
-                Home
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
       <main className="pt-24 pb-12 px-6 lg:px-8">
         <div className="max-w-2xl mx-auto">
           <motion.div
@@ -563,7 +544,7 @@ export default function PreOrder2026Page() {
                   <div className="p-6">
                     <div className="flex justify-between items-start gap-6 border-b border-gray-200 pb-6 mb-6">
                       <div>
-                        <Image src="/logo1.png" alt="Bio Vera" width={80} height={28} className="h-7 w-auto" />
+                        <BrandLogo alt="Bio Vera" />
                         <p className="text-xs text-gray-500 mt-2">Pre-order 2026 · Planning</p>
                       </div>
                       <div className="text-right">

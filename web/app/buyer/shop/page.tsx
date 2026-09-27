@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/lib/auth';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { inventoryAPI, ordersAPI } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 const CATEGORY_IDS = ['fruits', 'vegetables', 'grains'] as const;
 
-type CartLine = { product: any; quantity: number };
+type CartLine = { product: any; quantity: number; checkoutKey?: string };
 
 function formatEur(amount: number): string {
   return amount.toLocaleString(undefined, { style: 'currency', currency: 'EUR' });
@@ -32,6 +32,27 @@ export default function ShopPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<CartLine[]>([]);
+  const cartRef = useRef<CartLine[]>([]);
+  const cartOwner = useRef<string | null>(null);
+  const submitLock = useRef(false);
+  const [cartError, setCartError] = useState('');
+  useEffect(() => {
+    cartOwner.current = null; cartRef.current = []; setCart([]); setCartError('');
+    if (!user?.id) return;
+    try {
+      const raw = localStorage.getItem(`buyer-cart-v1:${user.id}`);
+      const saved: unknown = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(saved) || saved.some(line => !line?.product?.id || !Number.isFinite(line.quantity) || line.quantity <= 0)) throw new Error('Invalid cart');
+      cartRef.current = saved; cartOwner.current = user.id; setCart(saved);
+    } catch { setCartError(t('checkoutRecovery.storageError')); }
+  }, [user?.id, t]);
+  const updateCart = useCallback((apply: (lines: CartLine[]) => CartLine[]) => {
+    if (!user?.id || cartOwner.current !== user.id) throw new Error(t('checkoutRecovery.storageError'));
+    const next = apply(cartRef.current);
+    // Persist before sending or acknowledging an order, so a reload keeps its request key.
+    localStorage.setItem(`buyer-cart-v1:${user.id}`, JSON.stringify(next));
+    cartRef.current = next; setCart(next); setCartError('');
+  }, [user?.id, t]);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [street, setStreet] = useState('');
@@ -80,7 +101,7 @@ export default function ShopPage() {
   };
 
   const addToCart = (product: any) => {
-    setCart((prev) => {
+    try { updateCart((prev) => {
       const i = prev.findIndex((l) => l.product.id === product.id);
       if (i >= 0) {
         const next = [...prev];
@@ -88,18 +109,17 @@ export default function ShopPage() {
         return next;
       }
       return [...prev, { product, quantity: 1 }];
-    });
+    }); } catch { setCartError(t('checkoutRecovery.storageError')); }
   };
 
   const updateLineQuantity = (productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      setCart((prev) => prev.filter((l) => l.product.id !== productId));
-      return;
-    }
-    setCart((prev) => prev.map((l) => (l.product.id === productId ? { ...l, quantity } : l)));
+    try { updateCart(prev => quantity <= 0 ? prev.filter(l => l.product.id !== productId)
+      : prev.map(l => l.product.id === productId ? { ...l, quantity } : l)); }
+    catch { setCartError(t('checkoutRecovery.storageError')); }
   };
 
   const submitCheckout = useCallback(async () => {
+    if (submitLock.current) return;
     if (cart.length === 0) {
       alert(t('buyerRetail.shop.checkout.cartEmpty'));
       return;
@@ -118,12 +138,19 @@ export default function ShopPage() {
 
     const deliveryNotes = notes.trim() || undefined;
 
+    let recovered = false;
+    let createdCount = 0;
+    submitLock.current = true;
     try {
       setSubmitting(true);
-      for (const line of cart) {
+      updateCart(lines => lines.map(line => ({ ...line, checkoutKey: line.checkoutKey || crypto.randomUUID() })));
+      const attempt = [...cartRef.current];
+      for (const line of attempt) {
         const { product } = line;
         const productName = product.productName || product.name || t('buyerRetail.shop.productFallback');
-        await ordersAPI.create({
+        const order = await ordersAPI.create({
+          clientRequestId: line.checkoutKey!,
+          productId: product.id,
           ...(product.estate?.id ? { estateId: product.estate.id } : {}),
           productName,
           quantity: line.quantity,
@@ -132,26 +159,31 @@ export default function ShopPage() {
           deliveryAddress,
           deliveryNotes,
         });
+        if (!order?.id || !Number.isFinite(order.quantity) || order.quantity <= 0) throw new Error(t('checkoutRecovery.missingOrder'));
+        createdCount++;
+        recovered = recovered || !!order.checkoutReplay;
+        updateCart(lines => lines.map(current => current.checkoutKey === line.checkoutKey
+          ? { ...current, quantity: Math.max(0, current.quantity - order.quantity), checkoutKey: undefined } : current).filter(current => current.quantity > 0));
       }
-      const count = cart.length;
-      setCart([]);
+      const count = createdCount;
       setCheckoutOpen(false);
       setStreet('');
       setCity('');
       setPostalCode('');
       setNotes('');
       alert(
-        count > 1 ? t('buyerRetail.shop.checkout.ordersCreated', { count }) : t('buyerRetail.shop.orderCreated'),
+        recovered ? t('checkoutRecovery.recovered') : count > 1 ? t('buyerRetail.shop.checkout.ordersCreated', { count }) : t('buyerRetail.shop.orderCreated'),
       );
       router.push('/buyer-portal/orders');
     } catch (error) {
       console.error('Error creating order:', error);
       const detail = getOrderErrorMessage(error);
-      alert([t('buyerRetail.shop.orderFailed'), detail].filter(Boolean).join(' '));
+      alert([recovered ? t('checkoutRecovery.recovered') : '', createdCount ? t('checkoutRecovery.partial', { count: createdCount }) : t('buyerRetail.shop.orderFailed'), detail].filter(Boolean).join(' '));
     } finally {
+      submitLock.current = false;
       setSubmitting(false);
     }
-  }, [cart, city, country, notes, postalCode, router, street, t]);
+  }, [cart, city, country, notes, postalCode, router, street, t, updateCart]);
 
   if (isLoading) {
     return (
@@ -329,6 +361,7 @@ export default function ShopPage() {
         </div>
       )}
 
+      {cartError && <p role="alert" className="p-4 text-red-700">{cartError}</p>}
       {checkoutOpen && (
         <div
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 p-0 sm:p-4"

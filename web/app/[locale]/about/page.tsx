@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { SiteLocale } from '@/i18n/config';
 import { isSiteLocale } from '@/lib/i18n-routing';
-import { generatePageMetadata } from '@/app/metadata';
+import { marketingRouteMetadata } from '@/lib/marketing-route-metadata';
 import en from '@/locales/en.json';
 import sr from '@/locales/sr.json';
 import de from '@/locales/de.json';
@@ -10,6 +10,9 @@ import bg from '@/locales/bg.json';
 import fr from '@/locales/fr.json';
 import es from '@/locales/es.json';
 import AboutPageClient from '@/components/marketing/AboutPageClient';
+import { MarketingBreadcrumbJsonLd } from '@/components/marketing/MarketingBreadcrumbJsonLd';
+import { JsonLd } from '@/components/JsonLd';
+import { buildAboutPageJsonLd } from '@/lib/schema/marketing-jsonld';
 
 type LocaleBundle = {
   aboutPage: {
@@ -30,13 +33,15 @@ const bundles: Record<SiteLocale, LocaleBundle> = {
   es: es as LocaleBundle,
 };
 
-function aboutMetadata(locale: SiteLocale): Pick<Metadata, 'title' | 'description'> {
+function aboutMetadata(locale: SiteLocale): Metadata {
   const b = bundles[locale] ?? bundles.en;
   const ap = b.aboutPage;
-  const title = ap.metaTitle ?? `${ap.heroTitle} | Bio Vera`;
-  const description = ap.metaDescription ?? ap.heroSubtitle;
-  const path = locale === 'en' ? '/about' : `/${locale}/about`;
-  return generatePageMetadata(title, description, path);
+  return marketingRouteMetadata(locale, 'about', {
+    metaTitle: ap.metaTitle,
+    metaDescription: ap.metaDescription,
+    title: ap.heroTitle,
+    descriptionFallback: ap.heroSubtitle,
+  });
 }
 
 export async function generateMetadata({
@@ -49,6 +54,22 @@ export async function generateMetadata({
   return aboutMetadata(locale);
 }
 
-export default function AboutPage() {
-  return <AboutPageClient />;
+export default async function AboutPage({
+  params,
+}: Readonly<{
+  params: Promise<{ locale: string }>;
+}>) {
+  const { locale: loc } = await params;
+  const locale: SiteLocale = isSiteLocale(loc) ? loc : 'en';
+  const ap = (bundles[locale] ?? bundles.en).aboutPage;
+  return (
+    <>
+      <JsonLd data={buildAboutPageJsonLd(locale)} />
+      <MarketingBreadcrumbJsonLd
+        locale={locale}
+        items={[{ name: ap.heroTitle, segment: 'about' }]}
+      />
+      <AboutPageClient />
+    </>
+  );
 }

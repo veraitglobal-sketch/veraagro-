@@ -2,8 +2,9 @@
 
 import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Link2, Printer } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
+import { HideRootNavigation } from "@/components/marketing/HideRootNavigation";
 import { useLocalizedHref } from "@/hooks/useLocalizedHref";
 import Footer from "@/components/Footer";
 import { TECHNICAL_PROPOSAL_CHAPTERS } from "@/content/technical-proposal";
@@ -37,6 +38,7 @@ export default function TechnicalProposalPage() {
 
   return (
     <div className="min-h-screen bg-[#f4f7f4] text-gray-900 technical-proposal-root print:bg-white">
+      <HideRootNavigation />
       <style jsx global>{`
         @media print {
           .technical-proposal-root .tp-no-print {
@@ -109,14 +111,7 @@ export default function TechnicalProposalPage() {
             href={loc("/")}
             className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/25"
           >
-            <Image
-              src="/logo1.png"
-              alt={UI.logoAlt}
-              width={64}
-              height={24}
-              className="h-6 w-auto"
-              priority
-            />
+            <BrandLogo alt={UI.logoAlt} priority />
             <span className="hidden border-l border-gray-200 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-gray-400 sm:inline">
               {UI.coverEyebrow}
             </span>

@@ -33,7 +33,7 @@ type VisionCard = { title: string; description: string };
 type FeatureItem = { title: string; description: string };
 type RoadmapPhase = { phase: string; title: string; status: string; items: string[] };
 
-const STAT_NUMBERS = ['100%', 'EU', '24/7', '0', 'Polygon'] as const;
+const STAT_NUMBERS = ['100%', 'EU', '24/7', '3', 'Polygon'] as const;
 
 const VISION_ICONS: LucideIcon[] = [Eye, Lock, Globe];
 const FEATURE_ICONS: LucideIcon[] = [QrCode, PackageSearch, Wallet, Shield, FileCheck, Lock];
@@ -141,7 +141,7 @@ export default function HomePageClient({
                 {heroBrowseProducts}
               </Link>
               <Link
-                href={loc('/growers')}
+                href={loc('/for-growers')}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#2D5A27] text-[#2D5A27] text-sm font-medium hover:bg-[#2D5A27]/5 transition-colors rounded-lg"
               >
                 {heroBecomeProducer}

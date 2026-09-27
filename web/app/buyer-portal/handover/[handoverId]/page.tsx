@@ -15,9 +15,9 @@ import { Loader2 } from 'lucide-react';
 
 const SIG_W = 480;
 const SIG_H = 160;
-const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+const MAX_PHOTO_BYTES = 1_800_000;
 const MIN_PHOTOS = 2;
-const MAX_PHOTOS = 8;
+const MAX_PHOTOS = 6;
 
 /** Parse inputs like "5,2" or "5.2" (sr-RS). */
 function parseLocaleTemperature(raw: string): number {
@@ -69,6 +69,7 @@ export default function BuyerHandoverCompletePage() {
   const [loading, setLoading] = useState(true);
   const [loadErr, setLoadErr] = useState<string | null>(null);
   const [payload, setPayload] = useState<{
+    revision?: number;
     id: string;
     status: string;
     deliveries?: {
@@ -255,6 +256,7 @@ export default function BuyerHandoverCompletePage() {
     try {
       await digitalHandoverAPI.complete({
         handoverId: handoverIdRaw,
+        revision: payload.revision ?? 0,
         qualityCheck: {
           visualCheck: visual,
           temperature: temp,

@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { authAPI } from '@/lib/api';
@@ -146,30 +145,7 @@ export default function BuyerRegisterPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="fixed top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-sm">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
-          <Link href={loc('/')} className="flex items-center gap-2 transition-opacity hover:opacity-80">
-            <Image
-              src="/logo1.png"
-              alt={t('buyerRegister.logoAlt')}
-              width={56}
-              height={20}
-              className="h-4 w-auto"
-              priority
-            />
-          </Link>
-          <nav className="flex items-center gap-8">
-            <Link href={loc('/')} className="text-sm text-gray-600 transition-colors hover:text-[#2D5A27]">
-              {t('buyerRegister.navHome')}
-            </Link>
-            <Link href={loc('/login/buyer')} className="text-sm text-gray-600 transition-colors hover:text-[#2D5A27]">
-              {t('buyerRegister.navSignIn')}
-            </Link>
-          </nav>
-        </div>
-      </header>
-
-      <section className="bg-gradient-to-b from-[#2D5A27]/10 to-white px-6 pb-16 pt-32 lg:px-8">
+      <section className="bg-gradient-to-b from-[#2D5A27]/10 to-white px-6 pb-16 pt-12 lg:px-8">
         <div className="mx-auto max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -1,4 +1,103 @@
 {
+  "connectedWorkflow": {
+    "openHarvest": "Otvori plan berbe",
+    "adminHarvestHelp": "Uz plan berbe pratite povezane lotove i zahtev za prevoz. Otvorite prevoz da odobrite zahtev i dodelite prevoznika.",
+    "sourcePlanting": "Otvori izvorni zasad",
+    "lot": "Lot",
+    "allMissions": "Prikaži sav prevoz"
+  },
+  "paymentSettlement": {
+    "review": "Pregledaj i oslobodi sredstva",
+    "title": "Oslobađanje sredstava",
+    "grower": "Proizvođač",
+    "transport": "Prevoz",
+    "platform": "Platforma",
+    "explanation": "Potvrda knjiži sredstva na povezane novčanike. Ovo nije potvrda bankovnog prenosa. Server proverava prijem, dokaze i otvorene reklamacije.",
+    "confirm": "Potvrdi knjiženje",
+    "changed": "Status plaćanja se promenio. Lista je osvežena.",
+    "loadFailed": "Podaci plaćanja nisu učitani.",
+    "releaseFailed": "Knjiženje nije potvrđeno. Proveri trenutni status pre ponavljanja.",
+    "released": "Sredstva knjižena u novčanike"
+  },
+  "returnFlow": {
+    "title": "Povrati i refundacije",
+    "plan": "Otvori nalog za povrat",
+    "planHint": "Povrat cele pošiljke ide preko dodeljenog prevoznika do farme. Unesite tačnu adresu prijema i uputstva.",
+    "planned": "Nalog za povrat je sačuvan.",
+    "address": "Tačna adresa farme za prijem",
+    "instructions": "Uputstva za povrat (najmanje 10 znakova)",
+    "empty": "Nema povrata za ovaj nalog.",
+    "error": "Radnja nije uspela. Proverite podatke, osvežite i pokušajte ponovo.",
+    "collect": "Potvrdi preuzimanje povrata",
+    "receive": "Potvrdi prijem na farmi",
+    "fullShipment": "Potvrđujem da je cela pošiljka fizički preuzeta ili primljena u ovom koraku.",
+    "proofHint": "Snimite najmanje dve fotografije i opišite stanje robe. Prevoznik beleži preuzimanje, a farma prijem.",
+    "notes": "Stanje robe i napomene (najmanje 10 znakova)",
+    "photos": "Fotografije dokaza (2–6)",
+    "evidence": "Pogledaj dokaze povrata",
+    "collectedAt": "Preuzeto za povrat",
+    "receivedAt": "Primljeno na farmi",
+    "approveRefund": "Odobri pun povraćaj novca",
+    "refundHint": "Odobrenje rezerviše ceo iznos za povrat kupcu. Ova aplikacija ne šalje novac banci. Bankarski povraćaj se izvršava odvojeno.",
+    "reason": "Obrazloženje odobrenja (najmanje 20 znakova)",
+    "bankHint": "Unesite podatke samo za stvarno izvršen bankarski povraćaj odobrenog iznosa i priložite potvrdu.",
+    "bankReference": "Jedinstvena referenca bankarskog povraćaja",
+    "bankDate": "Vreme izvršenog bankarskog povraćaja",
+    "bankEvidence": "Potvrda banke (slika)",
+    "recordBank": "Evidentiraj izvršeni bankarski povraćaj",
+    "bankConfirm": "Potvrđujete da je banka već izvršila povraćaj {{amount}} {{currency}} kupcu? Aplikacija evidentira dokaz; ne izvršava transfer.",
+    "reconciliation": "Novac je ranije raspodeljen primaocima. Potrebno je finansijsko usaglašavanje: ovaj povraćaj ne stornira njihove novčanike.",
+    "listHint": "Poslednjih 200 naloga. Operativa može uneti fizički korak samo uz stvarne dokaze preuzimanja ili prijema.",
+    "states": {
+      "PLANNED": "Povrat planiran",
+      "COLLECTED": "Preuzeto od kupca",
+      "RECEIVED": "Primljeno na farmi"
+    },
+    "refundStates": {
+      "APPROVED": "Refundacija odobrena — čeka bankarski povraćaj",
+      "CONFIRMED": "Bankarski povraćaj evidentiran"
+    }
+  },
+  "dispatchFlow": {
+    "documentsPending": "Povezana dostava čeka otpremnicu ili račun",
+    "retryDocuments": "Ponovi izradu dokumenata",
+    "title": "Poveži misiju i dostavu",
+    "hint": "Izaberite misiju i plaćenu porudžbinu iste farme. Potvrdite da ova misija ispunjava celu porudžbinu; odredište se preuzima iz porudžbine. Prikazuje se poslednjih 200 zapisa.",
+    "mission": "Misija",
+    "order": "Porudžbina",
+    "choose": "Izaberite",
+    "link": "Poveži i sačuvaj dostavu",
+    "saved": "Dostava je povezana:",
+    "error": "Povezivanje nije uspelo. Osvežite i pokušajte ponovo."
+  },
+  "deliveryReview": {
+    "startReview": "Započni obradu",
+    "decision": "Odluka",
+    "explanation": "Obrazloženje za kupca (najmanje 20 znakova)",
+    "saveDecision": "Sačuvaj odluku",
+    "conflict": "Prijava je u međuvremenu promenjena. Osveži i proveri odluku.",
+    "moneyHint": "Upisuje se operativna odluka, bez povraćaja ili oslobađanja novca. Ponovna kontrola zahteva nove dokaze i potpis kupca; kod povrata prijem ostaje blokiran.",
+    "states": {
+      "PENDING": "Primljeno",
+      "IN_REVIEW": "U obradi",
+      "RESOLVED": "Odluka zabeležena"
+    },
+    "outcomes": {
+      "ACCEPTED": "Reklamacija prihvaćena",
+      "REJECTED": "Reklamacija odbijena",
+      "REINSPECTION": "Potrebna ponovna kontrola kupca",
+      "RETURN_REQUIRED": "Potreban povrat — prijem ostaje blokiran"
+    },
+    "title": "Prijave isporuke",
+    "hint": "Poslednjih 100 prijava kupaca i 100 sporova sa primopredaje. Ovde se pregledaju prijave i dokazi; odluku i eventualnu naknadu vodi operativa.",
+    "refresh": "Osveži",
+    "error": "Podaci nisu učitani. Pokušaj ponovo.",
+    "loading": "Učitavanje…",
+    "empty": "Nema sačuvanih prijava.",
+    "received": "Primljena prijava",
+    "photos": "Otvori fotografije",
+    "photoAlt": "Dokaz isporuke {{number}}"
+  },
   "brand": {
     "name": "Bio Vera"
   },
@@ -96,7 +195,7 @@
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "Operativni sistem koji povezuje proizvodnju, kontrolu kvaliteta, logistiku i distribuciju svežih proizvoda u jedinstven, sertifikovan lanac. Svaka serija praćena od parcele do krajnje tačke. Svaki učesnik verifikovan. Svaki korak dokumentovan.",
+    "siteDescription": "Vertikalno integrisan agrifood iz Hamburga. EU Digital Product Passport na svakoj seriji — sledljivost od parcele do police za proizvođače, logistiku i dobavljače.",
     "ldJsonDescription": "Operativni sistem za proizvodnju, kvalitet, logistiku i distribuciju svežih proizvoda — sertifikovan lanac od parcele do krajnje tačke, verifikovani učesnici, dokumentovan svaki korak.",
     "keywords": [
       "Bio Vera",
@@ -253,8 +352,28 @@
     "items": [
       {
         "category": "general",
+        "q": "Ko stoji iza Bio Vera?",
+        "a": "Bio Vera je osnovana od strane Jovice Mihajlovića i sedište joj je u Hamburgu. Deo je portfolija Vera Group; platformu gradi Vera IT."
+      },
+      {
+        "category": "general",
+        "q": "Ko može da se prijavi kao proizvođač?",
+        "a": "Program je otvoren za proizvođače širom Evrope koji su spremni da poštuju Bio Vera standarde proizvodnje i dokumentacije. Postojeći sertifikat sam po sebi nije uslov za prijavu."
+      },
+      {
+        "category": "general",
+        "q": "Da li ste marketplace?",
+        "a": "Ne. Bio Vera je operater programa i prodaje pod sopstvenim standardima. Nismo platforma koja samo objavljuje oglase i spaja nepoznate strane."
+      },
+      {
+        "category": "general",
+        "q": "Šta je digitalni pasoš proizvoda?",
+        "a": "Digitalni pasoš proizvoda je strukturirani zapis o poreklu i putu ture. U Bio Vera sistemu svaka tura može biti povezana QR kodom sa dosijeom koji obuhvata poreklo, kontekst berbe, kontrole kvaliteta, dokaze hladnog lanca i programske sertifikate, gde je primenljivo."
+      },
+      {
+        "category": "general",
         "q": "Šta je Bio Vera?",
-        "a": "Bio Vera je agrifood kompanija sa vertikalno vođenim lancem: definiše standarde i ulaze, organizuje proizvodnju kroz ugovorene Vera proizvođače, upravlja pakovanjem i logistikom i kao vlasnik brenda prodaje robu krajnjem kupcu—u istom modelu sledljivosti i kvaliteta od polja do prodavnice."
+        "a": "Bio Vera je vertikalno integrisana agrifood kompanija sa sedištem u Hamburgu. Ugovaramo proizvođače širom Evrope, vodimo kontrolu kvaliteta i pakovanje, organizujemo hladni lanac i prodajemo sveže proizvode u sopstvenom programu. Svaka tura ima dokumentovani digitalni pasoš od parcele do isporuke. Bio Vera nije marketplace koji samo spaja nepoznate strane."
       },
       {
         "category": "general",
@@ -3357,7 +3476,7 @@
     "hero": {
       "title1": "Vertikalno Integrisana",
       "title2": "Agrifood Kompanija",
-      "subtitle": "Operativni sistem koji povezuje proizvodnju, kontrolu kvaliteta, logistiku i distribuciju svežih proizvoda u jedinstven, sertifikovan lanac. Svaka serija praćena od parcele do krajnje tačke. Svaki učesnik verifikovan. Svaki korak dokumentovan.",
+      "subtitle": "Bio Vera je vertikalno integrisana agrifood kompanija sa sedištem u Hamburgu. Ugovaramo proizvođače, vodimo kontrolu kvaliteta i pakovanje, organizujemo hladni lanac i prodajemo sveže proizvode u okviru sopstvenog programa — svaka serija ima dokumentovan digitalni pasoš od parcele do police. Nismo marketplace koji samo povezuje nepoznate strane.",
       "browseProducts": "Pregledaj proizvode",
       "becomeProducer": "Postanite Vera proizvođač",
       "preOrder": "Pretporudžbina za 2026. je otvorena",
@@ -3369,7 +3488,7 @@
       "Sledljivost",
       "Sertifikovano",
       "Monitoring",
-      "Slučajevi prevara",
+      "QA nivoi",
       "Opcioni trag"
     ],
     "partnersLine": "Poverenje vodećih poljoprivrednih organizacija svakodnevno",
@@ -3498,7 +3617,7 @@
       "items": [
         {
           "question": "Šta je Bio Vera?",
-          "answer": "Bio Vera je vertikalno integrisana agrifood kompanija sa sedištem u Hamburgu, Nemačka. Vodimo ceo lanac svežih proizvoda — od ugovornih programa proizvođača, preko kontrole kvaliteta i logistike, do brendirane prodaje krajnjim kupcima. Svaka serija ima EU digitalni pasoš proizvoda sa punom sledljivošću od njive do police."
+          "answer": "Bio Vera je vertikalno integrisana agrifood kompanija sa sedištem u Hamburgu. Ugovaramo proizvođače, vodimo kontrolu kvaliteta i pakovanje, organizujemo hladni lanac i prodajemo sveže proizvode u okviru sopstvenog programa — svaka serija ima dokumentovan digitalni pasoš od parcele do police. Nismo marketplace koji samo povezuje nepoznate strane."
         },
         {
           "question": "Šta je EU digitalni pasoš proizvoda?",
@@ -3618,7 +3737,7 @@
     "downloadProspectCta": "Preuzmi prospekt (PDF)",
     "downloadProspectError": "Preuzimanje nije uspelo. Pokušajte ponovo.",
     "whoCanApplyTitle": "Ko može da se prijavi",
-    "whoCanApplyLead": "Program je otvoren za uzgajivače svih veličina — od malih porodičnih gazdinstava do velikih komercijalnih imanja. Primamo prijave iz svih zemalja Evropske unije i Zapadnog Balkana, uključujući Srbiju, Bosnu i Hercegovinu, Crnu Goru, Severnu Makedoniju, Hrvatsku i Albaniju. Jedini preduslov je spremnost da ispratite Bio Vera standarde proizvodnje — trenutni sertifikacioni status nije prepreka.",
+    "whoCanApplyLead": "Program je otvoren za uzgajivače svih veličina — od malih porodičnih gazdinstava do velikih komercijalnih imanja. Primamo prijave proizvođača širom Evrope koji su spremni da poštuju Bio Vera standarde proizvodnje. Postojeći sertifikacioni status nije prepreka.",
     "countriesLine": "",
     "valuePropositionTitle": "Zašto Bio Vera",
     "valuePropositionLead": "",
@@ -3785,7 +3904,7 @@
       }
     ],
     "metaTitle": "Program za Proizvođače | Bio Vera — Sertifikacija, Garantovani Uslovi, EU Tržišni Pristup",
-    "metaDescription": "Program za proizvođače: garantovani uslovi, besplatna GlobalG.A.P. IFA v6 grupna sertifikacija, isplata za 48h, koordinisana logistika i pristup EU tržištu. Otvoreno za uzgajivače u EU i na Zapadnom Balkanu.",
+    "metaDescription": "Program za proizvođače: garantovani uslovi, besplatna GlobalG.A.P. IFA v6 grupna sertifikacija, isplata za 48h, koordinisana logistika i pristup EU tržištu. Otvoreno za proizvođače širom Evrope.",
     "heroEyebrow": "Bio Vera · Proizvođači",
     "heroSubtitle": "Garantovani uslovi, pristup EU tržištu"
   },
@@ -3962,6 +4081,15 @@
     "loading": "Učitavanje…"
   },
   "careersPage": {
+    "headerAd": "Tražimo komercijaliste · Bio Vera",
+    "featuredAd": {
+      "eyebrow": "Otvorene pozicije · teren · Srbija",
+      "title": "Tražimo komercijaliste",
+      "lead": "Pridružite se Vera grower programu — obilazite proizvođače, sklapate ugovore o proizvodnji i gradite mrežu u Bio Vera lancu od njive do Hamburga.",
+      "regionSouthCentral": "Jug i centralna Srbija",
+      "regionVojvodina": "Vojvodina",
+      "degreeNote": "Poželjno: diploma Poljoprivrednog fakulteta (ratarstvo, voćarstvo, zaštita bilja ili srodno)."
+    },
     "heroTitle": "Pridružite se timu Bio Vera",
     "heroSubtitle": "Pomozite nam da poljoprivredu unapredimo tehnologijom. Gradimo budućnost transparentnih, održivih lanaca snabdevanja hranom.",
     "whyTitle": "Zašto raditi sa nama",
@@ -3984,12 +4112,13 @@
       },
       {
         "title": "Globalni uticaj",
-        "description": "Pridružite se timu koji menja poljoprivredu širom sveta."
+        "description": "Pridružite se timu koji menja poljoprivredu širom Evrope."
       }
     ],
     "openPositions": "Otvorene pozicije",
     "requirements": "Zahtevi",
     "benefits": "Benefiti",
+    "traits": "Idealne osobine",
     "applyNow": "Prijavi se",
     "employmentFullTime": "Puno radno vreme",
     "ctaTitle": "Ne vidite poziciju koja vam odgovara?",
@@ -3998,6 +4127,80 @@
     "applySubject": "Prijava za posao: {{role}}",
     "generalApplicationSubject": "Opšta prijava",
     "jobs": {
+      "salesSouthCentral": {
+        "title": "Komercijalista — jug i centralna Srbija",
+        "department": "Prodaja",
+        "location": "Južna i centralna Srbija (teren)",
+        "description": "Tražimo komercijalistu za Vera grower program u jugozapadnoj i centralnoj Srbiji. Obilazite voćare, povrtare i zadruge, predstavljate ugovornu proizvodnju po Bio Vera standardima i pratite usklađenost od njive do predaje robe.",
+        "requirements": [
+          "Poželjno: diploma Poljoprivrednog fakulteta (ratarstvo, voćarstvo, zaštita bilja ili srodna oblast)",
+          "Iskustvo u prodaji agro-inputa, otpada voća/povrća ili ugovornoj proizvodnji",
+          "Vozačka dozvola B kategorije i spremnost na dnevne obilaske po okruzima",
+          "Poznavanje lokalnih proizvođača, zadruga i kooperativa u regionu",
+          "Osnovno poznavanje engleskog jezika (nemački je plus)"
+        ],
+        "traits": [
+          "Energičan i uporan — ne odustaje posle prvog „ne“",
+          "Empatičan — sluša proizvođača pre nego što predloži rešenje",
+          "Organizovan — vodi beleške sa terena i poštuje dogovorene rokove",
+          "Pouzdan — drži reč i gradi dugoročno poverenje u selu",
+          "Timski igrač — usklađuje teren sa timom u Hamburgu"
+        ],
+        "benefits": [
+          "Osnovna plata + provizija na ugovorene obime",
+          "Budžet za putovanja i teren",
+          "Bio Vera mobilna aplikacija i obuka za teren",
+          "Mogućnost napredovanja u regionalnog sales lead-a",
+          "Rad sa vertikalno integrisanim brendom sa punom sledljivošću"
+        ]
+      },
+      "salesVojvodina": {
+        "title": "Komercijalista — Vojvodina",
+        "department": "Prodaja",
+        "location": "AP Vojvodina (teren)",
+        "description": "Tražimo komercijalistu za teritoriju Vojvodine — intenzivna voćarska i ratarska proizvodnja, zadruge i porodična gazdinstva. Predstavljate Vera program, sklapate sezonske ugovore i pomažete proizvođačima da ispune Bio Vera standarde pakovanja i dokumentacije.",
+        "requirements": [
+          "Poželjno: diploma Poljoprivrednog fakulteta (ratarstvo, voćarstvo, zaštita bilja ili srodno)",
+          "Iskustvo u prodaji ili savetovanju u poljoprivredi na severu Srbije",
+          "Vozačka dozvola B — putovanja po opštinama AP Vojvodine",
+          "Poznavanje mreže proizvođača, hladnjača i otkupnih mesta u Vojvodini",
+          "Srpski i mađarski ili engleski (bar jedan strani jezik je plus)"
+        ],
+        "traits": [
+          "Komunikativan i kulturno osvestljiv u radu sa raznovrsnim proizvođačima",
+          "Strpljiv — objašnjava standarde jasno, bez pritiska",
+          "Proaktivan — traži nove parcele i sezonske programe",
+          "Precizan — prati ugovorene količine i prozore berbe",
+          "Motivisan rezultatom — radi na proviziji i dugoročnim partnerstvima"
+        ],
+        "benefits": [
+          "Osnovna plata + provizija na ugovorene obime",
+          "Budžet za putovanja i teren",
+          "Bio Vera mobilni alati i obuka",
+          "Karijerni rast kako se koridor širi",
+          "Podrška QA i operativnog tima iz Hamburga"
+        ]
+      },
+      "salesRetail": {
+        "title": "Komercijalista — Nemačka i EU maloprodaja",
+        "department": "Prodaja",
+        "location": "Hamburg, Nemačka (+ DACH / EU putovanja)",
+        "description": "Prodajete sledljivo sveže voće i povrće veletrgovcima, HoReCa segmentu i retail nabavci. Predstavljate batch pasoše, kalendare berbe i Protocol 360 QA — zatvarate programe gde Bio Vera prodaje pod svojim brendom.",
+        "requirements": [
+          "2+ godine B2B prodaje u prehrani, retailu ili veleprodaji",
+          "Tečan nemački i engleski",
+          "Iskustvo sa svežim proizvodima ili hladnim lancem je plus",
+          "Poznavanje nabavnih ciklusa, listinga i sezonskog planiranja",
+          "Važeća dozvola za rad u EU ili mogućnost rada u Nemačkoj"
+        ],
+        "benefits": [
+          "Osnovna plata + provizija na zatvorene programe",
+          "Službeni automobil ili budžet za mobilnost",
+          "Zdravstveno osiguranje i bonusi po učinku",
+          "Live podaci o zalihama i berbi kroz Bio Vera buyer portal",
+          "Direktna linija ka operativi, QA i logistici u Hamburgu"
+        ]
+      },
       "dev": {
         "title": "Senior full-stack programer",
         "department": "Inženjering",
@@ -4021,18 +4224,18 @@
       "agritech": {
         "title": "Specijalista za agrar tehnologije",
         "department": "Proizvod",
-        "location": "Na daljinu (EU / širom sveta)",
+        "location": "Na daljinu (EU / širom Evrope)",
         "description": "Pridružite se produkt timu i oblikujte budućnost agrar tehnologije. Blisko ćete saradivati sa proizvođačima, razumeti njihove potrebe i pretvarati ih u funkcionalnosti proizvoda.",
         "requirements": [
           "Pozadina u poljoprivredi, agro-prehrambenoj tehnologiji ili srodnim oblastima",
           "Razumevanje EU propisa i sertifikacija u poljoprivredi",
           "Iskustvo sa sistemima za upravljanje gazdinstvom",
           "Analitičke i komunikacione veštine",
-          "Spremnost na putovanja do farmi i partnera širom sveta"
+          "Spremnost na putovanja do farmi i partnera širom Evrope"
         ],
         "benefits": [
           "Konkurentna plata",
-          "Mogućnosti putovanja širom sveta",
+          "Mogućnosti putovanja širom Evrope",
           "Direktan uticaj na inovacije u poljoprivredi",
           "Zdravstveno osiguranje",
           "Obuka i razvoj"
@@ -4072,6 +4275,12 @@
     "phoneHint": "Opciono — lakše zakazivanje razgovora.",
     "roleLabel": "Pozicija *",
     "rolePlaceholder": "Izaberite poziciju…",
+    "roleOptSalesSouthCentralKey": "salesSouthCentral",
+    "roleOptSalesSouthCentral": "Komercijalista — jug i centralna Srbija",
+    "roleOptSalesVojvodinaKey": "salesVojvodina",
+    "roleOptSalesVojvodina": "Komercijalista — Vojvodina",
+    "roleOptSalesRetailKey": "salesRetail",
+    "roleOptSalesRetail": "Komercijalista — Nemačka i EU maloprodaja",
     "roleOptDevKey": "dev",
     "roleOptDev": "Senior full-stack programer",
     "roleOptAgriKey": "agritech",
@@ -4104,9 +4313,9 @@
     "errorFallback": "Slanje nije uspelo. Pokušajte kasnije ili pišite na info@biovera.app."
   },
   "aboutPage": {
-    "metaTitle": "O Bio Veri | Organizovani Otkup Voća i Povrća — Hamburg",
-    "metaDescription": "Bio Vera organizuje proizvodnju, kontrolu kvaliteta, pakovanje i hladjeni transport svežeg voća i povrća od njive do EU maloprodaje. Sedište u Hamburgu, program otvoren za proizvođače širom sveta.",
-    "heroTitle": "O Bio Veri",
+    "metaTitle": "O Bio Vera | Vertikalno integrisana agrifood kompanija, Hamburg",
+    "metaDescription": "Bio Vera je vertikalno integrisana agrifood kompanija u Hamburgu: proizvođači širom Evrope, programski QA, hladni lanac i digitalni pasoši tura — ne marketplace.",
+    "heroTitle": "O Bio Vera",
     "heroSubtitle": "Bio Vera organizuje poljoprivrednu proizvodnju kroz ugovorne proizvođače, sprovodi terensku kontrolu kvaliteta, pakuje i isporučuje brendiranu hranu direktno EU maloprodajnim lancima. Jedan dosije serije prati svaki tovar od njive do police.",
     "techPartnerLine": "Bio Vera platformu razvija i održava <1>Vera IT</1> iz Hamburga — tehnološki partner u okviru Vera Group.",
     "missionTitle": "Naša misija",
@@ -5024,5 +5233,134 @@
     "termsUpdated": "Poslednje ažuriranje: januar 2026.",
     "cookiesTitle": "Politika kolačića",
     "cookiesUpdated": "Poslednje ažuriranje: januar 2026."
+  },
+  "refundReconciliation": {
+    "title": "Finansijsko usaglašavanje",
+    "open": "Otvori pregled knjiženja",
+    "closed": "Usaglašavanje zabeleženo",
+    "recovered": "Vraćeno iz salda",
+    "platformCost": "Trošak platforme",
+    "uncredited": "Deo platforme bez knjiženja u novčaniku",
+    "available": "Trenutno dostupno u novčaniku",
+    "choose": "Izaberite način za ovaj deo",
+    "hint": "Za svaki prvobitno raspodeljeni deo izaberite povraćaj iz dostupnog salda ili odluku da trošak snosi platforma. Odluka mora imati obrazloženje. Knjiženje iz salda smanjuje raspoloživi iznos; trošak platforme ne predstavlja naplaćeni novac. Ovaj obrazac ne izvršava bankarski transfer.",
+    "reason": "Obrazloženje odluke o trošku (najmanje 20 znakova)",
+    "confirm": "Potvrdite usaglašavanje: iz salda se zadužuje {{recovered}}, a platforma snosi {{cost}}. Ova odluka se ne može prepisati drugim zahtevom.",
+    "save": "Potvrdi i zabeleži usaglašavanje",
+    "error": "Usaglašavanje nije sačuvano. Osvežite podatke i proverite stanje.",
+    "methods": {
+      "WALLET_RECOVERY": "Vrati iz dostupnog salda",
+      "PLATFORM_COST": "Platforma snosi trošak"
+    },
+    "walletEntry": "Zaduženje zbog refundacije kupcu",
+    "orderReference": "Porudžbina",
+    "participantMethods": {
+      "WALLET_RECOVERY": "Zaduženje vašeg salda zbog refundacije",
+      "PLATFORM_COST": "Platforma snosi vaš deo troška; saldo nije zadužen"
+    }
+  },
+  "returnDisposition": {
+    "title": "Postupanje sa vraćenom robom",
+    "states": {
+      "QUARANTINED": "Karantin — čeka odluku",
+      "WRITTEN_OFF": "Otpisano",
+      "RESTOCKED": "Odobreno za prodaju uz popis"
+    },
+    "actions": {
+      "QUARANTINE": "Zadrži u karantinu",
+      "WRITE_OFF": "Evidentiraj otpis",
+      "RESTOCK": "Odobri prodaju uz fizički popis"
+    },
+    "open": "Otvori kontrolu i istoriju",
+    "initial": "Roba je primljena i čeka odluku o daljoj upotrebi. Povrat nije povećao prodajnu zalihu.",
+    "action": "Odluka za celu pošiljku",
+    "choose": "Izaberite",
+    "quantity": "Unesite pregledanu količinu cele pošiljke: {{quantity}} {{unit}}",
+    "notes": "Nalaz kontrole i obrazloženje odluke (najmanje 20 znakova)",
+    "countHint": "Stare porudžbine nemaju pouzdano knjiženje izlaza robe. Ovde se upisuje ukupno fizički prebrojano prodajno stanje izabrane zalihe, uključujući ovaj odobreni povrat. Ne unosite samo dodatnu količinu. Ostala roba u karantinu i otpisana roba moraju biti izuzete.",
+    "noStock": "Nema odgovarajuće zalihe ove farme za isti proizvod i jedinicu. Povrat ostaje u karantinu dok se evidencija ne usaglasi.",
+    "stock": "Zaliha i stvarna lokacija robe",
+    "currentCount": "Trenutno knjiženo stanje",
+    "currentExpiry": "Postojeći rok upotrebe",
+    "counted": "Ukupno fizički popisano prodajno stanje, sa ovim povratom",
+    "expiry": "Potvrđen rok upotrebe zalihe (bez produženja postojećeg)",
+    "quality": "Kontrola cele vraćene pošiljke je završena i roba je odobrena za prodaju.",
+    "countConfirmed": "Popisano stanje uključuje ovu pošiljku i isključuje robu koja nije odobrena za prodaju.",
+    "location": "Roba se fizički nalazi na izabranoj lokaciji zalihe.",
+    "confirmCount": "Postaviti ukupno prodajno stanje na {{count}} {{unit}} na osnovu fizičkog popisa? Ovo nije dodavanje na postojeću količinu.",
+    "confirmDecision": "Zabeležiti odluku „{{action}}“ za celu vraćenu pošiljku? Otpis i odobrenje prodaje su konačni u ovom toku.",
+    "save": "Sačuvaj kontrolu i odluku",
+    "savedCount": "Fizički popis: prethodno {{before}}, potvrđeno {{after}} {{unit}}.",
+    "error": "Odluka nije sačuvana. Osvežite podatke i proverite dokaze i stanje zalihe.",
+    "writeOffHint": "Otpis se odnosi na izdvojenu vraćenu količinu. Postojeća prodajna zaliha se ne umanjuje automatski: prethodni izlaz robe nije pouzdano povezan. Ako je ta roba već uračunata u prodajnu zalihu, potreban je zaseban popis i usaglašavanje."
+  },
+  "orderStock": {
+    "states": {
+      "UNALLOCATED": "Zaliha nije dodeljena",
+      "RESERVED": "Roba rezervisana",
+      "ISSUED": "Roba otpremljena",
+      "RELEASED": "Rezervacija oslobođena"
+    },
+    "choose": "Izaberi zalihu",
+    "noStock": "Nema odgovarajuće raspoložive zalihe. Proverite gazdinstvo i povezivanje lota.",
+    "reserve": "Rezerviši za ovu porudžbinu",
+    "cancel": "Otkaži neplaćenu porudžbinu",
+    "cancelConfirm": "Da li želite da otkažete ovu neplaćenu porudžbinu i oslobodite rezervisanu robu? Ako ste već uplatili novac, nemojte otkazivati ovde — javite se operativi.",
+    "keep": "Zadrži porudžbinu",
+    "error": "Promena nije sačuvana",
+    "retry": "Osvežite podatke i pokušajte ponovo."
+  },
+  "checkoutRecovery": {
+    "recovered": "Pronađena je porudžbina iz prethodnog pokušaja. Nije napravljena kopija. Proverite njenu originalnu količinu, adresu i status u porudžbinama; eventualni ostatak je sačuvan u korpi.",
+    "storageError": "Korpa nije mogla bezbedno da se sačuva. Proverite prostor i dozvole za čuvanje podataka, pa pokušajte ponovo.",
+    "missingOrder": "Nedostaje potvrda porudžbine. Pokušajte ponovo sa istom korpom.",
+    "partial": "Sačuvano porudžbina: {{count}}. Preostale stavke su u korpi."
+  },
+  "orderOperations": {
+    "title": "Operativni pregled porudžbina",
+    "open": "Otvorene porudžbine",
+    "held": "Ukupno rezervisano",
+    "unpaidHeld": "Rezervisano na neplaćenim porudžbinama",
+    "hint": "Prvo obradite najstarije zahteve. Starost je vreme od kreiranja porudžbine; roba se ne oslobađa automatski. Količine su odvojene po jedinici mere.",
+    "queues": {
+      "settlement": "Obra\u010dun",
+      "open": "Otvorene",
+      "stock": "Dodela zalihe",
+      "approval": "Za odobrenje",
+      "payment": "Čeka uplatu",
+      "dispatch": "Za otpremu",
+      "progress": "Dostava u toku",
+      "closed": "Zatvorene",
+      "all": "Sve"
+    },
+    "steps": {
+      "settlement": "Isporuka je završena. Pregledaj oslobađanje sredstava.",
+      "stock": "Dodelite konkretnu zalihu u koloni proizvoda.",
+      "approval": "Pregledajte i odobrite zahtev.",
+      "payment": "Proverite pristiglu bankarsku uplatu.",
+      "dispatch": "Povežite porudžbinu sa odgovarajućom transportnom misijom.",
+      "progress": "Pratite preuzimanje, prevoz i potvrdu prijema kupca.",
+      "closed": "Nema nove operativne akcije u ovom pregledu."
+    },
+    "search": "Pretraga: broj, proizvod, kupac ili gazdinstvo",
+    "sort": "Redosled",
+    "oldest": "Najstarije prvo",
+    "newest": "Najnovije prvo",
+    "refresh": "Osveži",
+    "showing": "Prikazano {{count}} od {{total}} porudžbina",
+    "loaded": "Učitano u {{time}}",
+    "nextStep": "Sledeći korak",
+    "cancelAction": "Neplaćen otkaz",
+    "release": "Otkaži i oslobodi robu",
+    "cancel": "Otkaži zahtev",
+    "cancelConfirm": "Otkaži porudžbinu {{number}} i oslobodi eventualnu rezervisanu robu? Pre otkaza proverite da uplata nije stigla na račun, a još nije evidentirana u aplikaciji.",
+    "ageDays": "Starost: {{count}} d.",
+    "openDispatch": "Otvori otpremu",
+    "noMatches": "Nema porudžbina za izabrani korak i pretragu.",
+    "dispatchContext": "Otprema za {{number}} · {{product}} · {{quantity}} {{unit}}",
+    "dispatchUnavailable": "Porudžbina nije među trenutno dostupnim za povezivanje. Proverite njen status i postojeću dostavu, pa osvežite pregled.",
+    "noMission": "Nema dostupne misije za ovo gazdinstvo i porudžbinu. Pripremite ili dodelite transport u pregledu porudžbina/misija.",
+    "backOrders": "Nazad na porudžbine",
+    "allDispatch": "Prikaži sve otpreme"
   }
 }

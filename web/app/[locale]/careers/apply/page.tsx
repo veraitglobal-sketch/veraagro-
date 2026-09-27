@@ -2,7 +2,6 @@
 
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Briefcase, Send, Paperclip } from 'lucide-react';
@@ -12,7 +11,7 @@ import { axiosResponseStatus } from '@/lib/api-error';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
 
-const JOB_KEYS = ['dev', 'agritech', 'bizdev'] as const;
+const JOB_KEYS = ['salesSouthCentral', 'salesVojvodina', 'salesRetail', 'dev', 'agritech', 'bizdev'] as const;
 export type CareersJobKey = (typeof JOB_KEYS)[number];
 
 const ROLE_GENERAL = 'general';
@@ -96,6 +95,9 @@ function CareersApplyInner() {
 
   const roleOptions = useMemo(
     () => [
+      { value: 'salesSouthCentral' as RoleValue, labelKey: 'roleOptSalesSouthCentral' },
+      { value: 'salesVojvodina' as RoleValue, labelKey: 'roleOptSalesVojvodina' },
+      { value: 'salesRetail' as RoleValue, labelKey: 'roleOptSalesRetail' },
       { value: 'dev' as RoleValue, labelKey: 'roleOptDev' },
       { value: 'agritech', labelKey: 'roleOptAgri' },
       { value: 'bizdev', labelKey: 'roleOptBiz' },
@@ -196,22 +198,7 @@ function CareersApplyInner() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href={loc('/')} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <Image src="/logo1.png" alt={t('footer.logoAlt')} width={56} height={20} className="h-4 w-auto" priority />
-            </Link>
-            <nav className="flex gap-6 items-center text-sm">
-              <Link href={loc('/')} className="text-gray-600 hover:text-[#2D5A27] transition-colors">
-                {t('nav.home')}
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      <main className="pt-28 pb-24 px-6 lg:px-8">
+      <main className="pt-12 pb-24 px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <Link
             href={loc('/careers')}

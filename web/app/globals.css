@@ -213,3 +213,8 @@ img.grower-app-guide-screenshot {
   }
 }
 
+/** Pages with their own top bar (project overview, pitch deck, etc.) */
+body.biovera-custom-top-nav nav[data-biovera-root-navigation] {
+  display: none;
+}
+

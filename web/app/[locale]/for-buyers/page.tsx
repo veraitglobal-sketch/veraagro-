@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { SiteLocale } from '@/i18n/config';
 import { isSiteLocale } from '@/lib/i18n-routing';
-import { generatePageMetadata } from '@/app/metadata';
+import { marketingRouteMetadata } from '@/lib/marketing-route-metadata';
 import en from '@/locales/en.json';
 import sr from '@/locales/sr.json';
 import de from '@/locales/de.json';
@@ -10,6 +10,7 @@ import bg from '@/locales/bg.json';
 import fr from '@/locales/fr.json';
 import es from '@/locales/es.json';
 import ForBuyersPageClient from '@/components/marketing/ForBuyersPageClient';
+import { MarketingBreadcrumbJsonLd } from '@/components/marketing/MarketingBreadcrumbJsonLd';
 
 type LocaleBundle = {
   forBuyersPage: {
@@ -30,13 +31,15 @@ const bundles: Record<SiteLocale, LocaleBundle> = {
   es: es as LocaleBundle,
 };
 
-function forBuyersMetadata(locale: SiteLocale): Pick<Metadata, 'title' | 'description'> {
+function forBuyersMetadata(locale: SiteLocale): Metadata {
   const b = bundles[locale] ?? bundles.en;
   const fb = b.forBuyersPage;
-  const title = fb.metaTitle ?? `${fb.title} | Bio Vera`;
-  const description = fb.metaDescription ?? fb.heroLead;
-  const path = locale === 'en' ? '/for-buyers' : `/${locale}/for-buyers`;
-  return generatePageMetadata(title, description, path);
+  return marketingRouteMetadata(locale, 'for-buyers', {
+    metaTitle: fb.metaTitle,
+    metaDescription: fb.metaDescription,
+    title: fb.title,
+    descriptionFallback: fb.heroLead,
+  });
 }
 
 export async function generateMetadata({
@@ -49,6 +52,21 @@ export async function generateMetadata({
   return forBuyersMetadata(locale);
 }
 
-export default function ForBuyersPage() {
-  return <ForBuyersPageClient />;
+export default async function ForBuyersPage({
+  params,
+}: Readonly<{
+  params: Promise<{ locale: string }>;
+}>) {
+  const { locale: loc } = await params;
+  const locale: SiteLocale = isSiteLocale(loc) ? loc : 'en';
+  const fb = (bundles[locale] ?? bundles.en).forBuyersPage;
+  return (
+    <>
+      <MarketingBreadcrumbJsonLd
+        locale={locale}
+        items={[{ name: fb.title, segment: 'for-buyers' }]}
+      />
+      <ForBuyersPageClient />
+    </>
+  );
 }

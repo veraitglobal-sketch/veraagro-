@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -32,34 +31,14 @@ export default function InvestorDocumentReaderShell({ docId, markdown, backHref 
         aria-hidden
       />
 
-      <header className="fixed top-0 z-50 w-full border-b border-gray-200/80 bg-white/85 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <Link
-              href={backHref}
-              className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-[#2D5A27]/5 hover:text-[#2D5A27] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/40 focus-visible:ring-offset-2"
-              aria-label={t('investorDeckPage.backToHub')}
-            >
-              <ArrowLeft className="h-5 w-5" aria-hidden />
-            </Link>
-            <Link href={loc('/')} className="flex items-center gap-2 transition-opacity hover:opacity-80">
-              <Image
-                src="/logo1.png"
-                alt={t('footer.logoAlt')}
-                width={56}
-                height={20}
-                className="h-4 w-auto"
-                priority
-              />
-            </Link>
-          </div>
-          <Link href={loc('/investor-deck')} className="text-sm text-gray-600 transition-colors hover:text-[#2D5A27]">
-            {t('investorDeckPage.backToHub')}
-          </Link>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-4xl px-4 pb-16 pt-24 sm:px-6 sm:pt-28 lg:px-8">
+      <main className="mx-auto max-w-4xl px-4 pb-16 pt-12 sm:px-6 lg:px-8">
+        <Link
+          href={backHref}
+          className="mb-8 inline-flex min-h-[44px] items-center gap-2 text-sm text-gray-600 transition-colors hover:text-[#2D5A27]"
+        >
+          <ArrowLeft className="h-5 w-5" aria-hidden />
+          {t('investorDeckPage.backToHub')}
+        </Link>
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#2D5A27]">{t('investorDeckPage.sectionDocumentsTitle')}</p>
         <h1 className="mt-3 text-2xl font-light text-gray-900 sm:text-3xl">{docTitle}</h1>
         <div className="mt-8 overflow-hidden rounded-2xl border border-gray-200/90 bg-white shadow-lg shadow-gray-900/[0.04] ring-1 ring-black/[0.03]">
@@ -70,6 +49,11 @@ export default function InvestorDocumentReaderShell({ docId, markdown, backHref 
         </div>
         <p className="mt-8 text-center text-xs font-light leading-relaxed text-gray-500">
           {t('investorDeckPage.documentsLead')}
+        </p>
+        <p className="mt-4 text-center">
+          <Link href={loc('/investor-deck')} className="text-sm text-[#2D5A27] hover:underline">
+            {t('investorDeckPage.backToHub')}
+          </Link>
         </p>
       </main>
     </div>

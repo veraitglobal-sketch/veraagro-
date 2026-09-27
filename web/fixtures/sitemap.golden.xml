@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://www.biovera.app/en</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/for-growers</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/for-growers" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/for-growers" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/for-growers" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/for-growers</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/for-growers" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/for-growers" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/for-growers" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/for-buyers</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/for-buyers" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/for-buyers" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/for-buyers" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/for-buyers</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/for-buyers" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/for-buyers" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/for-buyers" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/for-logistics</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/for-logistics" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/for-logistics" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/for-logistics" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/for-logistics</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/for-logistics" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/for-logistics" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/for-logistics" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/for-suppliers</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/for-suppliers" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/for-suppliers" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/for-suppliers" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/for-suppliers</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/for-suppliers" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/for-suppliers" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/for-suppliers" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/about</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/about" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/about" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/about" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/about</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/about" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/about" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/about" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/faq</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/faq" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/faq" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/faq" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/faq</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/faq" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/faq" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/faq" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/protocol-360</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/protocol-360" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/protocol-360" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/protocol-360" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/protocol-360</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/protocol-360" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/protocol-360" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/protocol-360" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/contact</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/contact" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/contact" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/contact" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/contact</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/contact" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/contact" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/contact" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/security</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/security" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/security" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/security" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/security</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/security" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/security" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/security" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/press</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/press" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/press" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/press" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/press</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/press" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/press" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/press" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/fresh-concept</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/fresh-concept" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/fresh-concept" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/fresh-concept" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/fresh-concept</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/fresh-concept" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/fresh-concept" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/fresh-concept" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/help-center</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/help-center" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/help-center" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/help-center" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/help-center</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/help-center" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/help-center" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/help-center" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/careers</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/careers" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/careers" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/careers" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/careers</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/careers" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/careers" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/careers" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/investors</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/investors" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/investors" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/investors" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/investors</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/investors" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/investors" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/investors" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/investor-deck</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/investor-deck" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/investor-deck" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/investor-deck" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/investor-deck</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/investor-deck" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/investor-deck" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/investor-deck" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/language</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/language" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/language" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/language" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/language</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/language" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/language" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/language" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/legal</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/legal" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/legal" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/legal" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/legal</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/legal" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/legal" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/legal" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/terms</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/terms" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/terms" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/terms" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/terms</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/terms" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/terms" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/terms" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/privacy" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/privacy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/privacy" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/privacy" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/privacy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/privacy" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/cookies" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/cookies" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/cookies" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/cookies" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/cookies" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/cookies" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/data-consent-declaration</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/data-consent-declaration" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/data-consent-declaration" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/data-consent-declaration" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/data-consent-declaration</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/data-consent-declaration" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/data-consent-declaration" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/data-consent-declaration" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/project-overview</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/project-overview" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/project-overview" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/project-overview" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.45</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/project-overview</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/project-overview" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/project-overview" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/project-overview" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.45</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/technical-proposal</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/technical-proposal" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/technical-proposal" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/technical-proposal" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.45</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/technical-proposal</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/technical-proposal" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/technical-proposal" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/technical-proposal" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.45</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/en/investor-deck/slides</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/investor-deck/slides" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/investor-deck/slides" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/investor-deck/slides" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.biovera.app/sr/investor-deck/slides</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.biovera.app/en/investor-deck/slides" />
+    <xhtml:link rel="alternate" hreflang="sr" href="https://www.biovera.app/sr/investor-deck/slides" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.biovera.app/en/investor-deck/slides" />
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+</urlset>

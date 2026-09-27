@@ -2,8 +2,8 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
+import BrandLogo from '@/components/BrandLogo';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth';
 
@@ -31,7 +31,7 @@ export default function SupplierHeader() {
       <div className="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-4">
           <Link href="/supplier/dashboard" className="flex items-center">
-            <Image src="/logo1.png" alt="Bio Vera" width={56} height={20} className="h-4 w-auto" />
+            <BrandLogo alt="Bio Vera" />
           </Link>
           <span className="text-xs text-gray-500">{t('supplier.header.badge')}</span>
         </div>

@@ -2,16 +2,16 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Briefcase, MapPin, Clock, Users, Heart, Zap, Target, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
+import CareersRecruitmentHero from '@/components/marketing/CareersRecruitmentHero';
 
 const VALUE_ICONS = [Target, Users, Zap, Heart, Globe] as const;
 
-const JOB_KEYS = ['dev', 'agritech', 'bizdev'] as const;
+const JOB_KEYS = ['salesSouthCentral', 'salesVojvodina', 'salesRetail', 'dev', 'agritech', 'bizdev'] as const;
 
 type ValueCard = { title: string; description: string };
 
@@ -48,6 +48,7 @@ export default function CareersPage() {
     return JOB_KEYS.map((key) => {
       const requirementsRaw = t(`careersPage.jobs.${key}.requirements`, { returnObjects: true });
       const benefitsRaw = t(`careersPage.jobs.${key}.benefits`, { returnObjects: true });
+      const traitsRaw = t(`careersPage.jobs.${key}.traits`, { returnObjects: true });
       return {
         key,
         title: t(`careersPage.jobs.${key}.title`),
@@ -56,51 +57,22 @@ export default function CareersPage() {
         description: t(`careersPage.jobs.${key}.description`),
         requirements: isStringArray(requirementsRaw) ? requirementsRaw : [],
         benefits: isStringArray(benefitsRaw) ? benefitsRaw : [],
+        traits: isStringArray(traitsRaw) ? traitsRaw : [],
       };
     });
   }, [t]);
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href={loc('/')} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <Image
-                src="/logo1.png"
-                alt={t('footer.logoAlt')}
-                width={56}
-                height={20}
-                className="h-4 w-auto"
-                priority
-              />
-            </Link>
-            <nav className="flex gap-8 items-center">
-              <Link href={loc('/')} className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
-                {t('nav.home')}
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      <main className="pt-32 pb-24 px-6 lg:px-8">
+      <main className="pt-12 pb-24 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="mb-16"
           >
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-[#2D5A27]/10 rounded-full flex items-center justify-center">
-                <Briefcase className="w-8 h-8 text-[#2D5A27]" />
-              </div>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">{t('careersPage.heroTitle')}</h1>
-            <p className="text-lg text-gray-600 font-light leading-relaxed max-w-2xl mx-auto">
-              {t('careersPage.heroSubtitle')}
-            </p>
+            <CareersRecruitmentHero />
           </motion.div>
 
           <section className="mb-16">
@@ -188,6 +160,19 @@ export default function CareersPage() {
                             </li>
                           ))}
                         </ul>
+                        {job.traits.length > 0 ? (
+                          <div className="mt-6">
+                            <h4 className="text-sm font-medium text-gray-900 mb-3">{t('careersPage.traits')}</h4>
+                            <ul className="space-y-2">
+                              {job.traits.map((trait, i) => (
+                                <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                                  <span className="w-1.5 h-1.5 bg-[#2D5A27]/60 rounded-full mt-2 flex-shrink-0" />
+                                  <span className="font-light">{trait}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ) : null}
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-gray-900 mb-3">{t('careersPage.benefits')}</h4>

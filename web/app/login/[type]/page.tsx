@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth';
 import { getPathAfterWebLogin } from '@/lib/post-login-redirect';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
@@ -44,30 +43,7 @@ function LoginTypePageInner() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href={loc('/')} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <Image
-                src="/logo1.png"
-                alt={t('footer.logoAlt')}
-                width={56}
-                height={20}
-                className="h-4 w-auto bg-transparent"
-                priority
-                style={{ background: 'transparent' }}
-              />
-            </Link>
-            <nav className="flex gap-8 items-center">
-              <Link href={loc('/')} className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors">
-                {t('nav.home')}
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      <section className="pt-32 pb-16 px-6 lg:px-8 bg-gradient-to-b from-[#2D5A27]/10 to-white">
+      <section className="pt-12 pb-16 px-6 lg:px-8 bg-gradient-to-b from-[#2D5A27]/10 to-white">
         <div className="max-w-md mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

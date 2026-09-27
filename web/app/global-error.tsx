@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import BrandLogo from '@/components/BrandLogo';
 import { Home, RefreshCw, AlertCircle } from 'lucide-react';
 import i18n from '@/i18n/config';
 
@@ -26,14 +26,9 @@ export default function GlobalError({
         <div className="min-h-screen bg-white flex items-center justify-center px-6">
           <div className="max-w-2xl mx-auto text-center">
             <div className="mb-8">
-              <Image
-                src="/logo1.png"
-                alt={i18n.t('globalError.logoAlt')}
-                width={56}
-                height={20}
-                className="h-4 w-auto mx-auto mb-8"
-                priority
-              />
+              <div className="mb-8 flex justify-center">
+                <BrandLogo alt={i18n.t('globalError.logoAlt')} priority />
+              </div>
               <div className="flex justify-center mb-4">
                 <AlertCircle className="w-16 h-16 text-red-500" />
               </div>

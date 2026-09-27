@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import BrandLogo from '@/components/BrandLogo';
 import { useTranslation, Trans } from 'react-i18next';
 import { Home, RefreshCw, AlertCircle } from 'lucide-react';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
@@ -27,14 +27,9 @@ export default function Error({
     <div className="min-h-screen bg-white flex items-center justify-center px-6">
       <div className="max-w-2xl mx-auto text-center">
         <div className="mb-8">
-          <Image
-            src="/logo1.png"
-            alt={t('errorPage.logoAlt')}
-            width={56}
-            height={20}
-            className="h-4 w-auto mx-auto mb-8"
-            priority
-          />
+          <div className="mb-8 flex justify-center">
+            <BrandLogo alt={t('errorPage.logoAlt')} priority />
+          </div>
           <div className="flex justify-center mb-4">
             <AlertCircle className="w-16 h-16 text-red-500" />
           </div>

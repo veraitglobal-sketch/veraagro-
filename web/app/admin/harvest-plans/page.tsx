@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { harvestAnnouncementsAPI } from '@/lib/api';
@@ -13,6 +14,9 @@ import { CalendarRange, Loader2, CheckCircle, XCircle, Clock, User, MapPin } fro
 
 type Row = {
   id: string;
+  sourcePlantingId?: string | null;
+  mission?: { id: string; missionNumber: string; status: string } | null;
+  batches?: { id: string; batchId: string; status: string }[];
   announcementType: string;
   cropType: string;
   estimatedDate: string;
@@ -64,6 +68,10 @@ function HarvestPlansInner() {
     load();
   }, [load]);
 
+  useEffect(() => {
+    if (!loading && highlightId) document.getElementById(`plan-${highlightId}`)?.scrollIntoView({ block: 'center' });
+  }, [loading, highlightId, rows]);
+
   const setStatus = async (id: string, status: string) => {
     setSaving(id);
     setError(null);
@@ -95,15 +103,7 @@ function HarvestPlansInner() {
       <SidebarLayout title={t('adminPages.titles.harvestPlans')} navItems={adminNavItems}>
         <div className="p-6 max-w-4xl">
           <h1 className="text-2xl font-light text-gray-900 mb-1">Harvest &amp; planting plans</h1>
-          <p className="text-sm text-gray-600 mb-6">
-            Growers report planned harvests—this is the first step. Use <strong>Confirm</strong> when operations has
-            told them what to prepare and you are aligned. <strong>Internal notes</strong> are for your team (what to
-            expect, how much, dock). When the lot is packed, they use <em>Request transport</em> in the app: that creates a
-            mission. You then assign a driver in <a className="text-[#2D5A27] font-medium underline" href="/admin/missions">Missions &amp; transport</a> or leave
-            it <strong>PENDING</strong> so logistics can claim the run in their app. If the API has{' '}
-            <code className="text-xs bg-gray-100 px-1 rounded">MISSIONS_REQUIRE_CONFIRMED_HARVEST_PLAN=true</code>, transport
-            is blocked until the plan is <strong>CONFIRMED</strong> here.
-          </p>
+          <p className="text-sm text-gray-600 mb-6">{t('connectedWorkflow.adminHarvestHelp')}</p>
 
           {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>}
 
@@ -124,6 +124,7 @@ function HarvestPlansInner() {
                 return (
                   <li
                     key={r.id}
+                    id={`plan-${r.id}`}
                     className={`p-4 bg-white border rounded-xl ${isHi ? 'ring-2 ring-[#2D5A27] border-[#2D5A27]/40' : 'border-gray-200'}`}
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
@@ -163,6 +164,13 @@ function HarvestPlansInner() {
                             {r.sortingSpec && <span>Sorting: {r.sortingSpec}</span>}
                           </p>
                         )}
+                        <div className="mt-2 space-y-1 text-sm">
+                          {r.sourcePlantingId ? <Link className="block text-green-800 underline" href={`/admin/harvest-plans?id=${encodeURIComponent(r.sourcePlantingId)}`}>{t('connectedWorkflow.sourcePlanting')}</Link> : null}
+                          {r.mission ? <Link className="block text-green-800 underline" href={`/admin/missions?missionId=${encodeURIComponent(r.mission.id)}`}>
+                            {r.mission.missionNumber} · {r.mission.status}
+                          </Link> : null}
+                          {r.batches?.map(batch => <p key={batch.id}>{t('connectedWorkflow.lot')}: {batch.batchId} · {batch.status}</p>)}
+                        </div>
                         <p className="text-xs text-gray-500 mt-2">
                           <span
                             className={`inline-block px-2 py-0.5 rounded ${

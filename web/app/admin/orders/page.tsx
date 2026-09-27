@@ -1,6 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { orderQueue, canCancelUnpaid, matchesOrderSearch, heldOrderStock, type OrderQueue } from '@/lib/order-operations';
+import { OrderPaymentSettlement } from '@/components/orders/OrderPaymentSettlement';
+import { OrderStockAllocation } from '@/components/orders/OrderStockAllocation';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { ordersAPI, estatesAPI, missionsAPI } from '@/lib/api';
@@ -11,25 +14,22 @@ import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
 import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
 
-/** Prisma OrderStatus — must match backend */
-const ORDER_STATUSES = [
-  'PENDING',
-  'APPROVED',
-  'PAID',
-  'CONFIRMED',
-  'PICKED_UP',
-  'IN_TRANSIT',
-  'DELIVERED',
-  'COMPLETED',
-  'CANCELLED',
-  'REFUNDED',
-] as const;
-
 export default function OrdersManagementPage() {
   const { t, i18n } = useTranslation();
   const dateLocale = dateIntlLocaleFromLanguageTag(i18n.resolvedLanguage ?? i18n.language);
   const adminNavItems = useAdminNavItems();
   const [orders, setOrders] = useState<any[]>([]);
+  const [queue, setQueue] = useState<OrderQueue | 'open' | 'all'>('open');
+  const [search, setSearch] = useState('');
+  const [oldestFirst, setOldestFirst] = useState(true);
+  const [loadedAt, setLoadedAt] = useState<Date | null>(null);
+  const cancelLock = useRef(false);
+  const visibleOrders = orders.filter(order => (queue === 'all' || queue === 'open' && orderQueue(order) !== 'closed' || orderQueue(order) === queue) && matchesOrderSearch(order, search))
+    .sort((a, b) => (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) * (oldestFirst ? 1 : -1));
+  const openOrders = orders.filter(order => orderQueue(order) !== 'closed');
+  const held = heldOrderStock(orders, false), unpaidHeld = heldOrderStock(orders, true);
+  const formatStock = (values: Array<[string, number]>) => values.length ? values.map(([unit, amount]) => `${amount.toLocaleString(dateLocale, { maximumFractionDigits: 3 })} ${unit}`).join(' · ') : '—';
+  const queueOptions = ['open', 'stock', 'approval', 'payment', 'dispatch', 'progress', 'settlement', 'closed', 'all'] as const;
   const [fulfillmentEstates, setFulfillmentEstates] = useState<
     { id: string; name: string; ownerId: string }[]
   >([]);
@@ -63,6 +63,7 @@ export default function OrdersManagementPage() {
         estatesAPI.getFulfillmentEstates().catch(() => []),
       ]);
       setOrders(data);
+      setLoadedAt(new Date());
       setFulfillmentEstates(Array.isArray(est) ? est : []);
     } catch (err: unknown) {
       console.error('Error loading orders:', err);
@@ -73,17 +74,20 @@ export default function OrdersManagementPage() {
   };
 
   const updateStatus = async (orderId: string, status: string) => {
+    if (cancelLock.current) return;
+    const order = orders.find(order => order.id === orderId);
+    if (status === 'CANCELLED' && (!order || !window.confirm(t('orderOperations.cancelConfirm', { number: order.orderNumber })))) return;
+    cancelLock.current = true;
     try {
       setSavingId(orderId);
       setError(null);
       await ordersAPI.updateStatusAdmin(orderId, status);
-      setOrders((prev) =>
-        prev.map((o) => (o.id === orderId ? { ...o, status } : o)),
-      );
+      await loadOrders();
     } catch (err: unknown) {
       console.error('updateStatus', err);
       setError(apiErrorOrT(err, t, 'adminPages.orderManagement.errUpdateStatus'));
     } finally {
+      cancelLock.current = false;
       setSavingId(null);
     }
   };
@@ -187,6 +191,28 @@ export default function OrdersManagementPage() {
             </div>
           </div>
 
+          <section className="space-y-4" aria-label={t('orderOperations.title')}>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded border bg-white p-4"><p className="text-sm text-gray-600">{t('orderOperations.open')}</p><p className="text-2xl">{openOrders.length}</p></div>
+              <div className="rounded border bg-white p-4"><p className="text-sm text-gray-600">{t('orderOperations.held')}</p><p className="text-lg">{formatStock(held)}</p></div>
+              <div className="rounded border bg-amber-50 p-4"><p className="text-sm text-gray-700">{t('orderOperations.unpaidHeld')}</p><p className="text-lg">{formatStock(unpaidHeld)}</p></div>
+            </div>
+            <p className="text-sm text-gray-600">{t('orderOperations.hint')}</p>
+            <div className="flex flex-wrap gap-2">
+              {queueOptions.map(value => <button key={value} type="button" aria-pressed={queue === value} onClick={() => setQueue(value)} className={`rounded-full border px-3 py-2 text-sm ${queue === value ? 'bg-[#2D5A27] text-white' : 'bg-white text-gray-700'}`}>
+                {t(`orderOperations.queues.${value}`)} · {value === 'all' ? orders.length : value === 'open' ? openOrders.length : orders.filter(order => orderQueue(order) === value).length}
+              </button>)}
+            </div>
+            <div className="flex flex-wrap items-end gap-3">
+              <label className="flex-1 text-sm min-w-52">{t('orderOperations.search')}<input type="search" value={search} onChange={e => setSearch(e.target.value)} className="mt-1 block w-full rounded border p-2" /></label>
+              <label className="text-sm">{t('orderOperations.sort')}<select value={oldestFirst ? 'oldest' : 'newest'} onChange={e => setOldestFirst(e.target.value === 'oldest')} className="mt-1 block rounded border p-2">
+                <option value="oldest">{t('orderOperations.oldest')}</option><option value="newest">{t('orderOperations.newest')}</option>
+              </select></label>
+              <button type="button" disabled={loading || savingId !== null} onClick={() => void loadOrders()} className="rounded border bg-white px-4 py-2 disabled:opacity-50">{t('orderOperations.refresh')}</button>
+            </div>
+            <p className="text-xs text-gray-500" aria-live="polite">{t('orderOperations.showing', { count: visibleOrders.length, total: orders.length })}{loadedAt ? ` · ${t('orderOperations.loaded', { time: loadedAt.toLocaleTimeString(dateLocale) })}` : ''}</p>
+          </section>
+
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
               {error}
@@ -201,7 +227,7 @@ export default function OrdersManagementPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-lg shadow border border-gray-200 overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
@@ -213,22 +239,25 @@ export default function OrdersManagementPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colFulfillingFarm')}</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colGrowerMission')}</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colLinkedMissions')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('orderOperations.nextStep')}</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colStatus')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colChangeStatus')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('orderOperations.cancelAction')}</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('adminPages.orderManagement.colCreated')}</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {orders.map((order) => (
+                  {visibleOrders.map((order) => (
                     <tr key={order.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {order.orderNumber}
+                        {orderQueue(order) !== 'closed' && Date.now() - new Date(order.createdAt).getTime() >= 86400000 && <p className="mt-1 text-xs text-amber-700">{t('orderOperations.ageDays', { count: Math.floor((Date.now() - new Date(order.createdAt).getTime()) / 86400000) })}</p>}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {order.users?.firstName} {order.users?.lastName}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {order.productName}
+                        <OrderStockAllocation orderId={order.id} status={order.status} reservation={order.stockReservation} reload={loadOrders} />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {order.quantity} {order.unit}
@@ -239,7 +268,7 @@ export default function OrdersManagementPage() {
                       <td className="px-6 py-4 whitespace-nowrap max-w-[14rem]">
                         <select
                           value={order.fulfillingEstateId || ''}
-                          disabled={savingId === order.id}
+                          disabled={savingId === order.id || !!order.stockReservation || ['CANCELLED', 'REFUNDED'].includes(order.status)}
                           onChange={(e) => {
                             const v = e.target.value;
                             void updateFulfillment(order.id, v === '' ? null : v);
@@ -260,7 +289,7 @@ export default function OrdersManagementPage() {
                       <td className="px-6 py-4 whitespace-nowrap max-w-[12rem]">
                         <button
                           type="button"
-                          disabled={!order.fulfillingEstateId || savingId === order.id}
+                          disabled={!order.fulfillingEstateId || savingId === order.id || orderQueue(order) === 'closed'}
                           onClick={() => {
                             setMissionOpsNotes('');
                             setMissionChannel('');
@@ -285,7 +314,7 @@ export default function OrdersManagementPage() {
                                 <span className="font-mono text-gray-800">{m.missionNumber}</span>
                                 <span className="text-gray-400 mx-1">·</span>
                                 <a
-                                  href={`/grower/portal?missionId=${encodeURIComponent(m.id)}`}
+                                  href={`/admin/missions?missionId=${encodeURIComponent(m.id)}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-[#2D5A27] font-medium underline"
@@ -303,7 +332,7 @@ export default function OrdersManagementPage() {
                         {order.status === 'PENDING' ? (
                           <button
                             type="button"
-                            disabled={savingId === order.id}
+                            disabled={savingId === order.id || order.stockReservation?.status !== 'RESERVED'}
                             onClick={() => void approveOrder(order.id)}
                             className="text-xs font-medium rounded-md px-3 py-1.5 bg-[#2D5A27] text-white hover:bg-[#234a20] disabled:opacity-50"
                           >
@@ -312,7 +341,7 @@ export default function OrdersManagementPage() {
                         ) : order.status === 'APPROVED' && !order.payments ? (
                           <button
                             type="button"
-                            disabled={savingId === order.id}
+                            disabled={savingId === order.id || order.stockReservation?.status !== 'RESERVED'}
                             onClick={() => {
                               setBankTxId('');
                               setBankModal({ orderId: order.id, orderNumber: order.orderNumber });
@@ -322,8 +351,15 @@ export default function OrdersManagementPage() {
                             {t('adminPages.orderManagement.confirmBankPayment')}
                           </button>
                         ) : (
-                          <span className="text-xs text-gray-400">{t('common.emDash')}</span>
+                          <div className="text-xs whitespace-normal min-w-40">
+                            <p>{t(`orderOperations.steps.${orderQueue(order)}`)}</p>
+                            {orderQueue(order) === 'dispatch' && <a className="mt-2 inline-block underline text-[#2D5A27]" href={`/admin/dispatch?orderId=${encodeURIComponent(order.id)}`}>{t('orderOperations.openDispatch')}</a>}
+                            {orderQueue(order) === 'progress' && <a className="mt-2 inline-block underline text-[#2D5A27]" href="/admin/missions">{t('adminPages.orderManagement.missionsLink')}</a>}
+                          </div>
                         )}
+                        {orderQueue(order) === 'settlement' && <OrderPaymentSettlement orderId={order.id} orderNumber={order.orderNumber} onReleased={loadOrders} onError={setError} />}
+                        {order.payments?.status === 'RELEASED' && <p className="mt-2 text-xs text-[#2D5A27]">{t('paymentSettlement.released')}</p>}
+                        {orderQueue(order) === 'stock' && ['PENDING', 'APPROVED'].includes(order.status) && <p className="text-xs mt-2 text-amber-700 whitespace-normal">{t('orderOperations.steps.stock')}</p>}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 text-xs font-medium rounded ${
@@ -338,21 +374,9 @@ export default function OrdersManagementPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <select
-                          value={order.status}
-                          disabled={savingId === order.id}
-                          onChange={(e) => updateStatus(order.id, e.target.value)}
-                          className="text-sm border border-gray-300 rounded-md px-2 py-1.5 bg-white max-w-[11rem] focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-600 disabled:opacity-50"
-                          aria-label={t('adminPages.orderManagement.updateStatusAria', {
-                            orderNumber: order.orderNumber,
-                          })}
-                        >
-                          {ORDER_STATUSES.map((s) => (
-                            <option key={s} value={s}>
-                              {t(`adminPages.orderManagement.statuses.${s}`)}
-                            </option>
-                          ))}
-                        </select>
+                        {canCancelUnpaid(order) ? <button type="button" disabled={savingId !== null} onClick={() => void updateStatus(order.id, 'CANCELLED')} className="rounded border border-red-200 px-3 py-2 text-xs text-red-700 disabled:opacity-50">
+                          {t(order.stockReservation?.status === 'RESERVED' ? 'orderOperations.release' : 'orderOperations.cancel')}
+                        </button> : <span className="text-xs text-gray-400">{t('common.emDash')}</span>}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(order.createdAt).toLocaleDateString(dateLocale)}
@@ -361,10 +385,10 @@ export default function OrdersManagementPage() {
                   ))}
                 </tbody>
               </table>
-              {orders.length === 0 && (
+              {visibleOrders.length === 0 && (
                 <div className="text-center py-12">
                   <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">{t('adminPages.orderManagement.emptyState')}</p>
+                  <p className="text-gray-500">{t(orders.length ? 'orderOperations.noMatches' : 'adminPages.orderManagement.emptyState')}</p>
                 </div>
               )}
             </div>

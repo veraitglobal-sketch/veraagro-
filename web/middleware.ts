@@ -6,8 +6,23 @@ import {
   pathIsLocaleFree,
   pathNeedsLocaleRedirect,
 } from "@/lib/i18n-routing";
+import { CANONICAL_SITE_HOST } from "@/lib/site-url";
 
 const LOCALE_COOKIE = "biovera-locale";
+const LOCALE_HEADER = "x-biovera-locale";
+
+function redirectApexToWww(request: NextRequest): NextResponse | null {
+  const host = request.headers.get("host")?.split(":")[0]?.toLowerCase();
+  if (host !== "biovera.app") return null;
+  const url = request.nextUrl.clone();
+  url.hostname = CANONICAL_SITE_HOST;
+  return NextResponse.redirect(url, 301);
+}
+
+function withLocaleHeader(response: NextResponse, locale: SiteLocale): NextResponse {
+  response.headers.set(LOCALE_HEADER, locale);
+  return response;
+}
 
 /**
  * First-time visitors: always English. No Accept-Language sniffing — avoids
@@ -20,8 +35,31 @@ function preferredLocale(request: NextRequest): SiteLocale {
   return "en";
 }
 
-export function middleware(request: NextRequest) {
+/** No trailing slash on marketing URLs (matches Next trailingSlash: false + sitemap locs). */
+function redirectTrailingSlash(request: NextRequest): NextResponse | null {
   const { pathname } = request.nextUrl;
+  if (pathname.length <= 1 || !pathname.endsWith("/")) return null;
+  const url = request.nextUrl.clone();
+  url.pathname = pathname.slice(0, -1);
+  return NextResponse.redirect(url, 301);
+}
+
+export function middleware(request: NextRequest) {
+  const apexRedirect = redirectApexToWww(request);
+  if (apexRedirect) return apexRedirect;
+
+  const trailingSlashRedirect = redirectTrailingSlash(request);
+  if (trailingSlashRedirect) return trailingSlashRedirect;
+
+  const { pathname } = request.nextUrl;
+
+  /** Legacy locale-free Protocol 360 → EN marketing route. */
+  if (pathname === "/protocol-360" || pathname === "/protocol-360/") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/en/protocol-360";
+    const res = NextResponse.redirect(url, 301);
+    return withLocaleHeader(res, "en");
+  }
 
   /** Main marketing login lives under /[locale]/login; keep query (e.g. returnTo). */
   if (pathname === "/login" || pathname === "/login/") {
@@ -59,7 +97,7 @@ export function middleware(request: NextRequest) {
       maxAge: 60 * 60 * 24 * 365,
       sameSite: "lax",
     });
-    return res;
+    return withLocaleHeader(res, existingLocale);
   }
 
   if (pathIsLocaleFree(pathname)) {
@@ -70,11 +108,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  /** Root `/` → `/en` or `/sr` from cookie; first visit defaults EN (spec §1.2). */
   const locale = preferredLocale(request);
   const url = request.nextUrl.clone();
   url.pathname =
     pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
-  const res = NextResponse.redirect(url);
+  const res = NextResponse.redirect(url, 301);
   res.cookies.set(LOCALE_COOKIE, locale, {
     path: "/",
     maxAge: 60 * 60 * 24 * 365,

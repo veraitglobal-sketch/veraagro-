@@ -27,12 +27,12 @@ export const partners: Partner[] = [
 export function getPartnerLogo(partner: Partner): string {
   // In production, you might want to check if the file exists
   // For now, we'll just return the path
-  return partner.logo || '/logo1.png';
+  return partner.logo || '/biovera-logo.png';
 }
 
 /**
  * Check if partner has a valid logo
  */
 export function hasPartnerLogo(partner: Partner): boolean {
-  return !!partner.logo && partner.logo !== '/logo1.png';
+  return !!partner.logo && partner.logo !== '/biovera-logo.png';
 }

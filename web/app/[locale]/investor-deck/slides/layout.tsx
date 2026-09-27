@@ -3,15 +3,15 @@ import type { Metadata } from "next";
 const OG_LOCALE: Record<string, { description: string }> = {
   sr: {
     description:
-      "Bio Vera: jedinstven vertikalni operativni model za uzgajivače, kupce i logistiku širom sveta koji prihvate Bio-Ready standarde. Podelite investitorski deck ili izvezite PDF.",
+      "Bio Vera: jedinstven vertikalni operativni model za uzgajivače, kupce i logistiku širom Evrope koji prihvate Bio-Ready standarde. Podelite investitorski deck ili izvezite PDF.",
   },
   en: {
     description:
-      "Bio Vera: one vertical operating model for growers, buyers and logistics partners worldwide who adopt Bio-Ready standards. Share this investor deck or export PDF.",
+      "Bio Vera: one vertical operating model for growers, buyers and logistics partners throughout Europe who adopt Bio-Ready standards. Share this investor deck or export PDF.",
   },
   de: {
     description:
-      "Bio Vera: ein vertikales Betriebsmodell für Erzeuger, Einkäufer und Logistikpartner weltweit unter Bio‑Ready‑Standards. Dieses Investor‑Deck teilen oder als PDF exportieren.",
+      "Bio Vera: ein vertikales Betriebsmodell für Erzeuger, Einkäufer und Logistikpartner in ganz Europa unter Bio‑Ready‑Standards. Dieses Investor‑Deck teilen oder als PDF exportieren.",
   },
 };
 

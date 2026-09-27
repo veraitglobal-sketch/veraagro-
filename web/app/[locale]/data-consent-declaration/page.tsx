@@ -2,8 +2,9 @@
 
 import { useCallback, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Link2, Printer } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
+import { HideRootNavigation } from "@/components/marketing/HideRootNavigation";
 import { useLocalizedHref } from "@/hooks/useLocalizedHref";
 import Footer from "@/components/Footer";
 import { DATA_CONSENT_DECLARATION_CHAPTERS } from "@/content/data-consent-declaration";
@@ -29,6 +30,7 @@ export default function DataConsentDeclarationPage() {
 
   return (
     <div className="min-h-screen bg-[#f4f7f4] text-gray-900 dcd-root print:bg-white">
+      <HideRootNavigation />
       <style jsx global>{`
         @media print {
           .dcd-root .dcd-no-print {
@@ -89,7 +91,7 @@ export default function DataConsentDeclarationPage() {
       <header className="dcd-no-print fixed top-0 z-50 w-full border-b border-gray-200/90 bg-[#fafcfa]/92 backdrop-blur-md print:hidden">
         <div className="mx-auto flex h-14 max-w-[900px] items-center justify-between px-6 sm:h-[3.65rem] sm:px-8">
           <Link href={loc("/")} className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-90">
-            <Image src="/logo1.png" alt={UI.logoAlt} width={64} height={24} className="h-6 w-auto" priority />
+            <BrandLogo alt={UI.logoAlt} priority />
           </Link>
           <nav className="flex items-center gap-4 text-[13px] font-medium text-gray-600">
             <Link href={loc("/technical-proposal")} className="hidden hover:text-[#2D5A27] sm:inline">

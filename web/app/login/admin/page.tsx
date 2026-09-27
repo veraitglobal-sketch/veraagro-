@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/auth';
 import { authAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
 import Link from 'next/link';
-import Image from 'next/image';
+import BrandLogo from '@/components/BrandLogo';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
@@ -64,13 +64,7 @@ export default function AdminLoginPage() {
         {/* Logo */}
         <div className="text-center">
           <Link href="/" className="inline-block">
-            <Image
-              src="/logo1.png"
-              alt="Bio Vera"
-              width={56}
-              height={20}
-              className="mx-auto h-4 w-auto"
-            />
+            <BrandLogo alt="Bio Vera" className="mx-auto" />
           </Link>
           <h2 className="mt-6 text-3xl font-light text-gray-900">Admin Login</h2>
           <p className="mt-2 text-sm text-gray-600">Sign in to access the admin panel</p>

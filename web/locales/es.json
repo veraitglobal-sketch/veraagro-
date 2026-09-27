@@ -243,8 +243,28 @@
     "items": [
       {
         "category": "general",
+        "q": "¿Quién está detrás de Bio Vera?",
+        "a": "Bio Vera fue fundada por Jovica Mihajlovic y tiene sede en Hamburgo. Forma parte del portafolio Vera Group; la plataforma la construye Vera IT."
+      },
+      {
+        "category": "general",
+        "q": "¿Quién puede unirse como productor?",
+        "a": "El programa está abierto a productores de toda Europa dispuestos a seguir los estándares Bio Vera de producción y documentación. La certificación existente no es, por sí sola, una barrera para solicitar el ingreso."
+      },
+      {
+        "category": "general",
+        "q": "¿Son un marketplace?",
+        "a": "No. Bio Vera es el operador del programa y vende bajo sus propios estándares. No somos un sitio de anuncios."
+      },
+      {
+        "category": "general",
+        "q": "¿Qué es un pasaporte digital de producto?",
+        "a": "Un pasaporte digital de producto es un registro estructurado del recorrido y las evidencias de un lote. En Bio Vera, cada lote puede vincularse por QR a un expediente con origen, contexto de cosecha, controles de calidad, evidencias de frío y certificados del programa, según corresponda."
+      },
+      {
+        "category": "general",
         "q": "¿Qué es Bio Vera?",
-        "a": "Bio Vera es una red agrícola verticalmente integrada: conectamos a los productores con los mercados bajo un modelo operativo: trazabilidad, garantía de calidad y cumplimiento desde el campo hasta el comprador, en todo el mundo."
+        "a": "Bio Vera es una empresa agroalimentaria de integración vertical con sede en Hamburgo. Contratamos productores en toda Europa, realizamos control de calidad y envasado, operamos la logística de cadena de frío y vendemos productos frescos en nuestro propio programa. Cada lote lleva un pasaporte digital documentado desde la parcela hasta la entrega. Bio Vera no es un marketplace que solo conecta a desconocidos."
       },
       {
         "category": "general",
@@ -257,62 +277,62 @@
         "a": "Facilitamos GlobalG.A.P. Certificación del grupo IFA v6 y garantiza que todos los productos cumplan con los estándares del mercado internacional y de la UE. Nuestros sistemas respaldan la gestión de certificaciones y el seguimiento del cumplimiento a nivel mundial."
       },
       {
-        "category": "cultivadores",
+        "category": "growers",
         "q": "¿Cómo me convierto en productor de Bio Vera?",
         "a": "Puede presentar su solicitud a través de nuestra página de Productores. El proceso de solicitud incluye proporcionar información sobre su finca, certificaciones y capacidad de producción. Nuestro equipo revisará su solicitud y lo guiará durante la incorporación."
       },
       {
-        "category": "cultivadores",
+        "category": "growers",
         "q": "¿Cuáles son los requisitos para ser productor?",
         "a": "Los productores deben tener operaciones agrícolas válidas, cumplir con los estándares de la UE y estar dispuestos a implementar nuestros protocolos de control de calidad. GlobalG.A.P. Se prefiere la certificación, pero podemos ayudarle a obtenerla."
       },
       {
-        "category": "cultivadores",
+        "category": "growers",
         "q": "¿Cómo se procesan los pagos?",
         "a": "Los pagos se procesan automáticamente tras la verificación de entrega exitosa. Utilizamos un sistema de depósito en garantía para garantizar transacciones seguras. Los agricultores reciben el pago entre 3 y 5 días hábiles después de la confirmación de la entrega."
       },
       {
-        "category": "compradores",
+        "category": "buyers",
         "q": "¿Cómo hago un pedido?",
         "a": "Cree una cuenta de comprador, explore los productos disponibles y realice pedidos a través de Bio Vera. Podrás realizar un seguimiento de tus pedidos en tiempo real y recibir certificados digitales por cada entrega."
       },
       {
-        "category": "compradores",
+        "category": "buyers",
         "q": "¿Cuál es la cantidad mínima de pedido?",
         "a": "Las cantidades mínimas de pedido varían según el producto y el productor. Puede ver requisitos específicos al buscar productos. Admitimos pedidos tanto al por menor como al por mayor."
       },
       {
-        "category": "compradores",
+        "category": "buyers",
         "q": "¿Cómo puedo verificar la autenticidad del producto?",
         "a": "Cada producto tiene un código QR que enlaza con su pasaporte digital. Escanee el código para ver información completa de trazabilidad, incluido el origen, los detalles del agricultor, las certificaciones de calidad y el historial de transporte."
       },
       {
-        "category": "logística",
+        "category": "logistics",
         "q": "¿Cómo me convierto en socio logístico?",
         "a": "Postúlate a través de nuestra página de Socios Logísticos. Damos la bienvenida a conductores independientes, furgonetas pequeñas y empresas de transporte más grandes. Los requisitos incluyen licencias válidas, capacidad de seguimiento por GPS y compromiso con el cumplimiento de la cadena de frío."
       },
       {
-        "category": "logística",
+        "category": "logistics",
         "q": "¿Qué es el programa Bio Vera: Del huerto al estante?",
         "a": "Este programa requiere que los socios logísticos asuman la responsabilidad integral del transporte, desde la recogida en el campo hasta la entrega final. Usted garantiza la integridad completa de la cadena de frío, el seguimiento por GPS y la transferencia digital en cada etapa."
       },
       {
-        "category": "logística",
+        "category": "logistics",
         "q": "¿Cómo se compensa a los socios logísticos?",
         "a": "Los socios reciben pagos automáticos tras la verificación de entrega exitosa. Los montos de pago se basan en la distancia, el tipo de carga y los requisitos de entrega. Todos los pagos se procesan digitalmente sin demoras burocráticas."
       },
       {
-        "category": "técnico",
+        "category": "technical",
         "q": "¿Existe una aplicación móvil?",
         "a": "Sí, contamos con aplicaciones móviles para productores y socios logísticos. Las aplicaciones admiten funcionalidad fuera de línea, seguimiento por GPS, escaneo de códigos de barras y sincronización en tiempo real cuando están en línea."
       },
       {
-        "category": "técnico",
+        "category": "technical",
         "q": "¿Cómo funciona el sistema de trazabilidad?",
         "a": "Nuestro sistema utiliza registros digitales inmutables, marcas de tiempo de GPS, huellas dactilares de dispositivos y códigos QR para crear una cadena de custodia inquebrantable. Cada paso desde el campo hasta el estante se registra y es verificable."
       },
       {
-        "category": "técnico",
+        "category": "technical",
         "q": "¿Qué medidas de seguridad existen?",
         "a": "Utilizamos cifrado de extremo a extremo, controles de acceso basados ​​en roles, autenticación multifactor y auditorías de seguridad periódicas. Todos los datos se almacenan de forma segura y cumplen con las regulaciones GDPR."
       }
@@ -1846,7 +1866,7 @@
       "Trazabilidad",
       "Certificado",
       "Escucha",
-      "Casos de fraude",
+      "Niveles QA",
       "Trazabilidad blockchain pública en Polygon cuando está activa"
     ],
     "partnersLine": "Con la confianza de las principales organizaciones agrícolas todos los días",
@@ -2097,13 +2117,13 @@
   },
   "growersPage": {
     "metaTitle": "Programa para productores | Bio Vera — Certificación, condiciones garantizadas, acceso al mercado UE",
-    "metaDescription": "Programa para productores: condiciones garantizadas, certificación grupal GlobalG.A.P. IFA v6 gratuita, pago en 48 h, logística coordinada y acceso al mercado UE. Abierto a productores de la UE y los Balcanes Occidentales.",
+    "metaDescription": "Programa para productores: condiciones garantizadas, certificación grupal GlobalG.A.P. IFA v6 gratuita, pago en 48 h, logística coordinada y acceso al mercado UE. Abierto a productores de la UE y los Europa.",
     "title": "Programa para productores",
     "heroLead": "Únase a una red de productores certificados. Bio Vera garantiza estándares de calidad, certificación grupal GlobalG.A.P., coordinación logística y acceso a compradores europeos — sin coste de certificación para el productor.",
     "downloadProspectCta": "Descargar prospecto PDF",
     "downloadProspectError": "No se pudo descargar el prospecto. Por favor inténtalo de nuevo.",
     "whoCanApplyTitle": "¿Quién puede aplicar?",
-    "whoCanApplyLead": "El programa está abierto a productores de todos los tamaños — desde pequeñas explotaciones familiares hasta grandes fincas comerciales. Aceptamos solicitudes de todos los países de la Unión Europea y los Balcanes Occidentales, incluidos Serbia, Bosnia y Herzegovina, Montenegro, Macedonia del Norte, Croacia y Albania. Único requisito: estar dispuesto a seguir los estándares de producción Bio Vera — el estado de certificación actual no es un obstáculo.",
+    "whoCanApplyLead": "El programa está abierto a productores de todos los tamaños — desde pequeñas explotaciones familiares hasta grandes fincas comerciales. Aceptamos solicitudes de productores en toda Europa dispuestos a seguir los estándares de producción Bio Vera. El estado de certificación actual no es un obstáculo.",
     "countriesLine": "",
     "valuePropositionTitle": "La propuesta de valor",
     "valuePropositionLead": "que ofrecemos",
@@ -2473,6 +2493,15 @@
     "loading": "Cargando…"
   },
   "careersPage": {
+    "headerAd": "Buscamos comerciales · Bio Vera",
+    "featuredAd": {
+      "eyebrow": "Vacantes · ventas de campo · Serbia",
+      "title": "Buscamos representantes comerciales",
+      "lead": "Únete al programa Vera — visita productores, cierra volúmenes contractuales y construye la red Bio Vera del campo a Hamburgo.",
+      "regionSouthCentral": "Serbia meridional y central",
+      "regionVojvodina": "Voivodina",
+      "degreeNote": "Deseable: titulación en Facultad de Agronomía (agronomía, fruticultura, protección de cultivos o similar)."
+    },
     "heroTitle": "Únete al equipo de Bio Vera",
     "heroSubtitle": "Ayúdanos a transformar la agricultura a través de la tecnología. Estamos construyendo el futuro de cadenas de suministro de alimentos transparentes y sostenibles.",
     "whyTitle": "Por qué trabajar con nosotros",
@@ -2495,12 +2524,13 @@
       },
       {
         "title": "Impacto global",
-        "description": "Únase a un equipo que está transformando la agricultura en todo el mundo."
+        "description": "Únase a un equipo que está transformando la agricultura en toda Europa."
       }
     ],
     "openPositions": "Posiciones abiertas",
     "requirements": "Requisitos",
     "benefits": "Beneficios",
+    "traits": "Cualidades que valoramos",
     "applyNow": "Aplicar ahora",
     "employmentFullTime": "Jornada completa",
     "ctaTitle": "¿No ve un rol que se ajuste?",
@@ -2509,6 +2539,80 @@
     "applySubject": "Solicitud de empleo: {{role}}",
     "generalApplicationSubject": "Aplicación general",
     "jobs": {
+      "salesSouthCentral": {
+        "title": "Comercial — Sur y centro de Serbia",
+        "department": "Ventas",
+        "location": "Serbia meridional y central (campo)",
+        "description": "Buscamos un comercial de campo para el programa Vera en el suroeste y centro de Serbia. Visita productores de fruta y hortalizas y cooperativas, presenta la producción por contrato según estándares Bio Vera y acompaña el cumplimiento del campo a la entrega.",
+        "requirements": [
+          "Deseable: titulación en Facultad de Agronomía (agronomía, fruticultura, protección de cultivos o similar)",
+          "Experiencia en venta de insumos agrícolas, comercialización o producción contractual",
+          "Permiso de conducir B y disponibilidad para visitas diarias de campo",
+          "Conocimiento de productores, zadruga y cooperativas locales",
+          "Inglés básico (alemán es una ventaja)"
+        ],
+        "traits": [
+          "Enérgico y persistente — no se detiene ante el primer «no»",
+          "Empático — escucha al productor antes de proponer",
+          "Organizado — lleva notas de campo y cumple plazos",
+          "Fiable — cumple la palabra y genera confianza a largo plazo",
+          "Trabajo en equipo — coordina con la sede de Hamburgo"
+        ],
+        "benefits": [
+          "Salario base + comisión por volúmenes contratados",
+          "Presupuesto de viajes y campo",
+          "App móvil Bio Vera y formación",
+          "Camino hacia liderazgo regional de ventas",
+          "Marca integrada verticalmente con trazabilidad completa"
+        ]
+      },
+      "salesVojvodina": {
+        "title": "Comercial — Voivodina",
+        "department": "Ventas",
+        "location": "Provincia autónoma de Voivodina (campo)",
+        "description": "Buscamos un comercial para Voivodina — producción intensiva de fruta y cereales, cooperativas y explotaciones familiares. Presenta el programa Vera, cierra contratos estacionales y ayuda a cumplir estándares de envasado y documentación Bio Vera.",
+        "requirements": [
+          "Deseable: titulación en Facultad de Agronomía",
+          "Experiencia en ventas o asesoría agrícola en el norte de Serbia",
+          "Permiso B — desplazamientos por municipios de Voivodina",
+          "Conocimiento de productores, cámaras frigoríficas y puntos de compra en Voivodina",
+          "Serbio más húngaro o inglés (al menos un idioma adicional es ventaja)"
+        ],
+        "traits": [
+          "Comunicativo y sensible a comunidades agrícolas diversas",
+          "Paciente — explica estándares sin presión",
+          "Proactivo — busca nuevas parcelas y programas estacionales",
+          "Preciso — controla volúmenes y ventanas de cosecha",
+          "Orientado a resultados — motivado por comisión y alianzas duraderas"
+        ],
+        "benefits": [
+          "Salario base + comisión por volúmenes contratados",
+          "Presupuesto de viajes y campo",
+          "Herramientas móviles Bio Vera y formación",
+          "Crecimiento profesional con la expansión del corredor",
+          "Apoyo de QA y operaciones desde Hamburgo"
+        ]
+      },
+      "salesRetail": {
+        "title": "Comercial — Alemania y retail UE",
+        "department": "Ventas",
+        "location": "Hamburgo, Alemania (+ viajes DACH / UE)",
+        "description": "Vende fruta y verdura trazable a mayoristas, food service y equipos de compras retail. Presenta pasaportes de lote, calendarios de cosecha y Protocol 360 QA — cierra programas donde Bio Vera es el vendedor.",
+        "requirements": [
+          "2+ años de ventas B2B en alimentación, retail o mayorista",
+          "Alemán e inglés fluidos",
+          "Experiencia en producto fresco o cadena de frío es una ventaja",
+          "Cómodo con ciclos de compra, listings y planificación estacional",
+          "Permiso de trabajo UE o elegibilidad en Alemania"
+        ],
+        "benefits": [
+          "Salario base + comisión por programas cerrados",
+          "Coche de empresa o presupuesto de movilidad",
+          "Seguro médico y bonos por rendimiento",
+          "Stock y cosecha en vivo vía portal comprador Bio Vera",
+          "Línea directa con operaciones, QA y logística en Hamburgo"
+        ]
+      },
       "dev": {
         "title": "Desarrollador senior full-stack",
         "department": "Ingeniería",
@@ -2539,7 +2643,7 @@
           "Comprensión de las regulaciones y certificaciones agrícolas de la UE.",
           "Experiencia con sistemas de gestión agrícola.",
           "Fuertes habilidades analíticas y de comunicación.",
-          "Disposición a viajar a granjas y socios en todo el mundo."
+          "Disposición a viajar a granjas y socios en toda Europa."
         ],
         "benefits": [
           "Salario competitivo",
@@ -2553,7 +2657,7 @@
         "title": "Gerente de Desarrollo de Negocios",
         "department": "Ventas",
         "location": "Hamburgo, Alemania",
-        "description": "Buscamos un Gerente de Desarrollo Comercial para expandir nuestra red de productores, proveedores y compradores en todo el mundo. Serás responsable de construir asociaciones estratégicas.",
+        "description": "Buscamos un Gerente de Desarrollo Comercial para expandir nuestra red de productores, proveedores y compradores en toda Europa. Serás responsable de construir asociaciones estratégicas.",
         "requirements": [
           "Más de 3 años de experiencia en ventas B2B o desarrollo de negocios.",
           "Experiencia en industrias agrícolas, alimentarias o logísticas.",
@@ -2572,7 +2676,7 @@
     }
   },
   "aboutPage": {
-    "heroTitle": "Acerca de Bio Vera",
+    "heroTitle": "Sobre Bio Vera",
     "heroSubtitle": "Transformar la agricultura a través de la tecnología, la transparencia y la confianza",
     "techPartnerLine": "La plataforma Bio Vera está desarrollada y mantenida por <1>Vera IT</1>, Hamburgo — socio tecnológico dentro del Vera Group.",
     "missionTitle": "Nuestra misión",
@@ -2624,7 +2728,9 @@
     "ctaProducer": "Conviértete en productor",
     "ctaContact": "Contáctenos",
     "protocol360Title": "Protocol 360",
-    "protocol360Body": "Protocol 360 is Bio Vera's end-to-end quality assurance system. From soil analysis at the parcel level through biometric scanning at packaging to cold chain monitoring during transport — every quality checkpoint is documented in the batch dossier and tied to the product's EU Digital Passport."
+    "protocol360Body": "Protocol 360 is Bio Vera's end-to-end quality assurance system. From soil analysis at the parcel level through biometric scanning at packaging to cold chain monitoring during transport — every quality checkpoint is documented in the batch dossier and tied to the product's EU Digital Passport.",
+    "metaTitle": "Sobre Bio Vera | Empresa agroalimentaria de integración vertical, Hamburgo",
+    "metaDescription": "Bio Vera es una empresa agroalimentaria de integración vertical en Hamburgo: productores en toda Europa, QA de programa, cadena de frío y pasaportes digitales de lote — no un marketplace."
   },
   "helpCenterPage": {
     "title": "Centro de ayuda",
@@ -2653,7 +2759,7 @@
         },
         {
           "title": "Beneficios y ventajas para el comprador",
-          "content": "Disfrute de precios competitivos, frescura garantizada, transparencia total y acceso directo a productores de todo el mundo. Genere confianza con sus clientes a través de calidad verificada."
+          "content": "Disfrute de precios competitivos, frescura garantizada, transparencia total y acceso directo a productores de toda Europa. Genere confianza con sus clientes a través de calidad verificada."
         },
         {
           "title": "Términos y condiciones",

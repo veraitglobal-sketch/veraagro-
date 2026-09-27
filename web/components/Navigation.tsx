@@ -5,8 +5,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth';
-import Image from 'next/image';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import BrandLogo from '@/components/BrandLogo';
+import { BRAND_LOGO_HEIGHT_CLASS } from '@/lib/brand-logo';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 const LOCALE_HOME_PREFIXES = ['/en', '/sr', '/de', '/ro', '/bg', '/fr', '/es'] as const;
@@ -56,15 +57,7 @@ export default function Navigation() {
         <div className="flex items-center h-16">
           {/* Logo — left */}
           <Link href={loc('/')} className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0">
-            <Image
-              src="/logo1.png"
-              alt={t('brand.name')}
-              width={56}
-              height={20}
-              className="h-4 w-auto bg-transparent"
-              priority
-              style={{ background: 'transparent' }}
-            />
+            <BrandLogo alt={t('brand.name')} priority heightClass={BRAND_LOGO_HEIGHT_CLASS} />
           </Link>
 
           {/* Desktop nav — centered links; tighter gap on narrow widths to avoid wrap */}

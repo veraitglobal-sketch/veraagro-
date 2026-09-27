@@ -95,7 +95,7 @@ Zadržavamo pravo da suspendujemo ili ukinemo vaš nalog u bilo kom trenutku, sa
 
               
 
-Bio Vera upravlja vertikalno integrisanom poljoprivrednom mrežom koja povezuje uzgajivače, dobavljače, logističke partnere i kupce širom sveta. Naše usluge uključuju, ali nisu ograničene na:
+Bio Vera upravlja vertikalno integrisanom poljoprivrednom mrežom koja povezuje uzgajivače, dobavljače, logističke partnere i kupce širom Evrope. Naše usluge uključuju, ali nisu ograničene na:
 
               
 

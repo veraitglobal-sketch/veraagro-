@@ -1,4 +1,103 @@
 {
+  "connectedWorkflow": {
+    "openHarvest": "Open harvest plan",
+    "adminHarvestHelp": "Track linked lots and the transport request alongside each harvest plan. Open transport to approve the request and assign a carrier.",
+    "sourcePlanting": "Open source planting",
+    "lot": "Lot",
+    "allMissions": "Show all transport"
+  },
+  "paymentSettlement": {
+    "review": "Review and release funds",
+    "title": "Release funds",
+    "grower": "Grower",
+    "transport": "Transport",
+    "platform": "Platform",
+    "explanation": "Confirmation credits the linked wallets. It does not confirm a bank transfer. The server validates receipt, evidence and open claims.",
+    "confirm": "Confirm wallet credits",
+    "changed": "The payment status changed. The list was refreshed.",
+    "loadFailed": "Could not load payment details.",
+    "releaseFailed": "Wallet credit was not confirmed. Check the current status before retrying.",
+    "released": "Funds credited to wallets"
+  },
+  "returnFlow": {
+    "title": "Returns and refunds",
+    "plan": "Create return order",
+    "planHint": "The assigned carrier returns the entire shipment to the farm. Enter the exact receiving address and instructions.",
+    "planned": "Return order saved.",
+    "address": "Exact receiving farm address",
+    "instructions": "Return instructions (at least 10 characters)",
+    "empty": "No returns for this account.",
+    "error": "The action failed. Check the details, refresh and retry.",
+    "collect": "Confirm return collection",
+    "receive": "Confirm receipt at farm",
+    "fullShipment": "I confirm the entire shipment has physically been collected or received at this step.",
+    "proofHint": "Take at least two photos and describe the condition. The carrier records collection; the farm records receipt.",
+    "notes": "Condition and notes (at least 10 characters)",
+    "photos": "Evidence photos (2–6)",
+    "evidence": "View return evidence",
+    "collectedAt": "Collected for return",
+    "receivedAt": "Received at farm",
+    "approveRefund": "Authorize full refund",
+    "refundHint": "Authorization reserves the full amount for refund. This app does not send money to a bank. Execute the bank refund separately.",
+    "reason": "Authorization reason (at least 20 characters)",
+    "bankHint": "Enter details only for an executed bank refund of the authorized amount and attach the bank confirmation.",
+    "bankReference": "Unique bank refund reference",
+    "bankDate": "Executed bank refund time",
+    "bankEvidence": "Bank confirmation (image)",
+    "recordBank": "Record executed bank refund",
+    "bankConfirm": "Confirm the bank has already refunded {{amount}} {{currency}} to the buyer? This app records evidence; it does not execute the transfer.",
+    "reconciliation": "Funds were previously distributed to recipients. Financial reconciliation is required: this refund does not reverse their wallets.",
+    "listHint": "Latest 200 orders. Operations may record a physical step only with actual collection or receipt evidence.",
+    "states": {
+      "PLANNED": "Return planned",
+      "COLLECTED": "Collected from buyer",
+      "RECEIVED": "Received at farm"
+    },
+    "refundStates": {
+      "APPROVED": "Refund authorized — awaiting bank refund",
+      "CONFIRMED": "Bank refund recorded"
+    }
+  },
+  "dispatchFlow": {
+    "documentsPending": "Linked delivery awaiting waybill or invoice",
+    "retryDocuments": "Retry documents",
+    "title": "Link mission and delivery",
+    "hint": "Select a mission and paid order from the same farm. Confirm this mission fulfills the entire order; destination comes from the order. The latest 200 records are shown.",
+    "mission": "Mission",
+    "order": "Order",
+    "choose": "Select",
+    "link": "Link and save delivery",
+    "saved": "Delivery linked:",
+    "error": "Linking failed. Refresh and retry."
+  },
+  "deliveryReview": {
+    "startReview": "Start review",
+    "decision": "Decision",
+    "explanation": "Explanation for the buyer (at least 20 characters)",
+    "saveDecision": "Save decision",
+    "conflict": "This report changed. Refresh and review the current decision.",
+    "moneyHint": "This records an operational decision. It does not refund or release funds. Reinspection requires new buyer evidence and signature; a return keeps receipt blocked.",
+    "states": {
+      "PENDING": "Received",
+      "IN_REVIEW": "Under review",
+      "RESOLVED": "Decision recorded"
+    },
+    "outcomes": {
+      "ACCEPTED": "Complaint accepted",
+      "REJECTED": "Complaint rejected",
+      "REINSPECTION": "New buyer inspection required",
+      "RETURN_REQUIRED": "Return required — receipt remains blocked"
+    },
+    "title": "Delivery reports",
+    "hint": "The latest 100 buyer reports and 100 handover disputes. Review reports and evidence here; operations handles decisions and any compensation.",
+    "refresh": "Refresh",
+    "error": "Could not load data. Please retry.",
+    "loading": "Loading…",
+    "empty": "No saved reports.",
+    "received": "Report received",
+    "photos": "Open photos",
+    "photoAlt": "Delivery evidence {{number}}"
+  },
   "brand": {
     "name": "Bio Vera"
   },
@@ -97,7 +196,7 @@
   "metadata": {
     "siteName": "Bio Vera",
     "homeTitle": "Bio Vera | Traceable Fresh Produce — Field to Shelf",
-    "siteDescription": "An operating system that connects production, quality control, logistics and distribution of fresh produce in a single certified chain. Every batch tracked from parcel to final point. Every participant verified. Every step documented.",
+    "siteDescription": "Vertically integrated agrifood operator in Hamburg. Documented batch passports from parcel to shelf — growers, logistics, suppliers across Europe. Not a marketplace.",
     "ldJsonDescription": "Certified agrifood operating system for production, quality, logistics and distribution — every batch tracked from parcel to final point, every participant verified, every step documented.",
     "keywords": [
       "Bio Vera",
@@ -253,8 +352,28 @@
     "items": [
       {
         "category": "general",
+        "q": "Who is behind Bio Vera?",
+        "a": "Bio Vera was founded by Jovica Mihajlovic and is based in Hamburg. It is part of the Vera Group portfolio; the operating platform is built by Vera IT."
+      },
+      {
+        "category": "general",
+        "q": "Who can join as a grower?",
+        "a": "The grower programme is open to producers throughout Europe who are willing to follow Bio Vera production and documentation standards. Current certification status is not by itself a barrier to applying."
+      },
+      {
+        "category": "general",
+        "q": "Are you a marketplace?",
+        "a": "No. Bio Vera is the programme operator and merchant for produce sold under its standards. We are not a listing site that only matches unknown parties."
+      },
+      {
+        "category": "general",
+        "q": "What is a digital product passport?",
+        "a": "A digital product passport is a structured record of a batch’s journey and compliance evidence. At Bio Vera, each batch can be linked to a QR-accessible dossier covering origin, harvest context, quality checks, cold-chain custody and programme certificates as applicable."
+      },
+      {
+        "category": "general",
         "q": "What is Bio Vera?",
-        "a": "Bio Vera is an agrifood company running a vertically managed chain: we set standards and inputs, organise and oversee production across contract growers, run packaging and logistics, and sell the product to customers as the brand owner—within one traceability and quality spine from field to shelf."
+        "a": "Bio Vera is a vertically integrated agrifood company based in Hamburg, Germany. We contract growers throughout Europe, run quality assurance and packing, operate refrigerated logistics, and sell fresh produce under our own programme. Every batch carries a documented digital passport from parcel to shelf. Bio Vera is not a marketplace that only connects strangers."
       },
       {
         "category": "general",
@@ -269,7 +388,7 @@
       {
         "category": "growers",
         "q": "How do I become a Bio Vera producer?",
-        "a": "Apply through our Growers page with farm, certification and capacity details. Our agronomy and compliance team reviews fit and, when tonnage and geography align, guides you through joining the Vera grower programme—the fruit and vegetables we merchandise to buyers."
+        "a": "Apply through our Growers page with farm, certification and capacity details. Our agronomy and compliance team reviews fit for producers throughout Europe and, when programme capacity aligns, guides you through joining the Vera grower programme — the fruit and vegetables we merchandise to buyers."
       },
       {
         "category": "growers",
@@ -345,7 +464,7 @@
     "sectionCompany": "About Bio Vera",
     "aboutTitle": "How the company explains its model to editors",
     "aboutParagraphs": [
-      "HAMBURG, Germany. When Bio Vera speaks about a vertically run food supply chain we do not mean a loose marketplace wiring strangers together — we mean every step from cultivation to the labelled pack on shelf lives inside Bio Vera's operating model and resale responsibility.",
+      "HAMBURG, Germany. Bio Vera is a vertically integrated agrifood company based in Hamburg. We contract growers, run quality and packing, operate refrigerated logistics, and sell fresh produce under our own programme — every batch carries a documented digital passport from parcel to shelf. We are not a marketplace that merely connects strangers.",
       "Registered as an agricultural brand, the company maintains a contiguous production trace from cultivation rules through to shelf-facing goods so every downstream step—including sourcing—rides the same system: clear, joined-up and transparent.",
       "Key inputs—including seed, packaging and anything the approved worksheet names—route through contracted suppliers organised locally or, where economies demand it, at regional hubs. Procurement runs through the Bio Vera application: each purchase connects to crop-cycle records so supply-side entries track field activity.",
       "Packing carries a Bio Vera badge bearing a QR shortcut; scanning opens the product passport spanning production cues, farmer identity, lifecycle logs and QA checkpoints reachable to shoppers and supervisory bodies wherever statute requires transparency.",
@@ -3356,7 +3475,7 @@
     "hero": {
       "title1": "Vertically Integrated",
       "title2": "Agrifood Company",
-      "subtitle": "An operating system that connects production, quality control, logistics and distribution of fresh produce in a single certified chain. Every batch tracked from parcel to final point. Every participant verified. Every step documented.",
+      "subtitle": "Bio Vera is a vertically integrated agrifood company based in Hamburg. We contract growers, run quality and packing, operate refrigerated logistics, and sell fresh produce under our own programme — every batch carries a documented digital passport from parcel to shelf. We are not a marketplace that merely connects strangers.",
       "browseProducts": "Browse our products",
       "becomeProducer": "Become a Vera grower",
       "preOrder": "Pre-order for 2026 is open",
@@ -3368,7 +3487,7 @@
       "Traceability",
       "Certified",
       "Monitoring",
-      "Fraud Cases",
+      "QA tiers",
       "Optional anchor"
     ],
     "partnersLine": "Trusted every day by leading agricultural organizations",
@@ -3497,7 +3616,7 @@
       "items": [
         {
           "question": "What is Bio Vera?",
-          "answer": "Bio Vera is a vertically integrated agrifood company based in Hamburg, Germany. We operate the complete fresh produce chain — from contracted grower programmes through quality assurance, logistics and branded sales to end customers. Every batch carries an EU Digital Product Passport with full traceability from field to shelf."
+          "answer": "Bio Vera is a vertically integrated agrifood company based in Hamburg. We contract growers, run quality and packing, operate refrigerated logistics, and sell fresh produce under our own programme — every batch carries a documented digital passport from parcel to shelf. We are not a marketplace that merely connects strangers."
         },
         {
           "question": "What is an EU Digital Product Passport?",
@@ -3617,13 +3736,13 @@
   },
   "growersPage": {
     "metaTitle": "Grower Programme | Bio Vera — Certification, Guaranteed Terms, EU Market Access",
-    "metaDescription": "Grower programme: guaranteed terms, free GlobalG.A.P. IFA v6 group certification, 48-hour payout, coordinated logistics and EU market access. Open to growers in the EU and Western Balkans.",
+    "metaDescription": "Grower programme: guaranteed terms, GlobalG.A.P. IFA v6 group certification facilitation, secured settlement after conformity, and export-ready batch passports. Open to producers throughout Europe.",
     "title": "Grower programme",
     "heroLead": "Join a network of certified growers. Bio Vera provides quality standards, group GlobalG.A.P. certification, logistics coordination and access to European buyers — at no certification cost to the grower.",
     "downloadProspectCta": "Download prospect PDF",
     "downloadProspectError": "Failed to download prospect. Please try again.",
     "whoCanApplyTitle": "Who Can Apply",
-    "whoCanApplyLead": "The programme is open to growers of all sizes — from small family farms to large commercial estates. We accept applications from all European Union and Western Balkans countries, including Serbia, Bosnia and Herzegovina, Montenegro, North Macedonia, Croatia and Albania. The only prerequisite is willingness to follow Bio Vera production standards — current certification status is not a barrier.",
+    "whoCanApplyLead": "The programme is open to growers of all sizes — from small family farms to large commercial estates. We accept applications from producers throughout Europe who are willing to follow Bio Vera production standards. Current certification status is not a barrier to starting a conversation.",
     "countriesLine": "",
     "valuePropositionTitle": "The Value Proposition",
     "valuePropositionLead": "",
@@ -3978,6 +4097,15 @@
     "loading": "Loading…"
   },
   "careersPage": {
+    "headerAd": "Hiring commercial reps · Bio Vera",
+    "featuredAd": {
+      "eyebrow": "Open roles · field sales · Serbia",
+      "title": "We're hiring commercial representatives",
+      "lead": "Join the Vera grower programme — visit producers, close contract volumes, and build the Bio Vera corridor from parcel to Hamburg.",
+      "regionSouthCentral": "South & Central Serbia",
+      "regionVojvodina": "Vojvodina",
+      "degreeNote": "Preferred: degree from a Faculty of Agriculture (agronomy, pomology, crop protection, or related)."
+    },
     "heroTitle": "Join the Bio Vera Team",
     "heroSubtitle": "Help us transform agriculture through technology. We're building the future of transparent, sustainable food supply chains.",
     "whyTitle": "Why Work With Us",
@@ -4006,6 +4134,7 @@
     "openPositions": "Open Positions",
     "requirements": "Requirements",
     "benefits": "Benefits",
+    "traits": "What we value in you",
     "applyNow": "Apply Now",
     "employmentFullTime": "Full-time",
     "ctaTitle": "Don't See a Role That Fits?",
@@ -4014,6 +4143,80 @@
     "applySubject": "Job application: {{role}}",
     "generalApplicationSubject": "General application",
     "jobs": {
+      "salesSouthCentral": {
+        "title": "Commercial Representative — South & Central Serbia",
+        "department": "Sales",
+        "location": "Southern & Central Serbia (field)",
+        "description": "We are hiring a field commercial representative for the Vera grower programme in south-western and central Serbia. You visit fruit and vegetable growers and cooperatives, present contract production under Bio Vera standards, and support compliance from parcel to handover.",
+        "requirements": [
+          "Preferred: degree from a Faculty of Agriculture (agronomy, pomology, crop protection, or related)",
+          "Experience in agro-input sales, produce marketing, or contract farming",
+          "Category B driving licence and willingness for daily field visits across districts",
+          "Knowledge of local growers, cooperatives, and farm networks in the region",
+          "Basic English (German is a plus)"
+        ],
+        "traits": [
+          "Energetic and persistent — does not stop after the first “no”",
+          "Empathetic — listens to the grower before proposing a programme",
+          "Organised — keeps field notes and respects agreed deadlines",
+          "Reliable — keeps promises and builds long-term trust in rural communities",
+          "Team player — coordinates with the Hamburg HQ and local partners"
+        ],
+        "benefits": [
+          "Base salary + commission on contracted volumes",
+          "Travel and field budget",
+          "Bio Vera mobile app and onboarding training",
+          "Path to regional sales lead as programmes grow",
+          "Work with a vertically integrated, fully traceable fresh produce brand"
+        ]
+      },
+      "salesVojvodina": {
+        "title": "Commercial Representative — Vojvodina",
+        "department": "Sales",
+        "location": "Autonomous Province of Vojvodina (field)",
+        "description": "We are hiring a commercial representative for Vojvodina — intensive fruit and arable production, cooperatives, and family farms. You present the Vera programme, close seasonal contracts, and help growers meet Bio Vera packaging and documentation standards.",
+        "requirements": [
+          "Preferred: degree from a Faculty of Agriculture",
+          "Experience in agricultural sales or advisory work in northern Serbia",
+          "Category B driving licence — travel across Vojvodina municipalities",
+          "Knowledge of growers, cold stores, and collection points in Vojvodina",
+          "Serbian plus Hungarian or English (at least one additional language is a plus)"
+        ],
+        "traits": [
+          "Communicative and culturally aware with diverse farming communities",
+          "Patient — explains standards clearly without pressure",
+          "Proactive — seeks new parcels and seasonal programmes",
+          "Precise — tracks contracted volumes and harvest windows",
+          "Results-driven — motivated by commission and long-term partnerships"
+        ],
+        "benefits": [
+          "Base salary + commission on contracted volumes",
+          "Travel and field budget",
+          "Bio Vera mobile tools and training",
+          "Regional career growth as the corridor scales",
+          "Direct support from QA and operations teams in Hamburg"
+        ]
+      },
+      "salesRetail": {
+        "title": "Commercial Representative — Germany & EU Retail",
+        "department": "Sales",
+        "location": "Hamburg, Germany (+ DACH / EU travel)",
+        "description": "Sell traceable fresh fruit and vegetables to wholesale buyers, food service, and retail procurement teams. You present batch passports, harvest calendars, and Protocol 360 QA — closing programmes where Bio Vera is the seller.",
+        "requirements": [
+          "2+ years of B2B sales in food, retail, or wholesale",
+          "Fluent German and English",
+          "Experience with fresh produce or chilled logistics is a plus",
+          "Comfortable with procurement cycles, listings, and seasonal planning",
+          "Valid EU work permit or eligibility to work in Germany"
+        ],
+        "benefits": [
+          "Base salary + commission on closed programmes",
+          "Company car or mobility budget",
+          "Health insurance and performance bonuses",
+          "Live stock and harvest data via the Bio Vera buyer portal",
+          "Direct line to operations, QA, and logistics teams in Hamburg"
+        ]
+      },
       "dev": {
         "title": "Senior Full-Stack Developer",
         "department": "Engineering",
@@ -4037,14 +4240,14 @@
       "agritech": {
         "title": "Agricultural Technology Specialist",
         "department": "Product",
-        "location": "Remote (EU / Worldwide)",
+        "location": "Remote (EU / Europe-wide)",
         "description": "Join our product team to help shape the future of agricultural technology. You will work closely with farmers, understand their needs, and translate them into product features.",
         "requirements": [
           "Background in agriculture, agri-food technology, or related field",
           "Understanding of EU agricultural regulations and certifications",
           "Experience with farm management systems",
           "Strong analytical and communication skills",
-          "Willingness to travel to farms and partners worldwide"
+          "Willingness to travel to farms and partners throughout Europe"
         ],
         "benefits": [
           "Competitive salary",
@@ -4088,6 +4291,12 @@
     "phoneHint": "Optional — helps recruiters reach you quickly.",
     "roleLabel": "Position *",
     "rolePlaceholder": "Select a role…",
+    "roleOptSalesSouthCentralKey": "salesSouthCentral",
+    "roleOptSalesSouthCentral": "Commercial Representative — South & Central Serbia",
+    "roleOptSalesVojvodinaKey": "salesVojvodina",
+    "roleOptSalesVojvodina": "Commercial Representative — Vojvodina",
+    "roleOptSalesRetailKey": "salesRetail",
+    "roleOptSalesRetail": "Commercial Representative — Germany & EU Retail",
     "roleOptDevKey": "dev",
     "roleOptDev": "Senior Full-Stack Developer",
     "roleOptAgriKey": "agritech",
@@ -4120,8 +4329,8 @@
     "errorFallback": "Could not submit. Try again later or email us at info@biovera.app"
   },
   "aboutPage": {
-    "metaTitle": "About Bio Vera | Integrated Agrifood Operator, Hamburg",
-    "metaDescription": "Bio Vera transforms agriculture through vertical integration. Grower programmes, field QA, packing and cold logistics to EU retailers with full batch traceability.",
+    "metaTitle": "About Bio Vera | Vertically Integrated Agrifood Company, Hamburg",
+    "metaDescription": "Bio Vera is a vertically integrated agrifood company in Hamburg: contracted growers throughout Europe, programme QA, cold logistics, and batch digital passports — not a marketplace.",
     "heroTitle": "About Bio Vera",
     "heroSubtitle": "Bio Vera organises agricultural production across contract growers who follow our standards and inputs, runs field QA, packing and logistics, and sells branded produce to end customers — all on a single batch dossier per load.",
     "techPartnerLine": "The Bio Vera platform is built and maintained by <1>Vera IT</1>, Hamburg — the technology partner within the Vera Group.",
@@ -4763,7 +4972,7 @@
       },
       {
         "title": "Market",
-        "body": "Initial beachhead concentrates on growers in the Balkan corridor who can meet EU-category buyers and refrigerated retail programmes needing verifiable dossiers — scaling partner-by-partner toward additional compliant trade lanes rather than spraying undifferentiated listings."
+        "body": "Initial focus is international growers who can meet regulated retail programmes that require verifiable dossiers — scaling partner-by-partner into additional compliant trade lanes rather than undifferentiated listings."
       },
       {
         "title": "Business Model",
@@ -5040,5 +5249,134 @@
     "termsUpdated": "Last updated: January 2026",
     "cookiesTitle": "Cookie Policy",
     "cookiesUpdated": "Last updated: January 2026"
+  },
+  "refundReconciliation": {
+    "title": "Financial reconciliation",
+    "open": "Open original credits",
+    "closed": "Reconciliation recorded",
+    "recovered": "Recovered from wallets",
+    "platformCost": "Platform cost",
+    "uncredited": "Platform share not credited to a wallet",
+    "available": "Currently available in wallet",
+    "choose": "Choose a method for this share",
+    "hint": "For each original payment share, choose recovery from the available wallet balance or record a decision that the platform bears the cost. Explain the decision. Wallet recovery reduces the available balance; platform cost is not collected money. This form does not execute a bank transfer.",
+    "reason": "Reason for the cost decision (at least 20 characters)",
+    "confirm": "Confirm reconciliation: debit {{recovered}} from wallets and record {{cost}} as platform cost. A different request cannot overwrite this decision.",
+    "save": "Confirm and record reconciliation",
+    "error": "Reconciliation was not saved. Refresh and check the current balances.",
+    "methods": {
+      "WALLET_RECOVERY": "Recover from available wallet balance",
+      "PLATFORM_COST": "Platform bears the cost"
+    },
+    "walletEntry": "Debit for buyer refund",
+    "orderReference": "Order",
+    "participantMethods": {
+      "WALLET_RECOVERY": "Your wallet debit for this refund",
+      "PLATFORM_COST": "The platform bears your share; your wallet was not debited"
+    }
+  },
+  "returnDisposition": {
+    "title": "Returned goods disposition",
+    "states": {
+      "QUARANTINED": "Quarantine — decision pending",
+      "WRITTEN_OFF": "Written off",
+      "RESTOCKED": "Approved for sale with stock count"
+    },
+    "actions": {
+      "QUARANTINE": "Keep in quarantine",
+      "WRITE_OFF": "Record write-off",
+      "RESTOCK": "Approve sale with physical count"
+    },
+    "open": "Open inspection and history",
+    "initial": "The goods have been received and await a disposition decision. The return has not increased saleable stock.",
+    "action": "Decision for the complete shipment",
+    "choose": "Choose",
+    "quantity": "Enter the inspected full-shipment quantity: {{quantity}} {{unit}}",
+    "notes": "Inspection findings and reason (at least 20 characters)",
+    "countHint": "Legacy orders lack a reliable stock issue ledger. Enter the total physically counted saleable quantity for this stock record, including this approved return. Do not enter only the added quantity. Exclude all other quarantined or written-off goods.",
+    "noStock": "No eligible stock for this farm, product and unit. The return remains quarantined until stock records are reconciled.",
+    "stock": "Stock record and actual goods location",
+    "currentCount": "Current recorded quantity",
+    "currentExpiry": "Existing expiry",
+    "counted": "Total physical saleable count, including this return",
+    "expiry": "Verified stock expiry (cannot extend existing expiry)",
+    "quality": "The full returned shipment was inspected and approved for sale.",
+    "countConfirmed": "The count includes this shipment and excludes goods not approved for sale.",
+    "location": "The goods are physically at the selected stock location.",
+    "confirmCount": "Set the total saleable stock to {{count}} {{unit}} based on the physical count? This does not add to the existing quantity.",
+    "confirmDecision": "Record “{{action}}” for the full returned shipment? Write-off and sale approval are final in this workflow.",
+    "save": "Save inspection and decision",
+    "savedCount": "Physical count: previously {{before}}, verified {{after}} {{unit}}.",
+    "error": "Decision was not saved. Refresh and check the evidence and stock state.",
+    "writeOffHint": "This write-off applies to the separate returned quantity. Existing saleable stock is not automatically reduced because the original stock issue is not reliably linked. If these goods are already included in saleable stock, a separate physical count and reconciliation are required."
+  },
+  "orderStock": {
+    "states": {
+      "UNALLOCATED": "Stock not allocated",
+      "RESERVED": "Goods reserved",
+      "ISSUED": "Goods dispatched",
+      "RELEASED": "Reservation released"
+    },
+    "choose": "Choose stock",
+    "noStock": "No matching available stock. Check the fulfilling farm and lot link.",
+    "reserve": "Reserve for this order",
+    "cancel": "Cancel unpaid order",
+    "cancelConfirm": "Cancel this unpaid order and release the reserved goods? If you have already transferred money, contact operations instead of cancelling here.",
+    "keep": "Keep order",
+    "error": "Change was not saved",
+    "retry": "Refresh and try again."
+  },
+  "checkoutRecovery": {
+    "recovered": "An order from the previous attempt was recovered without creating a duplicate. Check its original quantity, address and status in your orders; any remaining quantity stays in the cart.",
+    "storageError": "The cart could not be saved safely. Check storage space and permissions, then try again.",
+    "missingOrder": "Order confirmation is missing. Retry with the same cart.",
+    "partial": "Orders saved: {{count}}. Remaining items are in the cart."
+  },
+  "orderOperations": {
+    "title": "Order operations overview",
+    "open": "Open orders",
+    "held": "Total reserved goods",
+    "unpaidHeld": "Reserved on unpaid orders",
+    "hint": "Review the oldest requests first. Age is measured from order creation; stock is not released automatically. Quantities are grouped by unit.",
+    "queues": {
+      "settlement": "Settlement",
+      "open": "Open",
+      "stock": "Allocate stock",
+      "approval": "Approve",
+      "payment": "Awaiting payment",
+      "dispatch": "Dispatch",
+      "progress": "Delivery in progress",
+      "closed": "Closed",
+      "all": "All"
+    },
+    "steps": {
+      "settlement": "Delivery is finished. Review the release of funds.",
+      "stock": "Allocate specific stock in the product column.",
+      "approval": "Review and approve the request.",
+      "payment": "Check the received bank transfer.",
+      "dispatch": "Link this order to the appropriate transport mission.",
+      "progress": "Track pickup, transport and buyer receipt.",
+      "closed": "No new operations action in this overview."
+    },
+    "search": "Search: number, product, buyer or farm",
+    "sort": "Sort",
+    "oldest": "Oldest first",
+    "newest": "Newest first",
+    "refresh": "Refresh",
+    "showing": "Showing {{count}} of {{total}} orders",
+    "loaded": "Loaded at {{time}}",
+    "nextStep": "Next step",
+    "cancelAction": "Unpaid cancellation",
+    "release": "Cancel and release goods",
+    "cancel": "Cancel request",
+    "cancelConfirm": "Cancel order {{number}} and release any reserved goods? First verify that no bank transfer has arrived but is still unrecorded in the application.",
+    "ageDays": "Age: {{count}} d.",
+    "openDispatch": "Open dispatch",
+    "noMatches": "No orders match this step and search.",
+    "dispatchContext": "Dispatch for {{number}} · {{product}} · {{quantity}} {{unit}}",
+    "dispatchUnavailable": "This order is not currently listed as available for linkage. Check its status and existing delivery, then refresh.",
+    "noMission": "No available mission matches this farm and order. Prepare or assign transport in orders/missions.",
+    "backOrders": "Back to orders",
+    "allDispatch": "Show all dispatches"
   }
 }

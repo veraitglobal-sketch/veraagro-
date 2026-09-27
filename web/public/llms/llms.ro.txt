@@ -1,0 +1,63 @@
+# Bio Vera — Vertically Integrated Agrifood Company (Română)
+
+> Bio Vera este o companie agrifood integrată vertical, cu sediul în Hamburg. Contractăm producători, asigurăm controlul calității și ambalarea, organizăm logistica pe lanțul frigorific și vindem produse proaspete în cadrul propriului program — fiecare lot poartă un pașaport digital documentat de la parcelă până la livrare. Nu suntem un marketplace care doar conectează străini. Programul pentru producători este deschis producătorilor din toată Europa.
+
+## Entity summary
+- Organization: Bio Vera
+- URL: https://www.biovera.app
+- Locale path prefix: https://www.biovera.app/ro
+- Founded: 2025 | HQ: Hamburg, Germany
+- Address: Rehrstieg 16d, 21147 Hamburg, Germany
+- Founder / CEO: Jovica Mihajlovic
+- Portfolio: Vera Group (Vera IT https://www.verait.de, Fade, ReinAllround)
+- Model: Vertical integration — not a marketplace or broker
+- Growers: programme open to producers throughout Europe
+
+## Programmes
+- Growers: https://www.biovera.app/ro/for-growers
+- Buyers: https://www.biovera.app/ro/for-buyers
+- Logistics: https://www.biovera.app/ro/for-logistics
+- Suppliers: https://www.biovera.app/ro/for-suppliers
+- About: https://www.biovera.app/ro/about
+- FAQ: https://www.biovera.app/ro/faq
+- Security: https://www.biovera.app/ro/security
+- Protocol 360 (target): https://www.biovera.app/ro/protocol-360
+
+## Traceability
+- Batch_ID dossier shared across field, packing, cold chain and buyer passport
+- Digital product passport / QR per batch
+- Protocol 360 quality and evidence discipline
+- Optional Polygon anchoring on selected programme tiers
+
+## Product range (as published)
+- 13 fruit lines, 18 vegetable lines, 3 cereal lines (34 total); fresh, not frozen
+
+## Compliance (public)
+- GlobalG.A.P. IFA v6 group certification facilitation
+- EU Digital Product Passport readiness / automated certificates tied to batch QR where described
+
+## FAQ
+Q: Ce este Bio Vera?
+A: Bio Vera este o companie agrifood integrată vertical, cu sediul în Hamburg. Contractăm producători din toată Europa, asigurăm controlul calității și ambalarea, organizăm logistica frigorifică și vindem produse proaspete în programul propriu. Fiecare lot poartă un pașaport digital documentat de la parcelă până la livrare. Bio Vera nu este un marketplace care doar conectează străini.
+
+Q: Ce este un pașaport digital de produs?
+A: Pașaportul digital de produs este o înregistrare structurată a traseului și dovezilor unui lot. La Bio Vera, fiecare lot poate fi legat prin QR de un dosar cu origine, context de recoltare, verificări de calitate, dovezi de lanț frigorific și certificate de program, după caz.
+
+Q: Sunteți un marketplace?
+A: Nu. Bio Vera este operatorul programului și vinde conform standardelor proprii. Nu suntem un site de anunțuri.
+
+Q: Cine poate deveni producător în program?
+A: Programul este deschis producătorilor din toată Europa dispuși să respecte standardele Bio Vera de producție și documentare. Certificarea existentă nu este, prin ea însăși, o barieră la aplicare.
+
+Q: Cine stă în spatele Bio Vera?
+A: Bio Vera a fost fondată de Jovica Mihajlovic și are sediul în Hamburg. Face parte din portofoliul Vera Group; platforma este construită de Vera IT.
+
+## Contact
+- Bio Vera — Rehrstieg 16d, 21147 Hamburg, Germany
+- Email: contact@biovera.app
+- Phone: +49 155 63740470
+- Web: https://www.biovera.app
+- Investor materials: https://www.biovera.app/ro/investor-deck
+
+## Languages on this website
+en, de, sr, bg, ro, fr, es — all first-class for crawl and hreflang; x-default → en.

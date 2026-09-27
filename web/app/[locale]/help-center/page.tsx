@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 type Category = 'buyers' | 'growers' | 'drivers' | 'general';
 
@@ -35,6 +36,7 @@ function isArticleList(x: unknown): x is Article[] {
 
 export default function HelpCenterPage() {
   const { t } = useTranslation();
+  const loc = useLocalizedHref();
   const [category, setCategory] = useState<Category>('buyers');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -144,8 +146,14 @@ export default function HelpCenterPage() {
                   </motion.div>
                 );
 
-                return article.link ? (
-                  <Link key={`${category}-${article.title}`} href={article.link} className="block">
+                const href = article.link
+                  ? article.link.startsWith('http')
+                    ? article.link
+                    : loc(article.link.replace(/^\//, ''))
+                  : undefined;
+
+                return href ? (
+                  <Link key={`${category}-${article.title}`} href={href} className="block">
                     {inner}
                   </Link>
                 ) : (

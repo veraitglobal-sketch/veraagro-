@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { notFound, useParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -54,28 +53,14 @@ export default function PressReleaseFullPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href={loc('/')} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <Image
-                src="/logo1.png"
-                alt={t('footer.logoAlt')}
-                width={180}
-                height={51}
-                className="h-9 w-auto sm:h-10"
-                priority
-              />
-            </Link>
-            <Link href={loc('/press')} className="text-sm text-gray-600 hover:text-[#2D5A27] transition-colors inline-flex items-center gap-2">
-              <ArrowLeft className="w-4 h-4" aria-hidden />
-              {t('pressPage.releaseBackToKit')}
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <main className="pt-28 pb-24 px-6 lg:px-8">
+      <main className="pt-12 pb-24 px-6 lg:px-8">
+        <Link
+          href={loc('/press')}
+          className="max-w-3xl mx-auto mb-8 inline-flex items-center gap-2 text-sm text-gray-600 hover:text-[#2D5A27] transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" aria-hidden />
+          {t('pressPage.releaseBackToKit')}
+        </Link>
         <motion.article
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}

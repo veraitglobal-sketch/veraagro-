@@ -1,8 +1,7 @@
-const DEFAULT_SITE_URL = 'https://biovera.app';
+import { ENTITY_ONE_LINER_EN } from '@/lib/entity-copy';
+import { getSiteUrl } from '@/lib/site-url';
 
-export function getSiteUrl(): string {
-  return (process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL).replace(/\/$/, '');
-}
+export { getSiteUrl };
 
 /** Organization + WebSite @graph — included on every public page via root layout. */
 export function buildBioVeraOrganizationGraph(siteUrl: string = getSiteUrl()) {
@@ -15,9 +14,8 @@ export function buildBioVeraOrganizationGraph(siteUrl: string = getSiteUrl()) {
         name: 'Bio Vera',
         alternateName: ['BioVera', 'Bio Vera Hamburg', 'Bio Vera Agrifood'],
         url: siteUrl,
-        logo: `${siteUrl}/logo1.png`,
-        description:
-          'Vertically integrated agrifood company operating the complete fresh produce chain from contracted grower programmes through quality assurance, logistics and branded sales. Every batch carries an EU Digital Product Passport with full parcel-to-shelf traceability.',
+        logo: `${siteUrl}/biovera-logo.png`,
+        description: ENTITY_ONE_LINER_EN,
         foundingDate: '2025',
         founder: {
           '@type': 'Person',
@@ -122,12 +120,17 @@ export function buildBioVeraOrganizationGraph(siteUrl: string = getSiteUrl()) {
 
 export type FaqSchemaItem = { question: string; answer: string };
 
-/** FAQPage schema for homepage — questions must match visible FAQ copy. */
-export function buildFaqPageSchema(items: FaqSchemaItem[], siteUrl: string = getSiteUrl()) {
+/** FAQPage schema — questions must match visible FAQ copy; @id is locale-specific. */
+export function buildFaqPageSchema(
+  items: FaqSchemaItem[],
+  siteUrl: string = getSiteUrl(),
+  locale = 'en',
+) {
+  const faqPath = locale === 'en' ? '/en/faq' : `/${locale}/faq`;
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    '@id': `${siteUrl}/#faq`,
+    '@id': `${siteUrl}${faqPath}#faq`,
     mainEntity: items.map((item) => ({
       '@type': 'Question',
       name: item.question,

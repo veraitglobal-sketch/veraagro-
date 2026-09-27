@@ -3,8 +3,9 @@
 import { useCallback, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
+import BrandLogo from "@/components/BrandLogo";
+import { HideRootNavigation } from "@/components/marketing/HideRootNavigation";
 import {
   Link2,
   Printer,
@@ -273,6 +274,7 @@ export default function PitchDeckPage() {
 
   return (
     <div className="min-h-screen bg-[#EBEEEB] print:min-h-0 print:bg-white">
+      <HideRootNavigation />
       <style jsx global>{`
         @page {
           margin: 14mm 14mm 16mm;
@@ -419,7 +421,7 @@ export default function PitchDeckPage() {
             href={loc("/")}
             className="flex items-center gap-2 rounded-lg hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27]/30 focus-visible:ring-offset-2"
           >
-            <Image src="/logo1.png" alt={t("footer.logoAlt")} width={64} height={24} className="h-6 w-auto" priority />
+            <BrandLogo alt={t("footer.logoAlt")} priority />
             <span className="hidden sm:inline border-l border-gray-200 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-gray-400">
               {t("footer.investorDeck")}
             </span>
@@ -747,7 +749,7 @@ export default function PitchDeckPage() {
                 {t("pitchDeck.ctaContact")}
               </Link>
               <Link
-                href={loc("/growers")}
+                href={loc("/for-growers")}
                 className="inline-flex min-h-[48px] items-center justify-center rounded-lg border border-white/65 px-6 py-3 text-[14px] font-semibold hover:bg-white/10"
               >
                 {t("pitchDeck.ctaGrowers")}

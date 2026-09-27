@@ -98,7 +98,7 @@ We reserve the right to suspend or terminate your account at any time, with or w
 
               
 
-Bio Vera operates a vertically integrated agricultural network that connects growers, suppliers, logistics partners, and buyers worldwide. Our services include, but are not limited to:
+Bio Vera operates a vertically integrated agricultural network that connects growers, suppliers, logistics partners, and buyers across Europe. Our services include, but are not limited to:
 
               
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BuyerOrderStock } from '@/components/orders/BuyerOrderStock';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { ordersAPI, deliveriesAPI, invoicesAPI } from '@/lib/api';
@@ -332,6 +333,7 @@ export default function OrdersPage() {
                         <span className="ml-2 font-light text-gray-900">
                           {order.productName}
                         </span>
+                        <BuyerOrderStock order={order} reload={loadOrders} />
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
@@ -354,7 +356,9 @@ export default function OrdersPage() {
                       <span>
                         {typeof order.deliveryAddress === 'string'
                           ? order.deliveryAddress
-                          : `${order.deliveryAddress.address || ''}, ${order.deliveryAddress.city || ''}`}
+                          : [order.deliveryAddress.street || order.deliveryAddress.address,
+                              [order.deliveryAddress.postalCode, order.deliveryAddress.city].filter(Boolean).join(' '),
+                              order.deliveryAddress.country].filter(Boolean).join(', ')}
                       </span>
                     </div>
                   )}
@@ -446,7 +450,7 @@ export default function OrdersPage() {
                     <p className="text-xs text-gray-500 font-light leading-relaxed mb-6">
                       {t('buyerPortalOrders.transportStatusHint')}
                     </p>
-                    {selectedOrder.status === 'APPROVED' && (
+                    {selectedOrder.status === 'APPROVED' && selectedOrder.stockReservation?.status === 'RESERVED' && (
                       <PaymentInstructionsPanel
                         orderNumber={selectedOrder.orderNumber}
                         totalAmount={Number(selectedOrder.totalAmount)}
@@ -622,7 +626,9 @@ export default function OrdersPage() {
                             <p className="font-light text-gray-900 mt-1">
                               {typeof selectedOrder.deliveryAddress === 'string'
                                 ? selectedOrder.deliveryAddress
-                                : `${selectedOrder.deliveryAddress.address || ''}, ${selectedOrder.deliveryAddress.city || ''}`}
+                                : [selectedOrder.deliveryAddress.street || selectedOrder.deliveryAddress.address,
+                                    [selectedOrder.deliveryAddress.postalCode, selectedOrder.deliveryAddress.city].filter(Boolean).join(' '),
+                                    selectedOrder.deliveryAddress.country].filter(Boolean).join(', ')}
                             </p>
                           </div>
                         )}
@@ -652,30 +658,30 @@ export default function OrdersPage() {
                   </div>
 
                   {/* Payment Information */}
-                  {selectedOrder.payments && selectedOrder.payments.length > 0 && (
+                  {selectedOrder.payments && (
                     <div className="mb-6 border-b border-gray-200/50 pb-6">
                       <h3 className="text-sm font-light text-gray-500 mb-4">Payment Information</h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span className="text-gray-600 font-light">Payment Method:</span>
                           <span className="font-light text-gray-900">
-                            {selectedOrder.payments[0].paymentMethod || 'N/A'}
+                            {selectedOrder.payments.paymentMethod || 'N/A'}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600 font-light">Payment status:</span>
                           <span className="font-light text-gray-900">
-                            {String(selectedOrder.payments[0].status).replace(
+                            {String(selectedOrder.payments.status).replace(
                               /_/g,
                               ' ',
                             )}
                           </span>
                         </div>
-                        {selectedOrder.payments[0].releasedAt && (
+                        {selectedOrder.payments.releasedAt && (
                           <div className="flex justify-between">
                             <span className="text-gray-600 font-light">Released At:</span>
                             <span className="font-light text-gray-900">
-                              {new Date(selectedOrder.payments[0].releasedAt).toLocaleString()}
+                              {new Date(selectedOrder.payments.releasedAt).toLocaleString()}
                             </span>
                           </div>
                         )}

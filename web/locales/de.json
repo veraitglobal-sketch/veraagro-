@@ -243,77 +243,97 @@
     "ctaButton": "Kontaktieren Sie den Support",
     "items": [
       {
-        "category": "allgemein",
-        "q": "Was ist Bio Vera?",
-        "a": "Bio Vera ist ein vertikal integriertes landwirtschaftliches Netzwerk: Wir verbinden Produzenten mit Märkten im Rahmen eines Betriebsmodells – Rückverfolgbarkeit, Qualitätssicherung und Compliance vom Feld bis zum Käufer, weltweit."
+        "category": "general",
+        "q": "Wer steht hinter Bio Vera?",
+        "a": "Bio Vera wurde von Jovica Mihajlovic gegründet und hat seinen Sitz in Hamburg. Das Unternehmen gehört zur Vera Group; die Plattform wird von Vera IT gebaut."
       },
       {
-        "category": "allgemein",
+        "category": "general",
+        "q": "Wer kann als Erzeuger teilnehmen?",
+        "a": "Das Erzeugerprogramm steht Produzenten in ganz Europa offen, die bereit sind, die Produktions- und Dokumentationsstandards von Bio Vera einzuhalten. Ein bestehendes Zertifikat ist allein keine Voraussetzung für die Bewerbung."
+      },
+      {
+        "category": "general",
+        "q": "Seid ihr ein Marktplatz?",
+        "a": "Nein. Bio Vera ist Programmbetreiber und verkauft unter eigenen Standards. Wir sind keine reine Listing-Plattform."
+      },
+      {
+        "category": "general",
+        "q": "Was ist ein digitaler Produktpass?",
+        "a": "Ein digitaler Produktpass ist ein strukturierter Nachweis zum Weg einer Charge. Bei Bio Vera kann jede Charge über einen QR-Code mit einem Dossier verknüpft werden — mit Herkunft, Erntekontext, Qualitätsprüfungen, Kühlkettennachweisen und programmbezogenen Zertifikaten, soweit zutreffend."
+      },
+      {
+        "category": "general",
+        "q": "Was ist Bio Vera?",
+        "a": "Bio Vera ist ein vertikal integriertes Agrar- und Lebensmittelunternehmen mit Sitz in Hamburg. Wir kontraktieren Erzeuger in ganz Europa, führen Qualitätssicherung und Verpackung durch, betreiben Kühlkettenlogistik und verkaufen frische Erzeugnisse im eigenen Programm. Jede Charge trägt einen dokumentierten digitalen Produktpass von der Parzelle bis zum Lieferpunkt. Bio Vera ist kein Marktplatz, der nur Fremde zusammenführt."
+      },
+      {
+        "category": "general",
         "q": "Wie stellt Bio Vera die Produktqualität sicher?",
         "a": "Wir verwenden unser Protocol 360-System, das drei Ebenen der Qualitätskontrolle umfasst: Bodenanalyse auf Feldebene (Eco-Safe Audit), biometrisches Scannen in Verpackungszentren und Kühlkettenüberwachung während des Transports. Jedes Produkt wird überprüft, bevor es auf den Markt kommt."
       },
       {
-        "category": "allgemein",
+        "category": "general",
         "q": "Welche Zertifizierungen unterstützt Bio Vera?",
-        "a": "Wir ermöglichen GlobalG.A.P. IFA v6-Gruppenzertifizierung und stellen Sie sicher, dass alle Produkte internationalen und EU-Marktstandards entsprechen. Unsere Systeme unterstützen das Zertifizierungsmanagement und die Compliance-Verfolgung weltweit."
+        "a": "Wir ermöglichen GlobalG.A.P. IFA v6-Gruppenzertifizierung und stellen Sie sicher, dass alle Produkte internationalen und EU-Marktstandards entsprechen. Unsere Systeme unterstützen das Zertifizierungsmanagement und die Compliance-Verfolgung in ganz Europa."
       },
       {
-        "category": "Züchter",
+        "category": "growers",
         "q": "Wie werde ich Bio Vera-Produzent?",
         "a": "Sie können sich über unsere Growers-Seite bewerben. Der Bewerbungsprozess umfasst die Bereitstellung von Informationen über Ihren Betrieb, Zertifizierungen und Produktionskapazitäten. Unser Team wird Ihre Bewerbung prüfen und Sie durch das Onboarding begleiten."
       },
       {
-        "category": "Züchter",
+        "category": "growers",
         "q": "Was sind die Voraussetzungen, um Produzent zu werden?",
         "a": "Die Produzenten müssen über gültige landwirtschaftliche Betriebe verfügen, die EU-Standards einhalten und bereit sein, unsere Qualitätskontrollprotokolle umzusetzen. GlobalG.A.P. Eine Zertifizierung wird bevorzugt, aber wir können Ihnen dabei helfen, diese zu erhalten."
       },
       {
-        "category": "Züchter",
+        "category": "growers",
         "q": "Wie werden Zahlungen abgewickelt?",
         "a": "Die Zahlungsabwicklung erfolgt automatisch nach erfolgreicher Lieferbestätigung. Um sichere Transaktionen zu gewährleisten, verwenden wir ein Treuhandsystem. Landwirte erhalten die Zahlung innerhalb von 3–5 Werktagen nach Lieferbestätigung."
       },
       {
-        "category": "Käufer",
+        "category": "buyers",
         "q": "Wie gebe ich eine Bestellung auf?",
         "a": "Erstellen Sie ein Käuferkonto, durchsuchen Sie verfügbare Produkte und geben Sie Bestellungen über Bio Vera auf. Sie können Ihre Bestellungen in Echtzeit verfolgen und erhalten für jede Lieferung digitale Zertifikate."
       },
       {
-        "category": "Käufer",
+        "category": "buyers",
         "q": "Was ist die Mindestbestellmenge?",
         "a": "Mindestbestellmengen variieren je nach Produkt und Hersteller. Beim Durchsuchen der Produkte können Sie die spezifischen Anforderungen sehen. Wir unterstützen sowohl Einzel- als auch Großhandelsbestellungen."
       },
       {
-        "category": "Käufer",
+        "category": "buyers",
         "q": "Wie kann ich die Echtheit eines Produkts überprüfen?",
         "a": "Jedes Produkt verfügt über einen QR-Code, der auf seinen digitalen Reisepass verweist. Scannen Sie den Code, um vollständige Rückverfolgbarkeitsinformationen anzuzeigen, einschließlich Herkunft, Angaben zum Landwirt, Qualitätszertifizierungen und Transporthistorie."
       },
       {
-        "category": "Logistik",
+        "category": "logistics",
         "q": "Wie werde ich Logistikpartner?",
         "a": "Bewerben Sie sich über unsere Logistikpartner-Seite. Wir begrüßen unabhängige Fahrer, kleine Transporter und größere Transportunternehmen. Zu den Anforderungen gehören gültige Lizenzen, GPS-Tracking-Fähigkeit und die Verpflichtung zur Einhaltung der Kühlkette."
       },
       {
-        "category": "Logistik",
+        "category": "logistics",
         "q": "Was ist das Programm „Bio Vera: From Orchard to Shelf“?",
         "a": "Dieses Programm verlangt von Logistikpartnern, dass sie die gesamte Verantwortung für den Transport übernehmen, von der Abholung auf dem Bauernhof bis zur endgültigen Lieferung. Sie stellen in jeder Phase die vollständige Integrität der Kühlkette, GPS-Tracking und digitale Übergabe sicher."
       },
       {
-        "category": "Logistik",
+        "category": "logistics",
         "q": "Wie werden Logistikpartner vergütet?",
         "a": "Partner erhalten nach erfolgreicher Lieferverifizierung automatisierte Zahlungen. Die Zahlungsbeträge richten sich nach der Entfernung, der Frachtart und den Lieferanforderungen. Alle Zahlungen werden digital und ohne Verzögerungen durch den Papierkram abgewickelt."
       },
       {
-        "category": "technisch",
+        "category": "technical",
         "q": "Gibt es eine mobile App?",
         "a": "Ja, wir haben mobile Anwendungen für Erzeuger und Logistikpartner. Die Apps unterstützen Offline-Funktionalität, GPS-Tracking, Barcode-Scannen und Echtzeit-Synchronisierung im Online-Betrieb."
       },
       {
-        "category": "technisch",
+        "category": "technical",
         "q": "Wie funktioniert das Rückverfolgbarkeitssystem?",
         "a": "Unser System nutzt unveränderliche digitale Aufzeichnungen, GPS-Zeitstempel, Gerätefingerabdrücke und QR-Codes, um eine unzerbrechliche Überwachungskette zu schaffen. Jeder Schritt vom Feld bis zum Regal wird aufgezeichnet und ist nachweisbar."
       },
       {
-        "category": "technisch",
+        "category": "technical",
         "q": "Welche Sicherheitsmaßnahmen sind vorhanden?",
         "a": "Wir nutzen Ende-zu-Ende-Verschlüsselung, rollenbasierte Zugriffskontrollen, Multi-Faktor-Authentifizierung und regelmäßige Sicherheitsüberprüfungen. Alle Daten werden sicher gespeichert und entsprechen den DSGVO-Vorschriften."
       }
@@ -1838,16 +1858,16 @@
       "subtitle": "Ein Betriebssystem, das Produktion, Qualitätskontrolle, Logistik und Distribution frischer Produkte in einer einheitlichen, zertifizierten Kette verbindet. Jede Charge vom Parzell bis zum Endpunkt nachverfolgbar. Jeder Teilnehmer verifiziert. Jeder Schritt dokumentiert.",
       "browseProducts": "Produkte durchsuchen",
       "becomeProducer": "Werden Sie Vera-Erzeuger",
-      "preOrder": "Die Vorbestellung für 2026 ist geöffnet",
+      "preOrder": "Die Vorbestellung für 2027 ist geöffnet",
       "preOrderAria": "Informationen zur Vorbestellung",
       "preOrderTip1": "Vera-Produkte werden frisch zur Lieferung verschickt. Neben der Qualitätskontrolle sind wir bestrebt, die Erwartungen unserer Kunden in jedem Schritt zu erfüllen.",
-      "preOrderTip2": "Die Vorbestellung gilt nur für geplante Mengen im Jahr 2026; es handelt sich nicht um eine verbindliche Bestellung."
+      "preOrderTip2": "Die Vorbestellung gilt nur für geplante Mengen im Jahr 2027; es handelt sich nicht um eine verbindliche Bestellung."
     },
     "statLabels": [
       "Rückverfolgbarkeit",
       "Zertifiziert",
       "Überwachung",
-      "Betrugsfälle",
+      "QA-Stufen",
       "Optionale Verankerung"
     ],
     "partnersLine": "Führende Agrarorganisationen vertrauen uns tagtäglich",
@@ -2062,13 +2082,13 @@
   },
   "growersPage": {
     "metaTitle": "Programm für Erzeuger | Bio Vera — Zertifizierung, garantierte Konditionen, EU-Marktzugang",
-    "metaDescription": "Erzeugerprogramm: garantierte Konditionen, kostenlose GlobalG.A.P. IFA v6 Gruppenzertifizierung, Auszahlung in 48h, koordinierte Logistik und EU-Marktzugang. Offen für Erzeuger in der EU und dem Westlichen Balkan.",
+    "metaDescription": "Erzeugerprogramm: garantierte Konditionen, kostenlose GlobalG.A.P. IFA v6 Gruppenzertifizierung, Auszahlung in 48h, koordinierte Logistik und EU-Marktzugang. Offen für Erzeuger in ganz Europa.",
     "title": "Programm für Erzeuger",
     "heroLead": "Werden Sie Teil eines Netzwerks zertifizierter Erzeuger. Bio Vera sichert Qualitätsstandards, Gruppenzertifizierung GlobalG.A.P., Logistikkoordination und Zugang zu europäischen Abnehmern — ohne Zertifizierungskosten für den Erzeuger.",
     "downloadProspectCta": "Prospekt-PDF herunterladen",
     "downloadProspectError": "Der Prospekt konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut.",
     "whoCanApplyTitle": "Wer kann sich bewerben",
-    "whoCanApplyLead": "Das Programm steht Erzeugern jeder Größe offen — von kleinen Familienbetrieben bis zu großen kommerziellen Anlagen. Bewerbungen aus allen EU-Ländern und dem Westlichen Balkan, einschließlich Serbien, Bosnien und Herzegowina, Montenegro, Nordmazedonien, Kroatien und Albanien. Voraussetzung ist die Bereitschaft, die Bio-Vera-Produktionsstandards einzuhalten — der aktuelle Zertifizierungsstatus ist kein Hindernis.",
+    "whoCanApplyLead": "Das Programm steht Erzeugern jeder Größe offen — von kleinen Familienbetrieben bis zu großen kommerziellen Anlagen. Bewerbungen von Erzeugern in ganz Europa, die bereit sind, die Bio-Vera-Produktionsstandards einzuhalten. Der aktuelle Zertifizierungsstatus ist kein Hindernis.",
     "countriesLine": "",
     "valuePropositionTitle": "Ihre Vorteile",
     "valuePropositionLead": "",
@@ -2410,6 +2430,15 @@
     "loading": "Laden…"
   },
   "careersPage": {
+    "headerAd": "Vertriebsmitarbeiter gesucht · Bio Vera",
+    "featuredAd": {
+      "eyebrow": "Offene Stellen · Außendienst · Serbien",
+      "title": "Wir suchen Vertriebsmitarbeiter",
+      "lead": "Werden Sie Teil des Vera-Erzeugerprogramms — besuchen Sie Betriebe, schließen Vertragsvolumen ab und bauen Sie das Bio-Vera-Netzwerk vom Feld bis Hamburg auf.",
+      "regionSouthCentral": "Süd- & Zentralserbien",
+      "regionVojvodina": "Wojwodina",
+      "degreeNote": "Wünschenswert: Abschluss einer Agrarfakultät (Agronomie, Obstbau, Pflanzenschutz o. Ä.)."
+    },
     "heroTitle": "Treten Sie dem Bio Vera-Team bei",
     "heroSubtitle": "Helfen Sie uns, die Landwirtschaft durch Technologie zu transformieren. Wir bauen die Zukunft transparenter, nachhaltiger Lebensmittelversorgungsketten auf.",
     "whyTitle": "Warum mit uns zusammenarbeiten?",
@@ -2438,6 +2467,7 @@
     "openPositions": "Offene Stellen",
     "requirements": "Anforderungen",
     "benefits": "Vorteile",
+    "traits": "Das schätzen wir an Ihnen",
     "applyNow": "Bewerben Sie sich jetzt",
     "employmentFullTime": "Vollzeit",
     "ctaTitle": "Finden Sie keine passende Rolle?",
@@ -2446,6 +2476,80 @@
     "applySubject": "Bewerbung: {{role}}",
     "generalApplicationSubject": "Allgemeine Anwendung",
     "jobs": {
+      "salesSouthCentral": {
+        "title": "Vertriebsmitarbeiter — Süd- & Zentralserbien",
+        "department": "Vertrieb",
+        "location": "Süd- und Zentralserbien (Außendienst)",
+        "description": "Wir suchen einen Außendienst-Vertriebsmitarbeiter für das Vera-Erzeugerprogramm in Südwest- und Zentralserbien. Sie besuchen Obst- und Gemüseerzeuger sowie Genossenschaften, präsentieren Vertragsanbau nach Bio-Vera-Standards und begleiten die Compliance vom Feld bis zur Übergabe.",
+        "requirements": [
+          "Wünschenswert: Abschluss einer Agrarfakultät (Agronomie, Obstbau, Pflanzenschutz o. Ä.)",
+          "Erfahrung im Verkauf von Agrar-Inputs, Erzeugerabnahme oder Vertragsanbau",
+          "Führerschein Klasse B und tägliche Reisebereitschaft in der Region",
+          "Kenntnis lokaler Erzeuger, Zadruga und Kooperativen",
+          "Grundkenntnisse Englisch (Deutsch von Vorteil)"
+        ],
+        "traits": [
+          "Energisch und ausdauernd — gibt nicht nach dem ersten „Nein“ auf",
+          "Empathisch — hört zu, bevor ein Programm vorgeschlagen wird",
+          "Organisiert — führt Feldnotizen und hält Termine ein",
+          "Verlässlich — baut langfristiges Vertrauen in ländlichen Regionen auf",
+          "Teamplayer — abstimmen mit dem Hamburger HQ"
+        ],
+        "benefits": [
+          "Festgehalt + Provision auf vertragliche Volumina",
+          "Reise- und Außendienstbudget",
+          "Bio Vera Mobile App und Feldschulung",
+          "Perspektive als regionaler Vertriebslead",
+          "Vertikal integrierte Marke mit vollständiger Rückverfolgbarkeit"
+        ]
+      },
+      "salesVojvodina": {
+        "title": "Vertriebsmitarbeiter — Wojwodina",
+        "department": "Vertrieb",
+        "location": "Autonome Provinz Wojwodina (Außendienst)",
+        "description": "Wir suchen einen Vertriebsmitarbeiter für die Wojwodina — intensive Obst- und Ackerbauproduktion, Genossenschaften und Familienbetriebe. Sie präsentieren das Vera-Programm, schließen Saisonverträge ab und unterstützen Erzeuger bei Bio-Vera-Verpackungs- und Dokumentationsstandards.",
+        "requirements": [
+          "Wünschenswert: Abschluss einer Agrarfakultät",
+          "Erfahrung im Agrarvertrieb oder -beratung in Nordserbien",
+          "Führerschein Klasse B — Reisen in Gemeinden der Wojwodina",
+          "Kenntnis von Erzeugern, Kühlhäusern und Abnahmestellen in der Wojwodina",
+          "Serbisch plus Ungarisch oder Englisch (mindestens eine weitere Sprache von Vorteil)"
+        ],
+        "traits": [
+          "Kommunikativ und kultursensibel gegenüber vielfältigen Erzeugerstrukturen",
+          "Geduldig — erklärt Standards klar ohne Druck",
+          "Proaktiv — sucht neue Parzellen und Saisonprogramme",
+          "Präzise — verfolgt vertragliche Mengen und Erntefenster",
+          "Ergebnisorientiert — motiviert durch Provision und langfristige Partnerschaften"
+        ],
+        "benefits": [
+          "Festgehalt + Provision auf vertragliche Volumina",
+          "Reise- und Außendienstbudget",
+          "Bio Vera Mobile Tools und Schulung",
+          "Karrierewachstum mit wachsendem Korridor",
+          "Unterstützung durch QA- und Operations-Team in Hamburg"
+        ]
+      },
+      "salesRetail": {
+        "title": "Vertriebsmitarbeiter — Deutschland & EU-Einzelhandel",
+        "department": "Vertrieb",
+        "location": "Hamburg, Deutschland (+ DACH / EU-Reisen)",
+        "description": "Verkauf rückverfolgbarer Frischware an Großhandel, Foodservice und Einkauf im Einzelhandel. Sie präsentieren Chargenpässe, Erntekalender und Protocol 360 QA — und schließen Programme ab, in denen Bio Vera der Verkäufer ist.",
+        "requirements": [
+          "2+ Jahre B2B-Vertrieb in Lebensmitteln, Handel oder Großhandel",
+          "Fließend Deutsch und Englisch",
+          "Erfahrung mit Frischware oder Kühlkette von Vorteil",
+          "Sicher im Einkaufszyklus, Listings und Saisonplanung",
+          "Gültige EU-Arbeitserlaubnis oder Berechtigung in Deutschland"
+        ],
+        "benefits": [
+          "Festgehalt + Provision auf abgeschlossene Programme",
+          "Firmenwagen oder Mobilitätsbudget",
+          "Krankenversicherung und Leistungsboni",
+          "Live-Bestands- und Erntedaten im Bio Vera Einkäuferportal",
+          "Direkter Draht zu Operations, QA und Logistik in Hamburg"
+        ]
+      },
       "dev": {
         "title": "Leitender Full-Stack-Entwickler",
         "department": "Maschinenbau",
@@ -2469,14 +2573,14 @@
       "agritech": {
         "title": "Spezialist für Agrartechnologie",
         "department": "Produkt",
-        "location": "Remote (EU / Weltweit)",
+        "location": "Remote (EU / in ganz Europa)",
         "description": "Werden Sie Teil unseres Produktteams und gestalten Sie die Zukunft der Landtechnik mit. Sie arbeiten eng mit den Landwirten zusammen, verstehen ihre Bedürfnisse und setzen sie in Produkteigenschaften um.",
         "requirements": [
           "Hintergrund in der Landwirtschaft, Agrar- und Lebensmitteltechnologie oder einem verwandten Bereich",
           "Verständnis der EU-Agrarvorschriften und -Zertifizierungen",
           "Erfahrung mit landwirtschaftlichen Managementsystemen",
           "Starke analytische und kommunikative Fähigkeiten",
-          "Reisebereitschaft zu Farmen und Partnern weltweit"
+          "Reisebereitschaft zu Farmen und Partnern in ganz Europa"
         ],
         "benefits": [
           "Wettbewerbsfähiges Gehalt",
@@ -2490,7 +2594,7 @@
         "title": "Geschäftsentwicklungsmanager",
         "department": "Verkäufe",
         "location": "Hamburg, Deutschland",
-        "description": "Wir suchen einen Business Development Manager, um unser Netzwerk aus Erzeugern, Lieferanten und Käufern weltweit zu erweitern. Sie sind für den Aufbau strategischer Partnerschaften verantwortlich.",
+        "description": "Wir suchen einen Business Development Manager, um unser Netzwerk aus Erzeugern, Lieferanten und Käufern in ganz Europa zu erweitern. Sie sind für den Aufbau strategischer Partnerschaften verantwortlich.",
         "requirements": [
           "3+ Jahre Erfahrung im B2B-Vertrieb oder in der Geschäftsentwicklung",
           "Erfahrung in der Agrar-, Lebensmittel- oder Logistikbranche",
@@ -2509,8 +2613,8 @@
     }
   },
   "aboutPage": {
-    "metaTitle": "Über Bio Vera | Vertikal Integrierter Agrifood-Anbieter — Hamburg",
-    "metaDescription": "Bio Vera betreibt die gesamte Lieferkette: Vertragsanbau, Qualitätssicherung, Verpackung und Kühllogistik bis zum deutschen Einzelhandel. Lückenlose Chargenrückverfolgung.",
+    "metaTitle": "Über Bio Vera | Vertikal integriertes Agrarunternehmen, Hamburg",
+    "metaDescription": "Bio Vera ist ein vertikal integriertes Agrarunternehmen in Hamburg: Erzeuger in ganz Europa, Programm-QA, Kühlkette und digitale Chargenpässe — kein Marktplatz.",
     "heroTitle": "Über Bio Vera",
     "heroSubtitle": "Bio Vera organisiert landwirtschaftliche Produktion über Vertragserzeuger, führt Qualitätsprüfungen im Feld durch, verpackt und liefert Markenware direkt an den Einzelhandel — mit einem Chargendossier pro Lieferung.",
     "techPartnerLine": "Die Bio-Vera-Plattform wird von <1>Vera IT</1> in Hamburg entwickelt und betrieben — Technologiepartner innerhalb der Vera Group.",
@@ -2558,7 +2662,7 @@
         },
         {
           "title": "Vorteile und Vorteile für Käufer",
-          "content": "Genießen Sie wettbewerbsfähige Preise, garantierte Frische, vollständige Transparenz und direkten Zugang zu Produzenten weltweit. Schaffen Sie Vertrauen bei Ihren Kunden durch geprüfte Qualität."
+          "content": "Genießen Sie wettbewerbsfähige Preise, garantierte Frische, vollständige Transparenz und direkten Zugang zu Produzenten in ganz Europa. Schaffen Sie Vertrauen bei Ihren Kunden durch geprüfte Qualität."
         },
         {
           "title": "Allgemeine Geschäftsbedingungen",
@@ -3106,7 +3210,7 @@
       },
       {
         "title": "4. Innovation & Alleinstellungsmerkmale",
-        "body": "4. Innovation & Alleinstellungsmerkmale\nBio Vera vereint sechs Innovationsschichten, die in Kombination ein einzigartiges System\nschaffen, das so am Markt nicht existiert.\n4.1 Technologische Innovation\n1. End-to-End Batch-Traceability: Lückenlose Echtzeit-Rückverfolgbarkeit vom Feld bis\nzum Kassenbon. Jede Kiste hat eine eindeutige Batch_ID, die den gesamten Weg des\nProdukts  dokumentiert.  Dies  geht  über  die  aktuellen  EU-Anforderungen  hinaus  und  ist\nbereits kompatibel mit dem EU Digital Product Passport (DPP), der ab 2027 schrittweise\neingeführt wird.\n2.  Blockchain-verankerte  Custody  Records: Optionale  Verankerung  von  Dossier-\nFingerprints auf der Polygon-Blockchain. Dies schafft einen unveränderlichen, öffentlich\nüberprüfbaren  Nachweis  der  Lieferkette  —  ein  Differenzierungsmerkmal,  das  kein\nvergleichbarer Anbieter in der europäischen Frischwarenbranche bietet.\n3. Multi-Stakeholder Anti-Fraud System: Einzigartige Kombination aus GPS-Zeitstempel,\nDevice-ID-Tracking  und  Kamera-only-Erfassung.  Manipulationen  werden  systemisch\nausgeschlossen. Diese dreischichtige Validierung ist eine technologische Innovation, die\nBetrug in der Lieferkette auf ein Minimum reduziert.\n4. KI-gestützte Qualitätsbewertung: Bildbasierte Analyse von Frischprodukten, Anomalie-\nErkennung in der Lieferkette und Ernte-Prognosemodelle. Machine Learning ermöglicht\nprädiktive Qualitätskontrolle statt reaktiver Stichproben.\n4.2 Geschäftsmodellinnovation\n5.  Vertikale  Integration  ohne  eigene  Farmen: Bio  Vera  besitzt  keine  Anbauflächen,\nkontrolliert aber die gesamte Wertschöpfungskette digital — vom Vertragsanbau über QA,\nVerpackung  und  Logistik  bis  zum  Einzelhandelsverkauf.  Dieses  Modell  existiert  in  der\neuropäischen Frischwarenbranche so nicht. Es kombiniert die Skalierbarkeit eines Asset-\nLight-Modells mit der Kontrolle einer vertikalen Integration.\n6.  Escrow-basiertes  Settlement: Käufer-Gelder  bleiben  gesichert  bei  Bio  Vera,  bis\nLieferung und Konformitätsprüfung abgeschlossen sind. Erzeuger erhalten ihr Geld in 48\nStunden  statt  60–90  Tagen.  Diese  Zahlungsinnovation  adressiert  eines  der  größten\nProbleme kleiner Agrarbetriebe: den Cash-Flow.\n\nAlleinstellungsmerkmal: Die Kombination aus technologischer Rückverfolgbarkeit\n(Batch_ID + Blockchain), operativer Kontrolle (vertikale Integration) und finanzieller\nSicherheit (Escrow) in einem System ist weltweit einzigartig im Frischwarensegment.\nKein bestehender Anbieter — weder Marktplätze noch traditionelle Händler — bietet\ndiese drei Säulen in einem integrierten System."
+        "body": "4. Innovation & Alleinstellungsmerkmale\nBio Vera vereint sechs Innovationsschichten, die in Kombination ein einzigartiges System\nschaffen, das so am Markt nicht existiert.\n4.1 Technologische Innovation\n1. End-to-End Batch-Traceability: Lückenlose Echtzeit-Rückverfolgbarkeit vom Feld bis\nzum Kassenbon. Jede Kiste hat eine eindeutige Batch_ID, die den gesamten Weg des\nProdukts  dokumentiert.  Dies  geht  über  die  aktuellen  EU-Anforderungen  hinaus  und  ist\nbereits kompatibel mit dem EU Digital Product Passport (DPP), der ab 2027 schrittweise\neingeführt wird.\n2.  Blockchain-verankerte  Custody  Records: Optionale  Verankerung  von  Dossier-\nFingerprints auf der Polygon-Blockchain. Dies schafft einen unveränderlichen, öffentlich\nüberprüfbaren  Nachweis  der  Lieferkette  —  ein  Differenzierungsmerkmal,  das  kein\nvergleichbarer Anbieter in der europäischen Frischwarenbranche bietet.\n3. Multi-Stakeholder Anti-Fraud System: Einzigartige Kombination aus GPS-Zeitstempel,\nDevice-ID-Tracking  und  Kamera-only-Erfassung.  Manipulationen  werden  systemisch\nausgeschlossen. Diese dreischichtige Validierung ist eine technologische Innovation, die\nBetrug in der Lieferkette auf ein Minimum reduziert.\n4. KI-gestützte Qualitätsbewertung: Bildbasierte Analyse von Frischprodukten, Anomalie-\nErkennung in der Lieferkette und Ernte-Prognosemodelle. Machine Learning ermöglicht\nprädiktive Qualitätskontrolle statt reaktiver Stichproben.\n4.2 Geschäftsmodellinnovation\n5.  Vertikale  Integration  ohne  eigene  Farmen: Bio  Vera  besitzt  keine  Anbauflächen,\nkontrolliert aber die gesamte Wertschöpfungskette digital — vom Vertragsanbau über QA,\nVerpackung  und  Logistik  bis  zum  Einzelhandelsverkauf.  Dieses  Modell  existiert  in  der\neuropäischen Frischwarenbranche so nicht. Es kombiniert die Skalierbarkeit eines Asset-\nLight-Modells mit der Kontrolle einer vertikalen Integration.\n6.  Escrow-basiertes  Settlement: Käufer-Gelder  bleiben  gesichert  bei  Bio  Vera,  bis\nLieferung und Konformitätsprüfung abgeschlossen sind. Erzeuger erhalten ihr Geld in 48\nStunden  statt  60–90  Tagen.  Diese  Zahlungsinnovation  adressiert  eines  der  größten\nProbleme kleiner Agrarbetriebe: den Cash-Flow.\n\nAlleinstellungsmerkmal: Die Kombination aus technologischer Rückverfolgbarkeit\n(Batch_ID + Blockchain), operativer Kontrolle (vertikale Integration) und finanzieller\nSicherheit (Escrow) in einem System ist in ganz Europa einzigartig im Frischwarensegment.\nKein bestehender Anbieter — weder Marktplätze noch traditionelle Händler — bietet\ndiese drei Säulen in einem integrierten System."
       },
       {
         "title": "5. Markt & Wettbewerb",
@@ -3118,7 +3222,7 @@
       },
       {
         "title": "7. Gründerprofil",
-        "body": "7. Gründerprofil\nJovica Mihajlovic — Gründer & CEO\nFeld Details\nName Jovica Mihajlovic\nStandort Hamburg, Deutschland (Hauptwohnsitz)\nErfahrung 3+ Jahre praktische Entwicklungserfahrung (Autodidakt)\nStudium Kommunikation & Öffentlichkeitsarbeit, Philosophische Fakultät,\nUniversität Niš\nUnternehmensgründung03.07.2025 — Vera IT (Gewerbe, Hamburg)\nPortfolio — Bewiesene Umsetzungskompetenz\nJovica  Mihajlovic  hat  vier  digitale  Produkte  eigenständig  konzipiert,  entwickelt  und  live\ngebracht:\n1.  Vera  IT (verait.de)  —  Künstliche  Intelligenz  Agentur  Hamburg.  Dienstleistungen:  KI-\nIntegration,  Machine  Learning,  Mobile  Apps,  Software-  und  Webentwicklung  für\nUnternehmen in Hamburg und Deutschland.\n2.  Fade (getfadeapp.com)  —  Weltweit  einsetzbare  Salon-Booking-App  mit  Loyalty-\nPunktesystem pro Salon, QR-Check-in, Kartenentdeckung, Chat und Owner-Dashboard.\nVerfügbar auf iOS und Android mit Subscription-Modell (Starter/Medium/Pro).\n3.  ReinAllround (reinallround.de)  —  Gebäudereinigungsservice  in  Hamburg  mit  24h-\nVerfügbarkeit,  digitalem  Buchungssystem  und  16+  Einsatzbereichen.  Online-\nTerminbuchung und Direktkontakt.\n4.  Bio  Vera (biovera.app)  —  AgriTech-Plattform  für  rückverfolgbare  Frischprodukte.\nWebplattform  mit  Backend-API,  Benutzer-Dashboard,  Pre-Order-System  und  vier\nStakeholder-Bereichen.\nRelevanz für Bio Vera\nPraktische Entwicklungskompetenz: Eigenständige Entwicklung komplexer\nWeb- und Mobile-Plattformen von der Architektur bis zum Deployment\n•\n\nMulti-Stakeholder-Architektur: Fade zeigt die Fähigkeit, Plattformen mit\nverschiedenen Nutzergruppen (Kunden, Salon-Inhaber, Mitarbeiter) zu bauen\nProduktdesign: Nutzerzentrierte UX/UI-Entwicklung — alle vier Produkte sind live\nund nutzbar\nKenntnis des südosteuropäischen Agrarmarktes und des deutschen\nEinzelhandels: Verständnis beider Märkte ermöglicht die Brückenfunktion der\nPlattform\nKommunikation: Studium in Kommunikation & PR — essentiell für Stakeholder-\nManagement und B2B-Vertrieb im Agrarsektor\nKI & Blockchain: Praktische Erfahrung mit ML-Systemen und Polygon Smart\nContracts durch Vera IT\nGeplante Teamergänzung\nRolle Zeitpunkt Aufgabe\nMobile-App-Entwickler\n(Freelance)\nMonat 1–6iOS/Android-Entwicklung, React Native/Flutter\nAgrar-/QA-Spezialist (Teilzeit)Monat 3–\n10\nQualitätssicherung, Erzeuger-Betreuung vor\nOrt\nBusiness Development (Teilzeit)Monat 5–\n12\nEinzelhandelskontakte Deutschland, Messen\nOperatives Team in der Erzeugerregion\nRolle Beschreibung Kosten\nAgent (Qualitätskontrolle) ~20 Farmer pro Agent ~1.000 EUR/Monat\n•\n•\n•\n•\n•"
+        "body": "7. Gründerprofil\nJovica Mihajlovic — Gründer & CEO\nFeld Details\nName Jovica Mihajlovic\nStandort Hamburg, Deutschland (Hauptwohnsitz)\nErfahrung 3+ Jahre praktische Entwicklungserfahrung (Autodidakt)\nStudium Kommunikation & Öffentlichkeitsarbeit, Philosophische Fakultät,\nUniversität Niš\nUnternehmensgründung03.07.2025 — Vera IT (Gewerbe, Hamburg)\nPortfolio — Bewiesene Umsetzungskompetenz\nJovica  Mihajlovic  hat  vier  digitale  Produkte  eigenständig  konzipiert,  entwickelt  und  live\ngebracht:\n1.  Vera  IT (verait.de)  —  Künstliche  Intelligenz  Agentur  Hamburg.  Dienstleistungen:  KI-\nIntegration,  Machine  Learning,  Mobile  Apps,  Software-  und  Webentwicklung  für\nUnternehmen in Hamburg und Deutschland.\n2.  Fade (getfadeapp.com)  —  in ganz Europa  einsetzbare  Salon-Booking-App  mit  Loyalty-\nPunktesystem pro Salon, QR-Check-in, Kartenentdeckung, Chat und Owner-Dashboard.\nVerfügbar auf iOS und Android mit Subscription-Modell (Starter/Medium/Pro).\n3.  ReinAllround (reinallround.de)  —  Gebäudereinigungsservice  in  Hamburg  mit  24h-\nVerfügbarkeit,  digitalem  Buchungssystem  und  16+  Einsatzbereichen.  Online-\nTerminbuchung und Direktkontakt.\n4.  Bio  Vera (biovera.app)  —  AgriTech-Plattform  für  rückverfolgbare  Frischprodukte.\nWebplattform  mit  Backend-API,  Benutzer-Dashboard,  Pre-Order-System  und  vier\nStakeholder-Bereichen.\nRelevanz für Bio Vera\nPraktische Entwicklungskompetenz: Eigenständige Entwicklung komplexer\nWeb- und Mobile-Plattformen von der Architektur bis zum Deployment\n•\n\nMulti-Stakeholder-Architektur: Fade zeigt die Fähigkeit, Plattformen mit\nverschiedenen Nutzergruppen (Kunden, Salon-Inhaber, Mitarbeiter) zu bauen\nProduktdesign: Nutzerzentrierte UX/UI-Entwicklung — alle vier Produkte sind live\nund nutzbar\nKenntnis des südosteuropäischen Agrarmarktes und des deutschen\nEinzelhandels: Verständnis beider Märkte ermöglicht die Brückenfunktion der\nPlattform\nKommunikation: Studium in Kommunikation & PR — essentiell für Stakeholder-\nManagement und B2B-Vertrieb im Agrarsektor\nKI & Blockchain: Praktische Erfahrung mit ML-Systemen und Polygon Smart\nContracts durch Vera IT\nGeplante Teamergänzung\nRolle Zeitpunkt Aufgabe\nMobile-App-Entwickler\n(Freelance)\nMonat 1–6iOS/Android-Entwicklung, React Native/Flutter\nAgrar-/QA-Spezialist (Teilzeit)Monat 3–\n10\nQualitätssicherung, Erzeuger-Betreuung vor\nOrt\nBusiness Development (Teilzeit)Monat 5–\n12\nEinzelhandelskontakte Deutschland, Messen\nOperatives Team in der Erzeugerregion\nRolle Beschreibung Kosten\nAgent (Qualitätskontrolle) ~20 Farmer pro Agent ~1.000 EUR/Monat\n•\n•\n•\n•\n•"
       },
       {
         "title": "8. Projektbeschreibung & Meilensteine",

@@ -1,7 +1,7 @@
 "use client";
 
 import { I18nextProvider } from "react-i18next";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { usePathname } from "next/navigation";
 import i18n, { LOCALE_STORAGE_KEY, type SiteLocale } from "@/i18n/config";
 import { pathnameStartsWithLocale } from "@/lib/i18n-routing";
@@ -25,20 +25,25 @@ function isStoredLocale(v: string | null): v is SiteLocale {
   return v !== null && (STORED_LOCALES as readonly string[]).includes(v);
 }
 
+/** Sync i18n to URL locale before children render (SSR + client) — no empty-shell gate. */
+function ensureUrlLocale(urlLocale: SiteLocale | null) {
+  if (!urlLocale) return;
+  if ((i18n.resolvedLanguage || i18n.language) !== urlLocale) {
+    i18n.language = urlLocale;
+  }
+}
+
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const urlLocale = pathnameStartsWithLocale(pathname ?? "/");
-  const [localeReady, setLocaleReady] = useState(
-    () => !urlLocale || (i18n.resolvedLanguage || i18n.language) === urlLocale,
-  );
+
+  ensureUrlLocale(urlLocale);
 
   useLayoutEffect(() => {
     if (!urlLocale) {
-      setLocaleReady(true);
       return;
     }
     if ((i18n.resolvedLanguage || i18n.language) === urlLocale) {
-      setLocaleReady(true);
       syncDocumentLang(urlLocale);
       return;
     }
@@ -51,7 +56,6 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         /* ignore */
       }
       syncDocumentLang(urlLocale);
-      setLocaleReady(true);
     });
     return () => {
       cancelled = true;
@@ -81,14 +85,6 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       i18n.off("languageChanged", handler);
     };
   }, [urlLocale]);
-
-  if (urlLocale && !localeReady) {
-    return (
-      <I18nextProvider i18n={i18n}>
-        <div className="min-h-screen bg-white" aria-busy="true" />
-      </I18nextProvider>
-    );
-  }
 
   return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
 }

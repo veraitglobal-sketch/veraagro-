@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { missionsAPI } from '@/lib/api';
@@ -35,7 +36,8 @@ type Lp = {
   vehicles: { id: string; licensePlate: string; vehicleNumber: string }[];
 };
 
-export default function MissionsManagementPage() {
+function MissionsManagementContent() {
+  const focusedMissionId = useSearchParams().get('missionId');
   const { t, i18n } = useTranslation();
   const dateLocale = dateIntlLocaleFromLanguageTag(i18n.resolvedLanguage ?? i18n.language);
   const adminNavItems = useAdminNavItems();
@@ -54,14 +56,14 @@ export default function MissionsManagementPage() {
 
   useEffect(() => {
     loadMissions();
-  }, [statusFilter]);
+  }, [statusFilter, focusedMissionId]);
 
   const loadMissions = async () => {
     try {
       setLoading(true);
       setError(null);
       const filters: any = {};
-      if (statusFilter) filters.status = statusFilter;
+      if (statusFilter && !focusedMissionId) filters.status = statusFilter;
       const data = await missionsAPI.getAllAdmin(filters);
       setMissions(data);
     } catch (err: unknown) {
@@ -115,11 +117,12 @@ export default function MissionsManagementPage() {
   };
 
   const displayed = useMemo(() => {
+    if (focusedMissionId) return missions.filter(m => m.id === focusedMissionId);
     if (!unassignedOnly) return missions;
     return missions.filter(
       (m) => m.status === 'PENDING' && (m.logisticsPartnerId == null || m.logisticsPartnerId === ''),
     );
-  }, [missions, unassignedOnly]);
+  }, [missions, unassignedOnly, focusedMissionId]);
 
   return (
     <AuthGuard requiredRoles={['SUPER_ADMIN', 'ADMIN']}>
@@ -138,6 +141,7 @@ export default function MissionsManagementPage() {
 
           <div className="bg-white rounded-lg shadow border border-gray-200 p-4 flex flex-wrap items-center gap-4">
             <select
+              disabled={!!focusedMissionId}
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -152,6 +156,7 @@ export default function MissionsManagementPage() {
             <label className="inline-flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
               <input
                 type="checkbox"
+                disabled={!!focusedMissionId}
                 checked={unassignedOnly}
                 onChange={(e) => setUnassignedOnly(e.target.checked)}
                 className="rounded border-gray-300"
@@ -165,6 +170,8 @@ export default function MissionsManagementPage() {
               {t('adminPages.missions.commandControlLink')}
             </a>
           </div>
+
+          {focusedMissionId ? <Link href="/admin/missions" className="inline-block text-sm text-green-800 underline">{t('connectedWorkflow.allMissions')}</Link> : null}
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">{error}</div>
@@ -214,15 +221,11 @@ export default function MissionsManagementPage() {
                                 {t('adminPages.missions.linkFarmerAdmin')}
                               </Link>
                             )}
-                            <a
-                              href={`/grower/portal?missionId=${encodeURIComponent(mission.id)}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[#2D5A27] font-medium hover:underline"
-                              title={t('adminPages.missions.linkGrowerPortalTitle')}
-                            >
-                              {t('adminPages.missions.linkGrowerPortal')}
-                            </a>
+                            {mission.harvestAnnouncementId ? <Link
+                              href={`/admin/harvest-plans?id=${encodeURIComponent(mission.harvestAnnouncementId)}`}
+                              className="text-[#2D5A27] font-medium hover:underline">
+                              {t('connectedWorkflow.openHarvest')}
+                            </Link> : null}
                             {mission.batches?.batchId ? (
                               <span className="font-mono text-[11px] text-gray-500 break-all" title={t('adminPages.missions.batchPublicIdTitle')}>
                                 {mission.batches.batchId}
@@ -392,4 +395,8 @@ export default function MissionsManagementPage() {
       </SidebarLayout>
     </AuthGuard>
   );
+}
+
+export default function MissionsManagementPage() {
+  return <Suspense fallback={null}><MissionsManagementContent /></Suspense>;
 }

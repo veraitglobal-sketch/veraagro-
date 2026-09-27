@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
-import Link from 'next/link';
 import { WEB_API_BASE } from '@/lib/api-base';
 import { apiErrorOrT } from '@/lib/api-error';
 import { useTranslation } from 'react-i18next';
@@ -143,25 +141,9 @@ export default function AeoDashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <Image 
-                src="/logo1.png" 
-                alt="Bio Vera" 
-                width={56} 
-                height={20} 
-                className="h-4 w-auto"
-              />
-            </Link>
-            <div className="text-sm text-gray-600">
-              AEO Export Dashboard
-            </div>
-          </div>
-        </div>
-      </header>
+      <div className="border-b border-gray-200 bg-white px-6 py-3 text-center text-sm text-gray-600">
+        AEO Export Dashboard
+      </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
         {/* Search Vehicle */}

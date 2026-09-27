@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
+import { getSiteUrl } from '@/lib/site-url';
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://biovera.app').replace(/\/$/, '');
+const siteUrl = getSiteUrl();
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -11,6 +12,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           '/api/',
           '/login',
+          '/register/',
           '/dashboard',
           '/admin/',
           '/buyer-portal/',
@@ -19,10 +21,9 @@ export default function robots(): MetadataRoute.Robots {
           '/hub-manager/',
           '/aeo-dashboard/',
           '/operations-center/',
-          '/register/',
         ],
       },
     ],
-    sitemap: [`${siteUrl}/sitemap.xml`],
+    sitemap: `${siteUrl}/sitemap.xml`,
   };
 }

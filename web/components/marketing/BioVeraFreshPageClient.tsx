@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useLayoutEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Link2,
@@ -13,10 +13,9 @@ import {
   QrCode,
   ClipboardCheck,
 } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import type { SiteLocale } from "@/i18n/config";
-import { useLocalizedHref, useLocaleFromPath } from "@/hooks/useLocalizedHref";
+import { useLocalizedHref } from "@/hooks/useLocalizedHref";
 import { bioVeraFreshAPI } from "@/lib/api";
+import type { BioVeraFreshBundle } from "@/lib/biovera-fresh-bundle";
 import Footer from "@/components/Footer";
 import MarketingHero from "@/components/marketing/MarketingHero";
 import { marketingSectionTitle } from "@/lib/marketing-classes";
@@ -93,22 +92,12 @@ function sectionSlug(title: string, index: number): string {
 }
 
 export default function BioVeraFreshPageClient({
-  initialLocale,
-}: Readonly<{ initialLocale?: SiteLocale }> = {}) {
-  const { t, i18n } = useTranslation();
+  initial,
+}: Readonly<{ initial: BioVeraFreshBundle }>) {
   const loc = useLocalizedHref();
-  const localeFromPath = useLocaleFromPath();
-  const activeLocale = initialLocale ?? localeFromPath;
+  const b = initial;
   const [copied, setCopied] = useState(false);
   const [pdfDownloading, setPdfDownloading] = useState(false);
-
-  useLayoutEffect(() => {
-    if ((i18n.resolvedLanguage || i18n.language) !== activeLocale) {
-      void i18n.changeLanguage(activeLocale);
-    }
-  }, [activeLocale, i18n]);
-
-  const localeSynced = (i18n.resolvedLanguage || i18n.language) === activeLocale;
 
   const downloadProspect = useCallback(async () => {
     setPdfDownloading(true);
@@ -116,23 +105,18 @@ export default function BioVeraFreshPageClient({
       await bioVeraFreshAPI.downloadProspect();
     } catch (error) {
       console.error("BioVera Fresh prospect download:", error);
-      alert(t("bioVeraFresh.downloadProspectError"));
+      alert(b.downloadProspectError);
     } finally {
       setPdfDownloading(false);
     }
-  }, [t]);
+  }, [b.downloadProspectError]);
 
-  const rawWeb = t("bioVeraFresh.webSections", { returnObjects: true });
-  const webSections = Array.isArray(rawWeb) ? rawWeb.filter(isSection) : [];
-
-  const rawPdf = t("bioVeraFresh.pdfSections", { returnObjects: true });
-  const pdfSections = Array.isArray(rawPdf) ? rawPdf.filter(isSection) : [];
-
-  const rawFranchise = t("bioVeraFresh.franchiseBlueprintItems", { returnObjects: true });
-  const franchiseBlueprintItems = isFranchiseBlueprintList(rawFranchise) ? rawFranchise : [];
-
-  const rawResources = t("bioVeraFresh.resourceItems", { returnObjects: true });
-  const resourceItems = isFreshResourceItems(rawResources) ? rawResources : [];
+  const webSections = b.webSections.filter(isSection);
+  const pdfSections = b.pdfSections.filter(isSection);
+  const franchiseBlueprintItems = isFranchiseBlueprintList(b.franchiseBlueprintItems)
+    ? b.franchiseBlueprintItems
+    : [];
+  const resourceItems = isFreshResourceItems(b.resourceItems) ? b.resourceItems : [];
 
   const sectionAnchors = useMemo(
     () => webSections.map((s, i) => ({ slug: sectionSlug(s.title, i), title: s.title, index: i })),
@@ -151,20 +135,18 @@ export default function BioVeraFreshPageClient({
     if (typeof window !== "undefined") window.print();
   }, []);
 
-  const contentsTitle = t("bioVeraFresh.contentsTitle");
-  const pdfDocTitle = t("bioVeraFresh.pdfDocumentTitle");
-  const coverSubtitle = t("bioVeraFresh.coverSubtitle");
-  const toolbarCopyLink = t("bioVeraFresh.toolbarCopyLink");
-  const toolbarPrintPdf = t("bioVeraFresh.toolbarPrintPdf");
-  const pdfHint = t("bioVeraFresh.pdfHint");
-  const prospectNote = t("bioVeraFresh.prospectNote");
-  const franchiseBlueprintTitle = t("bioVeraFresh.franchiseBlueprintTitle");
-  const resourcesTitle = t("bioVeraFresh.resourcesTitle");
+  const {
+    contentsTitle,
+    pdfDocumentTitle: pdfDocTitle,
+    coverSubtitle,
+    toolbarCopyLink,
+    toolbarPrintPdf,
+    pdfHint,
+    prospectNote,
+    franchiseBlueprintTitle,
+    resourcesTitle,
+  } = b;
   const showToolbar = Boolean(toolbarCopyLink || toolbarPrintPdf);
-
-  if (!localeSynced) {
-    return <div className="min-h-screen bg-white" aria-busy="true" />;
-  }
 
   return (
     <div className="min-h-screen bg-white text-gray-900 biovera-fresh-root print:bg-white">
@@ -244,15 +226,15 @@ export default function BioVeraFreshPageClient({
         href="#biovera-fresh-document"
         className="bf-no-print sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-20 focus:z-[100] focus:rounded-lg focus:bg-[#2D5A27] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
       >
-        {t("bioVeraFresh.skipToContent")}
+        {b.skipToContent}
       </a>
 
       {/* Hero — same rhythm as growers (`growers/page.tsx`) */}
       <MarketingHero
-        eyebrow={t("bioVeraFresh.coverEyebrow")}
-        title={t("bioVeraFresh.coverTitle")}
-        subtitle={t("bioVeraFresh.heroSubtitle", { defaultValue: "" }) || undefined}
-        lead={t("bioVeraFresh.introNote")}
+        eyebrow={b.coverEyebrow}
+        title={b.coverTitle}
+        subtitle={b.heroSubtitle || undefined}
+        lead={b.introNote}
         sectionClassName="bf-no-print pb-16"
       >
           <button
@@ -266,7 +248,7 @@ export default function BioVeraFreshPageClient({
             ) : (
               <Download className="size-4 shrink-0" aria-hidden />
             )}
-            {t("bioVeraFresh.downloadProspectCta")}
+            {b.downloadProspectCta}
           </button>
         {showToolbar ? (
           <div
@@ -277,7 +259,7 @@ export default function BioVeraFreshPageClient({
             {toolbarCopyLink ? (
             <button type="button" onClick={copyPublicUrl} className="text-[#2D5A27] hover:text-[#23471f] transition-colors inline-flex items-center gap-1.5">
               <Link2 className="size-4 shrink-0 opacity-80" aria-hidden />
-              {copied ? t("bioVeraFresh.toolbarCopied") : toolbarCopyLink}
+              {copied ? b.toolbarCopied : toolbarCopyLink}
             </button>
             ) : null}
             {toolbarCopyLink && toolbarPrintPdf ? (
@@ -289,7 +271,7 @@ export default function BioVeraFreshPageClient({
             <button
               type="button"
               onClick={openPrint}
-              aria-label={t("bioVeraFresh.toolbarPrintAria")}
+              aria-label={b.toolbarPrintAria}
               className="text-[#2D5A27] hover:text-[#23471f] transition-colors inline-flex items-center gap-1.5"
             >
               <Printer className="size-4 shrink-0 opacity-80" aria-hidden />
@@ -314,16 +296,16 @@ export default function BioVeraFreshPageClient({
         {/* Print cover — Save as PDF from browser (no hero image; visuals in downloadable PDF / press kit) */}
         <header className="bf-cover px-6 pt-2 pb-8 sm:px-10 max-w-6xl mx-auto print:max-w-none">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#2D5A27]/85 print:text-[9pt]">
-            {t("bioVeraFresh.coverEyebrow")}
+            {b.coverEyebrow}
           </p>
           <h1 className="bf-heading mt-3 text-[1.75rem] font-semibold tracking-tight text-gray-900 print:text-[16pt]">
-            {t("bioVeraFresh.coverTitle")}
+            {b.coverTitle}
           </h1>
           <p className="bf-body mt-5 max-w-2xl text-[15px] leading-relaxed text-gray-600 print:text-[11pt]">
-            {coverSubtitle || t("bioVeraFresh.introNote")}
+            {coverSubtitle || b.introNote}
           </p>
           <p className="mt-6 text-center text-[10pt] leading-snug text-gray-700">
-            <span className="font-semibold text-[#2D5A27]">{t("bioVeraFresh.ctaButton")}</span>
+            <span className="font-semibold text-[#2D5A27]">{b.ctaButton}</span>
             <span className="text-gray-500"> · {loc("/contact")}</span>
           </p>
         </header>
@@ -353,13 +335,13 @@ export default function BioVeraFreshPageClient({
         {/* Partner CTA — growers-style centered block */}
         <section className="bf-no-print py-16 px-6 lg:px-8 border-t border-gray-200">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className={marketingSectionTitle}>{t("bioVeraFresh.ctaTitle")}</h2>
-            <p className="text-base text-gray-600 font-light mb-8">{t("bioVeraFresh.ctaBody")}</p>
+            <h2 className={marketingSectionTitle}>{b.ctaTitle}</h2>
+            <p className="text-base text-gray-600 font-light mb-8">{b.ctaBody}</p>
             <Link
               href={loc("/contact")}
               className="inline-flex items-center justify-center min-h-[48px] px-8 py-4 bg-[#2D5A27] text-white text-base font-medium hover:bg-[#23471f] transition-colors rounded-lg shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
             >
-              {t("bioVeraFresh.ctaButton")}
+              {b.ctaButton}
             </Link>
           </div>
         </section>
@@ -367,7 +349,7 @@ export default function BioVeraFreshPageClient({
         {/* Full brochure — print / Save as PDF / server PDF only (hidden on screen) */}
         <div className="bf-pdf-block border-t border-gray-200 px-6 py-8 sm:px-10 max-w-6xl mx-auto print:max-w-none">
           <h2 className="bf-heading text-lg font-semibold text-gray-900 print:text-[13pt]">{pdfDocTitle}</h2>
-          <p className="mt-2 text-[12px] leading-snug text-gray-500 print:text-[9pt]">{t("bioVeraFresh.pdfDocumentSubtitle")}</p>
+          <p className="mt-2 text-[12px] leading-snug text-gray-500 print:text-[9pt]">{b.pdfDocumentSubtitle}</p>
           <div className="mt-8 space-y-8 print:space-y-6">
             {pdfSections.map((s) => (
               <section key={s.title} className="bf-body">
@@ -384,9 +366,9 @@ export default function BioVeraFreshPageClient({
         <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/10/20">
           <div className="mx-auto max-w-6xl">
             <div className="text-center mb-12">
-              <h2 className={marketingSectionTitle}>{t("bioVeraFresh.franchiseBlueprintTitle")}</h2>
+              <h2 className={marketingSectionTitle}>{b.franchiseBlueprintTitle}</h2>
               <p className="mx-auto max-w-2xl text-base text-gray-600 font-light leading-relaxed">
-                {t("bioVeraFresh.franchiseBlueprintLead")}
+                {b.franchiseBlueprintLead}
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -418,9 +400,9 @@ export default function BioVeraFreshPageClient({
         <section className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white">
           <div className="mx-auto max-w-6xl">
             <div className="text-center mb-12">
-              <h2 className={marketingSectionTitle}>{t("bioVeraFresh.resourcesTitle")}</h2>
+              <h2 className={marketingSectionTitle}>{b.resourcesTitle}</h2>
               <p className="mx-auto max-w-2xl text-base text-gray-600 font-light leading-relaxed">
-                {t("bioVeraFresh.resourcesLead")}
+                {b.resourcesLead}
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -458,11 +440,11 @@ export default function BioVeraFreshPageClient({
                             {pdfDownloading ? (
                               <>
                                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                                {t("bioVeraFresh.resourceDownloading")}
+                                {b.resourceDownloading}
                               </>
                             ) : (
                               <>
-                                {t("bioVeraFresh.resourceDownload")}
+                                {b.resourceDownload}
                                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                                   <path
                                     strokeLinecap="round"
@@ -480,7 +462,7 @@ export default function BioVeraFreshPageClient({
                             download={resource.publicPath.split("/").pop() ?? undefined}
                             className="text-sm text-[#2D5A27] hover:text-[#23471f] font-medium transition-colors inline-flex items-center gap-1"
                           >
-                            {t("bioVeraFresh.resourceDownload")}
+                            {b.resourceDownload}
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                               <path
                                 strokeLinecap="round"

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
@@ -10,6 +11,25 @@ import VeraAIChatbotWrapper from "@/components/VeraAIChatbotWrapper";
 import { defaultMetadata } from "./metadata";
 import { JsonLd } from "@/components/JsonLd";
 import { buildBioVeraOrganizationGraph, getSiteUrl } from "@/lib/schema/biovera-jsonld";
+
+function htmlLangFromHeader(locale: string | null): string {
+  switch (locale) {
+    case "sr":
+      return "sr-Latn";
+    case "de":
+      return "de";
+    case "ro":
+      return "ro";
+    case "bg":
+      return "bg";
+    case "fr":
+      return "fr";
+    case "es":
+      return "es";
+    default:
+      return "en";
+  }
+}
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -33,13 +53,16 @@ export const metadata: Metadata = defaultMetadata;
 
 const organizationGraph = buildBioVeraOrganizationGraph(getSiteUrl());
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headerStore = await headers();
+  const htmlLang = htmlLangFromHeader(headerStore.get("x-biovera-locale"));
+
   return (
-    <html lang="en">
+    <html lang={htmlLang}>
       <head>
         <JsonLd data={organizationGraph} />
       </head>

@@ -30,7 +30,6 @@ export default function ProductsManagementPage() {
           <div className="bg-white rounded-lg shadow border border-gray-200 p-12 text-center">
             <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-500">{t('adminPages.products.empty')}</p>
-            <p className="text-sm text-gray-400 mt-2">See PRODUCT_MANAGEMENT_SYSTEM.md for details.</p>
           </div>
         </div>
       </SidebarLayout>

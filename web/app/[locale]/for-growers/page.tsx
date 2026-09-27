@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { SiteLocale } from '@/i18n/config';
 import { isSiteLocale } from '@/lib/i18n-routing';
-import { generatePageMetadata } from '@/app/metadata';
+import { marketingRouteMetadata } from '@/lib/marketing-route-metadata';
 import en from '@/locales/en.json';
 import sr from '@/locales/sr.json';
 import de from '@/locales/de.json';
@@ -10,6 +10,7 @@ import bg from '@/locales/bg.json';
 import fr from '@/locales/fr.json';
 import es from '@/locales/es.json';
 import GrowersPageClient from '@/components/marketing/GrowersPageClient';
+import { MarketingBreadcrumbJsonLd } from '@/components/marketing/MarketingBreadcrumbJsonLd';
 
 type LocaleBundle = {
   growersPage: {
@@ -30,13 +31,15 @@ const bundles: Record<SiteLocale, LocaleBundle> = {
   es: es as LocaleBundle,
 };
 
-function growersMetadata(locale: SiteLocale): Pick<Metadata, 'title' | 'description'> {
+function growersMetadata(locale: SiteLocale): Metadata {
   const b = bundles[locale] ?? bundles.en;
   const gp = b.growersPage;
-  const title = gp.metaTitle ?? `${gp.title} | Bio Vera`;
-  const description = gp.metaDescription ?? gp.heroLead;
-  const path = locale === 'en' ? '/for-growers' : `/${locale}/for-growers`;
-  return generatePageMetadata(title, description, path);
+  return marketingRouteMetadata(locale, 'for-growers', {
+    metaTitle: gp.metaTitle,
+    metaDescription: gp.metaDescription,
+    title: gp.title,
+    descriptionFallback: gp.heroLead,
+  });
 }
 
 export async function generateMetadata({
@@ -49,6 +52,21 @@ export async function generateMetadata({
   return growersMetadata(locale);
 }
 
-export default function ForGrowersPage() {
-  return <GrowersPageClient />;
+export default async function ForGrowersPage({
+  params,
+}: Readonly<{
+  params: Promise<{ locale: string }>;
+}>) {
+  const { locale: loc } = await params;
+  const locale: SiteLocale = isSiteLocale(loc) ? loc : 'en';
+  const gp = (bundles[locale] ?? bundles.en).growersPage;
+  return (
+    <>
+      <MarketingBreadcrumbJsonLd
+        locale={locale}
+        items={[{ name: gp.title, segment: 'for-growers' }]}
+      />
+      <GrowersPageClient />
+    </>
+  );
 }
