@@ -4,8 +4,10 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import {
   UserRole,
   UserStatus,
@@ -27,7 +29,33 @@ import { buildStreetAddressLine, geocodeAddressNominatim } from './address-geoco
 
 @Injectable()
 export class B2bSuppliersService {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly logger = new Logger(B2bSuppliersService.name);
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
+  ) {}
+
+  /** In-app + push note; a failed notification never undoes the order change. */
+  private async notify(userId: string, title: string, message: string, actionUrl: string) {
+    try {
+      await this.notifications.create({ userId, type: 'SYSTEM', title, message, actionUrl });
+    } catch (e) {
+      this.logger.warn(`b2b notification failed user=${userId}: ${e instanceof Error ? e.message : e}`);
+    }
+  }
+
+  private static orderRef(id: string) {
+    return `#${id.slice(0, 8).toUpperCase()}`;
+  }
+
+  private static itemsSummary(items: unknown) {
+    const list = Array.isArray(items) ? items : [];
+    const first = list[0] as { label?: string; quantity?: number; unit?: string } | undefined;
+    if (!first?.label) return '';
+    const head = `${first.label}${first.quantity ? ` × ${first.quantity}${first.unit ? ` ${first.unit}` : ''}` : ''}`;
+    return list.length > 1 ? `${head} (+${list.length - 1})` : head;
+  }
 
   private normLocationPart(s: string | null | undefined) {
     return (s ?? '').trim().toLowerCase();
@@ -561,6 +589,19 @@ export class B2bSuppliersService {
       where: { id: threadId },
       data: { lastMessageAt: new Date(), updatedAt: new Date() },
     });
+    const toSupplier = userId === t.farmerId;
+    const recipient = toSupplier ? t.supplierUserId : t.farmerId;
+    const sender = await this.prisma.users.findUnique({
+      where: { id: userId },
+      select: { firstName: true, lastName: true },
+    });
+    const who = [sender?.firstName, sender?.lastName].filter(Boolean).join(' ') || (toSupplier ? 'Proizvođač' : 'Dobavljač');
+    const title = 'Nova poruka';
+    const message = `${who} ti je poslao poruku.`;
+    // One ping per conversation burst, not one per message.
+    if (!(await this.notifications.hasRecentDuplicate(recipient, title, message, 15))) {
+      await this.notify(recipient, title, message, toSupplier ? '/supplier/messages' : '/(producer)/partner-orders');
+    }
     return msg;
   }
 
@@ -584,7 +625,7 @@ export class B2bSuppliersService {
       const th = await this.getOrCreateThread(farmerId, data.supplierUserId);
       threadId = th.id;
     }
-    return this.prisma.supplier_direct_orders.create({
+    const order = await this.prisma.supplier_direct_orders.create({
       data: {
         id: crypto.randomUUID(),
         farmerId,
@@ -596,6 +637,19 @@ export class B2bSuppliersService {
         updatedAt: new Date(),
       },
     });
+    const farmer = await this.prisma.users.findUnique({
+      where: { id: farmerId },
+      select: { firstName: true, lastName: true },
+    });
+    const who = [farmer?.firstName, farmer?.lastName].filter(Boolean).join(' ') || 'Proizvođač';
+    const what = B2bSuppliersService.itemsSummary(order.items);
+    await this.notify(
+      data.supplierUserId,
+      'Nova porudžbina',
+      `${who} je poručio ${B2bSuppliersService.orderRef(order.id)}${what ? `: ${what}` : ''}. Potvrdite ili odbijte.`,
+      '/supplier/orders',
+    );
+    return order;
   }
 
   async listOrdersForFarmer(farmerId: string) {
@@ -630,11 +684,40 @@ export class B2bSuppliersService {
       where: { id: orderId, supplierUserId },
     });
     if (!o) throw new NotFoundException();
-    return this.prisma.supplier_direct_orders.update({
+    if (o.status === status) return o;
+    const allowed = B2bSuppliersService.NEXT_STATUS[o.status] ?? [];
+    if (!allowed.includes(status) || (o.farmerReceivedAt && status !== 'FULFILLED')) {
+      throw new BadRequestException(`Order cannot move from ${o.status} to ${status}.`);
+    }
+    const updated = await this.prisma.supplier_direct_orders.update({
       where: { id: orderId },
       data: { status, noteFromSupplier, updatedAt: new Date() },
     });
+    const text = B2bSuppliersService.FARMER_STATUS_TEXT[status];
+    if (text) {
+      const note = noteFromSupplier?.trim() ? ` Napomena: ${noteFromSupplier.trim()}` : '';
+      await this.notify(
+        o.farmerId,
+        text.title,
+        `${B2bSuppliersService.orderRef(o.id)}: ${text.body}${note}`,
+        '/(producer)/partner-orders',
+      );
+    }
+    return updated;
   }
+
+  /** Supplier workflow; FULFILLED, REJECTED and CANCELLED are final. */
+  private static readonly NEXT_STATUS: Record<string, SupplierDirectOrderStatus[]> = {
+    PENDING: ['CONFIRMED', 'REJECTED', 'CANCELLED'] as SupplierDirectOrderStatus[],
+    CONFIRMED: ['FULFILLED', 'CANCELLED'] as SupplierDirectOrderStatus[],
+  };
+
+  private static readonly FARMER_STATUS_TEXT: Record<string, { title: string; body: string }> = {
+    CONFIRMED: { title: 'Porudžbina potvrđena', body: 'dobavljač je potvrdio porudžbinu.' },
+    REJECTED: { title: 'Porudžbina odbijena', body: 'dobavljač je odbio porudžbinu.' },
+    FULFILLED: { title: 'Porudžbina poslata', body: 'dobavljač je isporučio robu — potvrdite prijem na farmi.' },
+    CANCELLED: { title: 'Porudžbina otkazana', body: 'dobavljač je otkazao porudžbinu.' },
+  };
 
   /**
    * Grower confirms physical receipt at the farm. Does not change `status` (that stays the supplier’s workflow: PENDING → CONFIRMED → FULFILLED…).
@@ -642,7 +725,7 @@ export class B2bSuppliersService {
    */
   async markFarmerReceived(farmerId: string, orderId: string) {
     this.assertGrower((await this.prisma.users.findUniqueOrThrow({ where: { id: farmerId } })).roles);
-    return this.prisma.$transaction(async tx => {
+    const result = await this.prisma.$transaction(async tx => {
       // Serialize repeat receipts and concurrent supplier status changes on this order.
       await tx.$queryRaw`SELECT id FROM supplier_direct_orders WHERE id = ${orderId} AND "farmerId" = ${farmerId} FOR UPDATE`;
       const order = await tx.supplier_direct_orders.findFirst({ where: { id: orderId, farmerId } });
@@ -664,9 +747,19 @@ export class B2bSuppliersService {
             sourceOrderId: orderId, supplierUserId: order.supplierUserId, timestamp: receivedAt.toISOString() } }];
       });
       if (products.length) await tx.grower_mobile_ingest.createMany({ data: products, skipDuplicates: true });
-      if (order.farmerReceivedAt) return order;
-      return tx.supplier_direct_orders.update({ where: { id: orderId }, data: { farmerReceivedAt: receivedAt } });
+      if (order.farmerReceivedAt) return { order, firstReceipt: false };
+      const saved = await tx.supplier_direct_orders.update({ where: { id: orderId }, data: { farmerReceivedAt: receivedAt } });
+      return { order: saved, firstReceipt: true };
     });
+    if (result.firstReceipt) {
+      await this.notify(
+        result.order.supplierUserId,
+        'Roba primljena',
+        `${B2bSuppliersService.orderRef(result.order.id)}: proizvođač je potvrdio prijem robe na farmi.`,
+        '/supplier/orders',
+      );
+    }
+    return result.order;
   }
 
   async listMyCatalog(supplierUserId: string) {

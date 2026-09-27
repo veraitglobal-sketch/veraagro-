@@ -13,6 +13,20 @@ import { Injectable, Logger } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { shouldLogThrottled } from '../common/utils/log-throttle';
 
+/** Grower-facing mission status labels (backend notifications are Serbian, like the rest of the feed). */
+const MISSION_STATUS_SR: Record<string, string> = {
+  AWAITING_APPROVAL: 'zahtev čeka odobrenje operative',
+  PENDING: 'odobreno, čeka prevoznika',
+  ASSIGNED: 'prevoznik dodeljen',
+  ACCEPTED: 'prevoznik prihvatio',
+  READY_FOR_LOADING: 'spremno za utovar',
+  IN_PROGRESS: 'u toku',
+  PICKED_UP: 'roba preuzeta sa farme',
+  IN_TRANSIT: 'roba je u transportu',
+  COMPLETED: 'isporučeno',
+  CANCELLED: 'otkazano',
+};
+
 /**
  * Real-time Notifications Gateway
  * Emits live notifications to connected clients
@@ -120,20 +134,25 @@ export class NotificationsGateway implements OnGatewayConnection, OnGatewayDisco
    * Mission status update
    */
   async notifyMissionUpdate(userId: string, mission: any) {
+    const ref = mission.missionNumber || String(mission.id).slice(0, 8);
+    const status = MISSION_STATUS_SR[mission.status] ?? mission.status;
     const notification = {
-      type: 'ALERT',
-      title: 'Mission Update',
-      message: `Mission #${mission.id} status: ${mission.status}`,
+      type: 'SYSTEM' as const,
+      title: 'Status prevoza',
+      message: `${ref}: ${status}`,
       actionUrl: `/grower/portal?missionId=${encodeURIComponent(mission.id)}`,
       missionId: mission.id,
     };
 
     await this.sendNotificationToUser(userId, notification);
-    
-    // Also create persistent notification
+
+    // Plan + transport request can report the same unchanged status back to back — persist it once.
+    if (await this.notificationsService.hasRecentDuplicate(userId, notification.title, notification.message)) {
+      return;
+    }
     await this.notificationsService.create({
       userId,
-      type: 'ALERT',
+      type: notification.type,
       title: notification.title,
       message: notification.message,
       actionUrl: notification.actionUrl,

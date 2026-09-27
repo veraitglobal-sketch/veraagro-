@@ -1292,7 +1292,7 @@ export class MissionsService {
     if (nextId) {
       await this.assertActiveLogisticsDriver(logisticsPartnerId, nextId);
     }
-    return this.prisma.missions.update({
+    const updated = await this.prisma.missions.update({
       where: { id: missionId },
       data: { assignedLogisticsDriverId: nextId, updatedAt: new Date() },
       include: {
@@ -1303,6 +1303,23 @@ export class MissionsService {
         assigned_logistics_driver: true,
       },
     });
+    // The grower needs to know who is coming to load (name + phone on the mission screen).
+    const driver = updated.assigned_logistics_driver;
+    if (nextId && nextId !== mission.assignedLogisticsDriverId && driver) {
+      const name = [driver.firstName, driver.lastName].filter(Boolean).join(' ');
+      try {
+        await this.notificationsService.create({
+          userId: mission.growerId,
+          type: 'SYSTEM',
+          title: 'Vozač dodeljen',
+          message: `${mission.missionNumber ?? missionId.slice(0, 8)}: ${name}${driver.phone ? ` (${driver.phone})` : ''} dolazi po robu.`,
+          actionUrl: `/grower/portal?missionId=${encodeURIComponent(missionId)}`,
+        });
+      } catch (error) {
+        this.logger.warn(`driver-assigned notification failed for ${missionId}: ${(error as Error).message}`);
+      }
+    }
+    return updated;
   }
 
   /**

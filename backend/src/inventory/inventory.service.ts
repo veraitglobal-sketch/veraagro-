@@ -435,7 +435,9 @@ export class InventoryService {
       };
     });
 
-    return products;
+    // Same rule as order pricing: without a valid sale price the order endpoint rejects the item,
+    // so buyers must not see it in the catalogue as a 0 € product.
+    return products.filter((p) => Number.isFinite(p.price) && p.price > 0);
   }
 
   /**

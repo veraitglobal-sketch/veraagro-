@@ -306,6 +306,39 @@ export class OrdersService {
     });
   }
 
+  /**
+   * Grower view: orders fulfilled from estates this user owns. Buyer identity stays private
+   * (city only) — the grower needs volumes, status and delivery progress, not contact data.
+   */
+  async findAllForGrower(growerId: string) {
+    const rows = await this.prisma.orders.findMany({
+      where: { fulfilling_estate: { ownerId: growerId } },
+      select: {
+        id: true,
+        orderNumber: true,
+        productName: true,
+        quantity: true,
+        unit: true,
+        unitPrice: true,
+        totalAmount: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+        deliveryAddress: true,
+        fulfilling_estate: { select: { id: true, name: true } },
+        deliveries: { select: { id: true, status: true, deliveryNumber: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    return rows.map(({ deliveryAddress, ...row }) => ({
+      ...row,
+      deliveryCity:
+        deliveryAddress && typeof deliveryAddress === 'object' && !Array.isArray(deliveryAddress)
+          ? String((deliveryAddress as Record<string, unknown>).city ?? '')
+          : '',
+    }));
+  }
+
   // Admin methods
   async findAll(filters?: { status?: string; buyerId?: string; estateId?: string }) {
     const where: any = {};
@@ -510,9 +543,15 @@ export class OrdersService {
       throw new NotFoundException('Order not found');
     }
 
-    // Check access
-    if (order.buyerId !== userId) {
+    // Check access: the buyer, or the grower whose estate fulfils the order.
+    const isGrowerOwner = order.fulfilling_estate?.ownerId === userId;
+    if (order.buyerId !== userId && !isGrowerOwner) {
       throw new BadRequestException('Access denied');
+    }
+    if (isGrowerOwner && order.buyerId !== userId) {
+      // Growers see fulfilment data, not the buyer's payment/invoice records.
+      const { payments: _p, invoices: _i, ratings: _r, ...rest } = order;
+      return { ...rest, payments: [], invoices: [], ratings: [] };
     }
 
     const shipmentTracking = await this.buildBuyerShipmentTracking(order.id, order.createdAt);

@@ -94,6 +94,14 @@ export class OrdersController {
     return this.ordersService.findAllByBuyer(req.user.id);
   }
 
+  /** Orders fulfilled from the caller's estates (producer app "Porudžbine"). */
+  @Get('grower')
+  @UseGuards(RolesGuard)
+  @Roles('GROWER', 'FARMER')
+  async findForGrower(@Request() req: any) {
+    return this.ordersService.findAllForGrower(req.user.id);
+  }
+
   @Get('checkout/:requestId')
   findByCheckout(@Param('requestId') requestId: string, @Request() req: any) {
     return this.ordersService.findByCheckoutRequest(requestId, req.user.id);

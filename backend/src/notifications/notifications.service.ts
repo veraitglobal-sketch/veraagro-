@@ -407,6 +407,16 @@ export class NotificationsService {
     return mapping[trigger] || 'SYSTEM';
   }
 
+  /** True when the same text already reached this user recently (avoids double status pings). */
+  async hasRecentDuplicate(userId: string, title: string, message: string, withinMinutes = 30) {
+    const since = new Date(Date.now() - withinMinutes * 60_000);
+    const row = await this.prisma.notifications.findFirst({
+      where: { userId, title, message, createdAt: { gte: since } },
+      select: { id: true },
+    });
+    return row != null;
+  }
+
   async findAllByUser(userId: string) {
     return this.prisma.notifications.findMany({
       where: { userId },
