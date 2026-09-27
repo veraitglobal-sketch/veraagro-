@@ -26,22 +26,6 @@ export default function Footer() {
             <Link href={loc('/')} className="mb-4 flex items-center" style={{ minHeight: '1.25rem', marginTop: '-0.25rem' }}>
               <BrandLogo alt={t('footer.logoAlt')} />
             </Link>
-            <Link
-              href={loc('/about')}
-              className="mb-3 inline-block w-fit overflow-hidden rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
-            >
-              {/* Animated brand tagline — plain <img> so the GIF keeps animating (next/image would flatten it). */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/biovera-tagline.gif"
-                alt={t('footer.tagline')}
-                width={180}
-                height={50}
-                loading="lazy"
-                decoding="async"
-                className="block h-[50px] w-[180px]"
-              />
-            </Link>
             <p className="text-sm text-gray-600 leading-relaxed mb-4">{t('footer.tagline')}</p>
             <div className="flex flex-wrap items-center gap-2">
               {iosStoreUrl ? (
