@@ -2541,6 +2541,7 @@
     "refresh": "Refresh"
   },
   "logisticsPages": {
+    "missionsManageDriversLink": "Add or edit drivers",
     "dashboard": "Logistics dashboard",
     "dashboardPartnerFallback": "Logistics partner",
     "dashboardShellLoading": "Loading…",

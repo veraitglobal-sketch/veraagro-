@@ -1866,7 +1866,8 @@ export class MissionsService {
     const parts = [o.street, o.address, o.postalCode, o.city, o.country]
       .map((x) => (x == null ? '' : String(x).trim()))
       .filter(Boolean);
-    const full = (parts.length ? parts.join(', ') : JSON.stringify(deliveryAddress)).slice(0, 2000);
+    // An empty address object ({} on pre-orders) must read as "not set", never as raw JSON on the carrier's screen.
+    const full = parts.join(', ').slice(0, 2000);
     return { full: full || '—', city: city.slice(0, 200) };
   }
 

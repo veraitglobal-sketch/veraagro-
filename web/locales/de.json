@@ -1302,6 +1302,7 @@
     "refresh": "Aktualisieren"
   },
   "logisticsPages": {
+    "missionsManageDriversLink": "Fahrer hinzufügen oder bearbeiten",
     "dashboard": "Logistik-Dashboard",
     "loadingHandover": "Ladeübergabe",
     "receiverProof": "Empfängersicher",

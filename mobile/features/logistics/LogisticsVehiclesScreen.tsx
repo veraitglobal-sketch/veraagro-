@@ -53,8 +53,9 @@ export default function LogisticsVehiclesScreen() {
         licensePlate,
         type: 'refrigerated_van',
         hasFrigo: true,
-        tempRangeMin: 2,
-        tempRangeMax: 8,
+        // Same cold-chain profile as the web partner portal (0–4 °C).
+        tempRangeMin: 0,
+        tempRangeMax: 4,
       });
       setPlate('');
       setShowForm(false);

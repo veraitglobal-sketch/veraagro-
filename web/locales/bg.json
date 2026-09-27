@@ -1301,6 +1301,7 @@
     "refresh": "Опресняване"
   },
   "logisticsPages": {
+    "missionsManageDriversLink": "Добави или редактирай шофьори",
     "dashboard": "Табло за логистика",
     "loadingHandover": "Зареждане на предаване",
     "receiverProof": "Доказателство за получателя",

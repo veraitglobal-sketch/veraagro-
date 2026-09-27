@@ -241,7 +241,7 @@ function MissionsManagementContent() {
                           <div className="font-medium text-gray-800">
                             {mission.destinationCity || t('common.emDash')}
                           </div>
-                          {mission.destinationAddress && (
+                          {mission.destinationAddress && !/^\{\s*\}$/.test(mission.destinationAddress.trim()) && (
                             <div className="text-xs text-gray-500 line-clamp-2">{mission.destinationAddress}</div>
                           )}
                         </td>

@@ -1301,6 +1301,7 @@
     "refresh": "Rafraîchir"
   },
   "logisticsPages": {
+    "missionsManageDriversLink": "Ajouter ou modifier des chauffeurs",
     "dashboard": "Tableau de bord logistique",
     "loadingHandover": "Transfert de chargement",
     "receiverProof": "Preuve du récepteur",

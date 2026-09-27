@@ -2542,6 +2542,7 @@
     "refresh": "Osveži"
   },
   "logisticsPages": {
+    "missionsManageDriversLink": "Dodaj ili izmeni vozače",
     "dashboard": "Kontrolna tabla logistike",
     "dashboardPartnerFallback": "Logistički partner",
     "dashboardShellLoading": "Učitavanje…",

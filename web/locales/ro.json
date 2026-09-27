@@ -1301,6 +1301,7 @@
     "refresh": "Reîmprospăta"
   },
   "logisticsPages": {
+    "missionsManageDriversLink": "Adaugă sau editează șoferi",
     "dashboard": "Tabloul de bord logistic",
     "loadingHandover": "Se încarcă predarea",
     "receiverProof": "Dovada receptorului",

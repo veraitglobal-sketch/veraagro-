@@ -1301,6 +1301,7 @@
     "refresh": "Refrescar"
   },
   "logisticsPages": {
+    "missionsManageDriversLink": "Añadir o editar conductores",
     "dashboard": "Panel de logística",
     "loadingHandover": "Entrega de carga",
     "receiverProof": "Prueba del receptor",

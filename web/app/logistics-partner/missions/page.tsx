@@ -98,8 +98,10 @@ function suggestVehicleSize(quantity: number, unit: string, t: TFunction): strin
 }
 
 function destinationLine(m: Mission, t: TFunction): string {
-  if (m.destinationAddress?.trim()) {
-    return m.destinationAddress.trim();
+  const addr = m.destinationAddress?.trim();
+  // Legacy runs stored an empty address object as the literal "{}".
+  if (addr && !/^\{\s*\}$/.test(addr) && addr !== '—') {
+    return addr;
   }
   const ch = m.harvest_announcement?.marketChannel?.trim();
   if (ch) return t('logisticsPages.missionsDestChannel', { value: ch });
@@ -423,7 +425,7 @@ export default function LogisticsMissionsPage() {
                               href="/logistics-partner/drivers"
                               className="text-[#2D5A27] font-medium underline underline-offset-2"
                             >
-                              {t('logisticsPages.driversMissionsLink')}
+                              {t('logisticsPages.missionsManageDriversLink')}
                             </Link>
                           </p>
                           <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
