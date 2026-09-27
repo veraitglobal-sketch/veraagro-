@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useTranslation, Trans } from 'react-i18next';
+import BrandLogo from '@/components/BrandLogo';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 
 /**
@@ -24,13 +24,22 @@ export default function Footer() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 sm:gap-10 md:gap-12 mb-8 md:mb-12">
           <div className="flex flex-col">
             <Link href={loc('/')} className="mb-4 flex items-center" style={{ minHeight: '1.25rem', marginTop: '-0.25rem' }}>
-              <Image
-                src="/logo1.png"
-                alt={t('footer.logoAlt')}
-                width={56}
-                height={20}
-                className="h-4 w-auto"
-                style={{ display: 'block', background: 'transparent', objectFit: 'contain' }}
+              <BrandLogo alt={t('footer.logoAlt')} />
+            </Link>
+            <Link
+              href={loc('/about')}
+              className="mb-3 inline-block w-fit overflow-hidden rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2D5A27] focus-visible:ring-offset-2"
+            >
+              {/* Animated brand tagline — plain <img> so the GIF keeps animating (next/image would flatten it). */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/biovera-tagline.gif"
+                alt={t('footer.tagline')}
+                width={180}
+                height={50}
+                loading="lazy"
+                decoding="async"
+                className="block h-[50px] w-[180px]"
               />
             </Link>
             <p className="text-sm text-gray-600 leading-relaxed mb-4">{t('footer.tagline')}</p>
