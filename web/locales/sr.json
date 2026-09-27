@@ -2773,7 +2773,7 @@
     "missionsDestChannel": "Kanal / tržište: {{value}}",
     "missionsDestNotes": "Napomene: {{value}}",
     "missionsDestNotesTrunc": "Napomene: {{value}}…",
-    "missionsDestFallback": "— adresa isporuke nije u sistemu za ovu vožnju; potvrdite sa proizvođačem.",
+    "missionsDestFallback": "Adresa isporuke nije uneta — potvrdite sa proizvođačem.",
     "missionsSuggest_kg_van": "Uobičajeno: hladnjački kombi",
     "missionsSuggest_kg_rigid": "Uobičajeno: kamion sa koferom hladnjača (klasa 7,5–12 t)",
     "missionsSuggest_kg_large": "Uobičajeno: teža vučna vozila ili cerada + prikolica — potvrdite kapacitet sa pošiljaocem",

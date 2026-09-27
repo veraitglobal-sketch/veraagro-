@@ -2772,7 +2772,7 @@
     "missionsDestChannel": "Channel / market: {{value}}",
     "missionsDestNotes": "Notes: {{value}}",
     "missionsDestNotesTrunc": "Notes: {{value}}…",
-    "missionsDestFallback": "— delivery address not in system for this run; confirm with grower.",
+    "missionsDestFallback": "Delivery address not set — confirm with the grower.",
     "missionsSuggest_kg_van": "Typical: refrigerated van",
     "missionsSuggest_kg_rigid": "Typical: rigid refrigerated truck (7.5–12 t class)",
     "missionsSuggest_kg_large": "Typical: large truck or curtainsider + trailer — confirm space with the shipper",
