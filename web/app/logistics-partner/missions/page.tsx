@@ -111,7 +111,8 @@ function destinationLine(m: Mission, t: TFunction): string {
       ? t('logisticsPages.missionsDestNotesTrunc', { value: n.slice(0, 120) })
       : t('logisticsPages.missionsDestNotes', { value: n });
   }
-  if (m.optimalRoute?.destination?.address) return m.optimalRoute.destination.address;
+  const routeAddr = m.optimalRoute?.destination?.address?.trim();
+  if (routeAddr && !/^\{\s*\}$/.test(routeAddr) && routeAddr !== '—') return routeAddr;
   return t('logisticsPages.missionsDestFallback');
 }
 
@@ -382,7 +383,7 @@ export default function LogisticsMissionsPage() {
                       <p className="text-sm text-gray-900 mt-2">
                         <span className="text-gray-500">{t('logisticsPages.missionsLabelTo')} </span>
                         <strong>{destinationLine(mission, t)}</strong>
-                        {mission.destinationCity && (
+                        {mission.destinationCity && mission.destinationCity.trim() !== '—' && (
                           <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 text-slate-800 px-2 py-0.5 text-xs font-medium">
                             {mission.destinationCity}
                           </span>
@@ -589,7 +590,7 @@ export default function LogisticsMissionsPage() {
                         <p className="text-sm text-gray-900 mt-1">
                           <span className="text-gray-500">{t('logisticsPages.missionsLabelTo')} </span>
                           <strong>{destinationLine(mission, t)}</strong>
-                          {mission.destinationCity && (
+                          {mission.destinationCity && mission.destinationCity.trim() !== '—' && (
                             <span className="ml-2 inline-flex rounded-full bg-slate-100 text-slate-800 px-2 py-0.5 text-xs font-medium">
                               {mission.destinationCity}
                             </span>

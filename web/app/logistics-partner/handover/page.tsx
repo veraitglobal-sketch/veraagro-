@@ -333,7 +333,19 @@ export default function LogisticsHandoverPage() {
     initSigCanvas();
   };
 
+  const selectedMissionRow = missions.find((m) => m.id === selectedMission) ?? null;
+  const handoverRequirements = [
+    { key: 'handoverReqMission', ok: Boolean(selectedMission) },
+    { key: 'handoverReqTemp', ok: temperatureStatus === 'valid' },
+    { key: 'handoverReqPallet', ok: palletPhotos.length >= 1 },
+    { key: 'handoverReqTruck', ok: truckInteriorPhotos.length >= 1 },
+    { key: 'handoverReqDriver', ok: Boolean(selectedPickupDriverId) },
+    { key: 'handoverReqBadge', ok: Boolean(badgePhotoDataUrl) },
+    { key: 'handoverReqSignature', ok: signatureDirty },
+  ];
+
   const handoverComplete =
+    Boolean(selectedMission) &&
     temperatureStatus === 'valid' &&
     palletPhotos.length >= 1 &&
     truckInteriorPhotos.length >= 1 &&
@@ -812,17 +824,23 @@ export default function LogisticsHandoverPage() {
                   {t('logisticsPages.handoverBlockedByTemp')}
                 </p>
               )}
-              {temperatureStatus === 'valid' &&
-                (palletPhotos.length < 1 ||
-                  truckInteriorPhotos.length < 1 ||
-                  !selectedPickupDriverId ||
-                  !badgePhotoDataUrl ||
-                  !signatureDirty) && (
-                <p className="text-sm text-gray-600 mt-2 text-center">
-                  {palletPhotos.length < 1 || truckInteriorPhotos.length < 1
-                    ? t('logisticsPages.handoverNeedPhotos')
-                    : t('logisticsPages.handoverNeedPickupProof')}
-                </p>
+              {selectedMissionRow && !selectedMissionRow.batchId && !selectedMissionRow.batches?.batchId && (
+                <p className="text-sm text-amber-700 mt-2 text-center">{t('logisticsPages.handoverNoLotWarning')}</p>
+              )}
+              {!handoverComplete && (
+                <div className="mt-3 rounded-lg bg-gray-50 border border-gray-200 px-4 py-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                    {t('logisticsPages.handoverChecklistTitle')}
+                  </p>
+                  <ul className="space-y-1">
+                    {handoverRequirements.map((r) => (
+                      <li key={r.key} className={`flex items-center gap-2 text-sm ${r.ok ? 'text-[#2D5A27]' : 'text-gray-600'}`}>
+                        <span aria-hidden className="w-4 text-center">{r.ok ? '✓' : '○'}</span>
+                        {t(`logisticsPages.${r.key}`)}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
           </form>

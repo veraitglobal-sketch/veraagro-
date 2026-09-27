@@ -1301,6 +1301,15 @@
     "refresh": "Опресняване"
   },
   "logisticsPages": {
+    "handoverChecklistTitle": "Преди завършване е нужно:",
+    "handoverReqMission": "Изберете мисия",
+    "handoverReqTemp": "Температура 2–8 °C",
+    "handoverReqPallet": "Поне 1 снимка на палета",
+    "handoverReqTruck": "Поне 1 снимка на товарното помещение",
+    "handoverReqDriver": "Избран шофьор за вземане",
+    "handoverReqBadge": "Снимка на служебната карта на шофьора",
+    "handoverReqSignature": "Подпис на шофьора",
+    "handoverNoLotWarning": "Тази мисия няма свързана партида — предаването ще бъде отказано. Помолете администратора да свърже партида.",
     "missionsManageDriversLink": "Добави или редактирай шофьори",
     "dashboard": "Табло за логистика",
     "loadingHandover": "Зареждане на предаване",

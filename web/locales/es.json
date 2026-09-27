@@ -1301,6 +1301,15 @@
     "refresh": "Refrescar"
   },
   "logisticsPages": {
+    "handoverChecklistTitle": "Antes de finalizar:",
+    "handoverReqMission": "Seleccione una misión",
+    "handoverReqTemp": "Temperatura 2–8 °C",
+    "handoverReqPallet": "Al menos 1 foto del palé",
+    "handoverReqTruck": "Al menos 1 foto del interior del camión",
+    "handoverReqDriver": "Conductor de recogida seleccionado",
+    "handoverReqBadge": "Foto de la credencial del conductor",
+    "handoverReqSignature": "Firma del conductor",
+    "handoverNoLotWarning": "Esta misión no tiene lote asociado: la entrega será rechazada. Pida al administrador que vincule un lote.",
     "missionsManageDriversLink": "Añadir o editar conductores",
     "dashboard": "Panel de logística",
     "loadingHandover": "Entrega de carga",

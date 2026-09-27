@@ -1301,6 +1301,15 @@
     "refresh": "Rafraîchir"
   },
   "logisticsPages": {
+    "handoverChecklistTitle": "Avant de terminer :",
+    "handoverReqMission": "Sélectionnez une mission",
+    "handoverReqTemp": "Température 2–8 °C",
+    "handoverReqPallet": "Au moins 1 photo de palette",
+    "handoverReqTruck": "Au moins 1 photo de l'intérieur du camion",
+    "handoverReqDriver": "Chauffeur d'enlèvement sélectionné",
+    "handoverReqBadge": "Photo du badge du chauffeur",
+    "handoverReqSignature": "Signature du chauffeur",
+    "handoverNoLotWarning": "Cette mission n'a pas de lot associé — la remise sera refusée. Demandez à l'administrateur de lier un lot.",
     "missionsManageDriversLink": "Ajouter ou modifier des chauffeurs",
     "dashboard": "Tableau de bord logistique",
     "loadingHandover": "Transfert de chargement",

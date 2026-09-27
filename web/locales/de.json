@@ -1302,6 +1302,15 @@
     "refresh": "Aktualisieren"
   },
   "logisticsPages": {
+    "handoverChecklistTitle": "Vor dem Abschluss erforderlich:",
+    "handoverReqMission": "Mission auswählen",
+    "handoverReqTemp": "Temperatur 2–8 °C",
+    "handoverReqPallet": "Mindestens 1 Palettenfoto",
+    "handoverReqTruck": "Mindestens 1 Foto vom Laderaum",
+    "handoverReqDriver": "Abholfahrer ausgewählt",
+    "handoverReqBadge": "Foto des Fahrerausweises",
+    "handoverReqSignature": "Unterschrift des Fahrers",
+    "handoverNoLotWarning": "Diese Mission hat keine Charge — die Übergabe wird abgelehnt. Bitten Sie den Admin, eine Charge zu verknüpfen.",
     "missionsManageDriversLink": "Fahrer hinzufügen oder bearbeiten",
     "dashboard": "Logistik-Dashboard",
     "loadingHandover": "Ladeübergabe",

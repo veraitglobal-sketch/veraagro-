@@ -2542,6 +2542,15 @@
     "refresh": "Osveži"
   },
   "logisticsPages": {
+    "handoverChecklistTitle": "Pre završetka potrebno je:",
+    "handoverReqMission": "Izaberite misiju",
+    "handoverReqTemp": "Temperatura 2–8 °C",
+    "handoverReqPallet": "Najmanje 1 fotografija palete",
+    "handoverReqTruck": "Najmanje 1 fotografija unutrašnjosti kamiona",
+    "handoverReqDriver": "Izabran vozač za preuzimanje",
+    "handoverReqBadge": "Fotografija identifikacione kartice vozača",
+    "handoverReqSignature": "Potpis vozača",
+    "handoverNoLotWarning": "Ova misija nema povezanu lot seriju — primopredaja će biti odbijena. Zatražite od admina da poveže lot.",
     "missionsManageDriversLink": "Dodaj ili izmeni vozače",
     "dashboard": "Kontrolna tabla logistike",
     "dashboardPartnerFallback": "Logistički partner",

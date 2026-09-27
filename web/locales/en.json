@@ -2541,6 +2541,15 @@
     "refresh": "Refresh"
   },
   "logisticsPages": {
+    "handoverChecklistTitle": "Before you can finish:",
+    "handoverReqMission": "Select a mission",
+    "handoverReqTemp": "Temperature 2–8 °C",
+    "handoverReqPallet": "At least 1 pallet photo",
+    "handoverReqTruck": "At least 1 truck interior photo",
+    "handoverReqDriver": "Pickup driver selected",
+    "handoverReqBadge": "Driver ID badge photo",
+    "handoverReqSignature": "Driver signature",
+    "handoverNoLotWarning": "This mission has no lot attached — handover will be rejected. Ask the admin to link a lot.",
     "missionsManageDriversLink": "Add or edit drivers",
     "dashboard": "Logistics dashboard",
     "dashboardPartnerFallback": "Logistics partner",

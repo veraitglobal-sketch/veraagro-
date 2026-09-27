@@ -1301,6 +1301,15 @@
     "refresh": "Reîmprospăta"
   },
   "logisticsPages": {
+    "handoverChecklistTitle": "Înainte de finalizare:",
+    "handoverReqMission": "Selectați o misiune",
+    "handoverReqTemp": "Temperatură 2–8 °C",
+    "handoverReqPallet": "Cel puțin 1 fotografie a paletului",
+    "handoverReqTruck": "Cel puțin 1 fotografie a interiorului camionului",
+    "handoverReqDriver": "Șofer de preluare selectat",
+    "handoverReqBadge": "Fotografia legitimației șoferului",
+    "handoverReqSignature": "Semnătura șoferului",
+    "handoverNoLotWarning": "Această misiune nu are lot asociat — predarea va fi respinsă. Cereți administratorului să asocieze un lot.",
     "missionsManageDriversLink": "Adaugă sau editează șoferi",
     "dashboard": "Tabloul de bord logistic",
     "loadingHandover": "Se încarcă predarea",
