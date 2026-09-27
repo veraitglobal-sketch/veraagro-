@@ -10,6 +10,7 @@ import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { useAppLocaleTag } from '../../lib/date-locale';
 import { useCart } from '../../hooks/useCart';
 import ErrorMessage from '../../components/ErrorMessage';
+import { productEmoji } from '../../lib/product-emoji';
 
 /**
  * Product Detail Screen
@@ -85,14 +86,7 @@ export default function ProductDetailScreen() {
     }
   };
 
-  const getProductIcon = () => {
-    if (!product) return '🌾';
-    if (product.parcel?.cropType === 'Raspberry' || product.productName.includes('Malina'))
-      return '🫐';
-    if (product.parcel?.cropType === 'Pepper' || product.productName.includes('Paprika'))
-      return '🌶️';
-    return '🌾';
-  };
+  const getProductIcon = () => productEmoji(product);
 
   if (loading) {
     return (

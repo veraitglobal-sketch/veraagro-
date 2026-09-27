@@ -412,7 +412,7 @@
       "sigHint": "The driver signs with a finger in the box above.",
       "save": "Save handover",
       "errMission": "Choose a run.",
-      "errTemp": "Enter a temperature between −10 and 15 °C.",
+      "errTemp": "Cold chain: inside-truck temperature must be 2–8 °C before loading.",
       "errDriver": "Choose a driver.",
       "errPhotos": "All three photos are required.",
       "errSig": "The driver's signature is required.",

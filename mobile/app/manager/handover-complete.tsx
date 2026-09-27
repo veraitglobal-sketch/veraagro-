@@ -10,8 +10,8 @@ import {
   StyleSheet,
   PanResponder,
 } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import { useRouter, useLocalSearchParams, useNavigation } from 'expo-router';
+import { useState, useCallback, useMemo, useRef, useEffect, useLayoutEffect } from 'react';
 import { CheckCircle2, XCircle, Thermometer, Image as ImageIcon, Camera } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
@@ -54,6 +54,10 @@ export default function HandoverCompleteScreen() {
 function HandoverForm({ handoverId }: { handoverId: string }) {
   const { t } = useTranslation();
   const router = useRouter();
+  const navigation = useNavigation();
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: t('handover.qualityTitle'), headerBackTitle: t('common.back') });
+  }, [navigation, t]);
   const viewShotRef = useRef<InstanceType<typeof ViewShot> | null>(null);
   const submitLock = useRef(false);
   const [saved, setSaved] = useState<DigitalHandover | null>(null);
@@ -229,9 +233,6 @@ function HandoverForm({ handoverId }: { handoverId: string }) {
 
   return (
     <ScrollView style={styles.root}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{t('handover.qualityTitle')}</Text>
-      </View>
       <View style={styles.body}>
         <StepIndicator
           currentStep={step}

@@ -413,7 +413,7 @@
       "sigHint": "Vozač se potpisuje prstom u polju iznad.",
       "save": "Sačuvaj predaju",
       "errMission": "Izaberi vožnju.",
-      "errTemp": "Unesi temperaturu između −10 i 15 °C.",
+      "errTemp": "Hladni lanac: temperatura u kamionu mora biti 2–8 °C pre utovara.",
       "errDriver": "Izaberi vozača.",
       "errPhotos": "Potrebne su sve tri fotografije.",
       "errSig": "Potreban je potpis vozača.",

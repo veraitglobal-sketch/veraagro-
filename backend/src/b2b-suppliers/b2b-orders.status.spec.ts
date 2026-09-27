@@ -20,7 +20,7 @@ describe('Supplier direct order status workflow', () => {
   it('confirms a pending order and tells the farmer', async () => {
     const { service, notifications } = serviceWith({ ...base, status: 'PENDING' });
     await service.updateOrderStatus('sup', base.id, 'CONFIRMED' as any);
-    expect(notifications.create).toHaveBeenCalledWith(expect.objectContaining({ userId: 'farmer', title: 'Porudžbina potvrđena' }));
+    expect(notifications.create).toHaveBeenCalledWith(expect.objectContaining({ userId: 'farmer', title: 'Order confirmed' }));
   });
 
   it.each([

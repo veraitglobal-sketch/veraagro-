@@ -7,6 +7,7 @@ import { useAppLocaleTag } from '../lib/date-locale';
 import Card from './ui/Card';
 import Button from './ui/Button';
 import { CheckCircle, MapPin, Star, Calendar } from 'lucide-react-native';
+import { productEmoji } from '../lib/product-emoji';
 
 interface ProductCardProps {
   product: Product;
@@ -26,11 +27,7 @@ export default function ProductCard({ product, onPress, showActions = true }: Pr
     }
   };
 
-  const getProductIcon = () => {
-    if (product.parcel?.cropType === 'Raspberry' || product.productName.includes('Malina')) return '🫐';
-    if (product.parcel?.cropType === 'Pepper' || product.productName.includes('Paprika')) return '🌶️';
-    return '🌾';
-  };
+  const getProductIcon = () => productEmoji(product);
 
   return (
     <Card variant="elevated" padding="none" style={{ overflow: 'hidden' }}>

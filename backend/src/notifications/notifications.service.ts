@@ -111,7 +111,7 @@ export class NotificationsService {
     const city = data.destinationCity?.trim() || '—';
     const message = `${data.missionNumber} — ${data.growerLabel} → ${city}`;
     const title = data.awaitingApproval
-      ? 'Transport — čeka odobrenje'
+      ? 'Transport request awaiting approval'
       : 'New transport request';
     const actionUrl = data.awaitingApproval
       ? `/admin/grower-control?tab=transport&missionId=${encodeURIComponent(data.missionId)}`
@@ -152,10 +152,10 @@ export class NotificationsService {
     reason?: string;
     missionId: string;
   }): Promise<void> {
-    const title = data.approved ? 'Transport odobren' : 'Transport odbijen';
+    const title = data.approved ? 'Transport approved' : 'Transport rejected';
     const message = data.approved
-      ? `${data.missionNumber}: operativa je odobrila zahtev. Prevoznik može biti dodeljen.`
-      : `${data.missionNumber}: zahtev nije odobren.${data.reason?.trim() ? ` Razlog: ${data.reason.trim()}` : ''}`;
+      ? `${data.missionNumber}: operations approved the request. A carrier can now be assigned.`
+      : `${data.missionNumber}: the request was not approved.${data.reason?.trim() ? ` Reason: ${data.reason.trim()}` : ''}`;
     await this.create({
       userId: data.growerId,
       type: data.approved ? 'SYSTEM' : 'ALERT',
@@ -173,8 +173,8 @@ export class NotificationsService {
     await this.create({
       userId: data.growerId,
       type: 'ALERT',
-      title: 'Fotografija rasta odbijena',
-      message: `${data.parcelLabel ? `${data.parcelLabel}: ` : ''}Operativa nije prihvatila fotografiju.${data.reason?.trim() ? ` ${data.reason.trim()}` : ''} Pošaljite novu sa parcele.`,
+      title: 'Growth photo rejected',
+      message: `${data.parcelLabel ? `${data.parcelLabel}: ` : ''}Operations did not accept the photo.${data.reason?.trim() ? ` ${data.reason.trim()}` : ''} Please send a new one from the plot.`,
       actionUrl: '/(producer)/growth-journal',
     });
   }
@@ -187,8 +187,8 @@ export class NotificationsService {
     await this.create({
       userId: data.growerId,
       type: 'ALERT',
-      title: 'Zasad uklonjen',
-      message: `Plan zasada „${data.cropType}” je uklonjen iz sistema.${data.reason?.trim() ? ` ${data.reason.trim()}` : ''}`,
+      title: 'Planting removed',
+      message: `Planting plan "${data.cropType}" was removed.${data.reason?.trim() ? ` ${data.reason.trim()}` : ''}`,
       actionUrl: '/(producer)/plantings',
     });
   }

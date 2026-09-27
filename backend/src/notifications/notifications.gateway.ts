@@ -13,18 +13,18 @@ import { Injectable, Logger } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { shouldLogThrottled } from '../common/utils/log-throttle';
 
-/** Grower-facing mission status labels (backend notifications are Serbian, like the rest of the feed). */
-const MISSION_STATUS_SR: Record<string, string> = {
-  AWAITING_APPROVAL: 'zahtev čeka odobrenje operative',
-  PENDING: 'odobreno, čeka prevoznika',
-  ASSIGNED: 'prevoznik dodeljen',
-  ACCEPTED: 'prevoznik prihvatio',
-  READY_FOR_LOADING: 'spremno za utovar',
-  IN_PROGRESS: 'u toku',
-  PICKED_UP: 'roba preuzeta sa farme',
-  IN_TRANSIT: 'roba je u transportu',
-  COMPLETED: 'isporučeno',
-  CANCELLED: 'otkazano',
+/** Grower-facing mission status labels (English base language; clients localize). */
+const MISSION_STATUS_TEXT: Record<string, string> = {
+  AWAITING_APPROVAL: 'request awaiting operations approval',
+  PENDING: 'approved, waiting for a carrier',
+  ASSIGNED: 'carrier assigned',
+  ACCEPTED: 'carrier accepted',
+  READY_FOR_LOADING: 'ready for loading',
+  IN_PROGRESS: 'in progress',
+  PICKED_UP: 'goods collected from the farm',
+  IN_TRANSIT: 'goods in transit',
+  COMPLETED: 'delivered',
+  CANCELLED: 'cancelled',
 };
 
 /**
@@ -135,10 +135,10 @@ export class NotificationsGateway implements OnGatewayConnection, OnGatewayDisco
    */
   async notifyMissionUpdate(userId: string, mission: any) {
     const ref = mission.missionNumber || String(mission.id).slice(0, 8);
-    const status = MISSION_STATUS_SR[mission.status] ?? mission.status;
+    const status = MISSION_STATUS_TEXT[mission.status] ?? mission.status;
     const notification = {
       type: 'SYSTEM' as const,
-      title: 'Status prevoza',
+      title: 'Transport status',
       message: `${ref}: ${status}`,
       actionUrl: `/grower/portal?missionId=${encodeURIComponent(mission.id)}`,
       missionId: mission.id,

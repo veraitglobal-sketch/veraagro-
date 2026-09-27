@@ -1116,7 +1116,7 @@ export class MissionsService {
       void this.notifyLinkedBuyerShipmentMilestone(
         updated.orderId,
         'Carrier accepted your pickup',
-        'The assigned cold-chain partner has accepted this run. Your order timeline will update as the truck reaches the farm and loading checks complete.',
+        'A refrigerated carrier is assigned. Your order timeline updates when the truck reaches the farm and loading is checked.',
       );
     }
 
@@ -1245,8 +1245,8 @@ export class MissionsService {
     if (updated.orderId && step === 'COMPLETE_DELIVERY') {
       void this.notifyLinkedBuyerShipmentMilestone(
         updated.orderId,
-        'Linehaul completed',
-        'The long-distance logistics leg for your order is marked complete. Any further leg to depot or retailer will still follow in your shipment timeline.',
+        'Truck has arrived',
+        'Transport is complete. Show the driver your receiving code, then check the goods and sign the receipt in the app.',
       );
     }
 
@@ -1311,8 +1311,8 @@ export class MissionsService {
         await this.notificationsService.create({
           userId: mission.growerId,
           type: 'SYSTEM',
-          title: 'Vozač dodeljen',
-          message: `${mission.missionNumber ?? missionId.slice(0, 8)}: ${name}${driver.phone ? ` (${driver.phone})` : ''} dolazi po robu.`,
+          title: 'Driver assigned',
+          message: `${mission.missionNumber ?? missionId.slice(0, 8)}: ${name}${driver.phone ? ` (${driver.phone})` : ''} is coming to collect the goods.`,
           actionUrl: `/grower/portal?missionId=${encodeURIComponent(missionId)}`,
         });
       } catch (error) {
@@ -1741,8 +1741,8 @@ export class MissionsService {
         await this.notificationsService.create({
           userId: mission.logisticsPartnerId,
           type: 'SYSTEM',
-          title: 'Odredište ažurirano',
-          message: `${mission.missionNumber}: isporuka — ${address}`,
+          title: 'Destination updated',
+          message: `${mission.missionNumber}: deliver to ${address}`,
           actionUrl: '/logistics-partner/missions',
         });
       } catch (e) {
@@ -1783,21 +1783,21 @@ export class MissionsService {
       }
     }
 
-    const why = reason?.trim() ? ` Razlog: ${reason.trim()}` : '';
+    const why = reason?.trim() ? ` Reason: ${reason.trim()}` : '';
     try {
       await this.notificationsService.create({
         userId: mission.growerId,
         type: 'ALERT',
-        title: 'Prevoz otkazan',
-        message: `${mission.missionNumber}: operativa je otkazala ovaj prevoz.${why}`,
+        title: 'Transport cancelled',
+        message: `${mission.missionNumber}: operations cancelled this run.${why}`,
         actionUrl: `/(producer)/mission/${encodeURIComponent(mission.id)}`,
       });
       if (mission.logisticsPartnerId) {
         await this.notificationsService.create({
           userId: mission.logisticsPartnerId,
           type: 'ALERT',
-          title: 'Prevoz otkazan',
-          message: `${mission.missionNumber}: operativa je otkazala ovaj prevoz.${why}`,
+          title: 'Transport cancelled',
+          message: `${mission.missionNumber}: operations cancelled this run.${why}`,
           actionUrl: '/logistics-partner/missions',
         });
       }

@@ -595,9 +595,9 @@ export class B2bSuppliersService {
       where: { id: userId },
       select: { firstName: true, lastName: true },
     });
-    const who = [sender?.firstName, sender?.lastName].filter(Boolean).join(' ') || (toSupplier ? 'Proizvođač' : 'Dobavljač');
-    const title = 'Nova poruka';
-    const message = `${who} ti je poslao poruku.`;
+    const who = [sender?.firstName, sender?.lastName].filter(Boolean).join(' ') || (toSupplier ? 'A grower' : 'A supplier');
+    const title = 'New message';
+    const message = `${who} sent you a message.`;
     // One ping per conversation burst, not one per message.
     if (!(await this.notifications.hasRecentDuplicate(recipient, title, message, 15))) {
       await this.notify(recipient, title, message, toSupplier ? '/supplier/messages' : '/(producer)/partner-orders');
@@ -641,12 +641,12 @@ export class B2bSuppliersService {
       where: { id: farmerId },
       select: { firstName: true, lastName: true },
     });
-    const who = [farmer?.firstName, farmer?.lastName].filter(Boolean).join(' ') || 'Proizvođač';
+    const who = [farmer?.firstName, farmer?.lastName].filter(Boolean).join(' ') || 'A grower';
     const what = B2bSuppliersService.itemsSummary(order.items);
     await this.notify(
       data.supplierUserId,
-      'Nova porudžbina',
-      `${who} je poručio ${B2bSuppliersService.orderRef(order.id)}${what ? `: ${what}` : ''}. Potvrdite ili odbijte.`,
+      'New order',
+      `${who} placed ${B2bSuppliersService.orderRef(order.id)}${what ? `: ${what}` : ''}. Confirm or reject it.`,
       '/supplier/orders',
     );
     return order;
@@ -713,10 +713,10 @@ export class B2bSuppliersService {
   };
 
   private static readonly FARMER_STATUS_TEXT: Record<string, { title: string; body: string }> = {
-    CONFIRMED: { title: 'Porudžbina potvrđena', body: 'dobavljač je potvrdio porudžbinu.' },
-    REJECTED: { title: 'Porudžbina odbijena', body: 'dobavljač je odbio porudžbinu.' },
-    FULFILLED: { title: 'Porudžbina poslata', body: 'dobavljač je isporučio robu — potvrdite prijem na farmi.' },
-    CANCELLED: { title: 'Porudžbina otkazana', body: 'dobavljač je otkazao porudžbinu.' },
+    CONFIRMED: { title: 'Order confirmed', body: 'the supplier confirmed the order.' },
+    REJECTED: { title: 'Order rejected', body: 'the supplier rejected the order.' },
+    FULFILLED: { title: 'Order shipped', body: 'the supplier delivered the goods — confirm receipt at the farm.' },
+    CANCELLED: { title: 'Order cancelled', body: 'the supplier cancelled the order.' },
   };
 
   /**
@@ -754,8 +754,8 @@ export class B2bSuppliersService {
     if (result.firstReceipt) {
       await this.notify(
         result.order.supplierUserId,
-        'Roba primljena',
-        `${B2bSuppliersService.orderRef(result.order.id)}: proizvođač je potvrdio prijem robe na farmi.`,
+        'Goods received',
+        `${B2bSuppliersService.orderRef(result.order.id)}: the grower confirmed receipt at the farm.`,
         '/supplier/orders',
       );
     }

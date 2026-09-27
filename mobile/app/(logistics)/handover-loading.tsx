@@ -177,7 +177,7 @@ export default function HandoverLoadingScreen() {
       return;
     }
     const temp = parseLocaleTemperature(temperature);
-    if (temp == null || temp < -10 || temp > 15) {
+    if (temp == null || temp < 2 || temp > 8) {
       Alert.alert('', t('logistics.loadingHandover.errTemp'));
       return;
     }

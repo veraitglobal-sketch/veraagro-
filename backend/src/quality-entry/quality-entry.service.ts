@@ -64,8 +64,8 @@ export class QualityEntryService {
       await this.notificationsService.create({
         userId: order.buyerId,
         type: 'SYSTEM',
-        title: 'Farm loading verification complete',
-        message: `${order.orderNumber}: temperature and cargo checks at the farm are recorded. The shipment can proceed to departure when logistics confirms.`,
+        title: 'Farm loading checked',
+        message: `${order.orderNumber}: truck temperature and cargo were recorded at the farm. The shipment leaves once the carrier confirms departure.`,
         actionUrl: `/buyer-portal/orders`,
       });
     } catch (e) {

@@ -1,6 +1,6 @@
 import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, StyleSheet } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useRouter, useLocalSearchParams, useNavigation } from 'expo-router';
+import { useLayoutEffect, useState } from 'react';
 import { QrCode } from 'lucide-react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,10 @@ export default function HandoverInitiateScreen() {
   const [scanning, setScanning] = useState(false);
   const [loading, setLoading] = useState(false);
   const [manualCode, setManualCode] = useState('');
+  const navigation = useNavigation();
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: t('handover.initTitle'), headerBackTitle: t('common.back') });
+  }, [navigation, t]);
 
   const handleScanQR = async () => {
     if (!permission?.granted) {
@@ -93,9 +97,6 @@ export default function HandoverInitiateScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <View style={styles.topBar}>
-        <Text style={styles.heading}>{t('handover.initTitle')}</Text>
-      </View>
       <View style={{ padding: 20 }}>
         <View
           style={{

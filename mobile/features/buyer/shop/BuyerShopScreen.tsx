@@ -24,7 +24,6 @@ export default function ShopScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const p = useBioVeraScreenPadding();
-  const floatTop = p.headerTop + 8;
   const { getTotalItems } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -85,94 +84,6 @@ export default function ShopScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      {/* Notifications — isti kanal kao buyer dashboard */}
-      <TouchableOpacity
-        onPress={() => router.push('/(buyer)/notifications')}
-        style={{
-          position: 'absolute',
-          top: floatTop,
-          left: theme.spacing.lg,
-          zIndex: 10,
-          width: 48,
-          height: 48,
-          borderRadius: 24,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: theme.colors.surface,
-          borderWidth: 0.5,
-          borderColor: theme.colors.border,
-          ...theme.shadows.sm,
-        }}
-        accessibilityRole="button"
-        accessibilityLabel={t('notificationsCenter.title')}
-      >
-        <Bell size={22} color={theme.colors.text.primary} strokeWidth={1.5} />
-        {unreadNotifications > 0 ? (
-          <View
-            style={{
-              position: 'absolute',
-              top: -2,
-              right: -2,
-              minWidth: 18,
-              height: 18,
-              borderRadius: 9,
-              backgroundColor: theme.colors.error,
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingHorizontal: 3,
-            }}
-          >
-            <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.background }}>
-              {unreadNotifications > 9 ? '9+' : unreadNotifications}
-            </Text>
-          </View>
-        ) : null}
-      </TouchableOpacity>
-
-      {/* Cart Button */}
-      {getTotalItems() > 0 && (
-        <TouchableOpacity
-          onPress={() => router.push('/(buyer)/cart')}
-          style={{
-            position: 'absolute',
-            top: floatTop,
-            right: theme.spacing.lg,
-            zIndex: 10,
-            backgroundColor: theme.colors.primary,
-            width: 48,
-            height: 48,
-            borderRadius: 24,
-            alignItems: 'center',
-            justifyContent: 'center',
-            ...theme.shadows.md,
-          }}
-        >
-          <ShoppingCart size={22} color={theme.colors.text.inverse} strokeWidth={1.5} />
-          {getTotalItems() > 0 && (
-            <View style={{
-              position: 'absolute',
-              top: -4,
-              right: -4,
-              backgroundColor: theme.colors.error,
-              borderRadius: 10,
-              minWidth: 20,
-              height: 20,
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingHorizontal: 4,
-            }}>
-              <Text style={{
-                fontSize: 14,
-                fontWeight: '500',
-                color: theme.colors.text.inverse,
-              }}>
-                {getTotalItems()}
-              </Text>
-            </View>
-          )}
-        </TouchableOpacity>
-      )}
-
       <ScrollView 
         {...bioVeraScrollProps}
         style={{ flex: 1, backgroundColor: theme.colors.background }}
@@ -231,6 +142,34 @@ export default function ShopScreen() {
                 }}>
                   {t('buyer.shop.subtitle')}
                 </Text>
+              </View>
+              <View style={{ flexDirection: 'row', gap: 8, marginLeft: 8 }}>
+                <TouchableOpacity
+                  onPress={() => router.push('/(buyer)/notifications')}
+                  style={headerIconBtn}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('notificationsCenter.title')}
+                >
+                  <Bell size={20} color={theme.colors.text.primary} strokeWidth={1.6} />
+                  {unreadNotifications > 0 ? (
+                    <View style={headerBadge}>
+                      <Text style={headerBadgeText}>{unreadNotifications > 9 ? '9+' : unreadNotifications}</Text>
+                    </View>
+                  ) : null}
+                </TouchableOpacity>
+                {getTotalItems() > 0 ? (
+                  <TouchableOpacity
+                    onPress={() => router.push('/(buyer)/cart')}
+                    style={[headerIconBtn, { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }]}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('buyer.cart.title', { defaultValue: 'Cart' })}
+                  >
+                    <ShoppingCart size={20} color={theme.colors.text.inverse} strokeWidth={1.6} />
+                    <View style={headerBadge}>
+                      <Text style={headerBadgeText}>{getTotalItems()}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ) : null}
               </View>
             </View>
           </Card>
@@ -319,3 +258,27 @@ export default function ShopScreen() {
     </View>
   );
 }
+
+const headerIconBtn = {
+  width: 40,
+  height: 40,
+  borderRadius: 20,
+  alignItems: 'center' as const,
+  justifyContent: 'center' as const,
+  backgroundColor: theme.colors.surface,
+  borderWidth: 0.5,
+  borderColor: theme.colors.border,
+};
+const headerBadge = {
+  position: 'absolute' as const,
+  top: -3,
+  right: -3,
+  minWidth: 18,
+  height: 18,
+  borderRadius: 9,
+  backgroundColor: theme.colors.error,
+  alignItems: 'center' as const,
+  justifyContent: 'center' as const,
+  paddingHorizontal: 3,
+};
+const headerBadgeText = { fontSize: 11, fontWeight: '700' as const, color: '#fff' };

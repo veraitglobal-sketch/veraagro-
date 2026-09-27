@@ -109,7 +109,7 @@ export class DeliveriesService {
       return { delivery: { ...updated, orders: delivery.orders }, changed: true };
     });
     if (result.changed && target === 'PICKED_UP') {
-      try { await this.notificationsService.create({ userId: result.delivery.orders.buyerId, type: 'SYSTEM', title: 'Order picked up', message: 'Your Bio Vera order has been collected.', actionUrl: `/orders/${reference.orderId}` }); }
+      try { await this.notificationsService.create({ userId: result.delivery.orders.buyerId, type: 'SYSTEM', title: 'Order picked up', message: 'Your Bio Vera order has been collected and is on its way.', actionUrl: `/orders/${reference.orderId}` }); }
       catch { this.logger.warn('Pickup notification pending'); }
     }
     const { orders, ...delivery } = result.delivery;
@@ -214,7 +214,7 @@ export class DeliveriesService {
         throw e;
       }
       throw new BadRequestException(
-        'Isplata iz eskroua nije prošla. Stanje je vraćeno — pokušajte ponovo skeniranje ili potvrdu kroz portal.',
+        'Escrow payout failed. The state was restored — try scanning again or confirm through the portal.',
       );
     }
 
@@ -223,8 +223,8 @@ export class DeliveriesService {
       await this.notificationsService.create({
         userId: farmerUid,
         type: 'SYSTEM',
-        title: 'Delivery confirmed',
-        message: `Payment released for order ${delivery.orders.orderNumber}.`,
+        title: 'Buyer confirmed receipt',
+        message: `Payment for order ${delivery.orders.orderNumber} has been released.`,
       });
     }
 
@@ -232,7 +232,7 @@ export class DeliveriesService {
       userId: delivery.driverId,
       type: 'SYSTEM',
       title: 'Delivery completed',
-      message: `Payment released for delivery ${delivery.deliveryNumber}.`,
+      message: `The buyer confirmed receipt of ${delivery.deliveryNumber}.`,
     });
 
     return {
@@ -309,8 +309,8 @@ export class DeliveriesService {
       await this.notificationsService.create({
         userId: farmerUid,
         type: 'SYSTEM',
-        title: 'Delivery confirmed',
-        message: `Payment released for order ${delivery.orders.orderNumber}.`,
+        title: 'Buyer confirmed receipt',
+        message: `Payment for order ${delivery.orders.orderNumber} has been released.`,
       }).catch((error) => this.logger.warn(`Receipt notification failed: ${error}`));
     }
 
@@ -318,14 +318,14 @@ export class DeliveriesService {
       userId: delivery.driverId,
       type: 'SYSTEM',
       title: 'Delivery completed',
-      message: `Payment released for delivery ${delivery.deliveryNumber}.`,
+      message: `The buyer confirmed receipt of ${delivery.deliveryNumber}.`,
     }).catch((error) => this.logger.warn(`Receipt notification failed: ${error}`));
 
     await this.notificationsService.create({
       userId: buyerId,
       type: 'SYSTEM',
-      title: 'Preuzimanje potvrđeno',
-      message: `Za porudžbinu ${delivery.orders.orderNumber} zabeležena je potvrda preuzimanja: u roku od 24 sata možete prijaviti primedbu uz fotografije.`,
+      title: 'Receipt confirmed',
+      message: `Receipt of order ${delivery.orders.orderNumber} is recorded. You can report an issue with photos within 24 hours.`,
       actionUrl: `/buyer-portal/orders/${delivery.orderId}`,
     }).catch((error) => this.logger.warn(`Receipt notification failed: ${error}`));
 

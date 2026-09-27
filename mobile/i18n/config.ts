@@ -48,7 +48,7 @@ i18n.use(initReactI18next).init({
       translation: translationSr,
     },
   },
-  lng: 'sr',
+  lng: 'en', // English is the base language; a saved user choice is applied on start (lib/i18n-language)
   fallbackLng: 'en',
   supportedLngs: ['en', 'sr'],
   load: 'languageOnly',

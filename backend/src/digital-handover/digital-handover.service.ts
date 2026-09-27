@@ -75,8 +75,8 @@ export class DigitalHandoverService {
     await this.notificationsService.create({
       userId: delivery.orders.buyerId, // Store manager ID (in production, get from store)
       type: 'ACTION_REQUIRED',
-      title: 'Handover Initiated',
-      message: `Driver ${delivery.users.firstName} ${delivery.users.lastName} has arrived. Please complete quality audit.`,
+      title: 'Driver has arrived',
+      message: `${delivery.users.firstName} ${delivery.users.lastName} is at your dock with order ${delivery.orders.orderNumber}. Check the goods, add photos and sign the receipt.`,
       actionUrl: `/buyer-portal/handover/${handover.id}`,
     }).catch((error) => console.error('Handover notification failed', error));
 
@@ -86,8 +86,8 @@ export class DigitalHandoverService {
         delivery.orders.buyerId,
         {
           type: 'ACTION_REQUIRED',
-          title: 'Handover Initiated',
-          message: `Driver has arrived. Please complete quality audit.`,
+          title: 'Driver has arrived',
+          message: `Check the goods, add photos and sign the receipt.`,
           actionUrl: `/buyer-portal/handover/${handover.id}`,
           handoverId: handover.id,
         },
@@ -129,7 +129,7 @@ export class DigitalHandoverService {
     const linkedBuyerId = handover.deliveries.orders.buyerId;
     if (!elevated && linkedBuyerId !== managerId) {
       throw new ForbiddenException(
-        'Samo Bio Vera buyer nalog vezan za ovu porudžbinu može da završi primopredaju.',
+        'Only the Bio Vera buyer account on this order can complete the handover.',
       );
     }
 
@@ -219,8 +219,8 @@ export class DigitalHandoverService {
       await this.notificationsService.create({
         userId: admin.id,
         type: 'SYSTEM',
-        title: 'Delivery Completed',
-        message: `Delivery for ${storeName} completed successfully. Quality confirmed.`,
+        title: 'Delivery received',
+        message: `${storeName} received the delivery; quality confirmed.`,
         actionUrl: `/deliveries/${handover.deliveryId}`,
       }).catch((error) => console.error('Delivery notification failed', error));
 
@@ -228,8 +228,8 @@ export class DigitalHandoverService {
       try {
         await this.notificationsGateway.sendNotificationToUser(admin.id, {
           type: 'SYSTEM',
-          title: 'Delivery Completed',
-          message: `Delivery for ${storeName} completed successfully. Quality confirmed.`,
+          title: 'Delivery received',
+          message: `${storeName} received the delivery; quality confirmed.`,
           actionUrl: `/deliveries/${handover.deliveryId}`,
         });
       } catch (error) {
@@ -241,8 +241,8 @@ export class DigitalHandoverService {
     await this.notificationsService.create({
       userId: handover.driverId,
       type: 'SYSTEM',
-      title: 'Handover Completed',
-      message: `Handover completed successfully. Evidence saved.`,
+      title: 'Handover completed',
+      message: `The buyer signed the receipt; evidence is saved.`,
       actionUrl: `/deliveries/${handover.deliveryId}`,
     }).catch((error) => console.error('Driver notification failed', error));
 
@@ -280,8 +280,8 @@ export class DigitalHandoverService {
       await this.notificationsService.create({
         userId: admin.id,
         type: 'ALERT',
-        title: 'Quality Dispute',
-        message: `Quality issue reported for delivery ${handover.deliveries.orders.orderNumber}. Immediate action required.`,
+        title: 'Quality dispute',
+        message: `The buyer reported a quality issue for ${handover.deliveries.orders.orderNumber}. Review required.`,
         actionUrl: '/admin/delivery-issues',
       });
 
@@ -289,8 +289,8 @@ export class DigitalHandoverService {
       try {
         await this.notificationsGateway.sendNotificationToUser(admin.id, {
           type: 'ALERT',
-          title: 'Quality Dispute',
-          message: `Quality issue reported. Immediate action required.`,
+          title: 'Quality dispute',
+          message: `A quality issue was reported. Review required.`,
           actionUrl: '/admin/delivery-issues',
         });
       } catch (error) {
