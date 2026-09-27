@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
-  Pressable,
   Alert,
   StyleSheet,
 } from 'react-native';
@@ -305,14 +304,15 @@ export default function PlantingsScreen({ embedded = false }: { embedded?: boole
                       ? a.parcel.calculatedArea
                       : null;
                 return (
-                  <Pressable
+                  <TouchableOpacity
                     key={a.id}
                     onPress={() => setDetailHa(a)}
-                    style={({ pressed }) => [growerUi.card, pressed && styles.cardPressed]}
+                    activeOpacity={0.7}
+                    style={[growerUi.card, styles.card]}
                   >
                     <View style={styles.cardTop}>
                       <View style={styles.iconWrap}>
-                        <Sprout size={22} color={enterpriseColors.primary} strokeWidth={2} />
+                        <Sprout size={18} color={enterpriseColors.primary} strokeWidth={1.9} />
                       </View>
                       <View style={{ flex: 1 }}>
                         <Text style={styles.cropTitle}>{a.cropType}</Text>
@@ -340,7 +340,7 @@ export default function PlantingsScreen({ embedded = false }: { embedded?: boole
                       <MapPin size={16} color={enterpriseColors.gray600} />
                       <Text style={styles.metaText} numberOfLines={2}>
                         {pr?.label ?? pr?.cropType ?? parcelLabelSnippet(a)}
-                        {areaM2 != null ? ` · ${formatArea(areaM2, langSr)}` : ''}
+                        {areaM2 != null && areaM2 > 0 ? ` · ${formatArea(areaM2, langSr)}` : ''}
                       </Text>
                     </View>
 
@@ -363,7 +363,7 @@ export default function PlantingsScreen({ embedded = false }: { embedded?: boole
                         </TouchableOpacity>
                       </View>
                     ) : null}
-                  </Pressable>
+                  </TouchableOpacity>
                 );
               })
             )}
@@ -430,6 +430,18 @@ export default function PlantingsScreen({ embedded = false }: { embedded?: boole
               </Text>
               {detailHa.notes ? <Text style={styles.detailNotes}>{detailHa.notes}</Text> : null}
               <TouchableOpacity
+                disabled={detailHa.id.startsWith('local:')}
+                onPress={() => {
+                  const parcelId = normalizeHarvestParcelId(detailHa.parcelId, detailHa.parcel ?? null);
+                  if (!parcelId) return;
+                  setDetailHa(null);
+                  router.push({ pathname: '/(producer)/field-diary', params: { parcelId, plantingId: detailHa.id } });
+                }}
+                style={[styles.detailBtnSecondary, detailHa.id.startsWith('local:') && { opacity: 0.5 }]}
+              >
+                <Text style={styles.detailBtnSecondaryText}>{t('connectedWorkflow.openWorkLog')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
                 onPress={() => goHarvestForPlanting(detailHa)}
                 style={[enterpriseUi.authBtnPrimary, styles.detailBtn]}
               >
@@ -490,44 +502,44 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'stretch',
   },
-  cardPressed: { opacity: 0.92 },
+  card: { padding: 14 },
   cardTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 10 },
   iconWrap: {
-    width: 44,
-    height: 44,
+    width: 40,
+    height: 40,
     borderRadius: 12,
-    backgroundColor: enterpriseColors.primaryTint,
+    backgroundColor: '#E8F1E4',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  cropTitle: { fontSize: 18, fontWeight: '600', color: enterpriseColors.gray900 },
-  queueLabel: { fontSize: 14, fontWeight: '600', color: enterpriseColors.gray700, marginTop: 4 },
+  cropTitle: { fontSize: 15, fontWeight: '600', letterSpacing: -0.25, color: enterpriseColors.gray900 },
+  queueLabel: { fontSize: 12, fontWeight: '600', color: enterpriseColors.gray700, marginTop: 2 },
   queueError: { color: enterpriseColors.destructive },
   statusPill: {
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: '600',
     color: enterpriseColors.primary,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: enterpriseColors.primaryTint,
-    borderRadius: 8,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    backgroundColor: '#E8F1E4',
+    borderRadius: 6,
     overflow: 'hidden',
   },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
-  metaText: { flex: 1, fontSize: 15, color: enterpriseColors.gray600, lineHeight: 21 },
+  metaText: { flex: 1, fontSize: 13, color: enterpriseColors.gray600, lineHeight: 18 },
   progressBox: {
     marginTop: 10,
     paddingTop: 10,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: enterpriseColors.gray200,
   },
-  progressText: { fontSize: 14, color: enterpriseColors.gray600, lineHeight: 20 },
+  progressText: { fontSize: 12.5, color: enterpriseColors.gray600, lineHeight: 18 },
   progressOverdue: { color: enterpriseColors.destructive, fontWeight: '600' },
-  progressLink: { fontSize: 15, fontWeight: '600', color: enterpriseColors.primary, marginTop: 6 },
+  progressLink: { fontSize: 13, fontWeight: '600', color: enterpriseColors.primary, marginTop: 6 },
   harvestLink: { marginTop: 4 },
   harvestLinkRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  harvestLinkTitle: { fontSize: 17, fontWeight: '600', color: enterpriseColors.gray900 },
-  harvestLinkDesc: { fontSize: 14, color: enterpriseColors.gray600, marginTop: 2 },
+  harvestLinkTitle: { fontSize: 15, fontWeight: '600', color: enterpriseColors.gray900 },
+  harvestLinkDesc: { fontSize: 13, color: enterpriseColors.gray600, marginTop: 2 },
   modalBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.35)',
@@ -535,8 +547,8 @@ const styles = StyleSheet.create({
   },
   modalSheet: {
     backgroundColor: enterpriseColors.white,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
     maxHeight: '88%',
     paddingTop: 12,
   },
@@ -546,31 +558,31 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 12,
   },
-  modalTitle: { fontSize: 18, fontWeight: '600', color: enterpriseColors.gray900, flex: 1 },
-  detailCrop: { fontSize: 22, fontWeight: '600', color: enterpriseColors.gray900 },
+  modalTitle: { fontSize: 17, fontWeight: '600', letterSpacing: -0.3, color: enterpriseColors.gray900, flex: 1 },
+  detailCrop: { fontSize: 20, fontWeight: '600', letterSpacing: -0.4, color: enterpriseColors.gray900 },
   detailLabel: {
-    fontSize: 13,
+    fontSize: 11,
     fontWeight: '600',
-    color: enterpriseColors.gray600,
+    color: '#6B7A67',
     marginTop: 12,
     textTransform: 'uppercase',
-    letterSpacing: 0.4,
+    letterSpacing: 0.9,
   },
-  detailValue: { fontSize: 16, color: enterpriseColors.gray900, marginTop: 4 },
-  detailMeta: { fontSize: 15, color: enterpriseColors.gray600, marginTop: 8, lineHeight: 22 },
-  detailStatus: { fontSize: 14, color: enterpriseColors.gray600, marginTop: 8 },
-  detailNotes: { fontSize: 15, color: enterpriseColors.gray700, marginTop: 12, lineHeight: 22 },
-  detailBtn: { marginTop: 20, minHeight: 52, justifyContent: 'center' },
+  detailValue: { fontSize: 15, color: enterpriseColors.gray900, marginTop: 2 },
+  detailMeta: { fontSize: 13, color: enterpriseColors.gray600, marginTop: 8, lineHeight: 19 },
+  detailStatus: { fontSize: 13, color: enterpriseColors.gray600, marginTop: 8 },
+  detailNotes: { fontSize: 13.5, color: enterpriseColors.gray700, marginTop: 12, lineHeight: 20 },
+  detailBtn: { marginTop: 18, minHeight: 50, justifyContent: 'center' },
   detailBtnSecondary: {
     marginTop: 10,
     minHeight: 48,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
-    borderWidth: 1,
+    borderRadius: 14,
+    borderWidth: 1.5,
     borderColor: enterpriseColors.primary,
   },
-  detailBtnSecondaryText: { fontSize: 16, fontWeight: '600', color: enterpriseColors.primary },
+  detailBtnSecondaryText: { fontSize: 15, fontWeight: '600', color: enterpriseColors.primary },
   embeddedRoot: {
     flex: 1,
     minHeight: 0,

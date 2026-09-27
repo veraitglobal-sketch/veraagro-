@@ -10,16 +10,17 @@ import {
   Alert,
   Platform,
   KeyboardAvoidingView,
-  Keyboard,
   RefreshControl,
   StyleSheet,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { normalizeBatchReference } from '../../lib/batch-workflow';
+import { useWorkflowBatchSelection } from '../../hooks/useWorkflowBatchSelection';
 import { useFocusEffect } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import { getCurrentGrowerPosition } from '../../lib/grower-permissions';
-import { MapPin } from 'lucide-react-native';
-import { enterpriseColors, enterpriseUi } from '../../lib/enterprise-ui';
+import { MapPin, CheckCircle2, ChevronRight, Truck, ArrowRight } from 'lucide-react-native';
+import { enterpriseColors } from '../../lib/enterprise-ui';
 import { growerUi } from '../../lib/grower-ui';
 import { EnterpriseNotice } from '../../components/enterprise/EnterpriseNotice';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
@@ -27,11 +28,9 @@ import { GrowerStackHeader } from '../../components/grower/GrowerStackHeader';
 import {
   batchesAPI,
   missionsAPI,
-  harvestAnnouncementsAPI,
   materialControlAPI,
   type ComplianceBatchStatus,
 } from '../../lib/api';
-import { normalizeHarvestParcelId } from '../../features/grower/harvest/useHarvestData';
 import { apiErrorMessage, axiosErrorSupportHint, axiosIsAbortOrTimeout, axiosResponseStatus, isGenericInfrastructureMessage, isLikelyNetworkError } from '../../lib/api-error';
 import { getBatchStatusLabel } from '../../features/grower/batches/batch-status-i18n';
 
@@ -45,50 +44,6 @@ type BatchRow = {
   status?: string;
 };
 
-async function pickHarvestAnnouncementIdForParcel(
-  parcelId: string | null | undefined,
-): Promise<string | undefined> {
-  const pid = parcelId ? normalizeHarvestParcelId(parcelId, null) : '';
-  if (!pid) return undefined;
-  try {
-    const raw = await harvestAnnouncementsAPI.getMy();
-    const arr = Array.isArray(raw) ? raw : [];
-    type Ann = {
-      id: string;
-      status?: string;
-      createdAt?: string;
-      announcementType?: string;
-      parcelId?: string;
-      parcel?: { id?: string } | null;
-    };
-    const harvests: Ann[] = arr
-      .filter((a: Ann) => String(a.announcementType ?? '').toUpperCase() === 'HARVEST')
-      .filter(
-        (a: Ann) =>
-          normalizeHarvestParcelId(a.parcelId, a.parcel ?? null) === pid &&
-          typeof a.id === 'string' &&
-          !String(a.id).startsWith('local:'),
-      );
-    const rank = (s: string) => {
-      const u = String(s || '').toUpperCase();
-      if (u === 'CONFIRMED') return 0;
-      if (u === 'APPROVED') return 1;
-      return 2;
-    };
-    harvests.sort((a, b) => {
-      const rd = rank(String(a.status ?? '')) - rank(String(b.status ?? ''));
-      if (rd !== 0) return rd;
-      const ta = new Date(String(a.createdAt || 0)).getTime();
-      const tb = new Date(String(b.createdAt || 0)).getTime();
-      return tb - ta;
-    });
-    const id = harvests[0]?.id;
-    return typeof id === 'string' ? id : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
 function readyForTransport(b: BatchRow) {
   return b?.status === 'PACKED' || b?.status === 'QUALITY_VERIFIED';
 }
@@ -96,17 +51,20 @@ function readyForTransport(b: BatchRow) {
 export default function MissionsCreateScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const params = useLocalSearchParams<{ batchId?: string | string[] }>();
+  const requestedBatch = normalizeBatchReference(params.batchId);
   const p = useBioVeraScreenPadding();
   const scrollRef = useRef<ScrollView>(null);
-  const [keyboardPad, setKeyboardPad] = useState(0);
   const [batches, setBatches] = useState<BatchRow[]>([]);
   const [initialBatchesLoading, setInitialBatchesLoading] = useState(true);
+  const [batchLoadError, setBatchLoadError] = useState(false);
   const [listRefreshing, setListRefreshing] = useState(false);
   const [locLoading, setLocLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [locationHint, setLocationHint] = useState<string | null>(null);
   const [showManualGps, setShowManualGps] = useState(false);
-  const [batchId, setBatchId] = useState('');
+  const { selectedBatch, selectedBatchId: batchId, setSelectedBatchId: setBatchId, missingRequestedBatch } = useWorkflowBatchSelection(batches, false);
+  const visibleBatches = requestedBatch ? (selectedBatch ? [selectedBatch] : []) : batches;
   const [pickupAddress, setPickupAddress] = useState('');
   const [pickupLat, setPickupLat] = useState('');
   const [pickupLng, setPickupLng] = useState('');
@@ -148,9 +106,11 @@ export default function MissionsCreateScreen() {
     else setInitialBatchesLoading(true);
     try {
       const all = await batchesAPI.getAll();
+      setBatchLoadError(false);
       const arr = Array.isArray(all) ? all : [];
       setBatches(arr.filter(readyForTransport) as BatchRow[]);
     } catch {
+      setBatchLoadError(true);
       setBatches([]);
     } finally {
       if (mode === 'refresh') setListRefreshing(false);
@@ -161,21 +121,6 @@ export default function MissionsCreateScreen() {
   useEffect(() => {
     void loadBatches('initial');
   }, [loadBatches]);
-
-  useEffect(() => {
-    const onShow = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
-      (e) => setKeyboardPad(e.endCoordinates?.height ?? 0),
-    );
-    const onHide = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
-      () => setKeyboardPad(0),
-    );
-    return () => {
-      onShow.remove();
-      onHide.remove();
-    };
-  }, []);
 
   const scrollToBottomIfNeeded = useCallback(() => {
     requestAnimationFrame(() => {
@@ -256,16 +201,13 @@ export default function MissionsCreateScreen() {
 
     setSubmitting(true);
     try {
-      const picked = batches.find((b) => b.id === batchId);
-      const harvestAnnouncementId = await pickHarvestAnnouncementIdForParcel(picked?.parcelId);
-      await missionsAPI.create({
+      const mission = await missionsAPI.create({
         batchId,
         pickupLocation: { lat, lng, address: pickupAddress.trim() },
         pickupAddress: pickupAddress.trim(),
-        ...(harvestAnnouncementId ? { harvestAnnouncementId } : {}),
       });
       Alert.alert(t('producer.missionsCreate.successTitle'), t('producer.missionsCreate.successBody'), [
-        { text: t('producer.missionsCreate.ok'), onPress: () => router.replace('/(producer)/missions') },
+        { text: t('producer.missionsCreate.ok'), onPress: () => router.replace(mission?.id ? `/(producer)/mission/${mission.id}` : '/(producer)/missions') },
       ]);
     } catch (e: unknown) {
       if (isLikelyNetworkError(e) || axiosIsAbortOrTimeout(e)) {
@@ -308,198 +250,141 @@ export default function MissionsCreateScreen() {
 
   const hasGps = pickupLat.trim() !== '' && pickupLng.trim() !== '' && !Number.isNaN(parseFloat(pickupLat));
 
-  if (initialBatchesLoading) {
-    return (
-      <View style={growerUi.canvas}>
-        <GrowerStackHeader
-          title={t('navigation.requestTransport')}
-          subtitle={t('producer.missionsCreate.introShort')}
-          onBack={goBack}
-        />
-        <View style={styles.centered}>
-          <ActivityIndicator size="large" color={enterpriseColors.primary} />
-        </View>
-      </View>
-    );
-  }
+  const submitDisabled = submitting || !batchId || packagingComplianceLoading || packagingBlocksTransport;
 
   return (
     <View style={growerUi.canvas}>
-      <GrowerStackHeader
-        title={t('navigation.requestTransport')}
-        subtitle={t('producer.missionsCreate.introShort')}
-        onBack={goBack}
-      />
-
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 12 : 0}
-      >
+      <GrowerStackHeader title={t('navigation.requestTransport')} onBack={goBack} />
+      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           ref={scrollRef}
-          style={{ flex: 1 }}
-          contentContainerStyle={{
-            ...growerUi.scrollContent,
-            paddingTop: 12,
-            paddingBottom: 24 + keyboardPad,
-          }}
+          style={styles.flex}
+          contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
-          refreshControl={
-            <RefreshControl
-              refreshing={listRefreshing}
-              onRefresh={() => void loadBatches('refresh')}
-              tintColor={enterpriseColors.primary}
-              colors={[enterpriseColors.primary]}
-            />
-          }
+          refreshControl={<RefreshControl refreshing={listRefreshing}
+            onRefresh={() => void loadBatches('refresh')} tintColor={enterpriseColors.primary} />}
         >
-        {batches.length === 0 ? (
-          <View style={growerUi.emptyCard}>
-            <Text style={enterpriseUi.navRowSubtitle}>{t('producer.missionsCreate.noBatchesBody')}</Text>
-            <TouchableOpacity
-              onPress={() => router.push('/(producer)/batch-new')}
-              style={[enterpriseUi.authBtnPrimary, styles.emptyCta]}
-              activeOpacity={0.88}
-            >
-              <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.missionsCreate.openBatchesCta')}</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View style={styles.section}>
-            <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.missionsCreate.batchLabel')}</Text>
-            {batches.map((b) => {
-              const selected = batchId === b.id;
-              return (
-                <TouchableOpacity
-                  key={b.id}
-                  onPress={() => setBatchId(b.id)}
-                  activeOpacity={0.82}
-                  style={[
-                    enterpriseUi.inAppPanel,
-                    styles.batchRow,
-                    selected && styles.batchRowSelected,
-                  ]}
-                >
-                  <Text style={enterpriseUi.navRowTitle}>
-                    {b.productName || t('producer.missionsCreate.productFallback')} · {b.batchId || b.id.slice(0, 8)}
-                  </Text>
-                  <Text style={[enterpriseUi.navRowSubtitle, styles.batchMeta]}>
-                    {b.quantity} {b.unit} · {getBatchStatusLabel(t, b.status)}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        )}
-
-        {batches.length > 0 && batchId ? (
-          <View style={styles.section}>
-            {packagingComplianceLoading ? (
-              <View style={styles.inlineStatus}>
-                <ActivityIndicator size="small" color={enterpriseColors.primary} />
-                <Text style={enterpriseUi.navRowSubtitle}>
-                  {t('producer.missionsCreate.packagingComplianceChecking')}
-                </Text>
-              </View>
-            ) : packagingCompliance && !packagingCompliance.complete ? (
-              <EnterpriseNotice
-                title={t('producer.missionsCreate.packagingComplianceTitle')}
-                body={t('producer.missionsCreate.packagingComplianceBodyShort')}
-                onPress={() => router.push('/(producer)/compliance-photos')}
-                actionLabel={t('producer.missionsCreate.openPackagingCompliance')}
-              />
-            ) : packagingCompliance?.complete ? (
-              <Text style={styles.okLine}>{t('producer.missionsCreate.packagingComplianceOk')}</Text>
-            ) : (
-              <Text style={enterpriseUi.navRowSubtitle}>
-                {t('producer.missionsCreate.packagingComplianceUnchecked')}
-              </Text>
-            )}
-          </View>
-        ) : null}
-
-        {batches.length > 0 ? (
-          <View style={styles.section}>
-            <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.missionsCreate.pickupAddress')}</Text>
-            <TouchableOpacity
-              onPress={() => void getCurrentLocation()}
-              disabled={locLoading}
-              activeOpacity={0.88}
-              style={[enterpriseUi.authBtnPrimary, styles.locationBtn]}
-            >
-              {locLoading ? (
-                <ActivityIndicator size="small" color={enterpriseColors.white} />
-              ) : (
-                <>
-                  <MapPin size={20} color={enterpriseColors.white} strokeWidth={1.5} />
-                  <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.missionsCreate.useMyLocation')}</Text>
-                </>
-              )}
-            </TouchableOpacity>
-            {hasGps ? (
-              <Text style={enterpriseUi.navRowSubtitle}>
-                {t('producer.missionsCreate.gpsSaved')}: {parseFloat(pickupLat).toFixed(5)}, {parseFloat(pickupLng).toFixed(5)}
-              </Text>
-            ) : null}
-            {locationHint ? <Text style={[enterpriseUi.navRowSubtitle, styles.hint]}>{locationHint}</Text> : null}
-            {!showManualGps ? (
-              <TouchableOpacity onPress={() => setShowManualGps(true)} activeOpacity={0.72} style={styles.linkBtn}>
-                <Text style={styles.linkText}>{t('producer.missionsCreate.manualGpsToggle')}</Text>
+          {initialBatchesLoading ? <ActivityIndicator style={styles.loading} color={enterpriseColors.primary} />
+          : batchLoadError ? <EnterpriseNotice title={t('transportForm.loadFailed')}
+              actionLabel={t('harvestWorkflow.reload')} onPress={() => void loadBatches('initial')} />
+          : missingRequestedBatch ? <EnterpriseNotice title={t('batchWorkflow.unavailable')} />
+          : visibleBatches.length === 0 ? <View style={styles.empty}>
+              <Text style={styles.body}>{t('producer.missionsCreate.noBatchesBody')}</Text>
+              <TouchableOpacity accessibilityRole="button" onPress={() => router.push('/(producer)/batch-new')} style={styles.textAction}>
+                <Text style={styles.link}>{t('producer.missionsCreate.openBatchesCta')}</Text>
+                <ChevronRight size={16} color={enterpriseColors.primary} />
               </TouchableOpacity>
-            ) : (
-              <>
-                <Text style={growerUi.formLabel}>{t('producer.missionsCreate.latitude')}</Text>
-                <TextInput
-                  value={pickupLat}
-                  onChangeText={setPickupLat}
-                  placeholder={t('producer.missionsCreate.latPlaceholder')}
-                  placeholderTextColor={enterpriseColors.gray600}
-                  keyboardType="decimal-pad"
-                  style={growerUi.formInput}
-                />
-                <Text style={growerUi.formLabel}>{t('producer.missionsCreate.longitude')}</Text>
-                <TextInput
-                  value={pickupLng}
-                  onChangeText={setPickupLng}
-                  placeholder={t('producer.missionsCreate.lngPlaceholder')}
-                  placeholderTextColor={enterpriseColors.gray600}
-                  keyboardType="decimal-pad"
-                  style={growerUi.formInput}
-                />
-              </>
-            )}
-            <TextInput
-              value={pickupAddress}
-              onChangeText={setPickupAddress}
-              onFocus={scrollToBottomIfNeeded}
-              placeholder={t('producer.missionsCreate.pickupAddressPlaceholder')}
-              placeholderTextColor={enterpriseColors.gray600}
-              multiline
-              style={[growerUi.formInput, styles.addressInput]}
-            />
-          </View>
-        ) : null}
+            </View>
+          : <>
+            <Text style={styles.sectionLabel}>{t(requestedBatch ? 'producer.missionsCreate.selectedBatchLabel' : 'transportForm.chooseLot')}</Text>
+            <View style={styles.panel}>
+              {visibleBatches.map((b, index) => {
+                const selected = batchId === b.id;
+                return <TouchableOpacity key={b.id}
+                  disabled={Boolean(requestedBatch) || submitting}
+                  accessibilityRole={requestedBatch ? undefined : 'button'}
+                  accessibilityState={{ selected }}
+                  onPress={() => setBatchId(b.id)} activeOpacity={0.8}
+                  style={[styles.lotRow, index > 0 && styles.divider, selected && !requestedBatch && styles.selectedRow]}>
+                  <View style={styles.lotBody}>
+                    <Text style={styles.lotCode}>{b.batchId || b.id.slice(0, 8)}</Text>
+                    <Text style={styles.product}>{b.productName || t('producer.missionsCreate.productFallback')}</Text>
+                    <Text style={styles.meta}>{getBatchStatusLabel(t, b.status)}</Text>
+                  </View>
+                  <View style={styles.lotQuantity}>
+                    <Text style={styles.quantity}>{b.quantity} <Text style={styles.unit}>{b.unit}</Text></Text>
+                    {!requestedBatch ? selected
+                      ? <CheckCircle2 size={18} color={enterpriseColors.primary} />
+                      : <ChevronRight size={18} color={enterpriseColors.gray600} /> : null}
+                  </View>
+                </TouchableOpacity>;
+              })}
+              {batchId ? <View style={styles.readiness}>
+                {packagingComplianceLoading ? <ActivityIndicator size="small" color={enterpriseColors.primary} />
+                  : <View style={[styles.statusDot, packagingCompliance?.complete && styles.statusDotReady]} />}
+                <View style={styles.flex}>
+                  <Text style={styles.statusText}>{t(packagingComplianceLoading ? 'transportForm.checking'
+                    : packagingCompliance?.complete ? 'transportForm.ready'
+                    : packagingCompliance ? 'transportForm.incomplete' : 'transportForm.unchecked')}</Text>
+                  {packagingCompliance && !packagingCompliance.complete && !packagingComplianceLoading ? (
+                    <TouchableOpacity accessibilityRole="button" style={styles.textAction} disabled={submitting}
+                      onPress={() => router.push({ pathname: '/(producer)/compliance-photos', params: { batchId } })}>
+                      <Text style={styles.link}>{t('transportForm.completeChecks')}</Text>
+                      <ChevronRight size={16} color={enterpriseColors.primary} />
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+              </View> : null}
+            </View>
+          </>}
 
+          {batchId && !initialBatchesLoading ? <View style={styles.pickupSection}>
+            <Text style={styles.sectionLabel}>{t('transportForm.pickup')}</Text>
+            <View style={[styles.panel, styles.form]}>
+              <Text style={styles.fieldLabel}>{t('transportForm.location')}</Text>
+              <TouchableOpacity accessibilityRole="button" onPress={() => void getCurrentLocation()}
+                disabled={locLoading || submitting} activeOpacity={0.8} style={styles.gpsButton}>
+                {locLoading ? <ActivityIndicator size="small" color={enterpriseColors.primary} />
+                  : <MapPin size={19} color={enterpriseColors.primary} strokeWidth={1.7} />}
+                <Text style={styles.gpsButtonLabel}>{t(hasGps ? 'transportForm.refreshGps' : 'producer.missionsCreate.useMyLocation')}</Text>
+                <ChevronRight size={17} color={enterpriseColors.primary} />
+              </TouchableOpacity>
+              {hasGps ? <View style={styles.gpsValue}>
+                <CheckCircle2 size={14} color={enterpriseColors.primary} />
+                <Text style={styles.meta}>{parseFloat(pickupLat).toFixed(5)}, {parseFloat(pickupLng).toFixed(5)}</Text>
+              </View> : <Text style={styles.fieldHint}>{t('transportForm.locationHelp')}</Text>}
+              {locationHint ? <Text style={styles.fieldHint} accessibilityLiveRegion="polite">{locationHint}</Text> : null}
+              <TouchableOpacity accessibilityRole="button" accessibilityState={{ expanded: showManualGps }}
+                disabled={submitting} onPress={() => setShowManualGps(value => !value)} style={styles.manualToggle}>
+                <Text style={styles.link}>{t(showManualGps ? 'transportForm.hideCoordinates' : 'producer.missionsCreate.manualGpsToggle')}</Text>
+              </TouchableOpacity>
+              {showManualGps ? <View style={styles.coordinateRow}>
+                <View style={styles.flex}>
+                  <Text style={styles.fieldLabel}>{t('producer.missionsCreate.latitude')}</Text>
+                  <TextInput value={pickupLat} onChangeText={setPickupLat} editable={!submitting}
+                    accessibilityLabel={t('producer.missionsCreate.latitude')} placeholder="44.81250"
+                    placeholderTextColor={enterpriseColors.gray600} keyboardType="numbers-and-punctuation" style={styles.input} />
+                </View>
+                <View style={styles.flex}>
+                  <Text style={styles.fieldLabel}>{t('producer.missionsCreate.longitude')}</Text>
+                  <TextInput value={pickupLng} onChangeText={setPickupLng} editable={!submitting}
+                    accessibilityLabel={t('producer.missionsCreate.longitude')} placeholder="20.46120"
+                    placeholderTextColor={enterpriseColors.gray600} keyboardType="numbers-and-punctuation" style={styles.input} />
+                </View>
+              </View> : null}
+              <View style={styles.addressField}>
+                <Text style={styles.fieldLabel}>{t('producer.missionsCreate.pickupAddress')}</Text>
+                <TextInput value={pickupAddress} onChangeText={setPickupAddress} editable={!submitting}
+                  accessibilityLabel={t('producer.missionsCreate.pickupAddress')} onFocus={scrollToBottomIfNeeded}
+                  placeholder={t('producer.missionsCreate.pickupAddressPlaceholder')}
+                  placeholderTextColor={enterpriseColors.gray600} multiline style={[styles.input, styles.addressInput]} />
+                <Text style={styles.fieldHint}>{t('transportForm.addressHelp')}</Text>
+              </View>
+            </View>
+            <View style={styles.nextStep}>
+              <Truck size={18} color={enterpriseColors.gray600} strokeWidth={1.5} />
+              <Text style={[styles.fieldHint, styles.nextStepText]}>{t('transportForm.nextStep')}</Text>
+            </View>
+          </View> : null}
         </ScrollView>
-        <View style={[styles.footer, { paddingBottom: Math.max(p.bottomInset, 16) }]}>
-          <TouchableOpacity
-            onPress={() => void submit()}
-            disabled={submitting || batches.length === 0 || packagingComplianceLoading || packagingBlocksTransport}
-            activeOpacity={0.88}
-            style={[
-              enterpriseUi.authBtnPrimary,
-              styles.submitBtn,
-              (submitting || batches.length === 0 || packagingComplianceLoading || packagingBlocksTransport) &&
-                styles.submitBtnDisabled,
-            ]}
-          >
-            {submitting ? (
-              <ActivityIndicator color={enterpriseColors.white} />
-            ) : (
-              <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.missionsCreate.submitCta')}</Text>
-            )}
+        <View style={[styles.footer, { paddingBottom: Math.max(p.bottomInset, 12) }]}>
+          {batchId && packagingBlocksTransport && !packagingComplianceLoading ? (
+            <TouchableOpacity accessibilityRole="button" style={styles.blockedHint} disabled={submitting}
+              onPress={() => router.push({ pathname: '/(producer)/compliance-photos', params: { batchId } })}>
+              <Text style={styles.blockedHintText}>{t('transportForm.blockedHint')}</Text>
+              <ChevronRight size={15} color={enterpriseColors.primary} />
+            </TouchableOpacity>
+          ) : !batchId ? (
+            <Text style={[styles.blockedHintText, styles.blockedHintCenter]}>{t('transportForm.chooseLot')}</Text>
+          ) : null}
+          <TouchableOpacity onPress={() => void submit()} accessibilityRole="button"
+            accessibilityLabel={t('producer.missionsCreate.submitCta')} disabled={submitDisabled}
+            activeOpacity={0.85} style={[styles.submitButton, submitDisabled && styles.disabled]}>
+            {submitting ? <ActivityIndicator color={enterpriseColors.white} /> : <>
+              <Text style={styles.submitLabel}>{t('producer.missionsCreate.submitCta')}</Text>
+              <ArrowRight size={19} color={enterpriseColors.white} />
+            </>}
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -508,84 +393,48 @@ export default function MissionsCreateScreen() {
 }
 
 const styles = StyleSheet.create({
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  section: {
-    marginBottom: 20,
-  },
-  batchRow: {
-    padding: 16,
-    minHeight: 72,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
-  },
-  batchRowSelected: {
-    borderWidth: 1.5,
-    borderColor: enterpriseColors.primary,
-    backgroundColor: enterpriseColors.primaryTint,
-  },
-  batchMeta: {
-    marginTop: 4,
-  },
-  emptyCta: {
-    marginTop: 16,
-    minHeight: 52,
-    justifyContent: 'center',
-  },
-  inlineStatus: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  okLine: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: enterpriseColors.primary,
-  },
-  locationBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    minHeight: 52,
-    marginBottom: 10,
-  },
-  hint: {
-    marginTop: 6,
-    marginBottom: 4,
-  },
-  linkBtn: {
-    minHeight: 44,
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-  linkText: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: enterpriseColors.primary,
-  },
-  addressInput: {
-    minHeight: 88,
-    textAlignVertical: 'top',
-    marginTop: 8,
-  },
-  footer: {
-    paddingTop: 16,
-    paddingHorizontal: 20,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: enterpriseColors.gray200,
-    backgroundColor: enterpriseColors.white,
-  },
-  submitBtn: {
-    minHeight: 52,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  submitBtnDisabled: {
-    opacity: 0.5,
-  },
+  flex: { flex: 1 },
+  content: { paddingHorizontal: 20, paddingTop: 22, paddingBottom: 24 },
+  loading: { paddingVertical: 48 },
+  sectionLabel: { fontSize: 12, lineHeight: 16, fontWeight: '600', letterSpacing: 0.9, textTransform: 'uppercase', color: '#6B7A67', marginBottom: 8, marginLeft: 4 },
+  panel: { backgroundColor: enterpriseColors.white, borderWidth: StyleSheet.hairlineWidth, borderColor: 'rgba(17, 24, 39, 0.08)', borderRadius: 18, overflow: 'hidden', shadowColor: '#1a3328', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 2 },
+  lotRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 14, gap: 12 },
+  divider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: enterpriseColors.border },
+  selectedRow: { backgroundColor: 'rgba(45, 90, 39, 0.06)' },
+  lotBody: { flex: 1, minWidth: 0, gap: 2 },
+  lotCode: { fontSize: 10.5, lineHeight: 15, color: enterpriseColors.gray600, fontFamily: 'Menlo', letterSpacing: -0.2 },
+  product: { fontSize: 15, lineHeight: 20, fontWeight: '600', letterSpacing: -0.25, color: enterpriseColors.gray900 },
+  meta: { fontSize: 12, lineHeight: 18, color: enterpriseColors.gray600 },
+  lotQuantity: { maxWidth: '40%', alignItems: 'flex-end', gap: 6 },
+  quantity: { fontSize: 15, lineHeight: 20, fontWeight: '700', letterSpacing: -0.3, fontVariant: ['tabular-nums'], color: enterpriseColors.gray900, textAlign: 'right' },
+  unit: { fontSize: 12, fontWeight: '500', color: enterpriseColors.gray600 },
+  readiness: { flexDirection: 'row', alignItems: 'center', gap: 9, paddingVertical: 11, paddingHorizontal: 16, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: enterpriseColors.border },
+  statusDot: { height: 6, width: 6, borderRadius: 3, backgroundColor: enterpriseColors.gray600 },
+  statusDotReady: { backgroundColor: enterpriseColors.primary },
+  statusText: { fontSize: 12, lineHeight: 18, color: enterpriseColors.gray700 },
+  pickupSection: { marginTop: 24 },
+  form: { padding: 16 },
+  fieldLabel: { fontSize: 13, lineHeight: 19, fontWeight: '500', color: enterpriseColors.gray900, marginBottom: 7 },
+  gpsButton: { minHeight: 44, paddingVertical: 10, paddingHorizontal: 12, flexDirection: 'row', alignItems: 'center', gap: 9, borderWidth: 1, borderColor: 'rgba(45, 90, 39, 0.16)', borderRadius: 12, backgroundColor: enterpriseColors.tint },
+  gpsButtonLabel: { flex: 1, fontSize: 14, lineHeight: 20, fontWeight: '500', color: enterpriseColors.primary },
+  gpsValue: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 9 },
+  fieldHint: { fontSize: 12, lineHeight: 18, color: enterpriseColors.gray600, marginTop: 7 },
+  manualToggle: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' },
+  link: { fontSize: 13, lineHeight: 19, fontWeight: '500', color: enterpriseColors.primary },
+  textAction: { minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 4 },
+  coordinateRow: { flexDirection: 'row', gap: 10, marginTop: 2, marginBottom: 12 },
+  input: { borderWidth: 1, borderColor: 'rgba(17, 24, 39, 0.12)', borderRadius: 12, minHeight: 44, paddingHorizontal: 12, paddingVertical: 11, fontSize: 14, lineHeight: 21, color: enterpriseColors.gray900, backgroundColor: enterpriseColors.white },
+  addressField: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: enterpriseColors.border, paddingTop: 16, marginTop: 2 },
+  addressInput: { minHeight: 76, textAlignVertical: 'top' },
+  nextStep: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginTop: 16, paddingHorizontal: 2 },
+  nextStepText: { flex: 1, marginTop: 0 },
+  footer: { paddingTop: 12, paddingHorizontal: 20, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: enterpriseColors.border, backgroundColor: enterpriseColors.canvas },
+  submitButton: { minHeight: 50, borderRadius: 14, backgroundColor: enterpriseColors.primary, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 13, paddingHorizontal: 16 },
+  submitLabel: { fontSize: 15, lineHeight: 22, fontWeight: '600', color: enterpriseColors.white },
+  disabled: { opacity: 0.45 },
+  blockedHint: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4, marginBottom: 10 },
+  blockedHintText: { fontSize: 12.5, lineHeight: 17, color: enterpriseColors.gray700, textAlign: 'center' },
+  blockedHintCenter: { marginBottom: 10 },
+  empty: { paddingVertical: 20 },
+  body: { fontSize: 14, lineHeight: 21, color: enterpriseColors.gray700 },
 });

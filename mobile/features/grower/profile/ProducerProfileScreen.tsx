@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
-import { FileCheck, Settings, LogOut } from 'lucide-react-native';
+import { FileCheck, Settings, LogOut, ShoppingCart, RotateCcw } from 'lucide-react-native';
 import { GrowerHeroSheetScaffold, EnterpriseNavSection } from '../../../design-system';
 import { EnterprisePanel } from '../../../design-system/EnterprisePanel';
 import { GrowerHeroTopBar } from '../../../components/enterprise/GrowerHeroTopBar';
@@ -32,11 +32,22 @@ export default function ProducerProfileScreen() {
   const accountItems = useMemo(
     () => [
       {
+        key: 'buyer-orders',
+        title: t('producer.orders.menuTitle'),
+        subtitle: t('producer.orders.menuSubtitle'),
+        icon: ShoppingCart,
+        onPress: () => router.push('/(producer)/orders'),
+      },
+      {
         key: 'settings',
         title: t('producer.tabs.settings'),
         subtitle: t('producer.profileScreen.settingsSubtitle'),
         icon: Settings,
         onPress: () => router.push('/(producer)/(tabs)/settings'),
+      },
+      {
+        key: 'returns', title: t('returnFlow.title'), subtitle: t('returnFlow.menuSubtitle'), icon: RotateCcw,
+        onPress: () => router.push('/(producer)/returns'),
       },
       {
         key: 'compliance',

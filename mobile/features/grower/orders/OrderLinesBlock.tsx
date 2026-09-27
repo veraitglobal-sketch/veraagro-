@@ -18,7 +18,7 @@ export default function OrderLinesBlock({ order }: { order: Order }) {
         borderColor: theme.colors.border,
       }}
     >
-      <Text style={{ fontSize: 15, fontWeight: '400', color: theme.colors.text.primary, marginBottom: theme.spacing.sm, letterSpacing: 0.3 }}>
+      <Text style={{ fontSize: 13.5, fontWeight: '400', color: theme.colors.text.primary, marginBottom: theme.spacing.sm, letterSpacing: 0.3 }}>
         {t('producer.orders.product')}
       </Text>
       <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary, marginBottom: theme.spacing.xs }}>
@@ -34,8 +34,8 @@ export default function OrderLinesBlock({ order }: { order: Order }) {
         </Text>
       </View>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: theme.spacing.xs }}>
-        <Text style={{ fontSize: 15, fontWeight: '400', color: theme.colors.text.primary }}>{t('producer.orders.total')}</Text>
-        <Text style={{ fontSize: 15, fontWeight: '400', color: theme.colors.primary }}>
+        <Text style={{ fontSize: 13.5, fontWeight: '400', color: theme.colors.text.primary }}>{t('producer.orders.total')}</Text>
+        <Text style={{ fontSize: 13.5, fontWeight: '400', color: theme.colors.primary }}>
           {order.totalAmount.toLocaleString(dateLocale, { style: 'currency', currency: 'EUR' })}
         </Text>
       </View>

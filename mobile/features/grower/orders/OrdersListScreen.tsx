@@ -1,11 +1,13 @@
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import { useAppLocaleTag } from '../../../lib/date-locale';
-import { Package, Calendar, Euro } from 'lucide-react-native';
+import { Package, Calendar } from 'lucide-react-native';
 import EmptyState from '../../../components/EmptyState';
 import { theme } from '../../../lib/theme';
+import { growerUi } from '../../../lib/grower-ui';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { useOrdersListData } from './useOrdersListData';
@@ -35,17 +37,16 @@ export function OrdersListScreen() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <View style={{ flex: 1, backgroundColor: enterpriseColors.canvas }}>
       <BioVeraSubpageHeader title={t('navigation.orders')} left="back" />
 
       <View
         style={{
         paddingLeft: p.screenPaddingLeft,
         paddingRight: p.screenPaddingRight,
-        paddingVertical: theme.spacing.sm,
-        backgroundColor: theme.colors.background,
-        borderBottomWidth: 0.5,
-        borderBottomColor: 'rgba(0, 0, 0, 0.08)',
+        paddingTop: 2,
+        paddingBottom: 10,
+        backgroundColor: enterpriseColors.canvas,
       }}
       >
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -54,21 +55,9 @@ export function OrdersListScreen() {
               <TouchableOpacity
                 key={f.id}
                 onPress={() => data.setFilter(f.id)}
-                style={{
-                  paddingHorizontal: theme.spacing.md,
-                  paddingVertical: theme.spacing.sm,
-                  borderRadius: theme.borderRadius.sm,
-                  borderWidth: 0.5,
-                  borderColor: data.filter === f.id ? theme.colors.primary : 'rgba(0, 0, 0, 0.05)',
-                  backgroundColor: data.filter === f.id ? `${theme.colors.primary}10` : 'transparent',
-                }}
+                style={[growerUi.filterChip, data.filter === f.id && growerUi.filterChipOn]}
               >
-                <Text style={{
-                  fontSize: 14,
-                  fontWeight: '400',
-                  color: data.filter === f.id ? theme.colors.primary : theme.colors.text.secondary,
-                  letterSpacing: 0.3,
-                }}>
+                <Text style={[growerUi.filterChipText, data.filter === f.id && growerUi.filterChipTextOn]}>
                   {t(f.labelKey)}
                 </Text>
               </TouchableOpacity>
@@ -105,77 +94,47 @@ export function OrdersListScreen() {
             <EmptyState message={t('producer.orders.empty')} icon={Package} />
           ) : (
             <View style={{ gap: theme.spacing.sm }}>
-              {data.filteredOrders.map((order) => (
-                <TouchableOpacity
-                  key={order.id}
-                  onPress={() => router.push(`/(producer)/orders/${order.id}`)}
-                  activeOpacity={0.7}
-                  style={{
-                    backgroundColor: theme.colors.surface,
-                    borderRadius: theme.borderRadius.md,
-                    padding: theme.spacing.md,
-                    borderWidth: 0.5,
-                    borderColor: 'rgba(0, 0, 0, 0.05)',
-                  }}
-                >
-                  <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: theme.spacing.sm }}>
-                    <View style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: theme.borderRadius.sm,
-                      backgroundColor: `${data.getStatusColor(order.status)}15`,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginRight: theme.spacing.sm,
-                    }}>
-                      <Package size={20} color={data.getStatusColor(order.status)} strokeWidth={1} />
+              {data.filteredOrders.map((order) => {
+                const c = data.getStatusColor(order.status);
+                return (
+                  <TouchableOpacity
+                    key={order.id}
+                    onPress={() => router.push(`/(producer)/orders/${order.id}`)}
+                    activeOpacity={0.6}
+                    style={[enterpriseUi.inAppPanel, { padding: 14 }]}
+                    accessibilityRole="button"
+                  >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                      <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: `${c}18`, alignItems: 'center', justifyContent: 'center' }}>
+                        <Package size={18} color={c} strokeWidth={1.9} />
+                      </View>
+                      <View style={{ flex: 1, minWidth: 0 }}>
+                        <Text style={{ fontSize: 15, fontWeight: '600', letterSpacing: -0.25, color: enterpriseColors.gray900 }} numberOfLines={1}>
+                          {order.productName}
+                          <Text style={{ fontWeight: '500', color: enterpriseColors.gray600 }}>{`  ${order.quantity} ${order.unit}`}</Text>
+                        </Text>
+                        <Text style={{ fontSize: 11, color: enterpriseColors.gray600, fontFamily: 'Menlo', marginTop: 2 }} numberOfLines={1}>
+                          #{order.orderNumber || order.id.slice(0, 8)}
+                        </Text>
+                      </View>
+                      <View style={{ paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6, backgroundColor: `${c}18` }}>
+                        <Text style={{ fontSize: 11, fontWeight: '600', color: c }}>{data.getStatusLabel(order.status)}</Text>
+                      </View>
                     </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.primary, marginBottom: theme.spacing.xs, letterSpacing: 0.3 }}>
-                        #{order.orderNumber || order.id.slice(0, 8)}
-                      </Text>
-                      <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.secondary, letterSpacing: 0.2 }}>
-                        {order.productName}
-                      </Text>
-                      <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.secondary, marginTop: 2, letterSpacing: 0.2 }}>
-                        {order.quantity} {order.unit}
-                      </Text>
-                    </View>
-                    <View style={{
-                      paddingHorizontal: theme.spacing.sm,
-                      paddingVertical: theme.spacing.xs,
-                      borderRadius: theme.borderRadius.sm,
-                      backgroundColor: `${data.getStatusColor(order.status)}15`,
-                    }}>
-                      <Text style={{ fontSize: 13, fontWeight: '400', color: data.getStatusColor(order.status), letterSpacing: 0.3 }}>
-                        {data.getStatusLabel(order.status)}
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginTop: theme.spacing.xs,
-                    paddingTop: theme.spacing.xs,
-                    borderTopWidth: 0.5,
-                    borderTopColor: 'rgba(0, 0, 0, 0.05)',
-                  }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Euro size={14} color={theme.colors.text.secondary} strokeWidth={1} />
-                      <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.primary, marginLeft: 4, letterSpacing: 0.2 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, paddingTop: 10, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: enterpriseColors.gray200 }}>
+                      <Text style={{ fontSize: 16, fontWeight: '700', color: enterpriseColors.gray900, fontVariant: ['tabular-nums'] }}>
                         {order.totalAmount.toLocaleString(dateLocale, { style: 'currency', currency: 'EUR' })}
                       </Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                        <Calendar size={12} color={enterpriseColors.gray600} strokeWidth={1.9} />
+                        <Text style={{ fontSize: 12.5, color: enterpriseColors.gray600, fontVariant: ['tabular-nums'] }}>
+                          {new Date(order.createdAt).toLocaleDateString(dateLocale)}
+                        </Text>
+                      </View>
                     </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Calendar size={11} color={theme.colors.text.secondary} strokeWidth={1} />
-                      <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary, marginLeft: 4, letterSpacing: 0.2 }}>
-                        {new Date(order.createdAt).toLocaleDateString(dateLocale)}
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              ))}
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           )}
         </View>

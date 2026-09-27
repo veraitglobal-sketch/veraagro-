@@ -92,13 +92,13 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     flex: 1,
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '600',
     color: enterpriseColors.gray900,
   },
   heroBody: {
     fontSize: 14,
-    lineHeight: 21,
+    lineHeight: 19,
     color: enterpriseColors.gray600,
     paddingHorizontal: 16,
     paddingTop: 10,
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: enterpriseColors.primary,
   },
   primaryBtnText: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '600',
     color: enterpriseColors.white,
   },
@@ -134,23 +134,24 @@ const styles = StyleSheet.create({
     backgroundColor: enterpriseColors.white,
   },
   secondaryBtnText: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '600',
     color: enterpriseColors.primary,
   },
   faqCard: {
     ...growerUi.card,
-    padding: 16,
+    padding: 14,
+    marginBottom: 0,
   },
   faqTitle: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '600',
     color: enterpriseColors.gray900,
-    marginBottom: 8,
+    marginBottom: 4,
   },
   faqBody: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 13,
+    lineHeight: 18,
     color: enterpriseColors.gray600,
   },
 });

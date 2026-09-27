@@ -44,7 +44,7 @@ function CertRow({
   return (
     <View style={[enterpriseUi.inAppPanel, styles.card]}>
       <View style={styles.cardHeader}>
-        <Text style={enterpriseUi.navRowTitle}>{cert.title}</Text>
+        <Text style={[enterpriseUi.navRowTitle, styles.cardTitle]}>{cert.title}</Text>
         <View style={[growerStyles.statusPill, { backgroundColor: tone.bg }]}>
           {status === 'done' ? (
             <Check size={14} color={tone.text} strokeWidth={2} />
@@ -59,12 +59,13 @@ function CertRow({
       ) : null}
       {status !== 'done' ? (
         <TouchableOpacity
-          style={[enterpriseUi.authBtnPrimary, styles.uploadBtn]}
+          style={styles.uploadBtn}
           onPress={onUpload}
-          activeOpacity={0.88}
+          activeOpacity={0.7}
+          accessibilityRole="button"
         >
-          <Camera size={18} color={enterpriseColors.white} strokeWidth={1.5} />
-          <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.certifications.sendPhoto')}</Text>
+          <Camera size={16} color={enterpriseColors.primary} strokeWidth={1.9} />
+          <Text style={styles.uploadText}>{t('producer.certifications.sendPhoto')}</Text>
         </TouchableOpacity>
       ) : null}
     </View>
@@ -178,12 +179,16 @@ export default function CertificationsScreen() {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   list: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingTop: 8,
   },
   card: {
-    padding: 16,
+    padding: 14,
     marginBottom: 10,
+  },
+  cardTitle: {
+    flex: 1,
+    minWidth: 0,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -192,15 +197,24 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   cardDesc: {
-    marginTop: 6,
+    marginTop: 2,
   },
   uploadBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    minHeight: 48,
-    marginTop: 14,
+    minHeight: 40,
+    marginTop: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(45, 90, 39, 0.25)',
+    backgroundColor: 'rgba(45, 90, 39, 0.05)',
+  },
+  uploadText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: enterpriseColors.primary,
   },
   pendingWrap: {
     position: 'absolute',

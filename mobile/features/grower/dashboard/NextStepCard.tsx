@@ -165,12 +165,12 @@ export default function NextStepCard(props: NextStepCardProps) {
 const styles = StyleSheet.create({
   panel: {
     ...growerSheetCardStyle({ marginBottom: 18 }),
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingHorizontal: 18,
+    paddingVertical: 18,
   },
   headline: {
-    fontSize: 23,
-    fontWeight: '400',
+    fontSize: 20,
+    fontWeight: '600',
     color: growerSheet.title,
     letterSpacing: -0.5,
     lineHeight: 28,
@@ -185,8 +185,8 @@ const styles = StyleSheet.create({
     lineHeight: 19,
   },
   cta: {
-    marginTop: 22,
-    minHeight: 52,
+    marginTop: 18,
+    minHeight: 50,
     justifyContent: 'center',
   },
   ctaText: {

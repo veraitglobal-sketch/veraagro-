@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { enterpriseColors, enterpriseUi } from '../../lib/enterprise-ui';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from '@react-navigation/native';
@@ -9,6 +10,7 @@ import {
   Truck,
   Users,
   ArrowLeftRight,
+  RotateCcw,
   FileSignature,
   Bell,
 } from 'lucide-react-native';
@@ -110,34 +112,28 @@ export default function LogisticsHubScreen() {
       }
     >
       <TabRootBody>
-        <View
-          style={{
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            gap: 10,
-            marginBottom: 20,
-          }}
-        >
+        <View style={[enterpriseUi.inAppPanel, { flexDirection: 'row', marginBottom: 16, paddingVertical: 14 }]}>
           {[
             { label: t('logistics.hub.metricPending'), value: pendingCount },
             { label: t('logistics.hub.metricActive'), value: activeCount },
             { label: t('logistics.hub.metricFrigoFree'), value: availableVehicles },
-          ].map((chip) => (
+          ].map((chip, index) => (
             <View
               key={chip.label}
               style={{
                 flex: 1,
-                minWidth: '28%',
-                paddingVertical: 12,
-                paddingHorizontal: 10,
-                borderRadius: 12,
-                borderWidth: 0.5,
-                borderColor: 'rgba(0,0,0,0.08)',
-                backgroundColor: '#fff',
+                alignItems: 'center',
+                paddingHorizontal: 6,
+                borderLeftWidth: index > 0 ? StyleSheet.hairlineWidth : 0,
+                borderLeftColor: enterpriseColors.gray200,
               }}
             >
-              <Text style={{ fontSize: 20, fontWeight: '600', color: '#2D5A27' }}>{chip.value}</Text>
-              <Text style={{ fontSize: 14, color: '#64748b', marginTop: 4 }}>{chip.label}</Text>
+              <Text style={{ fontSize: 12, fontWeight: '500', color: enterpriseColors.gray600, textAlign: 'center' }} numberOfLines={2}>
+                {chip.label}
+              </Text>
+              <Text style={{ fontSize: 22, fontWeight: '600', letterSpacing: -0.6, color: chip.value > 0 ? enterpriseColors.primary : enterpriseColors.gray900, marginTop: 4, fontVariant: ['tabular-nums'] }}>
+                {chip.value}
+              </Text>
             </View>
           ))}
         </View>
@@ -194,6 +190,10 @@ export default function LogisticsHubScreen() {
               subtitle: t('logistics.hub.loadingDesc'),
               icon: ArrowLeftRight,
               onPress: () => router.push('/(logistics)/handover-loading'),
+            },
+            {
+              key: 'returns', title: t('returnFlow.title'), subtitle: t('returnFlow.menuSubtitle'), icon: RotateCcw,
+              onPress: () => router.push('/(logistics)/returns'),
             },
             {
               key: 'receiver',

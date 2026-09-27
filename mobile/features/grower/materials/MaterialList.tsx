@@ -118,15 +118,15 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   loadingText: {
-    fontSize: 15,
+    fontSize: 13.5,
     color: enterpriseColors.gray600,
   },
   emptyText: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '400',
     color: enterpriseColors.gray600,
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 19,
   },
   metaRow: {
     flexDirection: 'row',
@@ -165,11 +165,11 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   rowTitle: {
-    fontSize: 16,
+    fontSize: 14.5,
     fontWeight: '600',
     color: enterpriseColors.gray900,
     letterSpacing: -0.25,
-    lineHeight: 21,
+    lineHeight: 19,
   },
   rowMeta: {
     fontSize: 14,

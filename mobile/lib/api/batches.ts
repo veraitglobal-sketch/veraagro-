@@ -1,7 +1,7 @@
 import axios from 'axios';
 import api from './client';
 import { API_URL } from '../api-url';
-import { axiosResponseStatus, isLikelyNetworkError } from '../api-error';
+import { axiosResponseStatus } from '../api-error';
 import type {
   BatchAvailability,
   QualityEntry,
@@ -23,25 +23,22 @@ export const batchesAPI = {
     }
   },
   getAll: async (estateId?: string): Promise<any[]> => {
-    try {
-      const params = estateId ? { estateId } : {};
-      const response = await api.get('/batches', { params });
-      return response.data || [];
-    } catch (error: unknown) {
-      if (isLikelyNetworkError(error)) {
-        console.warn('Backend not available, returning empty batches list');
-        return [];
-      }
-      throw error;
-    }
+    const params = estateId ? { estateId } : {};
+    const response = await api.get('/batches', { params });
+    return Array.isArray(response.data) ? response.data : [];
   },
   getOne: async (batchId: string): Promise<any> => {
     const response = await api.get(`/batches/${batchId}/traceability`);
     return response.data;
   },
+  getWorkflow: async (batchId: string): Promise<BatchWorkflowContext> => {
+    const response = await api.get(`/batches/${encodeURIComponent(batchId)}/workflow`);
+    return response.data;
+  },
   create: async (data: {
     estateId: string;
     parcelId?: string;
+    harvestAnnouncementId?: string;
     productName: string;
     quantity: number;
     unit: string;
@@ -224,3 +221,8 @@ export const packageBadgesAPI = {
     return data;
   },
 };
+
+export interface BatchWorkflowContext {
+  harvestPlan: { id: string; parcelId?: string; sourcePlantingId?: string | null; cropType: string; estimatedDate: string; status: string } | null;
+  mission: { id: string; missionNumber: string; status: string; batchId: string | null } | null;
+}

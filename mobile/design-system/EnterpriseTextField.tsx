@@ -13,7 +13,6 @@ import { Eye, EyeOff } from 'lucide-react-native';
 import {
   dsColors,
   dsTypography,
-  ds,
   inputContainerStyle,
   inputHeight,
 } from './theme';
@@ -68,7 +67,7 @@ export function EnterpriseTextField({
           {
             minHeight: h,
             paddingVertical: size === 'farmer' ? 16 : 14,
-            fontSize: size === 'farmer' ? 17 : ds.type.bodyLarge,
+            fontSize: size === 'farmer' ? 16 : 15,
             color: dsColors.gray900,
             opacity: editable ? 1 : 0.55,
           },
@@ -175,8 +174,8 @@ const styles = {
   passwordInput: {
     flex: 1,
     paddingHorizontal: 14,
-    paddingVertical: 14,
-    fontSize: ds.type.bodyLarge,
+    paddingVertical: 12,
+    fontSize: 15,
     color: dsColors.gray900,
   },
   eyeBtn: {

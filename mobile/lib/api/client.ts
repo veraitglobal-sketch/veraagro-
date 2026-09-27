@@ -44,6 +44,7 @@ api.interceptors.response.use(
     const status = error.response?.status;
     const reqUrl = error.config?.url;
     if (status === 401 && !isAuthNegotiationUrl(reqUrl)) {
+      if (__DEV__) console.warn('[auth] 401 → logout, from', error.config?.method, reqUrl);
       notifyAuthUnauthorized();
     }
     return Promise.reject(error);

@@ -5,6 +5,7 @@ import type { GrowerHubConfig } from '../../../../design-system/GrowerHubScreen'
 export const fieldHubConfig: GrowerHubConfig = {
   titleKey: 'producer.hubs.field.screenTitle',
   subtitleKey: 'producer.hubs.field.screenSubtitle',
+  numbered: true,
   steps: [
     {
       key: 'estates',

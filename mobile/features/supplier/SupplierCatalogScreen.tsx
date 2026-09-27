@@ -12,6 +12,8 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { formatEur } from '../../lib/format-money';
+import { useAppLocaleTag } from '../../lib/date-locale';
 import { useRouter, type Href } from 'expo-router';
 import { Plus, Pencil, Trash2, ImagePlus, Eye, Package } from 'lucide-react-native';
 import { useAuth } from '../../hooks/useAuth';
@@ -42,6 +44,7 @@ const UNITS = ['bag', 'kg', 'l', 'pcs', 'box', 'roll'];
 
 export default function SupplierCatalogScreen() {
   const { t } = useTranslation();
+  const locale = useAppLocaleTag();
   const router = useRouter();
   const { user } = useAuth();
   const [items, setItems] = useState<CatalogItem[]>([]);
@@ -283,7 +286,7 @@ export default function SupplierCatalogScreen() {
                   ) : null}
                   <Text style={styles.meta}>
                     {it.unit}
-                    {it.listPrice != null ? ` · €${it.listPrice.toFixed(2)}` : ''}
+                    {it.listPrice != null ? ` · ${formatEur(it.listPrice, locale)}` : ''}
                     {it.sku ? ` · ${it.sku}` : ''}
                   </Text>
                 </View>
@@ -435,7 +438,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   previewBtnText: {
-    fontSize: 16,
+    fontSize: 14.5,
     fontWeight: '500',
     color: enterpriseColors.primary,
   },
@@ -452,8 +455,8 @@ const styles = StyleSheet.create({
     gap: 6,
     backgroundColor: enterpriseColors.primary,
     paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 10,
+    height: 36,
+    borderRadius: 18,
   },
   addChipText: {
     color: enterpriseColors.white,
@@ -515,7 +518,7 @@ const styles = StyleSheet.create({
     minHeight: 44,
   },
   iconBtnText: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '500',
     color: enterpriseColors.primary,
   },
@@ -524,21 +527,22 @@ const styles = StyleSheet.create({
     backgroundColor: enterpriseColors.canvas,
   },
   modalScroll: {
-    padding: 20,
+    padding: 16,
     paddingBottom: 40,
   },
   modalTitle: {
-    fontSize: 22,
-    fontWeight: '400',
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: -0.4,
     color: enterpriseColors.gray900,
     marginBottom: 16,
   },
   photoBox: {
     marginBottom: 16,
-    borderRadius: 12,
+    borderRadius: 16,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
+    borderWidth: 1.5,
+    borderColor: 'rgba(45, 90, 39, 0.3)',
     borderStyle: 'dashed',
   },
   photoPreview: {
@@ -553,7 +557,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   photoHint: {
-    fontSize: 15,
+    fontSize: 14,
     color: enterpriseColors.primary,
     fontWeight: '500',
   },
@@ -579,7 +583,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   cancelText: {
-    fontSize: 16,
+    fontSize: 15,
     color: enterpriseColors.gray600,
     fontWeight: '500',
   },

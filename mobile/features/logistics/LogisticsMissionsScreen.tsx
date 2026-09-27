@@ -6,12 +6,15 @@ import {
   RefreshControl,
   ActivityIndicator,
   Alert,
+  StyleSheet,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useCallback, useState, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { Truck, Calendar, Clock, Bell } from 'lucide-react-native';
+import { Truck, Calendar, Clock, Bell, MapPin } from 'lucide-react-native';
+import { enterpriseColors, enterpriseUi } from '../../lib/enterprise-ui';
+import { growerUi } from '../../lib/grower-ui';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { missionsAPI, Mission, notificationsAPI } from '../../lib/api';
@@ -137,257 +140,143 @@ export default function LogisticsMissionsScreen() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <View style={{ flex: 1, backgroundColor: enterpriseColors.canvas }}>
       <GrowerTabHeader
         title={t('logistics.missionsTitle')}
         subtitle={t('logistics.missionsSubtitle')}
         right={notifButton}
       />
 
-      <View
-        style={{
-          paddingLeft: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          paddingVertical: theme.spacing.sm,
-          backgroundColor: theme.colors.background,
-          borderBottomWidth: 0.5,
-          borderBottomColor: 'rgba(0, 0, 0, 0.08)',
-        }}
-      >
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
-            {(
-              [
-                { id: 'all' as const, label: t('logistics.filterAll') },
-                { id: 'PENDING' as const, label: t('logistics.filterPending') },
-                { id: 'ASSIGNED' as const, label: t('logistics.filterAssigned') },
-                { id: 'IN_TRANSIT' as const, label: t('logistics.filterInTransit') },
-                { id: 'COMPLETED' as const, label: t('logistics.filterCompleted') },
-              ] as const
-            ).map((f) => (
+      <View style={styles.filterBar}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
+          {(
+            [
+              { id: 'all' as const, label: t('logistics.filterAll') },
+              { id: 'PENDING' as const, label: t('logistics.filterPending') },
+              { id: 'ASSIGNED' as const, label: t('logistics.filterAssigned') },
+              { id: 'IN_TRANSIT' as const, label: t('logistics.filterInTransit') },
+              { id: 'COMPLETED' as const, label: t('logistics.filterCompleted') },
+            ] as const
+          ).map((f) => {
+            const on = filter === f.id;
+            return (
               <TouchableOpacity
                 key={f.id}
                 onPress={() => setFilter(f.id)}
                 activeOpacity={0.7}
-                style={{
-                  paddingHorizontal: theme.spacing.md,
-                  paddingVertical: theme.spacing.sm,
-                  borderRadius: theme.borderRadius.sm,
-                  borderWidth: 0.5,
-                  borderColor: filter === f.id ? theme.colors.primary : 'rgba(0, 0, 0, 0.05)',
-                  backgroundColor: filter === f.id ? `${theme.colors.primary}10` : 'transparent',
-                }}
+                style={[growerUi.filterChip, on && growerUi.filterChipOn]}
               >
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '400',
-                    color: filter === f.id ? theme.colors.primary : theme.colors.text.secondary,
-                    letterSpacing: 0.3,
-                  }}
-                >
-                  {f.label}
-                </Text>
+                <Text style={[growerUi.filterChipText, on && growerUi.filterChipTextOn]}>{f.label}</Text>
               </TouchableOpacity>
-            ))}
-          </View>
+            );
+          })}
         </ScrollView>
       </View>
 
       <ScrollView
         style={{ flex: 1 }}
+        contentContainerStyle={[styles.list, { paddingBottom: Math.max(p.bottomInset, 16) + 16 }]}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={theme.colors.primary}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={enterpriseColors.primary} />
         }
       >
-        <View
-          style={{
-            paddingTop: theme.spacing.md,
-            paddingLeft: p.screenPaddingLeft,
-            paddingRight: p.screenPaddingRight,
-            paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
-          }}
-        >
-          {loading ? (
-            <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
-              <Text
-                style={{
-                  color: theme.colors.text.secondary,
-                  fontSize: 14,
-                  fontWeight: '400',
-                  letterSpacing: 0.3,
-                }}
-              >
-                {t('producer.missions.loading')}
-              </Text>
-            </View>
-          ) : filteredMissions.length === 0 ? (
-            <EmptyState message={t('logistics.emptyMissions')} icon={Truck} />
-          ) : (
-            <View style={{ gap: theme.spacing.sm }}>
-              {filteredMissions.map((mission) => {
-                const c = getMissionStatusColor(mission.status);
-                return (
-                  <View
-                    key={mission.id}
-                    style={{
-                      backgroundColor: theme.colors.surface,
-                      borderRadius: theme.borderRadius.md,
-                      padding: theme.spacing.md,
-                      borderWidth: 0.5,
-                      borderColor: 'rgba(0, 0, 0, 0.05)',
-                    }}
-                  >
-                    <TouchableOpacity
-                      onPress={() => router.push(`/(logistics)/mission/${mission.id}`)}
-                      activeOpacity={0.7}
-                    >
-                    <View
-                      style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: theme.spacing.sm }}
-                    >
-                      <View
-                        style={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: theme.borderRadius.sm,
-                          backgroundColor: `${c}15`,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          marginRight: theme.spacing.sm,
-                        }}
-                      >
-                        <Truck size={20} color={c} strokeWidth={1} />
-                      </View>
-                      <View style={{ flex: 1 }}>
-                        <Text
-                          style={{
-                            fontSize: 14,
-                            fontWeight: '400',
-                            color: theme.colors.text.primary,
-                            marginBottom: theme.spacing.xs,
-                            letterSpacing: 0.3,
-                          }}
-                        >
-                          {mission.missionNumber ||
-                            t('producer.missions.missionPrefix', { id: mission.id.slice(0, 8) })}
-                        </Text>
-                        {mission.batch ? (
-                          <Text
-                            style={{
-                              fontSize: 14,
-                              fontWeight: '400',
-                              color: theme.colors.text.secondary,
-                              letterSpacing: 0.2,
-                            }}
-                          >
-                            {t('producer.missionsCreate.batchLabel')}:{' '}
-                            {mission.batch.batchId || mission.batchId}
-                          </Text>
-                        ) : null}
-                      </View>
-                      <View
-                        style={{
-                          paddingHorizontal: theme.spacing.sm,
-                          paddingVertical: theme.spacing.xs,
-                          borderRadius: theme.borderRadius.sm,
-                          backgroundColor: `${c}15`,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 13,
-                            fontWeight: '400',
-                            color: c,
-                            letterSpacing: 0.3,
-                          }}
-                        >
-                          {getMissionStatusLabelLocalized(mission.status, t)}
-                        </Text>
-                      </View>
+        {loading ? (
+          <ActivityIndicator color={enterpriseColors.primary} style={{ marginTop: 32 }} />
+        ) : filteredMissions.length === 0 ? (
+          <EmptyState message={t('logistics.emptyMissions')} icon={Truck} />
+        ) : (
+          filteredMissions.map((mission) => {
+            const c = getMissionStatusColor(mission.status);
+            const lotCode = mission.batch?.batchId?.trim();
+            const product = mission.batch?.productName?.trim();
+            const pickup = (mission as { pickupAddress?: string | null }).pickupAddress?.trim();
+            const claimable = canClaimLogisticsMission(mission);
+            return (
+              <View key={mission.id} style={styles.card}>
+                <TouchableOpacity
+                  onPress={() => router.push(`/(logistics)/mission/${mission.id}`)}
+                  activeOpacity={0.6}
+                  accessibilityRole="button"
+                >
+                  <View style={styles.cardHead}>
+                    <View style={[styles.icon, { backgroundColor: `${c}18` }]}>
+                      <Truck size={18} color={c} strokeWidth={1.9} />
                     </View>
-
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: theme.spacing.md,
-                        marginTop: theme.spacing.xs,
-                      }}
-                    >
-                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Calendar size={11} color={theme.colors.text.secondary} strokeWidth={1} />
-                        <Text
-                          style={{
-                            fontSize: 13,
-                            fontWeight: '400',
-                            color: theme.colors.text.secondary,
-                            marginLeft: 4,
-                            letterSpacing: 0.2,
-                          }}
-                        >
-                          {new Date(mission.createdAt).toLocaleDateString(dateLocale)}
-                        </Text>
-                      </View>
-                      {mission.updatedAt ? (
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                          <Clock size={11} color={theme.colors.text.secondary} strokeWidth={1} />
-                          <Text
-                            style={{
-                              fontSize: 13,
-                              fontWeight: '400',
-                              color: theme.colors.text.secondary,
-                              marginLeft: 4,
-                              letterSpacing: 0.2,
-                            }}
-                          >
-                            {new Date(mission.updatedAt).toLocaleDateString(dateLocale)}
-                          </Text>
-                        </View>
-                      ) : null}
+                    <View style={{ flex: 1, minWidth: 0 }}>
+                      <Text style={styles.title} numberOfLines={1}>
+                        {product || mission.missionNumber || t('producer.missions.missionPrefix', { id: mission.id.slice(0, 8) })}
+                      </Text>
+                      <Text style={styles.code} numberOfLines={1}>
+                        {[mission.missionNumber, lotCode].filter(Boolean).join(' · ')}
+                      </Text>
                     </View>
-                    </TouchableOpacity>
-                    {canClaimLogisticsMission(mission) ? (
-                      <TouchableOpacity
-                        onPress={() => void claimMission(mission.id)}
-                        disabled={claimingId === mission.id}
-                        activeOpacity={0.8}
-                        style={{
-                          marginTop: theme.spacing.sm,
-                          minHeight: 44,
-                          borderRadius: theme.borderRadius.sm,
-                          backgroundColor: theme.colors.primary,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          paddingHorizontal: theme.spacing.md,
-                        }}
-                      >
-                        {claimingId === mission.id ? (
-                          <ActivityIndicator color="#fff" />
-                        ) : (
-                          <Text
-                            style={{
-                              fontSize: 14,
-                              fontWeight: '500',
-                              color: '#fff',
-                              letterSpacing: 0.3,
-                            }}
-                          >
-                            {t('logistics.claim.cta')}
-                          </Text>
-                        )}
-                      </TouchableOpacity>
+                    <View style={[styles.pill, { backgroundColor: `${c}18` }]}>
+                      <Text style={[styles.pillText, { color: c }]} numberOfLines={1}>
+                        {getMissionStatusLabelLocalized(mission.status, t)}
+                      </Text>
+                    </View>
+                  </View>
+                  {pickup ? (
+                    <View style={styles.metaRow}>
+                      <MapPin size={13} color={enterpriseColors.gray600} strokeWidth={1.9} />
+                      <Text style={styles.meta} numberOfLines={1}>{pickup}</Text>
+                    </View>
+                  ) : null}
+                  <View style={styles.metaRow}>
+                    <Calendar size={13} color={enterpriseColors.gray600} strokeWidth={1.9} />
+                    <Text style={styles.meta}>{new Date(mission.createdAt).toLocaleDateString(dateLocale)}</Text>
+                    {mission.updatedAt ? (
+                      <>
+                        <Clock size={13} color={enterpriseColors.gray600} strokeWidth={1.9} style={{ marginLeft: 10 }} />
+                        <Text style={styles.meta}>{new Date(mission.updatedAt).toLocaleDateString(dateLocale)}</Text>
+                      </>
                     ) : null}
                   </View>
-                );
-              })}
-            </View>
-          )}
-        </View>
+                </TouchableOpacity>
+                {claimable ? (
+                  <TouchableOpacity
+                    onPress={() => void claimMission(mission.id)}
+                    disabled={claimingId === mission.id}
+                    activeOpacity={0.8}
+                    style={[styles.claim, claimingId === mission.id && { opacity: 0.6 }]}
+                    accessibilityRole="button"
+                  >
+                    {claimingId === mission.id ? (
+                      <ActivityIndicator color="#fff" />
+                    ) : (
+                      <Text style={styles.claimText}>{t('logistics.claim.cta')}</Text>
+                    )}
+                  </TouchableOpacity>
+                ) : null}
+              </View>
+            );
+          })
+        )}
       </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  filterBar: { backgroundColor: enterpriseColors.canvas, paddingBottom: 10 },
+  filterRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingTop: 2 },
+  list: { paddingHorizontal: 16, paddingTop: 4, gap: 10 },
+  card: { ...enterpriseUi.inAppPanel, padding: 14 },
+  cardHead: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  icon: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  title: { fontSize: 15, fontWeight: '600', letterSpacing: -0.25, color: enterpriseColors.gray900 },
+  code: { fontSize: 11, color: enterpriseColors.gray600, fontFamily: 'Menlo', marginTop: 2 },
+  pill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6, maxWidth: 130 },
+  pillText: { fontSize: 11, fontWeight: '600' },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 8, paddingLeft: 52 },
+  meta: { fontSize: 12.5, color: enterpriseColors.gray600, flexShrink: 1, fontVariant: ['tabular-nums'] },
+  claim: {
+    marginTop: 12,
+    minHeight: 44,
+    borderRadius: 12,
+    backgroundColor: enterpriseColors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  claimText: { fontSize: 14.5, fontWeight: '600', color: '#fff' },
+});

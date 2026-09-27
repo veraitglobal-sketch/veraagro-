@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 import { View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import { BackButton } from '../BackButton';
 import { dsStyles } from '../theme';
 import { EnterprisePageTitle } from '../EnterprisePageTitle';
 import { EnterpriseNavSection, type EnterpriseNavItem } from '../EnterpriseNavSection';
@@ -12,7 +14,7 @@ type Props = {
   statusLine?: string;
   items: EnterpriseNavItem[];
   footer?: ReactNode;
-  /** Tighter title block — sub-menus with few rows. */
+  /** @deprecated Title block is always compact now. */
   compact?: boolean;
 };
 
@@ -26,9 +28,9 @@ export function GrowerMenuScaffold({
   statusLine,
   items,
   footer,
-  compact = true,
 }: Props) {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
 
   return (
     <View style={[dsStyles.canvas, { flex: 1 }]}>
@@ -40,17 +42,24 @@ export function GrowerMenuScaffold({
       <View
         style={{
           flex: 1,
-          paddingTop: Math.max(insets.top, 16) + 8,
-          paddingHorizontal: 20,
+          paddingTop: Math.max(insets.top, 16) + 4,
+          paddingHorizontal: 16,
           paddingBottom: Math.max(insets.bottom, 16) + 8,
         }}
       >
-        <EnterprisePageTitle
-          title={title}
-          description={description}
-          statusLine={statusLine}
-          style={compact ? { marginBottom: 12 } : undefined}
-        />
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 16 }}>
+          <BackButton
+            style={{ marginTop: 1 }}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(producer)/(tabs)/profile'))}
+          />
+          <EnterprisePageTitle
+            title={title}
+            description={description}
+            statusLine={statusLine}
+            style={{ flex: 1, marginBottom: 0, paddingTop: 5 }}
+            compact
+          />
+        </View>
         <EnterpriseNavSection items={items} />
         {footer}
       </View>

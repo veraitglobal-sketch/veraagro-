@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import type { TFunction } from 'i18next';
 import { missionsAPI, Mission } from '../../../lib/api';
 import {
@@ -7,6 +8,7 @@ import {
 } from '../../../lib/mission-status';
 
 export function useMissionDetailData(missionId: string | undefined) {
+  const generation = useRef(0);
   const [mission, setMission] = useState<Mission | null>(null);
   const [journeyMap, setJourneyMap] = useState<any>(null);
   const [consumerFeedback, setConsumerFeedback] = useState<any>(null);
@@ -14,13 +16,15 @@ export function useMissionDetailData(missionId: string | undefined) {
   const [loading, setLoading] = useState(true);
 
   const loadMissionData = useCallback(async () => {
-    if (!missionId) return;
+    const current = ++generation.current;
+    if (!missionId) { setMission(null); setLoading(false); return; }
     try {
       setLoading(true);
       const [missionData, mapData] = await Promise.all([
         missionsAPI.getOne(missionId),
         missionsAPI.getJourneyMap(missionId).catch(() => null),
       ]);
+      if (current !== generation.current) return;
       setMission(missionData);
       setJourneyMap(mapData);
       if (missionData.batchId) {
@@ -29,6 +33,7 @@ export function useMissionDetailData(missionId: string | undefined) {
             missionsAPI.getConsumerFeedback(missionData.batchId).catch(() => null),
             missionsAPI.getFinancialStatus(missionData.batchId).catch(() => null),
           ]);
+          if (current !== generation.current) return;
           setConsumerFeedback(feedback);
           setFinancialStatus(financial);
         } catch {
@@ -38,16 +43,18 @@ export function useMissionDetailData(missionId: string | undefined) {
     } catch (error) {
       console.error('Error loading mission:', error);
     } finally {
-      setLoading(false);
+      if (current === generation.current) setLoading(false);
     }
   }, [missionId]);
 
-  useEffect(() => {
-    if (missionId) loadMissionData();
-  }, [missionId, loadMissionData]);
+  useFocusEffect(useCallback(() => {
+    setMission(null); setJourneyMap(null); setConsumerFeedback(null); setFinancialStatus(null);
+    void loadMissionData();
+    return () => { generation.current++; };
+  }, [loadMissionData]));
 
   return {
-    mission,
+    mission: mission?.id === missionId ? mission : null,
     journeyMap,
     consumerFeedback,
     financialStatus,

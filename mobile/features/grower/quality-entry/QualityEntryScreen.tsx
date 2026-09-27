@@ -7,6 +7,7 @@ import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { useQualityEntryData } from './useQualityEntryData';
 import { BatchSelector } from './BatchSelector';
 import { QualityForm } from './QualityForm';
+import { BatchWorkflowActions } from '../batches/BatchWorkflowActions';
 
 /**
  * Quality entry screen: batch selection + form for quality score and notes.
@@ -53,6 +54,9 @@ export function QualityEntryScreen() {
             paddingRight: p.screenPaddingRight,
           }}
         >
+          {data.missingRequestedBatch && !data.loading ? (
+            <Text style={{ color: theme.colors.text.secondary }}>{t('batchWorkflow.unavailable')}</Text>
+          ) : null}
           <BatchSelector
             filteredBatches={data.filteredBatches}
             parcelFilterOptions={data.parcelFilterOptions}
@@ -75,6 +79,14 @@ export function QualityEntryScreen() {
             getStatusColor={data.getStatusColor}
             getStatusLabel={data.getStatusLabel}
           />
+          {data.selectedBatchId && data.qualityError ? (
+            <TouchableOpacity onPress={() => void data.loadQualityEntry()} accessibilityRole="button">
+              <Text style={{ color: theme.colors.error }}>{t('batchWorkflow.qualityLoadFailed')} {t('common.tryAgain')}</Text>
+            </TouchableOpacity>
+          ) : null}
+          {data.qualityEntry && ['COMPLETED', 'VERIFIED'].includes(data.qualityEntry.status) ? (
+            <BatchWorkflowActions batchId={data.selectedBatchId} steps={['labels', 'compliance', 'detail']} />
+          ) : null}
         </View>
       </ScrollView>
     </View>

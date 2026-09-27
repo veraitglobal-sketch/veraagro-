@@ -68,6 +68,7 @@ export interface AiAssistantResponse {
 
 
 export interface CreateHarvestPlanBody {
+  sourcePlantingId?: string;
   parcelId: string;
   announcementType: 'HARVEST' | 'PLANTING';
   cropType: string;
@@ -142,6 +143,12 @@ export interface GrowthLog {
 
 
 export interface Order {
+  deliveries?: { id: string; deliveryNumber: string; status: string; buyerPickupConfirmedAt?: string | null; confirmedAt?: string | null } | null;
+  clientRequestId?: string | null;
+  checkoutReplay?: boolean;
+  stockReservation?: { status: string; quantity: number; unit: string } | null;
+  payments?: { status: string } | null;
+  shipmentTracking?: { missionNumber: string | null; missionStatus: string | null; events: Array<{ code: string; at: string }> };
   id: string;
   orderNumber: string;
   productName: string;
@@ -328,6 +335,7 @@ export type MissionBatchRef = {
 };
 
 export interface Mission {
+  delivery?: { id: string; status: string; deliveryNumber: string; digital_handovers?: { id: string; status: string } | null } | null;
   id: string;
   /** Human-readable, e.g. MISSION-2026-0001-AB12 */
   missionNumber?: string;
@@ -395,6 +403,7 @@ export interface RequiredCertification {
 
 
 export interface DigitalHandover {
+  revision?: number;
   id: string;
   deliveryId: string;
   driverId: string;
@@ -519,4 +528,3 @@ export interface FarmerProfileMeResponse {
   farmerQrCode?: string;
   farmerProfileUrl?: string;
 }
-

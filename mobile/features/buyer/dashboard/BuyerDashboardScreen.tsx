@@ -1,13 +1,14 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { QrCode, Package, Truck, Bell } from 'lucide-react-native';
+import { QrCode, Truck, Bell } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import ErrorMessage from '../../../components/ErrorMessage';
 import ProductPassport from '../../../components/ProductPassport';
 import ReservationModal from '../../../components/ReservationModal';
+import { tBuyerOrderStatus } from '../../../lib/buyer-order-status';
 import { useBuyerDashboardData } from './useBuyerDashboardData';
 import { ProductGrid } from './ProductGrid';
 import { QRScannerModal } from './QRScannerModal';
@@ -33,8 +34,8 @@ export default function BuyerDashboardScreen() {
   const filterLabels: Record<FilterStatus, string> = {
     all: t('buyer.dashboard.filterAll'),
     available_now: t('buyer.dashboard.filterAvailableNow'),
-    incoming: t('buyer.dashboard.filterIncoming'),
-    reservations: t('buyer.dashboard.filterReservations'),
+    incoming: t('buyer.dashboard.harvestSoon'),
+    reservations: t('buyer.dashboard.harvestLater'),
   };
 
   return (
@@ -97,107 +98,74 @@ export default function BuyerDashboardScreen() {
         </TouchableOpacity>
       </View>
 
-      <View
-        style={{
-          paddingVertical: theme.spacing.md,
-          borderBottomWidth: 0.5,
-          borderBottomColor: 'rgba(0, 0, 0, 0.05)',
-        }}
-      >
+      {data.estates.length > 0 ? (
+        <View style={{ paddingVertical: theme.spacing.sm }}>
+          <Text style={{ paddingLeft: p.screenPaddingLeft, marginBottom: theme.spacing.xs, color: theme.colors.text.secondary }}>
+            {t('buyer.dashboard.farms')}
+          </Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingLeft: p.screenPaddingLeft, paddingRight: p.screenPaddingRight, gap: theme.spacing.sm }}
+          >
+            {[{ id: null, name: t('buyer.dashboard.allFarms'), count: data.products.length }, ...data.estates].map((estate) => {
+              const selected = data.selectedEstateId === estate.id;
+              return (
+                <TouchableOpacity
+                  key={estate.id ?? 'all'}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected }}
+                  onPress={() => data.setSelectedEstateId(estate.id)}
+                  style={{
+                    padding: theme.spacing.sm,
+                    borderWidth: 1,
+                    borderColor: selected ? theme.colors.primary : theme.colors.border,
+                    backgroundColor: theme.colors.surface,
+                    borderRadius: 8,
+                  }}
+                >
+                  <Text style={{ color: selected ? theme.colors.primary : theme.colors.text.primary }}>{estate.name}</Text>
+                  <Text style={{ color: theme.colors.text.secondary, fontSize: 12 }}>{t('buyer.dashboard.offerCount', { count: estate.count })}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      ) : null}
+
+      <View style={{ borderBottomWidth: 0.5, borderBottomColor: 'rgba(0, 0, 0, 0.05)' }}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
             paddingLeft: p.screenPaddingLeft,
             paddingRight: p.screenPaddingRight,
-            gap: theme.spacing.md,
+            paddingVertical: theme.spacing.sm,
+            gap: theme.spacing.sm,
           }}
         >
-          {data.fieldStories.map((story) => (
-            <TouchableOpacity key={story.id} activeOpacity={0.7} style={{ alignItems: 'center', width: 88 }}>
-              <View
+          {(['all', 'available_now', 'incoming', 'reservations'] as FilterStatus[]).map((filter) => {
+            const isActive = data.activeFilter === filter;
+            return (
+              <TouchableOpacity
+                key={filter}
+                accessibilityRole="button"
+                accessibilityState={{ selected: isActive }}
+                onPress={() => data.setActiveFilter(filter)}
                 style={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: 32,
-                  borderWidth: 0.5,
-                  borderColor: 'rgba(0, 0, 0, 0.1)',
-                  backgroundColor: theme.colors.surface,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: theme.spacing.xs,
+                  paddingHorizontal: theme.spacing.sm,
+                  paddingVertical: theme.spacing.xs,
+                  borderBottomWidth: isActive ? 1 : 0,
+                  borderBottomColor: theme.colors.primary,
                 }}
               >
-                <Package size={24} color={theme.colors.text.secondary} strokeWidth={1} />
-              </View>
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: '400',
-                  color: theme.colors.text.secondary,
-                  textAlign: 'center',
-                  letterSpacing: 0.5,
-                  textTransform: 'uppercase',
-                }}
-              >
-                {story.farmerName}
-              </Text>
-              <Text
-                numberOfLines={2}
-                style={{
-                  fontSize: 13,
-                  fontWeight: '400',
-                  color: theme.colors.text.tertiary,
-                  textAlign: 'center',
-                  letterSpacing: 0.2,
-                  marginTop: 2,
-                  lineHeight: 12,
-                }}
-              >
-                {story.subtitle}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <Text style={{ fontSize: 14, color: isActive ? theme.colors.primary : theme.colors.text.secondary }}>
+                  {filterLabels[filter]}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
-      </View>
-
-      <View
-        style={{
-          flexDirection: 'row',
-          paddingLeft: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          paddingVertical: theme.spacing.sm,
-          borderBottomWidth: 0.5,
-          borderBottomColor: 'rgba(0, 0, 0, 0.05)',
-          gap: theme.spacing.md,
-        }}
-      >
-        {(['all', 'available_now', 'incoming', 'reservations'] as FilterStatus[]).map((filter) => {
-          const isActive = data.activeFilter === filter;
-          return (
-            <TouchableOpacity
-              key={filter}
-              onPress={() => data.setActiveFilter(filter)}
-              style={{
-                paddingHorizontal: theme.spacing.md,
-                paddingVertical: theme.spacing.xs,
-                borderBottomWidth: isActive ? 1 : 0,
-                borderBottomColor: theme.colors.primary,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: isActive ? '400' : '300',
-                  color: isActive ? theme.colors.primary : theme.colors.text.secondary,
-                  letterSpacing: 0.5,
-                }}
-              >
-                {filterLabels[filter]}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
       </View>
 
       {data.loading ? (
@@ -223,6 +191,8 @@ export default function BuyerDashboardScreen() {
       <TouchableOpacity
         onPress={() => void data.handleQRPress()}
         activeOpacity={0.8}
+        accessibilityRole="button"
+        accessibilityLabel={t('buyer.dashboard.scanCode')}
         style={{
           position: 'absolute',
           bottom: 60,
@@ -241,8 +211,11 @@ export default function BuyerDashboardScreen() {
         <QrCode size={28} color={theme.colors.primary} strokeWidth={1} />
       </TouchableOpacity>
 
-      {data.activeDelivery ? (
-        <View
+      {data.activeDelivery?.deliveries ? (
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={t('buyerOrderActions.openDelivery', { number: data.activeDelivery.orderNumber })}
+          onPress={() => router.push({ pathname: '/(buyer)/delivery/[id]', params: { id: data.activeDelivery!.deliveries!.id } })}
           style={{
             position: 'absolute',
             bottom: 0,
@@ -267,12 +240,9 @@ export default function BuyerDashboardScreen() {
               letterSpacing: 0.3,
             }}
           >
-            {t('buyer.dashboard.deliveryPulse', {
-              orderNumber: data.activeDelivery.orderNumber,
-              location: data.activeDelivery.location,
-            })}
+            {data.activeDelivery.orderNumber} · {tBuyerOrderStatus(t, data.activeDelivery.status)}
           </Text>
-        </View>
+        </TouchableOpacity>
       ) : null}
 
       {data.cameraPermission?.granted ? (
@@ -305,8 +275,9 @@ export default function BuyerDashboardScreen() {
           data.setShowReservationModal(false);
           data.setSelectedProduct(null);
         }}
-        onSuccess={() => {
-          void data.loadBatchAvailabilities(data.products);
+        onSuccess={(order) => {
+          void data.loadProducts();
+          router.push({ pathname: '/(buyer)/order/[id]', params: { id: order.id } });
         }}
       />
     </View>

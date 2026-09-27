@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useRouter, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { pickFromCamera, pickFromGallery } from '../../../lib/camera-picker';
 import { getCurrentGrowerPosition, isForegroundLocationGranted } from '../../../lib/grower-permissions';
@@ -72,6 +72,10 @@ export function historyActivityLabelKey(activity: string): string {
 export function useFieldLogData() {
   const { t } = useTranslation();
   const router = useRouter();
+  const route = useLocalSearchParams<{ parcelId?: string; plantingId?: string }>();
+  const requestedParcel = typeof route.parcelId === 'string' ? route.parcelId : '';
+  const requestedPlan = typeof route.plantingId === 'string' ? route.plantingId : '';
+  const plansRequest = useRef(0);
   const [activityType, setActivityType] = useState<ActivityType | ''>('');
   const [materialID, setMaterialID] = useState('');
   const [materialKind, setMaterialKind] = useState<MaterialKindForLog>('SEED');
@@ -86,8 +90,8 @@ export function useFieldLogData() {
   const [currentEstate, setCurrentEstate] = useState<Estate | null>(null);
   const [parcelsForGps, setParcelsForGps] = useState<Parcel[]>([]);
   const [plansLoading, setPlansLoading] = useState(false);
-  const [selectedParcelId, setSelectedParcelId] = useState('');
-  const [selectedHarvestPlanId, setSelectedHarvestPlanId] = useState('');
+  const [selectedParcelId, setSelectedParcelId] = useState(requestedParcel);
+  const [selectedHarvestPlanId, setSelectedHarvestPlanId] = useState(requestedPlan);
   const [parcelPlans, setParcelPlans] = useState<
     { id: string; label: string; announcementType: string; cropType: string }[]
   >([]);
@@ -102,7 +106,12 @@ export function useFieldLogData() {
   const [queueSyncBusy, setQueueSyncBusy] = useState(false);
 
   const locationRef = useRef<{ lat: number; lng: number; accuracy?: number } | null>(null);
-  const selectedParcelIdRef = useRef('');
+  const selectedParcelIdRef = useRef(requestedParcel);
+  useEffect(() => {
+    if (!requestedParcel) return;
+    setSelectedParcelId(requestedParcel);
+    setSelectedHarvestPlanId(requestedPlan);
+  }, [requestedParcel, requestedPlan]);
   useEffect(() => {
     locationRef.current = location;
   }, [location]);
@@ -202,11 +211,14 @@ export function useFieldLogData() {
   }, [selectedParcelId, approvedParcelOptions, parcelsByEstate]);
 
   const loadParcelPlans = useCallback(async () => {
+    const generation = ++plansRequest.current;
     if (!selectedParcelId) {
       setParcelPlans([]);
       setSelectedHarvestPlanId('');
+      setPlansLoading(false);
       return;
     }
+    setParcelPlans([]);
     setPlansLoading(true);
     try {
       const raw = await harvestAnnouncementsAPI.getMy();
@@ -230,21 +242,24 @@ export function useFieldLogData() {
           };
         },
       );
+      if (generation !== plansRequest.current) return;
       setParcelPlans(options);
       setSelectedHarvestPlanId((prev) => {
         if (options.length === 0) return '';
-        return options.some((o) => o.id === prev) ? prev : options[0].id;
+        return options.some((o) => o.id === prev) ? prev : requestedPlan ? '' : options[0].id;
       });
     } catch {
+      if (generation !== plansRequest.current) return;
       setParcelPlans([]);
       setSelectedHarvestPlanId('');
     } finally {
-      setPlansLoading(false);
+      if (generation === plansRequest.current) setPlansLoading(false);
     }
-  }, [selectedParcelId, t]);
+  }, [selectedParcelId, requestedPlan, t]);
 
   useEffect(() => {
     void loadParcelPlans();
+    return () => { plansRequest.current++; };
   }, [loadParcelPlans]);
 
   const selectedHarvestPlan = useMemo(

@@ -2,7 +2,8 @@ import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshCon
 import { useRouter } from 'expo-router';
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft } from 'lucide-react-native';
+import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
+import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useVeraInsightsData } from './useVeraInsightsData';
@@ -46,38 +47,11 @@ export default function VeraInsightsScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <View
-        style={{
-          paddingTop: p.headerTop,
-          paddingBottom: theme.spacing.md,
-          paddingLeft: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          backgroundColor: theme.colors.background,
-          borderBottomWidth: 0.5,
-          borderBottomColor: 'rgba(0, 0, 0, 0.08)',
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => router.back()}
-          activeOpacity={0.7}
-          style={{ marginRight: theme.spacing.md }}
-        >
-          <ArrowLeft size={20} color={theme.colors.text.primary} strokeWidth={1} />
-        </TouchableOpacity>
-        <Text
-          style={{
-            fontSize: 18,
-            fontWeight: '400',
-            color: theme.colors.text.primary,
-            letterSpacing: 0.5,
-          }}
-        >
-          {t('producer.veraInsights.title')}
-        </Text>
-      </View>
+    <View style={{ flex: 1, backgroundColor: enterpriseColors.canvas }}>
+      <GrowerStackHeader
+        title={t('producer.veraInsights.title')}
+        subtitle={t('producer.veraInsights.market')}
+      />
 
       <ScrollView
         style={{ flex: 1 }}
@@ -134,7 +108,7 @@ export default function VeraInsightsScreen() {
                 borderColor: theme.colors.border,
               }}
             >
-              <Text style={{ fontSize: 15, color: theme.colors.text.primary, lineHeight: 22 }}>
+              <Text style={{ fontSize: 13.5, color: theme.colors.text.primary, lineHeight: 19 }}>
                 {t('producer.veraInsights.loadError')}
               </Text>
               <TouchableOpacity
@@ -142,7 +116,7 @@ export default function VeraInsightsScreen() {
                 style={{ marginTop: 12, minHeight: 48, justifyContent: 'center' }}
                 accessibilityRole="button"
               >
-                <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.primary }}>
+                <Text style={{ fontSize: 14.5, fontWeight: '600', color: theme.colors.primary }}>
                   {t('producer.wallet.retry')}
                 </Text>
               </TouchableOpacity>

@@ -8,6 +8,10 @@ export interface NotificationActionContext {
   roles?: string[];
 }
 
+function decodeRouteId(value: string): string {
+  try { return decodeURIComponent(value); } catch { return value; }
+}
+
 function rolesUpperSet(roles: string[] | undefined): Set<string> {
   return new Set((roles ?? []).map((r) => String(r).trim().toUpperCase()).filter(Boolean));
 }
@@ -82,6 +86,22 @@ export function resolveNotificationActionHref(
   const growerMobile = webGrowerPathToMobileHref(path, queryPart);
   if (growerMobile) {
     return growerMobile as Href;
+  }
+
+  const receiverPath = /\/(?:logistics-partner|fleet-partner)\/(handover-receiver|handover-loading)$/.exec(path);
+  if (receiverPath) {
+    const missionId = new URLSearchParams(queryPart).get('missionId');
+    return { pathname: receiverPath[1] === 'handover-receiver' ? '/(logistics)/handover-receiver' : '/(logistics)/handover-loading',
+      ...(missionId ? { params: { missionId } } : {}) } as Href;
+  }
+  const buyerHandover = path.match(/^\/buyer-portal\/handover\/([^/]+)$/);
+  if (buyerHandover) {
+    return { pathname: '/manager/handover-complete', params: { handoverId: decodeRouteId(buyerHandover[1]) } } as Href;
+  }
+  const buyerDelivery = path.match(/^\/buyer-portal\/deliveries\/([^/]+)$/);
+  const queryDelivery = path === '/buyer-portal/deliveries' ? new URLSearchParams(queryPart).get('deliveryId') : null;
+  if (buyerDelivery || queryDelivery) {
+    return { pathname: '/(buyer)/delivery/[id]', params: { id: buyerDelivery ? decodeRouteId(buyerDelivery[1]) : queryDelivery! } } as Href;
   }
 
   /** Web buyer portal (`/buyer-portal/*`) → buyer tabs. */
@@ -188,7 +208,7 @@ export function resolveNotificationActionHref(
       return '/(logistics)/(tabs)' as Href;
     }
     if (R.has('BUYER') || R.has('CUSTOMER')) {
-      return '/(buyer)/orders' as Href;
+      return { pathname: '/(buyer)/delivery/[id]', params: { id: decodeRouteId(deliveryDetail[1]) } } as Href;
     }
     return '/(producer)/orders' as Href;
   }

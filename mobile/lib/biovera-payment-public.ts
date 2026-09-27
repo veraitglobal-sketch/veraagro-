@@ -22,5 +22,5 @@ export function getExpoPublicPaymentConfig() {
 
 export function hasExpoPaymentConfig(): boolean {
   const c = getExpoPublicPaymentConfig();
-  return Boolean(c.beneficiary || c.iban || c.bankName);
+  return Boolean(c.beneficiary && c.iban && c.currency.toUpperCase() === 'EUR');
 }

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ import { bioVeraScrollProps } from '../../lib/scroll-view-props';
 import { useAppLocaleTag } from '../../lib/date-locale';
 import { Plus, Minus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react-native';
 import EmptyState from '../../components/EmptyState';
+import { useCartCatalogue } from '../../hooks/useCartCatalogue';
 
 /**
  * Shopping Cart Screen
@@ -19,28 +20,40 @@ export default function CartScreen() {
   const router = useRouter();
   const insets = useBioVeraScreenPadding();
   const priceLocale = useAppLocaleTag();
-  const { items, updateQuantity, removeFromCart, getTotalPrice, reloadCart } = useCart();
+  const { items, changeQuantity, removeFromCart, getTotalPrice, reloadCart, loading } = useCart();
   const [refreshing, setRefreshing] = useState(false);
+  const catalogue = useCartCatalogue();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await reloadCart();
+      await Promise.all([reloadCart(), catalogue.reload()]);
     } finally {
       setRefreshing(false);
     }
-  }, [reloadCart]);
+  }, [reloadCart, catalogue.reload]);
 
   const handleCheckout = () => {
-    if (items.length > 0) {
+    if (items.length > 0 && !catalogue.blocked) {
       router.push('/(buyer)/checkout');
     }
   };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', backgroundColor: theme.colors.background }}>
+        <ActivityIndicator color={theme.colors.primary} />
+      </View>
+    );
+  }
 
   if (items.length === 0) {
     return (
       <View style={{ flex: 1, paddingTop: insets.topInset, backgroundColor: theme.colors.background }}>
         <EmptyState message={t('buyer.cart.empty')} icon={ShoppingBag} />
+        <TouchableOpacity onPress={() => router.replace('/(buyer)')} style={{ padding: theme.spacing.lg, alignItems: 'center' }}>
+          <Text style={{ color: theme.colors.primary }}>{t('buyer.cartReview.backToShop')}</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -61,16 +74,26 @@ export default function CartScreen() {
         }
       >
         <View style={{ padding: theme.spacing.lg }}>
+          <Text style={{ color: theme.colors.text.secondary, marginBottom: theme.spacing.md }}>
+            {t(catalogue.loading ? 'buyer.cartReview.checking' : catalogue.pricesChanged ? 'buyer.cartReview.pricesChanged' : 'buyer.cartReview.stockHint')}
+          </Text>
+          {catalogue.failed ? (
+            <TouchableOpacity onPress={() => void catalogue.reload()} style={{ paddingVertical: theme.spacing.md }}>
+              <Text style={{ color: theme.colors.error }}>{t('buyer.cartReview.loadFailed')}</Text>
+            </TouchableOpacity>
+          ) : null}
           {items.map((item) => (
             <View key={`${item.product.id}-${item.lineKind}`}>
               <View style={{
                 flexDirection: 'row',
+                flexWrap: 'wrap',
                 paddingVertical: theme.spacing.lg,
                 borderBottomWidth: 0.5,
                 borderBottomColor: 'rgba(0, 0, 0, 0.1)',
               }}>
                 {/* Product Info */}
-                <View style={{ flex: 1, marginRight: theme.spacing.md }}>
+                <View style={{ width: '100%', marginBottom: theme.spacing.md }}>
+                  <TouchableOpacity accessibilityRole="button" onPress={() => router.push({ pathname: '/product/[id]', params: { id: item.product.id, ...(item.lineKind === 'reservation' ? { mode: 'reserve' } : {}) } })}>
                   <Text style={{
                     fontSize: 14,
                     fontWeight: '400',
@@ -85,6 +108,7 @@ export default function CartScreen() {
                       </Text>
                     )}
                   </Text>
+                  </TouchableOpacity>
                   <Text style={{
                     fontSize: 13,
                     fontWeight: '400',
@@ -103,12 +127,18 @@ export default function CartScreen() {
                           unit: item.product.unit ?? '—',
                         })}
                   </Text>
+                  {!catalogue.loading && !catalogue.failed && catalogue.issueFor(item) ? (
+                    <Text style={{ color: theme.colors.error, marginTop: theme.spacing.xs }}>
+                      {t(`buyer.cartReview.${catalogue.issueFor(item)}`, { quantity: item.product.quantity, unit: item.product.unit })}
+                    </Text>
+                  ) : null}
+                  {item.checkoutKey ? <Text style={{ color: theme.colors.text.secondary }}>{t('buyer.cartReview.retryHint')}</Text> : null}
                 </View>
 
                 {/* Quantity Controls */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md }}>
                   <TouchableOpacity
-                    onPress={() => updateQuantity(item.product.id, item.quantity - 1, item.lineKind)}
+                    onPress={() => changeQuantity(item.product.id, -1, item.lineKind)}
                     style={{ padding: theme.spacing.xs }}
                     accessibilityRole="button"
                     accessibilityLabel={t('buyer.cart.decreaseQty')}
@@ -126,7 +156,11 @@ export default function CartScreen() {
                     {item.quantity}
                   </Text>
                   <TouchableOpacity
-                    onPress={() => updateQuantity(item.product.id, item.quantity + 1, item.lineKind)}
+                    disabled={!item.checkoutKey && (catalogue.loading || catalogue.failed || !!catalogue.issueFor(item) || items.filter(line => line.product.id === item.product.id && !line.checkoutKey).reduce((sum, line) => sum + line.quantity, 0) >= Number(item.product.quantity))}
+                    onPress={() => {
+                      const remaining = Number(item.product.quantity) - items.filter(line => line.product.id === item.product.id && !line.checkoutKey).reduce((sum, line) => sum + line.quantity, 0);
+                      if (item.checkoutKey || remaining > 0) changeQuantity(item.product.id, item.checkoutKey ? 1 : Math.min(1, remaining), item.lineKind);
+                    }}
                     style={{ padding: theme.spacing.xs }}
                     accessibilityRole="button"
                     accessibilityLabel={t('buyer.cart.increaseQty')}
@@ -138,7 +172,7 @@ export default function CartScreen() {
                 {/* Remove Button */}
                 <TouchableOpacity
                   onPress={() => removeFromCart(item.product.id, item.lineKind)}
-                  style={{ marginLeft: theme.spacing.md, padding: theme.spacing.xs }}
+                  style={{ marginLeft: 'auto', padding: theme.spacing.xs }}
                   accessibilityRole="button"
                   accessibilityLabel={t('buyer.cart.removeItem')}
                 >
@@ -177,14 +211,18 @@ export default function CartScreen() {
             color: theme.colors.text.primary,
             letterSpacing: 0.5,
           }}>
-            {getTotalPrice().toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' })}
+            {items.some(item => !item.product.price || item.product.price <= 0)
+              ? t('buyer.cartReview.totalIncomplete')
+              : getTotalPrice().toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' })}
           </Text>
         </View>
 
         <TouchableOpacity
           onPress={handleCheckout}
+          disabled={catalogue.blocked}
           style={{
             backgroundColor: theme.colors.primary,
+            opacity: catalogue.blocked ? 0.5 : 1,
             paddingVertical: theme.spacing.md,
             paddingHorizontal: theme.spacing.lg,
             borderRadius: theme.borderRadius.md,
@@ -200,7 +238,7 @@ export default function CartScreen() {
             color: theme.colors.text.inverse,
             letterSpacing: 1,
           }}>
-            {t('buyer.cart.checkout')}
+            {t('buyer.cartReview.checkoutCta')}
           </Text>
           <ArrowRight size={18} color={theme.colors.text.inverse} strokeWidth={1.5} />
         </TouchableOpacity>

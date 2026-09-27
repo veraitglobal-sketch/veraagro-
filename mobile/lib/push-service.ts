@@ -2,6 +2,8 @@ import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import axios from 'axios';
+import { API_URL } from './api-url';
 import i18n from '../i18n/config';
 import api from './api';
 import { axiosResponseStatus } from './api-error';
@@ -83,11 +85,18 @@ export async function registerPushTokenWithBackend(roles?: string[]): Promise<bo
 }
 
 export async function unregisterPushTokenFromBackend(): Promise<void> {
-  const token = await AsyncStorage.getItem(PUSH_TOKEN_STORAGE_KEY);
-  const deviceId = await getOrCreateDeviceId();
   try {
-    await api.delete('/notifications/push/register', {
-      data: { token: token ?? undefined, deviceId },
+    const [token, authToken] = await Promise.all([
+      AsyncStorage.getItem(PUSH_TOKEN_STORAGE_KEY),
+      AsyncStorage.getItem('auth_token'),
+    ]);
+    if (!token || !authToken) return;
+    const deviceId = await getOrCreateDeviceId();
+    // Cleanup of an expired session must not trigger the API's 401 logout handler again.
+    await axios.delete(`${API_URL.replace(/\/$/, '')}/notifications/push/register`, {
+      headers: { Authorization: `Bearer ${authToken}` },
+      timeout: 5000,
+      data: { token, deviceId },
     });
   } catch (e) {
     console.warn('[push] unregister failed:', e instanceof Error ? e.message : e);

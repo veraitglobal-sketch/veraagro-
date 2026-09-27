@@ -18,7 +18,7 @@ export function useOrdersListData() {
     const background = opts?.background === true;
     if (!background) setLoading(true);
     try {
-      const data = await ordersAPI.getAll();
+      const data = await ordersAPI.getForGrower();
       setOrders(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading orders:', error);

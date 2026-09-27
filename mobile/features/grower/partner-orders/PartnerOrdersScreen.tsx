@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
     backgroundColor: enterpriseColors.primaryTint,
   },
   tabChipText: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '500',
     color: enterpriseColors.gray600,
   },
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   },
   mapLinkText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '500',
     color: enterpriseColors.gray900,
     letterSpacing: -0.15,
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyTitle: {
-    fontSize: 16,
+    fontSize: 14.5,
     fontWeight: '600',
     color: enterpriseColors.gray900,
     marginTop: 12,
@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   orderTitle: {
-    fontSize: 16,
+    fontSize: 14.5,
     fontWeight: '600',
     color: enterpriseColors.gray900,
     letterSpacing: -0.25,

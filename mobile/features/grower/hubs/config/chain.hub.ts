@@ -5,6 +5,7 @@ import type { GrowerHubConfig } from '../../../../design-system/GrowerHubScreen'
 export const chainHubConfig: GrowerHubConfig = {
   titleKey: 'producer.hubs.chain.screenTitle',
   subtitleKey: 'producer.hubs.chain.screenSubtitle',
+  numbered: true,
   steps: [
     {
       key: 'batches',

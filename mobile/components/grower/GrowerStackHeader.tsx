@@ -1,66 +1,58 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronLeft } from 'lucide-react-native';
+import { BackButton } from '../../design-system/BackButton';
 import { enterpriseColors } from '../../lib/enterprise-ui';
-import { growerUi } from '../../lib/grower-ui';
 
 type Props = {
   title: string;
   subtitle?: string;
   onBack?: () => void;
+  right?: React.ReactNode;
 };
 
 /** Stack screen header — enterprise back + light title (no heavy icons). */
-export function GrowerStackHeader({ title, subtitle, onBack }: Props) {
+export function GrowerStackHeader({ title, subtitle, onBack, right }: Props) {
   const router = useRouter();
-  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
     <View style={[styles.bar, { paddingTop: insets.top + 8 }]}>
-      <TouchableOpacity
-        onPress={onBack ?? (() => router.back())}
-        activeOpacity={0.65}
-        style={styles.back}
-        accessibilityRole="button"
-        accessibilityLabel={t('common.back')}
-      >
-        <ChevronLeft size={22} color={enterpriseColors.gray900} strokeWidth={1.5} />
-      </TouchableOpacity>
+      <BackButton onPress={onBack ?? (() => router.back())} style={styles.back} />
       <View style={styles.titles}>
-        <Text style={growerUi.pageTitle} numberOfLines={2} accessibilityRole="header">
+        <Text style={styles.title} numberOfLines={2} accessibilityRole="header">
           {title}
         </Text>
-        {subtitle ? <Text style={growerUi.pageLead}>{subtitle}</Text> : null}
+        {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
       </View>
+      {right != null ? <View style={styles.right}>{right}</View> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  title: { fontSize: 20, lineHeight: 25, fontWeight: '600', letterSpacing: -0.45, color: enterpriseColors.gray900 },
+  subtitle: { fontSize: 13, lineHeight: 18, marginTop: 2, color: enterpriseColors.gray600 },
   bar: {
-    paddingHorizontal: 12,
-    paddingBottom: 14,
-    backgroundColor: enterpriseColors.white,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    backgroundColor: enterpriseColors.canvas,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: enterpriseColors.gray200,
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 4,
+    gap: 12,
   },
   back: {
-    minWidth: 44,
-    minHeight: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 2,
+    marginTop: 1,
+  },
+  right: {
+    marginTop: 1,
   },
   titles: {
     flex: 1,
     minWidth: 0,
     paddingRight: 8,
-    paddingTop: 6,
+    paddingTop: 5,
   },
 });

@@ -2,7 +2,7 @@
  * Packing Flow – Step-by-step wizard
  */
 
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -12,31 +12,99 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { useWorkflowBatchSelection } from '../../../hooks/useWorkflowBatchSelection';
+import { EnterpriseButton } from '../../../design-system/EnterpriseButton';
+import { BatchWorkflowActions } from '../batches/BatchWorkflowActions';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FileText, Camera, MapPin, Check } from 'lucide-react-native';
+import { Check, Package } from 'lucide-react-native';
+import { EnterpriseNavSection } from '../../../design-system/EnterpriseNavSection';
 import { readAsStringAsync, EncodingType } from 'expo-file-system/legacy';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { EnterpriseNotice } from '../../../components/enterprise/EnterpriseNotice';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import StepInstructions from './StepInstructions';
+import { WorkflowSteps } from '../../../components/grower/WorkflowSteps';
 import StepCamera from './StepCamera';
 import StepGps, { type GpsCapturePayload } from './StepGps';
 import { batchesAPI } from '../../../lib/api';
 
 const STEPS = [
-  { id: 'instructions', icon: FileText, titleKey: 'packingFlow.step1.title' },
-  { id: 'camera', icon: Camera, titleKey: 'packingFlow.step2.title' },
-  { id: 'gps', icon: MapPin, titleKey: 'packingFlow.step3.title' },
+  { id: 'instructions', titleKey: 'workflowSteps.instructions' },
+  { id: 'camera', titleKey: 'workflowSteps.photos' },
+  { id: 'gps', titleKey: 'workflowSteps.location' },
 ] as const;
+
+type PackingBatch = { id: string; batchId?: string; productName?: string };
 
 export default function PackingFlowScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const [batches, setBatches] = useState<PackingBatch[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const { selectedBatch, setSelectedBatchId, missingRequestedBatch } = useWorkflowBatchSelection(batches, false);
+  const load = useCallback(async () => {
+    setLoading(true);
+    setFailed(false);
+    try {
+      const data = await batchesAPI.getAll();
+      setBatches(data.filter((row: PackingBatch) => row?.id));
+    } catch {
+      setFailed(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  useEffect(() => { void load(); }, [load]);
+
+  if (selectedBatch && !loading && !failed) {
+    return <PackingWizard key={selectedBatch.id} batchRef={selectedBatch.id}
+      batchLabel={[selectedBatch.batchId, selectedBatch.productName].filter(Boolean).join(' · ')} />;
+  }
+  return (
+    <View style={growerUi.canvas}>
+      <GrowerStackHeader title={t('packingFlow.title')} onBack={() => router.back()} />
+      <ScrollView contentContainerStyle={[growerUi.scrollContent, { gap: 12 }]}>
+        <Text style={[enterpriseUi.inAppSectionLabel, { marginTop: 4 }]}>{t('batchWorkflow.selectBatch')}</Text>
+        {loading ? <ActivityIndicator color={enterpriseColors.primary} /> : failed ? (
+          <>
+            <Text style={enterpriseUi.navRowSubtitle}>{t('batchWorkflow.loadFailed')}</Text>
+            <EnterpriseButton label={t('common.tryAgain')} onPress={() => void load()} />
+          </>
+        ) : (
+          <>
+            {missingRequestedBatch ? <EnterpriseNotice title={t('batchWorkflow.unavailable')} /> : null}
+            <EnterpriseNavSection
+              items={batches.map((batch) => ({
+                key: batch.id,
+                title: batch.productName || batch.batchId || batch.id,
+                subtitle: batch.batchId || undefined,
+                icon: Package,
+                tone: 'green' as const,
+                onPress: () => setSelectedBatchId(batch.id),
+              }))}
+            />
+            {batches.length === 0 ? (
+              <>
+                <Text style={enterpriseUi.navRowSubtitle}>{t('producer.batches.noBatches')}</Text>
+                <EnterpriseButton label={t('producer.batches.createFabA11y')}
+                  onPress={() => router.push('/(producer)/batch-new')} />
+              </>
+            ) : null}
+          </>
+        )}
+      </ScrollView>
+    </View>
+  );
+}
+
+function PackingWizard({ batchRef, batchLabel }: { batchRef: string; batchLabel: string }) {
+  const { t } = useTranslation();
+  const router = useRouter();
   const insets = useSafeAreaInsets();
-  const params = useLocalSearchParams<{ batchId?: string }>();
   const [step, setStep] = useState(0);
   const [instructionsViewed, setInstructionsViewed] = useState(false);
   const [photoUri, setPhotoUri] = useState<string | null>(null);
@@ -47,7 +115,7 @@ export default function PackingFlowScreen() {
   const [flowComplete, setFlowComplete] = useState(false);
   const [successPhotosSaved, setSuccessPhotosSaved] = useState(false);
 
-  const batchRef = params.batchId ? String(params.batchId) : '';
+  const submittingRef = useRef(false);
 
   const currentStepId = STEPS[step]?.id ?? 'instructions';
   const canProceed = (() => {
@@ -75,7 +143,7 @@ export default function PackingFlowScreen() {
   };
 
   const handleSubmit = async () => {
-    setSubmitting(true);
+    if (submittingRef.current) return;
     if (!batchRef) {
       Alert.alert(t('alerts.warning'), t('packingFlow.needBatch'), [{ text: t('common.ok') }]);
       setSubmitting(false);
@@ -85,6 +153,8 @@ export default function PackingFlowScreen() {
       setSubmitting(false);
       return;
     }
+    submittingRef.current = true;
+    setSubmitting(true);
     try {
       let cratePhotoBase64: string | undefined;
       let qualityPhotoBase64: string | undefined;
@@ -101,6 +171,7 @@ export default function PackingFlowScreen() {
         cratePhotoBase64,
         qualityPhotoBase64,
       });
+      if (!res.success) throw new Error(t('packingFlow.submitFailed'));
       setSuccessPhotosSaved(!!res.photosSaved);
       setFlowComplete(true);
     } catch (err: unknown) {
@@ -108,6 +179,7 @@ export default function PackingFlowScreen() {
       const msg = err && typeof err === 'object' && 'message' in err ? String((err as Error).message) : '';
       Alert.alert(t('error'), msg || t('packingFlow.submitFailed'), [{ text: t('common.ok') }]);
     } finally {
+      submittingRef.current = false;
       setSubmitting(false);
     }
   };
@@ -119,7 +191,7 @@ export default function PackingFlowScreen() {
 
   return (
     <View style={growerUi.canvas}>
-      <GrowerStackHeader title={t('packingFlow.title')} onBack={handleBack} />
+      <GrowerStackHeader title={t('packingFlow.title')} subtitle={batchLabel} onBack={handleBack} />
 
       {!flowComplete && !batchRef ? (
         <View style={styles.noticeWrap}>
@@ -143,6 +215,7 @@ export default function PackingFlowScreen() {
               {successPhotosSaved ? t('packingFlow.successBodyWithPhotos') : t('packingFlow.successBodyLocationOnly')}
             </Text>
             <Text style={enterpriseUi.navRowSubtitle}>{t('packingFlow.successHint')}</Text>
+            <BatchWorkflowActions batchId={batchRef} steps={['labels', 'quality', 'detail']} />
           </ScrollView>
           <View style={[styles.footer, footerPadding]}>
             <TouchableOpacity style={enterpriseUi.authBtnPrimary} onPress={handleBack} activeOpacity={0.88}>
@@ -152,38 +225,9 @@ export default function PackingFlowScreen() {
         </>
       ) : (
         <>
-          <View style={styles.stepper}>
-            {STEPS.map((s, i) => {
-              const Icon = s.icon;
-              const done = i < step || (i === step && canProceed);
-              const active = i === step;
-              return (
-                <View key={s.id} style={styles.stepDotWrap}>
-                  <View
-                    style={[
-                      styles.stepDot,
-                      done && styles.stepDotDone,
-                      active && !done && styles.stepDotActive,
-                    ]}
-                  >
-                    {done ? (
-                      <Check size={16} color={enterpriseColors.white} strokeWidth={2} />
-                    ) : (
-                      <Icon
-                        size={16}
-                        color={active ? enterpriseColors.primary : enterpriseColors.gray600}
-                        strokeWidth={1.5}
-                      />
-                    )}
-                  </View>
-                  {i < STEPS.length - 1 ? (
-                    <View style={[styles.stepLine, i < step && styles.stepLineDone]} />
-                  ) : null}
-                </View>
-              );
-            })}
+          <View style={styles.stepsWrap}>
+            <WorkflowSteps current={step} labels={STEPS.map(s => t(s.titleKey))} />
           </View>
-          <Text style={styles.stepLabel}>{t(STEPS[step].titleKey)}</Text>
 
           <ScrollView
             style={styles.flex}
@@ -192,7 +236,7 @@ export default function PackingFlowScreen() {
             showsVerticalScrollIndicator={false}
           >
             {currentStepId === 'instructions' ? (
-              <StepInstructions onViewed={() => setInstructionsViewed(true)} />
+              <StepInstructions viewed={instructionsViewed} onToggle={() => setInstructionsViewed(value => !value)} />
             ) : null}
             {currentStepId === 'camera' ? (
               <StepCamera
@@ -257,56 +301,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 12,
   },
-  stepper: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    backgroundColor: enterpriseColors.white,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: enterpriseColors.gray200,
-  },
-  stepDotWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  stepDot: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: enterpriseColors.white,
-    borderWidth: 2,
-    borderColor: enterpriseColors.gray200,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stepDotDone: {
-    backgroundColor: enterpriseColors.primary,
-    borderColor: enterpriseColors.primary,
-  },
-  stepDotActive: {
-    borderColor: enterpriseColors.primary,
-    backgroundColor: enterpriseColors.primaryTint,
-  },
-  stepLine: {
-    width: 40,
-    height: 2,
-    backgroundColor: enterpriseColors.gray200,
-    marginHorizontal: 4,
-  },
-  stepLineDone: {
-    backgroundColor: enterpriseColors.primary,
-  },
-  stepLabel: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: enterpriseColors.gray600,
-    textAlign: 'center',
-    marginVertical: 12,
-    paddingHorizontal: 20,
-  },
+  stepsWrap: { paddingHorizontal: 20 },
   contentInner: {
+    paddingTop: 20,
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
@@ -314,10 +311,12 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: enterpriseColors.gray200,
-    backgroundColor: enterpriseColors.white,
+    backgroundColor: enterpriseColors.canvas,
   },
   nextBtn: {
-    minHeight: 52,
+    minHeight: 48,
+    paddingVertical: 12,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },

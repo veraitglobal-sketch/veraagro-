@@ -41,7 +41,7 @@ export default function StepGps({ onCaptured }: Props) {
       onCaptured(payload);
     } catch (err) {
       console.error('GPS capture:', err);
-      Alert.alert(t('error'), t('estates.getLocationFailed'));
+      Alert.alert(t('error'), t('producer.compliance.getLocationFailed'));
     } finally {
       setLoading(false);
     }

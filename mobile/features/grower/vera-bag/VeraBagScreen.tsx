@@ -1,11 +1,10 @@
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft } from 'lucide-react-native';
+import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { dsColors } from '../../../design-system/theme';
 import VeraBag from '../../../components/VeraBag';
-import { a11yIconButton } from '../../../lib/date-locale';
 
 interface Photo {
   id: string;
@@ -32,12 +31,7 @@ export default function VeraBagScreen({ embedded = false }: { embedded?: boolean
   return (
     <View style={[styles.root, embedded && styles.embeddedRoot]}>
       {!embedded ? (
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7} {...a11yIconButton(t('common.back'))}>
-            <ArrowLeft size={20} color={dsColors.gray900} strokeWidth={1} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>{t('producer.veraBag.title')}</Text>
-        </View>
+        <GrowerStackHeader title={t('producer.veraBag.title')} onBack={() => router.back()} />
       ) : null}
 
       <ScrollView style={styles.scroll}>

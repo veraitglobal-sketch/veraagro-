@@ -1,3 +1,4 @@
+import { HarvestTransportStatus } from './HarvestTransportStatus';
 import {
   View,
   Text,
@@ -158,47 +159,28 @@ export default function HarvestForm({ embedded = false }: { embedded?: boolean }
           }
           keyboardShouldPersistTaps="handled"
         >
+        {step === 1 && h.planMode === 'HARVEST' ? <HarvestTransportStatus busy={h.loading || h.parcelsRefreshing} /> : null}
         {step === 1 ? (
         <>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
           <TouchableOpacity
             onPress={() => h.setPlanMode('PLANTING')}
-            style={{
-              paddingHorizontal: 14,
-              paddingVertical: 10,
-              borderRadius: 8,
-              borderWidth: 0.5,
-              backgroundColor: h.planMode === 'PLANTING' ? theme.colors.accent : theme.colors.background,
-              borderColor: h.planMode === 'PLANTING' ? theme.colors.accent : theme.colors.border,
-            }}
+            style={[growerUi.filterChip, h.planMode === 'PLANTING' && growerUi.filterChipOn]}
           >
-            <Text style={{ fontSize: 14, color: h.planMode === 'PLANTING' ? theme.colors.background : theme.colors.text.primary }}>
+            <Text style={[growerUi.filterChipText, h.planMode === 'PLANTING' && growerUi.filterChipTextOn]}>
               {t('producer.harvest.modePlanting')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => h.setPlanMode('HARVEST')}
-            style={{
-              paddingHorizontal: 14,
-              paddingVertical: 10,
-              borderRadius: 8,
-              borderWidth: 0.5,
-              backgroundColor: h.planMode === 'HARVEST' ? theme.colors.accent : theme.colors.background,
-              borderColor: h.planMode === 'HARVEST' ? theme.colors.accent : theme.colors.border,
-            }}
+            style={[growerUi.filterChip, h.planMode === 'HARVEST' && growerUi.filterChipOn]}
           >
-            <Text style={{ fontSize: 14, color: h.planMode === 'HARVEST' ? theme.colors.background : theme.colors.text.primary }}>
+            <Text style={[growerUi.filterChipText, h.planMode === 'HARVEST' && growerUi.filterChipTextOn]}>
               {t('producer.harvest.modeHarvest')}
             </Text>
           </TouchableOpacity>
         </View>
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 10 }}>
-            {t('producer.harvest.stepParcel')}
-          </Text>
-            <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginBottom: 12, lineHeight: 18 }}>
-              {t('producer.harvest.selectParcel')} <Text style={{ color: theme.colors.error }}>*</Text>
-            </Text>
             {h.parcelsLoading ? (
               <ActivityIndicator size="small" color={enterpriseColors.primary} />
             ) : h.approvedParcels.length === 0 ? (
@@ -234,7 +216,7 @@ export default function HarvestForm({ embedded = false }: { embedded?: boolean }
 
         {step === 2 && h.planMode === 'HARVEST' ? (
           <View style={{ marginBottom: 16 }}>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 10 }}>
+            <Text style={{ fontSize: 16, fontWeight: '600', letterSpacing: -0.3, color: theme.colors.text.primary, marginBottom: 8 }}>
               {t('producer.harvest.stepPlanting')}
             </Text>
             {h.plantingsForParcel.length === 0 ? (
@@ -260,7 +242,7 @@ export default function HarvestForm({ embedded = false }: { embedded?: boolean }
 
         {step === 2 && h.planMode === 'PLANTING' ? (
           <View style={{ marginBottom: 16 }}>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 10 }}>
+            <Text style={{ fontSize: 16, fontWeight: '600', letterSpacing: -0.3, color: theme.colors.text.primary, marginBottom: 8 }}>
               {t('producer.harvest.stepCropPlanting')}
             </Text>
             <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginBottom: 12, lineHeight: 18 }}>
@@ -286,12 +268,12 @@ export default function HarvestForm({ embedded = false }: { embedded?: boolean }
 
         {step === 3 ? (
           <>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary, marginBottom: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: '600', letterSpacing: -0.3, color: theme.colors.text.primary, marginBottom: 10 }}>
               {h.planMode === 'HARVEST' ? t('producer.harvest.stepHarvestDetails') : t('producer.harvest.stepPlantingDetails')}
             </Text>
 
             <View style={{ marginBottom: 16 }}>
-              <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
+              <Text style={{ fontSize: 13, fontWeight: '500', color: theme.colors.text.secondary, marginBottom: 6 }}>
                 {h.planMode === 'HARVEST' ? t('producer.harvest.plannedHarvestDate') : t('producer.harvest.plantingPlanDate')}{' '}
                 <Text style={{ color: theme.colors.error }}>*</Text>
               </Text>
@@ -324,7 +306,7 @@ export default function HarvestForm({ embedded = false }: { embedded?: boolean }
             {h.planMode === 'HARVEST' ? (
               <>
                 <View style={{ marginBottom: 16 }}>
-                  <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
+                  <Text style={{ fontSize: 13, fontWeight: '500', color: theme.colors.text.secondary, marginBottom: 6 }}>
                     {t('producer.harvest.plannedLoadDate')}
                   </Text>
                   <GrowerDateField value={h.plannedLoadDate} onChange={h.setPlannedLoadDate} />
@@ -341,7 +323,7 @@ export default function HarvestForm({ embedded = false }: { embedded?: boolean }
                 </View>
 
                 <View style={{ marginBottom: 16 }}>
-                  <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.text.primary, marginBottom: 12, letterSpacing: 0.5 }}>
+                  <Text style={{ fontSize: 13, fontWeight: '500', color: theme.colors.text.secondary, marginBottom: 6 }}>
                     {t('producer.harvest.channel')}
                   </Text>
                   <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
@@ -431,9 +413,7 @@ export default function HarvestForm({ embedded = false }: { embedded?: boolean }
               onPress={() => setStep((s) => s - 1)}
               variant="secondary"
             />
-          ) : (
-            <View style={styles.footerSpacer} />
-          )}
+          ) : null}
           {step < STEPS ? (
             <EnterpriseButton
               label={t('producer.fieldLogForm.farmerNext')}
@@ -478,7 +458,7 @@ const styles = StyleSheet.create({
   },
   contextText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '500',
     color: enterpriseColors.gray900,
     letterSpacing: -0.15,
@@ -492,9 +472,6 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: enterpriseColors.gray200,
   },
-  footerSpacer: {
-    width: 88,
-  },
   footerPrimary: {
     flex: 1,
   },
@@ -502,8 +479,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   fieldLabel: {
-    fontSize: 16,
-    fontWeight: '400',
+    fontSize: 13,
+    fontWeight: '500',
     color: dsColors.gray900,
     marginBottom: 8,
     letterSpacing: 0.5,

@@ -17,7 +17,7 @@ export default function ProductsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { products, loading, listRefreshing, load, addProduct } = useProductsData();
+  const { products, loadError, loading, listRefreshing, load, addProduct } = useProductsData();
   const [showForm, setShowForm] = useState(false);
   const [scannedQr, setScannedQr] = useState<string | null>(null);
 
@@ -82,6 +82,9 @@ export default function ProductsScreen() {
   const listHeader = (
     <View style={styles.headerBlock}>
       <HubMetricsStrip rows={productMetricRows} />
+      {loadError ? <TouchableOpacity onPress={() => void refreshList()} accessibilityRole="button" style={{ paddingVertical: 12 }}>
+        <Text style={enterpriseUi.navRowSubtitle}>{t('connectedWorkflow.productsUnavailable')}</Text>
+      </TouchableOpacity> : null}
       <View style={styles.actions}>
         <TouchableOpacity onPress={openScanner} activeOpacity={0.88} style={[enterpriseUi.authBtnPrimary, styles.actionBtn]}>
           <QrCode size={22} color={enterpriseColors.white} strokeWidth={1.5} />

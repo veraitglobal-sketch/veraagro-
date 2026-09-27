@@ -11,33 +11,33 @@ export const growerUi = {
   } as ViewStyle,
 
   scrollContent: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingTop: 16,
     flexGrow: 0,
   } as ViewStyle,
 
   /** Tab roots: stretch content to bottom safe area (no half-empty canvas). */
   tabRootBody: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 8,
   } as ViewStyle,
 
   pageTitle: {
-    fontSize: 26,
-    fontWeight: '400',
+    fontSize: 24,
+    fontWeight: '600',
     color: enterpriseColors.gray900,
-    letterSpacing: -0.55,
-    lineHeight: 32,
+    letterSpacing: -0.6,
+    lineHeight: 30,
   } as TextStyle,
 
   pageLead: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '400',
     color: enterpriseColors.gray600,
-    lineHeight: 23,
-    marginTop: 8,
-    letterSpacing: -0.15,
+    lineHeight: 20,
+    marginTop: 6,
+    letterSpacing: -0.1,
   } as TextStyle,
 
   sectionLabel: {
@@ -67,9 +67,9 @@ export const growerUi = {
   btnPrimaryText: enterpriseUi.authBtnPrimaryText,
 
   btnIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
+    width: 44,
+    height: 44,
+    borderRadius: 14,
     backgroundColor: enterpriseColors.primary,
     alignItems: 'center',
     justifyContent: 'center',
@@ -89,82 +89,87 @@ export const growerUi = {
   } as ViewStyle,
 
   formLabel: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600',
-    color: enterpriseColors.gray600,
-    letterSpacing: 0.4,
+    color: '#6B7A67',
+    letterSpacing: 0.8,
     textTransform: 'uppercase',
     marginBottom: 6,
   } as TextStyle,
 
   formInput: {
     borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
+    borderColor: 'rgba(17, 24, 39, 0.12)',
     borderRadius: 12,
     paddingHorizontal: 14,
-    paddingVertical: 14,
-    fontSize: 16,
+    paddingVertical: 12,
+    fontSize: 15,
     color: enterpriseColors.gray900,
     backgroundColor: enterpriseColors.white,
-    marginBottom: 16,
+    marginBottom: 14,
   } as TextStyle,
 
   formPanel: {
     backgroundColor: enterpriseColors.white,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
-    padding: 18,
+    borderRadius: 18,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(17, 24, 39, 0.09)',
+    padding: 16,
     marginBottom: 12,
+    shadowColor: '#1a3328',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
+    elevation: 1,
   } as ViewStyle,
 
   settingsGroupTitle: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600',
-    color: enterpriseColors.gray600,
-    letterSpacing: 0.5,
+    color: '#6B7A67',
+    letterSpacing: 0.9,
     textTransform: 'uppercase',
   } as TextStyle,
 
   settingsRowTitle: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '600',
     color: enterpriseColors.gray900,
     letterSpacing: -0.25,
   } as TextStyle,
 
   settingsRowDesc: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '400',
     color: enterpriseColors.gray600,
-    marginTop: 4,
-    lineHeight: 21,
+    marginTop: 2,
+    lineHeight: 18,
   } as TextStyle,
 
   filterChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    minHeight: 48,
+    paddingHorizontal: 14,
+    height: 34,
     justifyContent: 'center',
-    borderRadius: 12,
+    borderRadius: 17,
     borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
+    borderColor: 'rgba(17, 24, 39, 0.08)',
     backgroundColor: enterpriseColors.white,
   } as ViewStyle,
 
   filterChipOn: {
-    borderColor: enterpriseColors.primary,
-    backgroundColor: enterpriseColors.primaryTint,
+    borderColor: '#1F3D1B',
+    backgroundColor: '#1F3D1B',
   } as ViewStyle,
 
   filterChipText: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '600',
-    color: enterpriseColors.gray600,
+    color: enterpriseColors.gray700,
+    letterSpacing: -0.15,
   } as TextStyle,
 
   filterChipTextOn: {
-    color: enterpriseColors.primary,
+    color: enterpriseColors.white,
   } as TextStyle,
 };
 
@@ -215,14 +220,18 @@ export const growerStyles = StyleSheet.create({
     marginBottom: 4,
   },
   statusPill: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    flexShrink: 0,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
     alignSelf: 'flex-start',
   },
   statusPillText: {
-    fontSize: 13,
-    fontWeight: '500',
+    fontSize: 11.5,
+    fontWeight: '600',
     letterSpacing: 0.1,
   },
 });

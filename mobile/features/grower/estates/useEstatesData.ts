@@ -1,5 +1,7 @@
 import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { Alert } from 'react-native';
+import { useRouter } from 'expo-router';
+import { estateDeletionBlock, estateLotsHref } from '../../../lib/estate-deletion';
 import { useTranslation } from 'react-i18next';
 import { estatesAPI, Estate } from '../../../lib/api';
 import { growerOfflineCache } from '../../../lib/grower-offline-cache';
@@ -17,6 +19,7 @@ function messageFromApiError(error: unknown): string | undefined {
 
 export function useEstatesData() {
   const { t } = useTranslation();
+  const router = useRouter();
   const { estates: dashboardEstates } = useGrowerDashboard();
   const [estates, setEstates] = useState<Estate[]>(dashboardEstates);
   const [ready, setReady] = useState(dashboardEstates.length > 0);
@@ -102,6 +105,14 @@ export function useEstatesData() {
                 await estatesAPI.delete(estate.id);
                 await loadEstates();
               } catch (error: unknown) {
+                const blocked = estateDeletionBlock(error);
+                if (blocked) {
+                  Alert.alert(t('estateDeletion.title'), t(`estateDeletion.${blocked}`, { name: estate.name }), [
+                    { text: t('common.cancel'), style: 'cancel' },
+                    ...(blocked === 'batches' ? [{ text: t('estateDeletion.openLots'), onPress: () => router.push(estateLotsHref(estate)) }] : []),
+                  ]);
+                  return;
+                }
                 const fromApi = messageFromApiError(error);
                 const status = (error as { response?: { status?: number } })?.response?.status;
                 const msg =
@@ -116,7 +127,7 @@ export function useEstatesData() {
         ],
       );
     },
-    [loadEstates, t],
+    [loadEstates, t, router],
   );
 
   const getStatusColor = useCallback((status: string) => enterpriseEstateStatusColor(status), []);

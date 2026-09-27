@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   batchTitle: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '500',
     color: dsColors.gray900,
     marginLeft: 8,
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     color: dsColors.destructive,
   },
   qtyText: {
-    fontSize: 16,
+    fontSize: 14.5,
     color: dsColors.muted,
     marginTop: 8,
   },
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   statusLabel: {
-    fontSize: 16,
+    fontSize: 14.5,
     color: dsColors.muted,
   },
   statusBadge: {
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   statusBadgeText: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '500',
     letterSpacing: 0.3,
   },

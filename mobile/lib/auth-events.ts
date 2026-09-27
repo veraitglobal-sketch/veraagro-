@@ -4,21 +4,21 @@
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type UnauthorizedHandler = () => void;
+type UnauthorizedHandler = () => void | Promise<void>;
 
 let onUnauthorized: UnauthorizedHandler | null = null;
+let pending: Promise<void> | null = null;
 
 export function setAuthUnauthorizedHandler(handler: UnauthorizedHandler | null) {
   onUnauthorized = handler;
 }
 
 export function notifyAuthUnauthorized() {
-  try {
-    onUnauthorized?.();
-  } catch (e) {
-    console.error('auth unauthorized handler', e);
-  }
-  if (!onUnauthorized) {
-    void AsyncStorage.multiRemove(['auth_token', 'auth_user']);
-  }
+  if (pending) return pending;
+  const handler = onUnauthorized;
+  pending = Promise.resolve()
+    .then(() => handler ? handler() : AsyncStorage.multiRemove(['auth_token', 'auth_user']))
+    .catch((error) => { console.error('auth unauthorized handler', error); })
+    .finally(() => { pending = null; });
+  return pending;
 }

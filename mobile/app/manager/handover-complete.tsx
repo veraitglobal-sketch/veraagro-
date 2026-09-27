@@ -11,14 +11,15 @@ import {
   PanResponder,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { CheckCircle2, XCircle, Thermometer, Image as ImageIcon, Camera } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import ViewShot, { type CaptureOptions } from 'react-native-view-shot';
 import Svg, { Polyline } from 'react-native-svg';
 import { theme } from '../../lib/theme';
-import { digitalHandoverAPI } from '../../lib/api';
+import { prepareHandoverPhotos } from '../../lib/handover-evidence';
+import { digitalHandoverAPI, type DigitalHandover } from '../../lib/api';
 import { apiErrorMessage } from '../../lib/api-error';
 import StepIndicator from '../../components/StepIndicator';
 import { FormHelperText } from '../../components/FormHelperText';
@@ -45,10 +46,26 @@ function hasStrokes(strokes: Point[][]): boolean {
  * Manager / store handover: visual check, temperature, four documented photos, recipient signature for OK receipt, then submit.
  */
 export default function HandoverCompleteScreen() {
+  const params = useLocalSearchParams<{ handoverId?: string | string[] }>();
+  const handoverId = (Array.isArray(params.handoverId) ? params.handoverId[0] : params.handoverId) || '';
+  return <HandoverForm key={handoverId} handoverId={handoverId} />;
+}
+
+function HandoverForm({ handoverId }: { handoverId: string }) {
   const { t } = useTranslation();
   const router = useRouter();
-  const { handoverId } = useLocalSearchParams<{ handoverId: string }>();
   const viewShotRef = useRef<InstanceType<typeof ViewShot> | null>(null);
+  const submitLock = useRef(false);
+  const [saved, setSaved] = useState<DigitalHandover | null>(null);
+  const [readFailed, setReadFailed] = useState(false);
+  const [reading, setReading] = useState(true);
+  const reload = useCallback(async () => {
+    setReading(true); setReadFailed(false);
+    try { if (!handoverId) throw new Error('Missing handover'); setSaved(await digitalHandoverAPI.getOne(handoverId)); }
+    catch { setReadFailed(true); }
+    finally { setReading(false); }
+  }, [handoverId]);
+  useEffect(() => { void reload(); }, [reload]);
   const [step, setStep] = useState(2);
   const [visualCheck, setVisualCheck] = useState<'FRESH' | 'DAMAGED' | null>(null);
   const [temperature, setTemperature] = useState('');
@@ -116,11 +133,13 @@ export default function HandoverCompleteScreen() {
   );
 
   const handleComplete = async () => {
+    if (submitLock.current || reading || readFailed || !saved) return;
     if (!visualCheck) {
       Alert.alert(t('common.required'), t('handover.errVisual'));
       return;
     }
-    if (!temperature || Number.isNaN(parseFloat(temperature))) {
+    const temperatureValue = Number(temperature.trim().replace(',', '.'));
+    if (!temperature.trim() || !Number.isFinite(temperatureValue)) {
       Alert.alert(t('common.required'), t('handover.errTemp'));
       return;
     }
@@ -133,12 +152,13 @@ export default function HandoverCompleteScreen() {
       return;
     }
 
+    if (visualCheck === 'FRESH' && !hasStrokes(strokes)) {
+      Alert.alert(t('common.required'), t('handover.errSignature'));
+      return;
+    }
+    submitLock.current = true;
     let signatureDataUrl: string | undefined;
     if (visualCheck === 'FRESH') {
-      if (!hasStrokes(strokes)) {
-        Alert.alert(t('common.required'), t('handover.errSignature'));
-        return;
-      }
       try {
         const uri = viewShotRef.current?.capture ? await viewShotRef.current.capture() : null;
         if (uri?.startsWith('data:image')) {
@@ -148,6 +168,7 @@ export default function HandoverCompleteScreen() {
         // fall through — caught below
       }
       if (!signatureDataUrl || signatureDataUrl.length < 80) {
+        submitLock.current = false;
         Alert.alert(t('common.required'), t('handover.errSignatureCapture'));
         return;
       }
@@ -155,28 +176,47 @@ export default function HandoverCompleteScreen() {
 
     setLoading(true);
     try {
-      const photoUrls = photos.filter((p): p is string => p != null);
-      await digitalHandoverAPI.complete({
+      const photoUrls = await prepareHandoverPhotos(photos.filter((p): p is string => p != null));
+      const result = await digitalHandoverAPI.complete({
         handoverId,
+        revision: saved.revision ?? 0,
         qualityCheck: {
           visualCheck,
-          temperature: parseFloat(temperature),
+          temperature: temperatureValue,
           photoUrls,
           notes: notes || undefined,
           ...(signatureDataUrl ? { signature: signatureDataUrl } : {}),
         },
       });
+      setSaved(result);
       Alert.alert(
         t('handover.completeTitle'),
         visualCheck === 'DAMAGED' ? t('handover.doneDamaged') : t('handover.doneOk'),
-        [{ text: t('common.ok'), onPress: () => router.back() }],
+        [{ text: t('common.ok'), onPress: () => void reload() }],
       );
     } catch (error: unknown) {
       Alert.alert(t('common.error'), apiErrorMessage(error, t('handover.errGeneric')));
     } finally {
+      submitLock.current = false;
       setLoading(false);
     }
   };
+
+  if (reading) return <ActivityIndicator style={{ marginTop: 40 }} />;
+  if (readFailed || !saved) return <View style={{ padding: 24 }}><Text>{t('deliveryFlow.loadFailed')}</Text>
+    <TouchableOpacity onPress={() => void reload()}><Text>{t('common.tryAgain')}</Text></TouchableOpacity></View>;
+  if (saved.status === 'COMPLETED' || saved.status === 'DISPUTED') return (
+    <ScrollView contentContainerStyle={{ padding: 24, paddingTop: 64, gap: 12 }}>
+      <Text>{saved.status === 'DISPUTED' ? t('handover.doneDamaged') : t('handover.doneOk')}</Text>
+      {saved.temperature != null ? <Text>{t('handover.tempCheck')}: {saved.temperature}</Text> : null}
+      {saved.notes ? <Text>{t('handover.notes')}: {saved.notes}</Text> : null}
+      {saved.photoUrls.map((uri, index) => <Image key={index} source={{ uri }} style={{ width: '100%', height: 200 }} resizeMode="contain" />)}
+      {saved.signature ? <Image source={{ uri: saved.signature }} style={{ width: '100%', height: 120 }} resizeMode="contain" /> : null}
+      <TouchableOpacity onPress={() => router.replace({ pathname: '/(buyer)/delivery/[id]', params: { id: saved.deliveryId } })}>
+        <Text>{t('deliveryFlow.openDelivery')}</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
 
   if (loading) {
     return (

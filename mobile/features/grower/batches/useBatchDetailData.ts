@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { batchesAPI } from '../../../lib/api';
 import { theme } from '../../../lib/theme';
+import { useFocusEffect } from '@react-navigation/native';
 
 /** API returns { batch, traceability }; the detail screen expects a merged flat object. */
 function mergeBatchTraceabilityResponse(
@@ -30,29 +31,38 @@ function mergeBatchTraceabilityResponse(
     locationHistory,
     qualityIssues: t.qualityIssues ?? b.qualityIssues,
     origin: t.origin,
+    packing: t.packing,
   };
 }
 
 export function useBatchDetailData(batchId: string | undefined) {
-  const [batch, setBatch] = useState<any>(null);
+  const [result, setResult] = useState<{ reference: string; batch: any } | null>(null);
+  const batch = result && result.reference === batchId ? result.batch : null;
+  const requestNumber = useRef(0);
   const [loading, setLoading] = useState(true);
 
   const loadBatch = useCallback(async () => {
-    if (!batchId) return;
+    const request = ++requestNumber.current;
+    if (!batchId) {
+      setResult(null);
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const data = await batchesAPI.getOne(batchId);
-      setBatch(mergeBatchTraceabilityResponse(data));
+      if (request === requestNumber.current) setResult({ reference: batchId, batch: mergeBatchTraceabilityResponse(data) });
     } catch (error) {
       console.error('Error loading batch:', error);
     } finally {
-      setLoading(false);
+      if (request === requestNumber.current) setLoading(false);
     }
   }, [batchId]);
 
-  useEffect(() => {
-    if (batchId) loadBatch();
-  }, [batchId, loadBatch]);
+  useFocusEffect(useCallback(() => {
+    void loadBatch();
+    return () => { requestNumber.current++; };
+  }, [loadBatch]));
 
   return { batch, loading, onRefresh: loadBatch };
 }

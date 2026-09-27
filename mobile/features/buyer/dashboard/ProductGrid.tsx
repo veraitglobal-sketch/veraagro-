@@ -83,9 +83,9 @@ function ProductCard({
 }) {
   const { t } = useTranslation();
   const priceLocale = useAppLocaleTag();
-  const isSoldOut = availability?.isSoldOut || false;
-  const reservedPercentage = availability?.reservedPercentage || 0;
-  const availableQuantity = availability?.availableQuantity || product.availableQuantity || 0;
+  const isSoldOut = availability ? availability.isSoldOut || availability.availableQuantity <= 0 : false;
+  const reservedPercentage = Math.min(100, Math.max(0, availability?.reservedPercentage || 0));
+  const availableQuantity = availability?.availableQuantity ?? product.availableQuantity ?? 0;
 
   return (
     <TouchableOpacity
@@ -167,7 +167,7 @@ function ProductCard({
             >
               {t('buyer.dashboard.unitsAvailable', {
                 qty: availableQuantity,
-                unit: product.unit || t('buyer.dashboard.unitsDefault'),
+                unit: availability.unit || product.unit || t('buyer.dashboard.unitsDefault'),
               })}
             </Text>
           </View>

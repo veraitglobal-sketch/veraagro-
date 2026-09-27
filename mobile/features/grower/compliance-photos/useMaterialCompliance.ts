@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useWorkflowBatchSelection } from '../../../hooks/useWorkflowBatchSelection';
 import { pickFromCamera } from '../../../lib/camera-picker';
 import {
   batchesAPI,
@@ -50,9 +51,9 @@ export function useMaterialCompliance() {
   const [parcelFilterId, setParcelFilterId] = useState<string>(PARCEL_ALL_KEY);
   const [batchesLoading, setBatchesLoading] = useState(true);
   const [labelRolls, setLabelRolls] = useState<LabelRollRow[]>([]);
-  const [selectedBatchId, setSelectedBatchId] = useState('');
   const [stickerRollId, setStickerRollId] = useState('');
-  const [complianceStatus, setComplianceStatus] = useState<ComplianceBatchStatus | null>(null);
+  const [statusResult, setStatusResult] = useState<{ batchId: string; value: ComplianceBatchStatus } | null>(null);
+  const statusRequest = useRef(0);
   const [statusLoading, setStatusLoading] = useState(false);
   const [statusError, setStatusError] = useState(false);
   const [photos, setPhotos] = useState<Partial<Record<CompliancePhotoType, string>>>({});
@@ -131,37 +132,44 @@ export function useMaterialCompliance() {
     void loadLabelRolls();
   }, [loadBatches, loadLabelRolls]);
 
-  useEffect(() => {
-    setSelectedBatchId((prev) => {
-      if (prev && filteredBatches.some((b) => b.id === prev)) return prev;
-      return filteredBatches[0]?.id ?? '';
-    });
-  }, [filteredBatches]);
+  const { selectedBatchId, setSelectedBatchId, missingRequestedBatch } = useWorkflowBatchSelection(filteredBatches);
+  const activeBatch = useRef(selectedBatchId);
+  activeBatch.current = selectedBatchId;
+
+  const complianceStatus = statusResult?.batchId === selectedBatchId ? statusResult.value : null;
 
   const fetchStatus = useCallback(async (batchId: string) => {
+    if (batchId !== activeBatch.current) return;
+    const request = ++statusRequest.current;
     if (!batchId) {
-      setComplianceStatus(null);
+      setStatusResult(null);
       return;
     }
     setStatusLoading(true);
     setStatusError(false);
     try {
       const s = await materialControlAPI.getComplianceStatus(batchId);
-      setComplianceStatus(s);
+      if (request !== statusRequest.current || batchId !== activeBatch.current) return;
+      setStatusResult({ batchId, value: s });
     } catch {
-      setComplianceStatus(null);
-      setStatusError(true);
+      if (request === statusRequest.current) {
+        setStatusResult(null);
+        setStatusError(true);
+      }
     } finally {
-      setStatusLoading(false);
+      if (request === statusRequest.current) setStatusLoading(false);
     }
   }, []);
 
   useEffect(() => {
     if (!selectedBatchId) {
-      setComplianceStatus(null);
+      setStatusResult(null);
+      setStatusLoading(false);
+      setStatusError(false);
       return;
     }
     void fetchStatus(selectedBatchId);
+    return () => { statusRequest.current++; };
   }, [selectedBatchId, fetchStatus]);
 
   useEffect(() => {
@@ -216,15 +224,19 @@ export function useMaterialCompliance() {
 
   const onBatchChange = useCallback((id: string) => {
     setSelectedBatchId(id);
+  }, [setSelectedBatchId]);
+
+  useEffect(() => {
     setShowReplaceForm(false);
     setPhotos({});
     setStickerRollId('');
     setLabelRollFilter('');
-  }, []);
+  }, [selectedBatchId]);
 
   const takePhoto = useCallback(
     async (type: CompliancePhotoType) => {
       if (picking) return;
+      const photoBatchId = selectedBatchId;
       setPicking(type);
       try {
         const picked = await pickFromCamera({ t, allowsEditing: true, quality: 0.85 });
@@ -236,7 +248,7 @@ export function useMaterialCompliance() {
           Alert.alert(t('error'), t('producer.compliance.batchForm.errors.photoTooLarge'));
           return;
         }
-        setPhotos((prev) => ({ ...prev, [type]: dataUrl }));
+        if (activeBatch.current === photoBatchId) setPhotos((prev) => ({ ...prev, [type]: dataUrl }));
       } catch (e) {
         console.error(e);
         Alert.alert(t('error'), t('producer.compliance.openCameraFailed'));
@@ -244,7 +256,7 @@ export function useMaterialCompliance() {
         setPicking(null);
       }
     },
-    [picking, t],
+    [picking, t, selectedBatchId],
   );
 
   const onVerifySticker = useCallback(async () => {
@@ -302,9 +314,11 @@ export function useMaterialCompliance() {
         parcelId: parcelIdForLot,
       });
       Alert.alert(t('alerts.success'), t('producer.compliance.batchForm.saveSuccess'));
-      setPhotos({});
-      setShowReplaceForm(false);
-      await fetchStatus(selectedBatchId);
+      if (activeBatch.current === selectedBatchId) {
+        setPhotos({});
+        setShowReplaceForm(false);
+        await fetchStatus(selectedBatchId);
+      }
     } catch (e: unknown) {
       Alert.alert(t('error'), apiErrorMessage(e, t('producer.compliance.batchForm.errors.saveFailed')));
     } finally {
@@ -336,6 +350,7 @@ export function useMaterialCompliance() {
     stickerRollListForUi,
     stickerRollListMeta,
     selectedBatchId,
+    missingRequestedBatch,
     setSelectedBatchId: onBatchChange,
     stickerRollId,
     setStickerRollId,

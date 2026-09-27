@@ -21,14 +21,17 @@ import growerSeasonSr from './locales/grower-season.sr.json';
  */
 type Dict = Record<string, unknown>;
 
-const translationEn = deepmerge(en as Dict, {
+/** Localized lists (FAQ, steps…) replace the English list — deepmerge would concatenate them. */
+const merge = (a: Dict, b: Dict) => deepmerge(a, b, { arrayMerge: (_target, source) => source });
+
+const translationEn = merge(en as Dict, {
   grower: {
     journey: growerJourneyEn,
     season: growerSeasonEn,
   },
 }) as typeof en;
 
-const translationSr = deepmerge(deepmerge(en as Dict, sr as Dict), {
+const translationSr = merge(merge(en as Dict, sr as Dict), {
   grower: {
     journey: growerJourneySr,
     season: growerSeasonSr,

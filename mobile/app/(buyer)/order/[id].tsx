@@ -1,3 +1,5 @@
+import { useFocusEffect } from '@react-navigation/native';
+import { BuyerDeliveryPanel } from '../../../features/buyer/delivery/BuyerDeliveryPanel';
 import {
   View,
   Text,
@@ -6,10 +8,11 @@ import {
   ActivityIndicator,
   Linking,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { ArrowLeft, CheckCircle, Circle } from 'lucide-react-native';
 import { ordersAPI, Order } from '../../../lib/api';
 import { theme } from '../../../lib/theme';
@@ -22,6 +25,9 @@ import {
 } from '../../../lib/buyer-order-status';
 import { getExpoPublicPaymentConfig, hasExpoPaymentConfig } from '../../../lib/biovera-payment-public';
 import { useAppLocaleTag } from '../../../lib/date-locale';
+import { buyerOrderNextStep, buyerOrderPermissions } from '../../../lib/buyer-order-next-step';
+import { axiosResponseStatus } from '../../../lib/api-error';
+import ErrorMessage from '../../../components/ErrorMessage';
 
 function PaymentDetailsTextBlock() {
   const { t } = useTranslation();
@@ -66,39 +72,57 @@ function PaymentDetailsTextBlock() {
  * Vertical timeline design with thin line and outline circles
  */
 export default function OrderTrackingScreen() {
+  const params = useLocalSearchParams<{ id?: string | string[] }>();
+  const id = (Array.isArray(params.id) ? params.id[0] : params.id) || '';
+  return <OrderTrackingContent key={id} id={id} />;
+}
+
+function OrderTrackingContent({ id }: { id: string }) {
   const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
   const priceLocale = useAppLocaleTag();
-  const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const cancelLock = useRef(false);
+  const generation = useRef(0);
+  const [error, setError] = useState<string | null>(null);
+  const [updating, setUpdating] = useState(false);
+  const renderedGeneration = generation.current;
 
   const loadOrder = useCallback(async (opts?: { background?: boolean }) => {
+    const request = ++generation.current;
     if (!id || typeof id !== 'string') {
       setOrder(null);
       setLoading(false);
       return;
     }
     const background = opts?.background === true;
+    setUpdating(true);
+    setError(null);
     if (!background) {
       setLoading(true);
       setOrder(null);
     }
     try {
       const data = await ordersAPI.getOne(id);
-      setOrder(data);
+      if (request === generation.current) setOrder(data);
     } catch (error: unknown) {
-      console.error('Error loading order:', error);
+      if (request === generation.current) {
+        if (axiosResponseStatus(error) === 404) setOrder(null);
+        else setError(t('buyerOrderActions.loadFailed'));
+      }
     } finally {
-      if (!background) setLoading(false);
+      if (request === generation.current) { setLoading(false); setUpdating(false); }
     }
-  }, [id]);
+  }, [id, t]);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     void loadOrder();
-  }, [loadOrder]);
+    return () => { generation.current++; };
+  }, [loadOrder]));
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -108,6 +132,19 @@ export default function OrderTrackingScreen() {
       setRefreshing(false);
     }
   }, [loadOrder]);
+  const cancelOrder = () => Alert.alert(t('orderStock.cancel'), t('orderStock.cancelConfirm'), [
+    { text: t('orderStock.keep'), style: 'cancel' },
+    { text: t('orderStock.cancel'), style: 'destructive', onPress: () => { void (async () => {
+      if (cancelLock.current || updating || error || renderedGeneration !== generation.current || !order || !buyerOrderPermissions(order).canCancel) return;
+      cancelLock.current = true; setCancelling(true);
+      try { await ordersAPI.cancel(id); await loadOrder({ background: true }); }
+      catch (e) {
+        const message = (e as { response?: { data?: { message?: unknown } } }).response?.data?.message;
+        Alert.alert(t('orderStock.error'), typeof message === 'string' ? message : t('orderStock.retry'));
+        await loadOrder({ background: true });
+      } finally { cancelLock.current = false; setCancelling(false); }
+    })(); } },
+  ]);
   if (loading) {
     return (
       <View style={{ flex: 1, paddingTop: p.topInset, backgroundColor: theme.colors.background, justifyContent: 'center', alignItems: 'center' }}>
@@ -119,7 +156,7 @@ export default function OrderTrackingScreen() {
   if (!order) {
     return (
       <View style={{ flex: 1, paddingTop: p.topInset, backgroundColor: theme.colors.background, justifyContent: 'center', alignItems: 'center', padding: theme.spacing.lg }}>
-        <Text style={{ 
+        {error ? <ErrorMessage message={error} onRetry={() => void loadOrder()} /> : <Text style={{
           fontSize: 14, 
           fontWeight: '400',
           color: theme.colors.text.secondary, 
@@ -128,7 +165,7 @@ export default function OrderTrackingScreen() {
           marginBottom: theme.spacing.md,
         }}>
           {t('buyer.orders.notFound')}
-        </Text>
+        </Text>}
         <TouchableOpacity
           onPress={() => router.replace('/(buyer)/orders')}
           style={{ 
@@ -155,6 +192,9 @@ export default function OrderTrackingScreen() {
   const timelineInvalid =
     order.status === 'CANCELLED' || order.status === 'REFUNDED';
   const steps = getOrderTimelineSteps(t);
+  const next = buyerOrderNextStep(order);
+  const permissions = buyerOrderPermissions(order);
+  const fresh = !error && !updating && !cancelling;
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
@@ -236,6 +276,16 @@ export default function OrderTrackingScreen() {
             paddingBottom: Math.max(p.bottomInset, theme.spacing.lg),
           }}
         >
+          {error ? <ErrorMessage message={`${error}\n${t('buyerOrderActions.stale')}`} onRetry={() => void loadOrder({ background: true })} /> : null}
+          <View style={{ padding: theme.spacing.md, marginBottom: theme.spacing.lg, backgroundColor: theme.colors.surface, gap: theme.spacing.sm }}>
+            <Text style={{ fontWeight: '500', color: theme.colors.text.primary }}>{t('buyer.orders.currentStep')}</Text>
+            <Text style={{ color: theme.colors.text.secondary }}>{t(`buyerOrderActions.hints.${next.kind}`)}</Text>
+            {next.destination === 'delivery' ? (
+              <TouchableOpacity accessibilityRole="button" onPress={() => router.push({ pathname: '/(buyer)/delivery/[id]', params: { id: next.id } })} style={{ paddingVertical: theme.spacing.sm }}>
+                <Text style={{ color: theme.colors.primary }}>{t(`buyerOrderActions.buttons.${next.kind}`)}</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
           {/* Order Info */}
           <View style={{
             marginBottom: theme.spacing.xl,
@@ -288,8 +338,15 @@ export default function OrderTrackingScreen() {
             </View>
           </View>
 
+          <View style={{ marginBottom: theme.spacing.lg }}>
+            <Text>{t(`orderStock.states.${order.stockReservation?.status || 'UNALLOCATED'}`)}{order.stockReservation ? ` · ${order.stockReservation.quantity} ${order.stockReservation.unit}` : ''}</Text>
+            {permissions.canCancel && <TouchableOpacity accessibilityRole="button" disabled={!fresh} onPress={cancelOrder} style={{ paddingVertical: 14, opacity: fresh ? 1 : 0.5 }}>
+              <Text style={{ color: theme.colors.primary }}>{t('orderStock.cancel')}</Text>
+            </TouchableOpacity>}
+          </View>
+
           {/* Bank transfer: after Vera approved (APPROVED) */}
-          {order.status === 'APPROVED' && (
+          {permissions.canPay && fresh && (
             <View
               style={{
                 marginBottom: theme.spacing.xl,
@@ -470,6 +527,11 @@ export default function OrderTrackingScreen() {
             </View>
           )}
         </View>
+        {order.shipmentTracking?.missionNumber ? <Text>{order.shipmentTracking.missionNumber} · {order.shipmentTracking.missionStatus}</Text> : null}
+        {order.shipmentTracking?.events.map((event) => <Text key={`${event.code}-${event.at}`}>
+          {t(`deliveryFlow.events.${event.code}`, { defaultValue: event.code })} · {new Date(event.at).toLocaleString(priceLocale)}
+        </Text>)}
+        <BuyerDeliveryPanel key={order.id} orderId={order.id} onChanged={() => void loadOrder({ background: true })} />
       </ScrollView>
     </View>
   );

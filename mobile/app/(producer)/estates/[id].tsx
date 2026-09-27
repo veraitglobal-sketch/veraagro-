@@ -288,7 +288,7 @@ export default function EstateDetailsScreen() {
                         flex: 1,
                         minWidth: 120,
                       }}>
-                        {parcel.cropType || t('producer.products.unknownProduct')}
+                        {parcel.cropType || t('producer.batches.unknownProduct')}
                       </Text>
                       {(() => {
                         const ok =
@@ -341,7 +341,7 @@ export default function EstateDetailsScreen() {
                           params: {
                             parcelId: parcel.id,
                             parcelLabel: encodeURIComponent(
-                              `${estate.name} · ${parcel.cropType || t('producer.products.unknownProduct')}`,
+                              `${estate.name} · ${parcel.cropType || t('producer.batches.unknownProduct')}`,
                             ),
                           },
                         })

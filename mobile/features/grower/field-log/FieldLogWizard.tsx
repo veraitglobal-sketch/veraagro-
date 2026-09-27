@@ -12,13 +12,14 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
+import { WorkflowSteps } from '../../../components/grower/WorkflowSteps';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { GrowerSelectField } from '../../../components/grower/GrowerSelectField';
 import { EnterpriseNotice } from '../../../components/enterprise/EnterpriseNotice';
 import { useTranslation } from 'react-i18next';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 import { Camera, MapPin, Check, ScanLine, Sprout } from 'lucide-react-native';
-import { enterpriseColors, enterpriseUi, enterpriseStyles } from '../../../lib/enterprise-ui';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { EnterpriseButton, EnterpriseTextField, EnterpriseTextArea } from '../../../design-system';
 import {
@@ -42,68 +43,6 @@ const activityLabelKey: Record<ActivityType, string> = {
 };
 
 const MATERIAL_ACTIVITIES = new Set<ActivityType>(['PLANTING', 'FERTILIZING', 'SPRAYING']);
-
-function StepPanel({ step, title }: { step: number; title: string }) {
-  const { t } = useTranslation();
-  return (
-    <View style={[enterpriseUi.authPanel, styles.stepPanel]}>
-      <View style={enterpriseStyles.stepAccent} />
-      <View style={styles.stepInner}>
-        <Text style={enterpriseUi.inAppSectionLabel}>
-          {t('producer.fieldLogForm.farmerStepFraction', { step, total: STEPS })}
-        </Text>
-        <Text style={enterpriseUi.inAppTitle}>{title}</Text>
-      </View>
-    </View>
-  );
-}
-
-function SelectCard({
-  selected,
-  onPress,
-  title,
-  subtitle,
-  icon: Icon,
-}: {
-  selected: boolean;
-  onPress: () => void;
-  title: string;
-  subtitle?: string;
-  icon?: typeof MapPin;
-}) {
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={0.82}
-      style={[
-        enterpriseUi.inAppPanel,
-        styles.selectCard,
-        selected && styles.selectCardOn,
-      ]}
-    >
-      <View style={styles.selectRow}>
-        {Icon ? (
-          <View style={[enterpriseUi.navRowIcon, selected && styles.selectIconOn]}>
-            <Icon
-              size={20}
-              color={selected ? enterpriseColors.primary : enterpriseColors.gray600}
-              strokeWidth={1.5}
-            />
-          </View>
-        ) : null}
-        <View style={styles.selectCopy}>
-          <Text style={[enterpriseUi.navRowTitle, selected && styles.selectTitleOn]}>{title}</Text>
-          {subtitle ? (
-            <Text style={enterpriseUi.navRowSubtitle} numberOfLines={2}>
-              {subtitle}
-            </Text>
-          ) : null}
-        </View>
-        {selected ? <Check size={22} color={enterpriseColors.primary} strokeWidth={2} /> : null}
-      </View>
-    </TouchableOpacity>
-  );
-}
 
 /** 1. Parcela → 2. Zasad → 3. Rad + slika + GPS */
 export default function FieldLogWizard({ embedded = false }: { embedded?: boolean }) {
@@ -200,7 +139,6 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
 
   const headerSubtitle = t('producer.fieldLogForm.wizardStepOf', { step, total: STEPS });
 
-  const progressPct = step / STEPS;
 
   return (
     <View style={[growerUi.canvas, embedded && styles.embeddedRoot]}>
@@ -209,9 +147,11 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
       ) : null}
 
       <View style={styles.progressWrap}>
-        <View style={enterpriseUi.progressTrack}>
-          <View style={[enterpriseUi.progressFill, { width: `${progressPct * 100}%` }]} />
-        </View>
+        <WorkflowSteps current={step - 1} labels={[
+          t('workflowSteps.parcel'),
+          t('workflowSteps.crop'),
+          t('workflowSteps.work'),
+        ]} />
       </View>
 
       <KeyboardAvoidingView
@@ -222,7 +162,7 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={[growerUi.scrollContent, { paddingBottom: 120 }]}
+          contentContainerStyle={[growerUi.scrollContent, { paddingTop: 20, paddingBottom: 24 }]}
           refreshControl={
             <RefreshControl
               refreshing={data.referenceRefreshing}
@@ -264,7 +204,6 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
 
           {step === 1 ? (
             <>
-              <StepPanel step={1} title={t('producer.fieldLogForm.farmerStepParcel')} />
               {data.approvedParcelOptions.length === 0 ? (
                 <TouchableOpacity
                   onPress={() => data.router.push('/(producer)/estates' as never)}
@@ -292,7 +231,6 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
 
           {step === 2 ? (
             <>
-              <StepPanel step={2} title={t('producer.fieldLogForm.farmerStepCrop')} />
               {data.plansLoading ? (
                 <ActivityIndicator color={enterpriseColors.primary} style={{ marginVertical: 24 }} />
               ) : data.parcelPlans.length === 0 ? (
@@ -326,7 +264,6 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
 
           {step === 3 ? (
             <>
-              <StepPanel step={3} title={t('producer.fieldLogForm.farmerStepWork')} />
 
               {data.gpsWarning ? (
                 <Text style={styles.gpsWarn}>{t('producer.fieldLog.notOnParcel')}</Text>
@@ -449,16 +386,14 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
               onPress={() => setStep((s) => s - 1)}
               variant="secondary"
             />
-          ) : (
-            <View style={styles.footerSpacer} />
-          )}
+          ) : null}
           {step < STEPS ? (
             <EnterpriseButton
               label={t('producer.fieldLogForm.farmerNext')}
               onPress={() => setStep((s) => s + 1)}
               disabled={step === 1 ? !step1Ok : !step2Ok}
               style={styles.footerPrimary}
-              size="large"
+              size="default"
             />
           ) : data.activityType ? (
             <EnterpriseButton
@@ -467,7 +402,7 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
               loading={data.saveBusy}
               disabled={data.saveBusy || submitBlocked}
               style={styles.footerPrimary}
-              size="large"
+              size="default"
             />
           ) : (
             <View style={styles.footerSpacer} />
@@ -481,43 +416,7 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
 const styles = StyleSheet.create({
   progressWrap: {
     paddingHorizontal: 20,
-    paddingBottom: 12,
     backgroundColor: enterpriseColors.canvas,
-  },
-  stepPanel: {
-    marginBottom: 14,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  stepInner: {
-    paddingLeft: 8,
-  },
-  selectCard: {
-    marginBottom: 10,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    minHeight: 72,
-  },
-  selectCardOn: {
-    borderColor: enterpriseColors.primary,
-    borderWidth: 1.5,
-    backgroundColor: enterpriseColors.primaryTint,
-  },
-  selectRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-  },
-  selectIconOn: {
-    borderColor: enterpriseColors.primary,
-    backgroundColor: enterpriseColors.white,
-  },
-  selectCopy: {
-    flex: 1,
-    minWidth: 0,
-  },
-  selectTitleOn: {
-    color: enterpriseColors.primary,
   },
   contextChip: {
     flexDirection: 'row',
@@ -529,7 +428,7 @@ const styles = StyleSheet.create({
   },
   contextText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '500',
     color: enterpriseColors.gray900,
     letterSpacing: -0.15,
@@ -551,7 +450,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   linkAddText: {
-    fontSize: 16,
+    fontSize: 14.5,
     fontWeight: '600',
     color: enterpriseColors.primary,
     letterSpacing: -0.2,
@@ -563,11 +462,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   gpsWarn: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '500',
     color: enterpriseColors.gray700,
     marginBottom: 12,
-    lineHeight: 21,
+    lineHeight: 19,
   },
   photoBtn: {
     flexDirection: 'row',
@@ -612,21 +511,17 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   saveHint: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '400',
     color: enterpriseColors.gray600,
     textAlign: 'center',
     marginTop: 12,
-    lineHeight: 22,
+    lineHeight: 19,
   },
   footer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
     flexDirection: 'row',
     gap: 10,
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingTop: 10,
     paddingBottom: Platform.OS === 'ios' ? 28 : 16,
     backgroundColor: enterpriseColors.canvas,
@@ -638,6 +533,7 @@ const styles = StyleSheet.create({
   },
   footerPrimary: {
     flex: 1,
+    borderRadius: 8,
   },
   embeddedRoot: {
     flex: 1,

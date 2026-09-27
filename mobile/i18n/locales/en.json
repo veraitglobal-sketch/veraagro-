@@ -1,4 +1,154 @@
 {
+  "scanQr": {
+    "wait": "Preparing camera…",
+    "allowTitle": "Allow camera",
+    "allowBody": "The camera is needed to scan the QR or barcode on the seed bag.",
+    "allowCta": "Allow",
+    "title": "Scan",
+    "instruction": "Point the camera at the QR or barcode"
+  },
+  "transportForm": {
+    "chooseLot": "Select a lot",
+    "checking": "Checking packing documentation…",
+    "ready": "Packing documentation is complete",
+    "incomplete": "Packing documentation is incomplete",
+    "unchecked": "Documentation check is currently unavailable",
+    "completeChecks": "Complete documentation",
+    "blockedHint": "Transport unlocks once packing documentation is complete — complete it",
+    "pickup": "Pickup",
+    "location": "Pickup location",
+    "refreshGps": "Refresh GPS location",
+    "locationHelp": "Set the place where the driver will collect the goods.",
+    "hideCoordinates": "Hide coordinates",
+    "addressHelp": "Enter the address or clear directions to the farm entrance.",
+    "nextStep": "Operations reviews the request and assigns a carrier. Follow its status in Transport.",
+    "loadFailed": "Could not load lots. Please try again."
+  },
+  "estateDeletion": {
+    "title": "This field cannot be deleted",
+    "batches": "The field “{{name}}” has linked lots. Deletion is blocked to preserve the history of produce origins, packing and deliveries. You can review the linked lots.",
+    "orders": "The field “{{name}}” has linked orders. Deletion is blocked to preserve sales and delivery history.",
+    "system": "This field is part of the system records and cannot be deleted.",
+    "openLots": "View lots",
+    "lotsFor": "Lots for field: {{name}}",
+    "allLots": "Show all lots",
+    "lotsLoadFailed": "Could not load lots. Tap to retry."
+  },
+  "connectedWorkflow": {
+    "productsUnavailable": "The server product list is unavailable. Only this account’s device entries are shown. Tap to retry.",
+    "synced": "Saved on server",
+    "productPending": "Awaiting sync",
+    "openLot": "Open lot",
+    "createLot": "Create lot from this harvest",
+    "openWorkLog": "Record work for this planting",
+    "openOrder": "Open linked order"
+  },
+  "workflowSteps": {
+    "parcel": "Parcel",
+    "crop": "Crop",
+    "work": "Activity",
+    "instructions": "Instructions",
+    "photos": "Photos",
+    "location": "Location"
+  },
+  "returnFlow": {
+    "title": "Returns and refunds",
+    "menuSubtitle": "Goods returned by buyers and refund status",
+    "plan": "Create return order",
+    "planHint": "The assigned carrier returns the entire shipment to the farm. Enter the exact receiving address and instructions.",
+    "planned": "Return order saved.",
+    "address": "Exact receiving farm address",
+    "instructions": "Return instructions (at least 10 characters)",
+    "empty": "No returns for this account.",
+    "error": "The action failed. Check the details, refresh and retry.",
+    "collect": "Confirm return collection",
+    "receive": "Confirm receipt at farm",
+    "fullShipment": "I confirm the entire shipment has physically been collected or received at this step.",
+    "proofHint": "Take at least two photos and describe the condition. The carrier records collection; the farm records receipt.",
+    "notes": "Condition and notes (at least 10 characters)",
+    "photos": "Evidence photos (2–6)",
+    "evidence": "View return evidence",
+    "collectedAt": "Collected for return",
+    "receivedAt": "Received at farm",
+    "approveRefund": "Authorize full refund",
+    "refundHint": "Authorization reserves the full amount for refund. This app does not send money to a bank. Execute the bank refund separately.",
+    "reason": "Authorization reason (at least 20 characters)",
+    "bankHint": "Enter details only for an executed bank refund of the authorized amount and attach the bank confirmation.",
+    "bankReference": "Unique bank refund reference",
+    "bankDate": "Executed bank refund time",
+    "bankEvidence": "Bank confirmation (image)",
+    "recordBank": "Record executed bank refund",
+    "bankConfirm": "Confirm the bank has already refunded {{amount}} {{currency}} to the buyer? This app records evidence; it does not execute the transfer.",
+    "reconciliation": "Funds were previously distributed to recipients. Financial reconciliation is required: this refund does not reverse their wallets.",
+    "listHint": "Latest 200 orders. Operations may record a physical step only with actual collection or receipt evidence.",
+    "states": {
+      "PLANNED": "Return planned",
+      "COLLECTED": "Collected from buyer",
+      "RECEIVED": "Received at farm"
+    },
+    "refundStates": {
+      "APPROVED": "Refund authorized — awaiting bank refund",
+      "CONFIRMED": "Bank refund recorded"
+    }
+  },
+  "deliveryReview": {
+    "startReview": "Start review",
+    "decision": "Decision",
+    "explanation": "Explanation for the buyer (at least 20 characters)",
+    "saveDecision": "Save decision",
+    "conflict": "This report changed. Refresh and review the current decision.",
+    "moneyHint": "This records an operational decision. It does not refund or release funds. Reinspection requires new buyer evidence and signature; a return keeps receipt blocked.",
+    "states": {
+      "PENDING": "Received",
+      "IN_REVIEW": "Under review",
+      "RESOLVED": "Decision recorded"
+    },
+    "outcomes": {
+      "ACCEPTED": "Complaint accepted",
+      "REJECTED": "Complaint rejected",
+      "REINSPECTION": "New buyer inspection required",
+      "RETURN_REQUIRED": "Return required — receipt remains blocked"
+    }
+  },
+  "deliveryFlow": {
+    "title": "Delivery receipt",
+    "loadFailed": "Delivery data could not be loaded. Please retry.",
+    "saveFailed": "Could not save. Check your connection and retry.",
+    "refresh": "Refresh delivery",
+    "notAssigned": "No delivery has been assigned to this order yet.",
+    "completeHandover": "Complete inspection and handover",
+    "viewEvidence": "View handover evidence",
+    "confirm": "Confirm takeover",
+    "confirmHint": "Confirm that you have received the goods. This starts the existing payment settlement and the 24-hour issue reporting window.",
+    "receivedAt": "Takeover confirmed: {{at}}",
+    "reportDeadline": "You can report an issue with photos until {{at}}.",
+    "description": "Describe the issue (at least 20 characters)",
+    "addPhoto": "Add issue photo",
+    "removePhoto": "Remove photo",
+    "report": "Submit report",
+    "reportRequired": "Add a description of at least 20 characters and at least one photo.",
+    "reportSaved": "Report saved and available to administration for review.",
+    "expired": "The 24-hour window has expired. Contact operations for next steps.",
+    "openDelivery": "Open delivery and takeover confirmation",
+    "missionUnavailable": "The notification mission is unavailable for this step. Refresh or select a mission.",
+    "events": {
+      "LINE_OPENED": "Mission opened",
+      "LINEHAUL_ASSIGNED": "Logistics assigned",
+      "LINEHAUL_ACCEPTED": "Transport accepted",
+      "LOADING_QUALITY_CHECK_COMPLETE": "Loading inspection complete",
+      "DEPARTED_FARM": "Departed farm",
+      "BORDER_STOP_ARRIVAL": "Border arrival",
+      "BORDER_STOP_DEPARTURE": "Border departure",
+      "LINEHAUL_FINISHED": "Transport complete",
+      "DELIVERY_BOOKED": "Delivery scheduled",
+      "LAST_MILE_DISPATCHED": "Last-mile assigned",
+      "SHIPMENT_COLLECTED": "Goods collected",
+      "SHIPMENT_ENTRY_TRANSIT_LINE": "Goods in transit",
+      "SHIPMENT_DROP_OFF_CONFIRMED": "Dock receipt confirmed",
+      "SHIPMENT_BUYER_RECEIPT_CONFIRMED": "Buyer takeover confirmed",
+      "ORDER_RECORDED": "Order recorded"
+    }
+  },
   "integrity": {
     "barcodeRequired": "Barcode is required",
     "voidBarcode": "This barcode is voided in the system. Contact the supplier.",
@@ -17,7 +167,9 @@
     "filterReminders": "Reminders",
     "filterAlerts": "Alerts",
     "loading": "Loading…",
-    "empty": "No notifications"
+    "empty": "No notifications",
+    "today": "Today",
+    "yesterday": "Yesterday"
   },
   "marketplace": {
     "title": "Marketplace",
@@ -40,7 +192,7 @@
       "traceability": "Traceability",
       "certified": "Certified",
       "monitoring": "Monitoring",
-      "fraudCases": "Fraud Cases"
+      "fraudCases": "QA tiers"
     },
     "tagline": "BIO-Ready certified food with digital proof",
     "searchTitle": "What would you like today?",
@@ -132,6 +284,30 @@
     "registerPrompt": "Don't have an account? Register your business"
   },
   "logistics": {
+    "assignDriver": {
+      "title": "Loading driver",
+      "hint": "Choose who drives this run. You can change it until the truck leaves the farm.",
+      "noDrivers": "No drivers yet — add a driver"
+    },
+    "delivery": {
+      "title": "Delivery",
+      "handover": "Handover",
+      "status": {
+        "PENDING": "Pending",
+        "ASSIGNED": "Assigned",
+        "PICKED_UP": "Picked up",
+        "IN_TRANSIT": "In transit",
+        "DELIVERED": "Delivered",
+        "CONFIRMED": "Confirmed",
+        "COMPLETED": "Completed"
+      },
+      "handoverStatus": {
+        "INITIATED": "Started",
+        "IN_PROGRESS": "In progress",
+        "COMPLETED": "Completed",
+        "DISPUTED": "Disputed"
+      }
+    },
     "missionsTitle": "Transport",
     "missionsSubtitle": "Claim open jobs or continue assigned runs. Add a refrigerated vehicle if claim fails.",
     "claim": {
@@ -169,7 +345,7 @@
       "vehicles": "Vehicles",
       "vehiclesDesc": "{{count}} registered · {{free}} frigo available",
       "drivers": "Drivers",
-      "driversDesc": "Assign drivers to missions on web or view list here",
+      "driversDesc": "Add drivers and assign them to runs",
       "sectionHandover": "Handover",
       "loadingDesc": "Temperature, photos, signature at farm loading",
       "receiverDesc": "Who received the lot at destination",
@@ -187,19 +363,64 @@
       "frigoYes": "Refrigerated",
       "frigoNo": "No frigo",
       "errTitle": "Vehicle",
-      "errPlate": "Enter license plate"
+      "errPlate": "Enter license plate",
+      "status": {
+        "AVAILABLE": "Available",
+        "IN_USE": "On a run",
+        "MAINTENANCE": "In maintenance",
+        "OFFLINE": "Offline"
+      }
     },
     "drivers": {
       "lead": "People who can be assigned to pickup runs.",
       "webHint": "To add or edit drivers with photos, use the web portal (Drivers).",
       "empty": "No drivers registered yet.",
-      "inactive": "inactive"
+      "inactive": "inactive",
+      "addCta": "Add driver",
+      "formTitle": "New driver",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "phone": "Phone (optional)",
+      "errName": "Enter the driver's first and last name."
     },
     "loadingHandover": {
       "link": "Loading handover",
       "needTitle": "Loading handover required",
       "needBody": "Complete temperature check and photos before the truck departs.",
-      "needCta": "Open handover"
+      "needCta": "Open handover",
+      "title": "Loading handover",
+      "subtitle": "Temperature, photos and driver signature before departure",
+      "mission": "Run",
+      "noMissions": "No runs ready for loading.",
+      "driver": "Driver",
+      "noDrivers": "No active drivers — add one under Drivers.",
+      "temp": "Cargo temperature (°C)",
+      "tempPh": "e.g. 4",
+      "tempRange": "Allowed −10 to 15 °C; fresh fruit is typically 2–8 °C.",
+      "notes": "Notes (optional)",
+      "notesPh": "e.g. packaging condition, number of pallets…",
+      "pallet": "Pallet",
+      "palletHint": "Whole pallet with goods and label.",
+      "truckInside": "Truck interior",
+      "truckInsideHint": "Cargo space after loading.",
+      "badge": "Label / serial number",
+      "badgeHint": "QR or serial number clearly visible on the pallet.",
+      "snap": "Take photo",
+      "retake": "Retake",
+      "sig": "Driver signature",
+      "clear": "Clear",
+      "sigHint": "The driver signs with a finger in the box above.",
+      "save": "Save handover",
+      "errMission": "Choose a run.",
+      "errTemp": "Enter a temperature between −10 and 15 °C.",
+      "errDriver": "Choose a driver.",
+      "errPhotos": "All three photos are required.",
+      "errSig": "The driver's signature is required.",
+      "errSigCapture": "Signature was not saved. Try again.",
+      "doneTitle": "Handover saved",
+      "doneBody": "Loading is recorded. The truck may leave the farm.",
+      "errTitle": "Handover not saved",
+      "errGeneric": "Check the details and try again."
     },
     "receiverProof": {
       "link": "Receiver proof",
@@ -570,10 +791,10 @@
       "homeLead": "Alerts, your chain progress, and the next action — same flow as on the web dashboard.",
       "homeLeadShort": "Farm overview, lots, and your next step.",
       "homeKpi": {
-        "parcels": "Active parcels",
-        "chain": "Lots in progress",
-        "outbox": "Ready to ship",
-        "escrow": "In escrow"
+        "parcels": "Parcels",
+        "chain": "Lots",
+        "outbox": "To upload",
+        "escrow": "Escrow"
       },
       "homeSnapshot": {
         "title": "Your farm",
@@ -944,6 +1165,7 @@
     },
     "estates": {
       "newEstate": "Add field",
+      "locationPlaceholder": "e.g. Arilje, Serbia",
       "step": "Step",
       "estateName": "Field name",
       "estateNamePlaceholder": "e.g. Big field",
@@ -1097,6 +1319,8 @@
     "orders": {
       "title": "Orders",
       "filterAll": "All",
+      "menuTitle": "Buyer orders",
+      "menuSubtitle": "What sold from your estates and delivery status",
       "empty": "No orders",
       "buyer": "Buyer",
       "paid": "Paid",
@@ -1126,7 +1350,7 @@
     "wallet": {
       "subtitle": "Transactions and balance",
       "pending": "Pending",
-      "totalEarned": "Total earned",
+      "totalEarned": "Lifetime credits before debits",
       "available": "Available",
       "noTransactions": "No transactions",
       "transactions": "Transactions",
@@ -1274,7 +1498,7 @@
       "validationPlanting": "Select a planting on this parcel.",
       "validationName": "Enter a cost name.",
       "validationAmount": "Enter a valid amount (EUR).",
-      "costLinesMetric": "Lines on device",
+      "costLinesMetric": "Cost entries",
       "costNameLabel": "Cost name",
       "noteLabel": "Note",
       "notePlaceholder": "e.g. invoice no., supplier, transport fuel…",
@@ -1386,10 +1610,6 @@
       "faqTitle": "Common questions",
       "faqItems": [
         {
-          "title": "“Experience needs permissions”",
-          "body": "That is Expo Go (testing), not the real Bio Vera app. Use the installed EAS build for field work."
-        },
-        {
           "title": "Camera and location",
           "body": "Requested only when you tap photo or GPS. Short in-app explanation first, then the system dialog."
         },
@@ -1400,10 +1620,6 @@
         {
           "title": "Growth journal",
           "body": "After Continue, a photo on the parcel plus GPS for the passport is required."
-        },
-        {
-          "title": "404 error",
-          "body": "Often the push module is missing on the server — diary still works. Deploy the latest API."
         }
       ]
     },
@@ -1611,6 +1827,7 @@
       "ratingWithMax": "Rating: {{n}}/5"
     },
     "missionsCreate": {
+      "selectedBatchLabel": "Lot for this transport",
       "title": "Request transport",
       "submitCta": "Send request",
       "introShort": "Packed batch + farm pickup address.",
@@ -1737,7 +1954,7 @@
       "removePhoto": "Remove"
     },
     "products": {
-      "deviceLinesMetric": "Lines on device",
+      "deviceLinesMetric": "Recorded products",
       "screenLeadShort": "QR or manual — for passport and transparency.",
       "savedOnDevice": "Saved on device",
       "syncing": "Syncing…",
@@ -2068,8 +2285,13 @@
       "profile": "Profile"
     },
     "dashboard": {
+      "farms": "Farms in the marketplace",
+      "allFarms": "All farms",
+      "offerCount": "Offers: {{count}}",
+      "harvestSoon": "Harvest within 7 days",
+      "harvestLater": "Later harvest",
       "scanCode": "Scan Bio Vera code",
-      "reserve": "Reserve crates",
+      "reserve": "Reserve",
       "soldOut": "Sold out — next harvest",
       "noProducts": "No products found",
       "marketplaceTitle": "Marketplace",
@@ -2085,20 +2307,7 @@
       "unitsAvailable": "{{qty}} {{unit}} available",
       "unitsDefault": "units",
       "soldOutBadge": "Sold out — next harvest soon",
-      "reserveCrates": "Reserve crates",
-      "demoDeliveryLocation": "Hungary",
-      "demoStoryNames": {
-        "1": "Marko",
-        "2": "Petar",
-        "3": "Jovan",
-        "4": "Milan"
-      },
-      "demoStorySubtitles": {
-        "1": "Harvest · Central region",
-        "2": "Quality check · North plain",
-        "3": "Loading · National",
-        "4": "Harvest · Eastern region"
-      }
+      "reserveCrates": "Reserve crates"
     },
     "shop": {
       "title": "Bio Vera Marketplace",
@@ -2108,6 +2317,23 @@
       "viewHistory": "View history",
       "noProducts": "Currently no available products",
       "loading": "Loading products..."
+    },
+    "cartReview": {
+      "backToShop": "Back to marketplace",
+      "checking": "Checking current prices and availability…",
+      "pricesChanged": "Prices were updated from the marketplace. Review the new total before submitting.",
+      "stockHint": "This is the latest loaded offer. Stock is checked again when the order is created.",
+      "loadFailed": "The marketplace could not be checked. Tap to retry.",
+      "unavailable": "This product is no longer listed. Remove it or choose another product.",
+      "priceMissing": "A price is not available yet. Remove this item to continue with the others.",
+      "quantity": "Your cart exceeds the listed quantity ({{quantity}} {{unit}}) or has an invalid quantity. Reduce it or remove the item.",
+      "retryHint": "This item has a previous submission attempt. Continuing reuses the same request; an existing order will open with its original details.",
+      "totalIncomplete": "Some items have no price",
+      "remainingCart": "Remaining cart",
+      "checkoutTitle": "Confirm order",
+      "checkoutHint": "This step submits your order. Payment instructions appear in its details after approval and stock allocation.",
+      "fixCart": "Some items need attention. Open the cart.",
+      "checkoutCta": "Review and confirm order"
     },
     "cart": {
       "empty": "Your cart is empty",
@@ -2188,6 +2414,7 @@
       "viewOrders": "View orders",
       "logout": "Log out",
       "logoutConfirm": "Are you sure you want to sign out?",
+      "saveFailed": "Company details were not saved. Check your connection and try again.",
       "tabGeneral": "General",
       "tabLocations": "Locations",
       "tabStaff": "Staff",
@@ -2238,6 +2465,7 @@
       "total": "Total",
       "multiOrderHint": "Each cart line is submitted as a separate order with this delivery address (same as the web shop).",
       "ordersCreated": "{{count}} orders placed successfully.",
+      "partialSuccess": "{{count}} orders were placed. Only items that were not confirmed remain in your cart. You can see confirmed orders in My orders.",
       "fieldStreet": "Street and number",
       "fieldCity": "City",
       "fieldPostal": "Postal code",
@@ -2247,6 +2475,7 @@
       "orderMissingId": "Order was created but no ID was returned"
     },
     "productDetail": {
+      "remainingToAdd": "You can add: {{quantity}} {{unit}} (cart included)",
       "notFound": "Product not found",
       "farmerFallback": "Bio Vera farmer",
       "originHeading": "Origin",
@@ -2316,6 +2545,29 @@
     "growerFallback": "Grower",
     "growerReceivedAtFarm": "Grower received at farm: {{when}}",
     "threadUntitledShort": "Thread {{id}}",
+    "dashboard": {
+      "noProfile": "Store not set up yet",
+      "kpiNew": "New orders",
+      "kpiOpen": "Being delivered",
+      "kpiProducts": "Products",
+      "pendingAlert": "{{count}} orders waiting for your confirmation",
+      "sectionStore": "Store",
+      "ordersHint": "Confirm, ship and track farm receipt",
+      "messagesHint": "Conversations with growers: {{count}}",
+      "noThreads": "No conversations yet. Growers message you from your store on the map.",
+      "allThreads": "All conversations"
+    },
+    "orderActions": {
+      "CONFIRMED": "Confirm",
+      "REJECTED": "Reject",
+      "FULFILLED": "Mark delivered",
+      "CANCELLED": "Cancel order",
+      "confirm_REJECTED": "Reject this order?",
+      "confirm_CANCELLED": "Cancel this order?",
+      "confirmBody": "The grower is notified. This change cannot be undone.",
+      "filterOpen": "Open ({{count}})",
+      "filterAll": "All"
+    },
     "b2bOrderStatus": {
       "PENDING": "Pending",
       "CONFIRMED": "Confirmed",
@@ -2405,6 +2657,8 @@
     "ok": "OK"
   },
   "common": {
+    "noResults": "No results",
+    "apiErrorGeneric": "Something went wrong. Check your connection and try again.",
     "currency": "EUR",
     "total": "Total",
     "back": "Back",
@@ -2555,6 +2809,35 @@
       "mapSubtitle": "Shops near you"
     }
   },
+  "harvestWorkflow": {
+    "planNotSynced": "The selected harvest plan has not reached the server. Sync it and refresh the list before creating the lot.",
+    "planUnavailable": "The selected plan is unavailable for this parcel. Refresh and select it again.",
+    "savedWithoutTransport": "The harvest plan was saved, but transport was not requested. Retry transport here; do not submit the harvest again.",
+    "savedPlans": "Saved harvests and transport",
+    "retryTransport": "Retry transport request",
+    "retryFailed": "Transport was not requested. Please try again.",
+    "openMission": "Open linked mission",
+    "reload": "Harvest and transport links could not be loaded. Try again",
+    "planTitle": "Linked harvest plan",
+    "noPlan": "This lot has no saved harvest plan link.",
+    "noMission": "No linked mission. Continue with Request transport.",
+    "planMissionNotLinked": "This mission belongs to the harvest plan. The lot is not attached yet; continue with Request transport."
+  },
+  "batchWorkflow": {
+    "labels": "Labels for this lot",
+    "qualityLoadFailed": "Quality data could not be loaded.",
+    "continueTitle": "Continue with this lot",
+    "packing": "Record packing",
+    "quality": "Quality check",
+    "compliance": "Labels and control photos",
+    "transport": "Request transport",
+    "detail": "Open lot details",
+    "selectBatch": "Choose the lot to pack",
+    "unavailable": "This lot is unavailable for this step. Refresh the list or choose another lot explicitly.",
+    "loadFailed": "Could not load your lots. Check your connection and try again.",
+    "packingSaved": "Packing check saved: {{at}}",
+    "packingNotSaved": "No packing check has been recorded for this lot."
+  },
   "packingFlow": {
     "title": "Packing Flow",
     "submit": "Submit",
@@ -2564,7 +2847,7 @@
     "successTitle": "Packing check saved",
     "successBodyWithPhotos": "Location, time, and photos are stored on the server for this batch.",
     "successBodyLocationOnly": "Location and time are stored on the server for this batch.",
-    "successHint": "You're done — we'll take you back to the previous screen.",
+    "successHint": "Continue to quality checks for this lot, or open its saved record.",
     "finishButton": "Finish",
     "step1": {
       "title": "Packaging Instructions",
@@ -2663,14 +2946,15 @@
     "registrationFailed": "Registration failed"
   },
   "reservationModal": {
+    "recovered": "The order from your previous attempt has been opened. Check its quantity, address and status.",
     "missingInfo": "Product or user information missing",
-    "quantityRange": "Please select a quantity between 1 and {{max}}",
+    "quantityRange": "Enter a quantity greater than 0, up to {{max}}",
     "estateMissing": "Estate information missing",
     "priceMissing": "Product price missing",
     "addressRequired": "Please enter street and city for delivery.",
-    "success": "Reserved {{quantity}} {{unit}} of {{name}}",
+    "success": "Order {{number}} created: {{quantity}} {{unit}} — {{name}}. See the order details for its status and next step.",
     "createFailed": "Failed to create reservation",
-    "title": "Reserve crates",
+    "title": "Reserve product",
     "quantitySection": "Quantity",
     "deliveryAddressHeading": "Delivery address",
     "maxAvailable": "{{max}} {{unit}} available",
@@ -2686,7 +2970,12 @@
     "addPhotoFailed": "Failed to add photo",
     "categorySeed": "Seed & planting",
     "categoryTreatment": "Treatment",
-    "categoryHarvest": "Harvest"
+    "categoryHarvest": "Harvest",
+    "bagTitle": "Vera digital bag",
+    "batchLine": "Lot {{id}}",
+    "noPhotos": "No photos in this category",
+    "takePhoto": "Take photo",
+    "chooseGallery": "Choose from gallery"
   },
   "b2bSupplier": {
     "signInTitle": "Sign in",
@@ -2709,6 +2998,7 @@
       "noteLabel": "Note (optional)",
       "notePlaceholder": "e.g. delivery date…",
       "submit": "Send order",
+      "estimatedTotal": "Estimated total (list prices)",
       "successTitle": "Order sent",
       "successBody": "The partner sees your request. Track status under Orders.",
       "placeAnother": "Place another order",
@@ -2717,6 +3007,137 @@
       "inquiryLineLabel": "Inquiry: {{snippet}}",
       "messagePlaceholder": "Message to supplier…",
       "sendMessage": "Send"
+    }
+  },
+  "refundReconciliation": {
+    "title": "Financial reconciliation",
+    "open": "Open original credits",
+    "closed": "Reconciliation recorded",
+    "recovered": "Recovered from wallets",
+    "platformCost": "Platform cost",
+    "uncredited": "Platform share not credited to a wallet",
+    "available": "Currently available in wallet",
+    "choose": "Choose a method for this share",
+    "hint": "For each original payment share, choose recovery from the available wallet balance or record a decision that the platform bears the cost. Explain the decision. Wallet recovery reduces the available balance; platform cost is not collected money. This form does not execute a bank transfer.",
+    "reason": "Reason for the cost decision (at least 20 characters)",
+    "confirm": "Confirm reconciliation: debit {{recovered}} from wallets and record {{cost}} as platform cost. A different request cannot overwrite this decision.",
+    "save": "Confirm and record reconciliation",
+    "error": "Reconciliation was not saved. Refresh and check the current balances.",
+    "methods": {
+      "WALLET_RECOVERY": "Recover from available wallet balance",
+      "PLATFORM_COST": "Platform bears the cost"
+    },
+    "walletEntry": "Debit for buyer refund",
+    "orderReference": "Order",
+    "participantMethods": {
+      "WALLET_RECOVERY": "Your wallet debit for this refund",
+      "PLATFORM_COST": "The platform bears your share; your wallet was not debited"
+    }
+  },
+  "returnDisposition": {
+    "title": "Returned goods disposition",
+    "states": {
+      "QUARANTINED": "Quarantine — decision pending",
+      "WRITTEN_OFF": "Written off",
+      "RESTOCKED": "Approved for sale with stock count"
+    },
+    "actions": {
+      "QUARANTINE": "Keep in quarantine",
+      "WRITE_OFF": "Record write-off",
+      "RESTOCK": "Approve sale with physical count"
+    },
+    "open": "Open inspection and history",
+    "initial": "The goods have been received and await a disposition decision. The return has not increased saleable stock.",
+    "action": "Decision for the complete shipment",
+    "choose": "Choose",
+    "quantity": "Enter the inspected full-shipment quantity: {{quantity}} {{unit}}",
+    "notes": "Inspection findings and reason (at least 20 characters)",
+    "countHint": "Legacy orders lack a reliable stock issue ledger. Enter the total physically counted saleable quantity for this stock record, including this approved return. Do not enter only the added quantity. Exclude all other quarantined or written-off goods.",
+    "noStock": "No eligible stock for this farm, product and unit. The return remains quarantined until stock records are reconciled.",
+    "stock": "Stock record and actual goods location",
+    "currentCount": "Current recorded quantity",
+    "currentExpiry": "Existing expiry",
+    "counted": "Total physical saleable count, including this return",
+    "expiry": "Verified stock expiry (cannot extend existing expiry)",
+    "quality": "The full returned shipment was inspected and approved for sale.",
+    "countConfirmed": "The count includes this shipment and excludes goods not approved for sale.",
+    "location": "The goods are physically at the selected stock location.",
+    "confirmCount": "Set the total saleable stock to {{count}} {{unit}} based on the physical count? This does not add to the existing quantity.",
+    "confirmDecision": "Record “{{action}}” for the full returned shipment? Write-off and sale approval are final in this workflow.",
+    "save": "Save inspection and decision",
+    "savedCount": "Physical count: previously {{before}}, verified {{after}} {{unit}}.",
+    "error": "Decision was not saved. Refresh and check the evidence and stock state.",
+    "writeOffHint": "This write-off applies to the separate returned quantity. Existing saleable stock is not automatically reduced because the original stock issue is not reliably linked. If these goods are already included in saleable stock, a separate physical count and reconciliation are required."
+  },
+  "orderStock": {
+    "states": {
+      "UNALLOCATED": "Stock not allocated",
+      "RESERVED": "Goods reserved",
+      "ISSUED": "Goods dispatched",
+      "RELEASED": "Reservation released"
+    },
+    "choose": "Choose stock",
+    "noStock": "No matching available stock. Check the fulfilling farm and lot link.",
+    "reserve": "Reserve for this order",
+    "cancel": "Cancel unpaid order",
+    "cancelConfirm": "Cancel this unpaid order and release the reserved goods? If you have already transferred money, contact operations instead of cancelling here.",
+    "keep": "Keep order",
+    "error": "Change was not saved",
+    "retry": "Refresh and try again."
+  },
+  "checkoutRecovery": {
+    "recovered": "An order from the previous attempt was recovered without creating a duplicate. Check its original quantity, address and status in your orders; any remaining quantity stays in the cart.",
+    "storageError": "The cart could not be saved safely. Check storage space and permissions, then try again.",
+    "missingOrder": "Order confirmation is missing. Retry with the same cart.",
+    "partial": "Orders saved: {{count}}. Remaining items are in the cart."
+  },
+  "buyerDeliveryStatus": {
+    "ASSIGNED": "Assigned to carrier",
+    "PICKED_UP": "Picked up by carrier",
+    "IN_TRANSIT": "In transit",
+    "DELIVERED": "Delivered — awaiting receipt",
+    "CONFIRMED": "Receipt confirmed",
+    "CANCELLED": "Cancelled"
+  },
+  "buyerOrderActions": {
+    "search": "Search order number or product",
+    "loadFailed": "Orders could not be loaded right now.",
+    "stale": "Previously loaded information is shown. Refresh before taking another action.",
+    "noMatches": "No orders match this filter and search.",
+    "openOrder": "Open order {{number}}",
+    "openDelivery": "Open delivery for {{number}}",
+    "orderDetails": "Order details",
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "action": "Payment / receipt",
+      "closed": "Closed"
+    },
+    "buttons": {
+      "paymentPending": "Review payment record",
+      "preparing": "Review order preparation",
+      "closed": "View order",
+      "report": "Report an issue / view delivery",
+      "evidence": "View evidence and reports",
+      "receipt": "Review receipt of goods",
+      "track": "Track delivery",
+      "payment": "View bank transfer details",
+      "approval": "View request",
+      "allocation": "View request",
+      "details": "Order details"
+    },
+    "hints": {
+      "paymentPending": "The payment record is being processed. Wait for a status update; do not send the same payment again.",
+      "preparing": "Payment is recorded. Operations is preparing the goods and arranging delivery; the linked delivery will appear here.",
+      "closed": "This order is closed. Its details and existing records remain available.",
+      "report": "Receipt has been recorded. If something is wrong with the shipment, open the delivery and submit a report with photos.",
+      "evidence": "Review the recorded receipt, evidence and decisions on reports.",
+      "receipt": "This delivery is marked as delivered. Review the handover and confirm receipt once you physically receive the goods.",
+      "track": "Open the linked delivery for its current status and handover.",
+      "payment": "Your order is approved and goods are reserved. Bank details and the payment reference are in the order.",
+      "approval": "Goods are reserved. Operations is reviewing the request.",
+      "allocation": "Operations must allocate specific stock before further approval and payment.",
+      "details": "Preparation and further updates are available in the order details."
     }
   }
 }

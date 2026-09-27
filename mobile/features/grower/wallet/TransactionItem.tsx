@@ -1,4 +1,6 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import { ArrowDownLeft, ArrowUpRight, Calendar } from 'lucide-react-native';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { useAppLocaleTag } from '../../../lib/date-locale';
@@ -10,11 +12,16 @@ interface TransactionItemProps {
 
 export function TransactionItem({ transaction }: TransactionItemProps) {
   const dateLocale = useAppLocaleTag();
+  const { t } = useTranslation();
+  const router = useRouter();
   const isCredit = transaction.type === 'CREDIT';
   const amountColor = isCredit ? enterpriseColors.primary : enterpriseColors.destructive;
 
   return (
-    <View style={[enterpriseUi.inAppPanel, styles.row]}>
+    <TouchableOpacity style={[enterpriseUi.inAppPanel, styles.row]} disabled={!transaction.orderId}
+      accessibilityRole={transaction.orderId ? 'button' : undefined}
+      accessibilityHint={transaction.orderId ? t('connectedWorkflow.openOrder') : undefined}
+      onPress={() => transaction.orderId && router.push({ pathname: '/(producer)/orders/[id]', params: { id: transaction.orderId } })}>
       <View style={[styles.iconWell, { backgroundColor: enterpriseColors.gray100 }]}>
         {isCredit ? (
           <ArrowDownLeft size={20} color={enterpriseColors.primary} strokeWidth={1.5} />
@@ -24,8 +31,9 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
       </View>
       <View style={styles.body}>
         <Text style={enterpriseUi.navRowTitle} numberOfLines={2}>
-          {transaction.description}
+          {transaction.sourceType === 'REFUNDED' ? t('refundReconciliation.walletEntry') : transaction.description}
         </Text>
+        {transaction.sourceType === 'REFUNDED' && transaction.orderId ? <Text style={enterpriseUi.navRowSubtitle}>{t('refundReconciliation.orderReference')}: {transaction.orderId}</Text> : null}
         <View style={styles.dateRow}>
           <Calendar size={12} color={enterpriseColors.gray600} strokeWidth={1} />
           <Text style={enterpriseUi.navRowSubtitle}>
@@ -40,7 +48,7 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
           currency: 'EUR',
         })}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 }
 

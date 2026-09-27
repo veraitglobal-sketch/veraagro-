@@ -22,6 +22,8 @@ export type GrowerHubConfig = {
   subtitleKey: string;
   statusLine?: string;
   sectionTitleKey?: string;
+  /** Sequential workflow — number each step tile. */
+  numbered?: boolean;
   steps: HubStepDef[];
 };
 
@@ -60,6 +62,7 @@ export function GrowerHubScreen({ config }: Props) {
       <EnterpriseNavSection
         title={config.sectionTitleKey ? t(config.sectionTitleKey) : undefined}
         items={items}
+        numbered={config.numbered}
       />
     </GrowerHeroSheetScaffold>
   );

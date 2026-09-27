@@ -7,6 +7,7 @@ export { ds, dsColors, dsStyles, dsTypography } from './theme';
 
 export { EnterpriseButton, type EnterpriseButtonVariant, type EnterpriseButtonSize } from './EnterpriseButton';
 export { EnterpriseTextField, EnterpriseTextArea, EnterprisePasswordField, type EnterpriseFieldSize } from './EnterpriseTextField';
+export { EnterpriseSearchField } from './EnterpriseSearchField';
 export { EnterprisePanel, EnterpriseAccentPanel, type EnterprisePanelVariant } from './EnterprisePanel';
 export { EnterprisePageTitle } from './EnterprisePageTitle';
 export {

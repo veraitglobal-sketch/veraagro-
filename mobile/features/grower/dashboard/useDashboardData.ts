@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback, useRef, useMemo } from 'react';
 import { Alert, AppState, AppStateStatus } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import {
@@ -45,7 +45,10 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
   const [legacyFieldLogPending, setLegacyFieldLogPending] = useState(0);
   const [offlineSyncing, setOfflineSyncing] = useState(false);
   const [offlineSyncLastError, setOfflineSyncLastError] = useState<string | null>(null);
-  const [batchesReadyForTransport, setBatchesReadyForTransport] = useState(0);
+  /** Packed / quality-verified lots (internal ids). */
+  const [readyBatchIds, setReadyBatchIds] = useState<string[]>([]);
+  /** Lots that already have a live (non-cancelled) transport request. */
+  const [missionBatchIds, setMissionBatchIds] = useState<Set<string>>(() => new Set());
   const [batchTotalCount, setBatchTotalCount] = useState(0);
   const [harvestPlanCount, setHarvestPlanCount] = useState(0);
   const [hasTransportRecord, setHasTransportRecord] = useState(false);
@@ -201,6 +204,13 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
         );
       });
       setActiveMissions(active);
+      setMissionBatchIds(
+        new Set(
+          list
+            .filter((m: any) => String(m?.status || '').toUpperCase() !== 'CANCELLED' && m?.batchId)
+            .map((m: any) => String(m.batchId)),
+        ),
+      );
       setHasTransportRecord(
         list.some((m: any) => String(m?.status || '').toUpperCase().replace(/\s+/g, '_') !== 'CANCELLED'),
       );
@@ -225,8 +235,10 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
       const arr = Array.isArray(batches) ? batches : [];
       await growerOfflineCache.saveBatches(arr);
       setBatchTotalCount(arr.length);
-      setBatchesReadyForTransport(
-        arr.filter((b: any) => b?.status === 'PACKED' || b?.status === 'QUALITY_VERIFIED').length
+      setReadyBatchIds(
+        arr
+          .filter((b: any) => b?.status === 'PACKED' || b?.status === 'QUALITY_VERIFIED')
+          .map((b: any) => String(b.id)),
       );
       const active = arr
         .filter((b: any) => b?.status === 'PACKED' || b?.status === 'IN_HUB' || b?.status === 'IN_TRANSIT')
@@ -236,8 +248,10 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
       const cached = await growerOfflineCache.loadBatches();
       const arr = cached ?? [];
       setBatchTotalCount(arr.length);
-      setBatchesReadyForTransport(
-        arr.filter((b: any) => b?.status === 'PACKED' || b?.status === 'QUALITY_VERIFIED').length
+      setReadyBatchIds(
+        arr
+          .filter((b: any) => b?.status === 'PACKED' || b?.status === 'QUALITY_VERIFIED')
+          .map((b: any) => String(b.id)),
       );
       const active = arr
         .filter((b: any) => b?.status === 'PACKED' || b?.status === 'IN_HUB' || b?.status === 'IN_TRANSIT')
@@ -440,6 +454,12 @@ export function useDashboardData(user: { id?: string; trustScore?: number; partn
       ],
     );
   }, [offlinePending, offlineSyncLastError, t]);
+
+  // A lot needs "request transport" only while no transport request exists for it yet.
+  const batchesReadyForTransport = useMemo(
+    () => readyBatchIds.filter((id) => !missionBatchIds.has(id)).length,
+    [readyBatchIds, missionBatchIds],
+  );
 
   return {
     connected,

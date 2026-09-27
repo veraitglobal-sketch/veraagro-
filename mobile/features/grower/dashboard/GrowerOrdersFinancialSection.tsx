@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Sparkles } from 'lucide-react-native';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 import {
   enterpriseColors,
@@ -45,22 +46,36 @@ export default function GrowerOrdersFinancialSection({
     <View style={styles.block}>
       <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.dashboard.financialOrders.title')}</Text>
       <Text style={styles.subtitle}>{t('producer.dashboard.financialOrders.subtitle')}</Text>
-      <View style={styles.grid}>
-        {rows.map((row) => (
-          <View key={row.label} style={styles.metric}>
-            <Text style={styles.metricLabel}>{row.label}</Text>
-            <Text style={[enterpriseUi.kpiValue, { fontSize: 18, color: enterpriseValueColor(row.tone) }]}>
-              {euro(row.value, locale)}
-            </Text>
+      <View style={styles.panel}>
+        <View style={styles.grid}>
+          {rows.map((row, i) => (
+            <View
+              key={row.label}
+              style={[styles.metric, i % 2 === 0 && styles.metricLeft, i < 2 && styles.metricTop]}
+            >
+              <Text style={styles.metricLabel} numberOfLines={1}>
+                {row.label}
+              </Text>
+              <Text
+                style={[styles.metricValue, { color: enterpriseValueColor(row.tone) }]}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+              >
+                {euro(row.value, locale)}
+              </Text>
+            </View>
+          ))}
+        </View>
+        <View style={styles.bonusRow}>
+          <View style={styles.bonusIcon}>
+            <Sparkles size={16} color={enterpriseColors.primary} strokeWidth={1.9} />
           </View>
-        ))}
-      </View>
-      <View style={styles.bonusPanel}>
-        <Text style={styles.bonusTitle}>{t('producer.dashboard.financialOrders.estimatedVeraBonus')}</Text>
-        <Text style={[enterpriseUi.kpiValue, { fontSize: 20, color: enterpriseColors.primary }]}>
-          {euro(data.estimatedVeraBonusDeliveredLots, locale)}
-        </Text>
-        <Text style={styles.bonusFoot}>{t('producer.dashboard.financialOrders.veraFootnote')}</Text>
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Text style={styles.bonusTitle}>{t('producer.dashboard.financialOrders.estimatedVeraBonus')}</Text>
+            <Text style={styles.bonusFoot}>{t('producer.dashboard.financialOrders.veraFootnote')}</Text>
+          </View>
+          <Text style={styles.bonusValue}>{euro(data.estimatedVeraBonusDeliveredLots, locale)}</Text>
+        </View>
       </View>
     </View>
   );
@@ -68,62 +83,88 @@ export default function GrowerOrdersFinancialSection({
 
 const styles = StyleSheet.create({
   block: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   subtitle: {
-    ...enterpriseUi.premiumSub,
-    marginBottom: 14,
-    marginTop: -4,
+    fontSize: 12.5,
+    color: enterpriseColors.gray600,
+    lineHeight: 17,
+    marginBottom: 10,
+    marginTop: -2,
+    marginLeft: 4,
   },
   panel: {
     ...enterpriseUi.inAppPanel,
-    padding: 16,
   },
   hint: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '400',
     color: enterpriseColors.gray600,
-    lineHeight: 20,
+    lineHeight: 19,
+    padding: 14,
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
-    marginBottom: 10,
   },
   metric: {
-    flexGrow: 1,
-    minWidth: '44%',
-    backgroundColor: enterpriseColors.white,
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
+    width: '50%',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+  },
+  metricLeft: {
+    borderRightWidth: StyleSheet.hairlineWidth,
+    borderRightColor: enterpriseColors.gray200,
+  },
+  metricTop: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: enterpriseColors.gray200,
   },
   metricLabel: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '500',
     color: enterpriseColors.gray600,
-    marginBottom: 6,
+    marginBottom: 3,
   },
-  bonusPanel: {
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: enterpriseColors.premiumTintBorder,
-    backgroundColor: enterpriseColors.premiumTintBg,
+  metricValue: {
+    fontSize: 17,
+    fontWeight: '600',
+    letterSpacing: -0.4,
+    fontVariant: ['tabular-nums'],
+  },
+  bonusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: enterpriseColors.gray200,
+    backgroundColor: 'rgba(45, 90, 39, 0.04)',
+  },
+  bonusIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: '#E8F1E4',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   bonusTitle: {
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: '600',
     color: enterpriseColors.gray900,
-    marginBottom: 8,
   },
   bonusFoot: {
-    fontSize: 14,
-    fontWeight: '400',
+    fontSize: 11.5,
     color: enterpriseColors.gray600,
-    marginTop: 10,
-    lineHeight: 17,
+    marginTop: 1,
+    lineHeight: 15,
+  },
+  bonusValue: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: enterpriseColors.primary,
+    fontVariant: ['tabular-nums'],
   },
 });

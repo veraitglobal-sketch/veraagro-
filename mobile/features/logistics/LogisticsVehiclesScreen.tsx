@@ -74,7 +74,7 @@ export default function LogisticsVehiclesScreen() {
       onRefresh={() => void onRefresh()}
       header={<GrowerStackHeader title={t('logistics.hub.vehicles')} subtitle={t('logistics.vehicles.lead')} />}
     >
-      <View style={{ paddingHorizontal: 20, paddingBottom: 32, gap: 12 }}>
+      <View style={{ paddingHorizontal: 16, paddingBottom: 32, gap: 12 }}>
         <TouchableOpacity
           style={enterpriseUi.authBtnSecondary}
           onPress={() => setShowForm((v) => !v)}
@@ -86,20 +86,22 @@ export default function LogisticsVehiclesScreen() {
         </TouchableOpacity>
 
         {showForm ? (
-          <View style={[enterpriseUi.inAppPanel, { gap: 10 }]}>
+          <View style={[enterpriseUi.inAppPanel, { gap: 10, padding: 14, marginBottom: 12 }]}>
             <Text style={enterpriseUi.navRowTitle}>{t('logistics.vehicles.formTitle')}</Text>
             <TextInput
               value={plate}
               onChangeText={setPlate}
               placeholder={t('logistics.vehicles.platePh')}
               autoCapitalize="characters"
+              placeholderTextColor={enterpriseColors.gray600}
               style={{
                 borderWidth: 1,
-                borderColor: enterpriseColors.gray200,
-                borderRadius: 10,
+                borderColor: 'rgba(17, 24, 39, 0.12)',
+                borderRadius: 12,
                 paddingHorizontal: 14,
-                paddingVertical: 12,
-                fontSize: 16,
+                paddingVertical: 11,
+                fontSize: 15,
+                color: enterpriseColors.gray900,
               }}
             />
             <TouchableOpacity
@@ -122,8 +124,10 @@ export default function LogisticsVehiclesScreen() {
           <EmptyState message={t('logistics.vehicles.empty')} icon={Truck} />
         ) : (
           list.map((v) => (
-            <View key={v.id} style={[enterpriseUi.inAppPanel, { flexDirection: 'row', gap: 12, alignItems: 'center' }]}>
-              <Truck size={22} color={enterpriseColors.primary} strokeWidth={1.5} />
+            <View key={v.id} style={[enterpriseUi.inAppPanel, { flexDirection: 'row', gap: 12, alignItems: 'center', padding: 14, marginBottom: 8 }]}>
+              <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: v.hasFrigo ? '#E1EFEC' : '#ECEEF1', alignItems: 'center', justifyContent: 'center' }}>
+                <Truck size={19} color={v.hasFrigo ? '#1D665D' : '#475467'} strokeWidth={1.8} />
+              </View>
               <View style={{ flex: 1 }}>
                 <Text style={enterpriseUi.navRowTitle}>{v.licensePlate}</Text>
                 <Text style={enterpriseUi.navRowSubtitle}>
@@ -131,7 +135,7 @@ export default function LogisticsVehiclesScreen() {
                   {' · '}
                   {v.hasFrigo ? t('logistics.vehicles.frigoYes') : t('logistics.vehicles.frigoNo')}
                   {' · '}
-                  {v.status}
+                  {t(`logistics.vehicles.status.${v.status}`, { defaultValue: v.status })}
                 </Text>
               </View>
             </View>

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { onBatchListRefreshRequest } from '../../../lib/batch-refresh';
 import { batchesAPI } from '../../../lib/api';
 import { isLikelyNetworkError } from '../../../lib/api-error';
+import { lotsForEstate } from '../../../lib/estate-deletion';
 import { theme } from '../../../lib/theme';
 import type { LotListItem } from '../../../lib/lot-display';
 
@@ -30,11 +31,12 @@ function matchesFilter(status: string | null | undefined, filter: BatchFilter): 
   return normalizeStatus(status) === filter;
 }
 
-export function useBatchesData() {
+export function useBatchesData(estateId?: string) {
   const { t } = useTranslation();
   const [batches, setBatches] = useState<BatchListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [filter, setFilter] = useState<BatchFilter>('all');
   const hasCacheRef = useRef(false);
 
@@ -43,9 +45,11 @@ export function useBatchesData() {
     if (!silent) setLoading(true);
     try {
       const data = await batchesAPI.getAll();
+      setLoadError(false);
       setBatches(Array.isArray(data) ? data : []);
       hasCacheRef.current = true;
     } catch (error) {
+      setLoadError(true);
       if (!isLikelyNetworkError(error)) {
         console.error('Error loading batches:', error);
       }
@@ -73,25 +77,27 @@ export function useBatchesData() {
     setRefreshing(false);
   }, [loadBatches]);
 
+  const scopedBatches = useMemo(() => lotsForEstate(batches, estateId), [batches, estateId]);
+
   const filteredBatches = useMemo(
-    () => batches.filter((b) => matchesFilter(b.status, filter)),
-    [batches, filter],
+    () => scopedBatches.filter((b) => matchesFilter(b.status, filter)),
+    [scopedBatches, filter],
   );
 
   const counts = useMemo(() => {
     const c: Record<BatchFilter, number> = {
-      all: batches.length,
+      all: scopedBatches.length,
       packed: 0,
       inHub: 0,
       inTransit: 0,
       delivered: 0,
     };
-    for (const b of batches) {
+    for (const b of scopedBatches) {
       const bucket = normalizeStatus(b.status);
       if (bucket !== 'other') c[bucket] += 1;
     }
     return c;
-  }, [batches]);
+  }, [scopedBatches]);
 
   const getStatusLabel = useCallback(
     (status: string | null | undefined): string => {
@@ -129,7 +135,8 @@ export function useBatchesData() {
   }, []);
 
   return {
-    batches,
+    batches: scopedBatches,
+    loadError,
     loading,
     refreshing,
     filter,

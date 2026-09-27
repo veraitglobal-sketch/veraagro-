@@ -10,13 +10,14 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { GrowerStackHeader } from '../../components/grower/GrowerStackHeader';
 import { useTranslation } from 'react-i18next';
+import { getMissionStatusLabelLocalized } from '../../lib/mission-status';
 import ViewShot, { type CaptureOptions } from 'react-native-view-shot';
 import Svg, { Polyline } from 'react-native-svg';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import { ChevronLeft } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
@@ -53,7 +54,12 @@ export default function HandoverReceiverScreen() {
 
   const [missions, setMissions] = useState<Mission[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const params = useLocalSearchParams<{ missionId?: string | string[] }>();
+  const requestedId = Array.isArray(params.missionId) ? params.missionId[0] : params.missionId;
+  const [choice, setChoice] = useState<{ route?: string; id: string } | null>(null);
+  const reference = choice?.route === requestedId ? choice?.id : requestedId;
+  const selectedId = missions.some((m) => m.id === reference) ? reference : null;
+  const setSelectedId = (id: string) => setChoice({ route: requestedId, id });
   const [receiverName, setReceiverName] = useState('');
   const [strokes, setStrokes] = useState<Point[][]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -77,6 +83,8 @@ export default function HandoverReceiverScreen() {
   useEffect(() => {
     void loadMissions();
   }, [loadMissions]);
+
+  useEffect(() => { setReceiverName(''); setStrokes([]); }, [selectedId]);
 
   const panResponder = useMemo(
     () =>
@@ -178,40 +186,11 @@ export default function HandoverReceiverScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <View
-        style={{
-          paddingTop: insets.top + 8,
-          paddingBottom: theme.spacing.md,
-          paddingLeft: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: 'rgba(0,0,0,0.08)',
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => router.back()}
-          hitSlop={12}
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}
-        >
-          <ChevronLeft size={22} color={theme.colors.text.primary} strokeWidth={1.5} />
-          <Text style={{ fontSize: 14, color: theme.colors.text.secondary, fontWeight: '500' }}>
-            {t('logistics.receiverProof.back')}
-          </Text>
-        </TouchableOpacity>
-        <Text style={{ fontSize: 18, fontWeight: '400', color: theme.colors.text.primary }}>
-          {t('logistics.receiverProof.title')}
-        </Text>
-        <Text
-          style={{
-            fontSize: 14,
-            color: theme.colors.text.secondary,
-            marginTop: 4,
-            lineHeight: 18,
-          }}
-        >
-          {t('logistics.receiverProof.subtitle')}
-        </Text>
-      </View>
+      <GrowerStackHeader
+        title={t('logistics.receiverProof.title')}
+        subtitle={t('logistics.receiverProof.subtitle')}
+        onBack={() => router.back()}
+      />
 
       <ScrollView
         style={{ flex: 1 }}
@@ -226,6 +205,7 @@ export default function HandoverReceiverScreen() {
           <ActivityIndicator color={theme.colors.primary} style={{ marginTop: 24 }} />
         ) : (
           <>
+            {reference && !selectedId ? <Text style={styles.hint}>{t('deliveryFlow.missionUnavailable')}</Text> : null}
             <Text style={styles.label}>{t('logistics.receiverProof.mission')}</Text>
             {missions.length === 0 ? (
               <Text style={styles.hint}>{t('logistics.receiverProof.noMissions')}</Text>
@@ -247,7 +227,7 @@ export default function HandoverReceiverScreen() {
                       <View style={{ flex: 1 }}>
                         <Text style={styles.missionNo}>{m.missionNumber || id}</Text>
                         <Text style={styles.missionSub}>
-                          {m.batch?.batchId || m.batchId || '—'} · {m.status}
+                          {m.batch?.batchId || m.batchId || '—'} · {getMissionStatusLabelLocalized(m.status, t)}
                         </Text>
                       </View>
                       <View
@@ -408,12 +388,14 @@ const styles = StyleSheet.create({
   },
   submit: {
     backgroundColor: theme.colors.primary,
-    borderRadius: theme.borderRadius.md,
-    paddingVertical: 14,
+    borderRadius: 14,
+    minHeight: 50,
+    justifyContent: 'center',
+    paddingVertical: 13,
     alignItems: 'center',
     marginTop: 4,
   },
-  submitText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  submitText: { color: '#fff', fontSize: 15, fontWeight: '600' },
   pdfBtn: {
     marginTop: 12,
     paddingVertical: 12,

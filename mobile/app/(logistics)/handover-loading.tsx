@@ -16,8 +16,10 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { GrowerStackHeader } from '../../components/grower/GrowerStackHeader';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, Camera } from 'lucide-react-native';
+import { getMissionStatusLabelLocalized } from '../../lib/mission-status';
+import { Camera } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import ViewShot, { type CaptureOptions } from 'react-native-view-shot';
 import Svg, { Polyline } from 'react-native-svg';
@@ -240,40 +242,11 @@ export default function HandoverLoadingScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <View
-        style={{
-          paddingTop: p.headerTop,
-          paddingBottom: theme.spacing.md,
-          paddingLeft: p.screenPaddingLeft,
-          paddingRight: p.screenPaddingRight,
-          borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: 'rgba(0,0,0,0.08)',
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => router.back()}
-          hitSlop={12}
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}
-        >
-          <ChevronLeft size={22} color={theme.colors.text.primary} strokeWidth={1.5} />
-          <Text style={{ fontSize: 14, color: theme.colors.text.secondary, fontWeight: '500' }}>
-            {t('logistics.loadingHandover.back')}
-          </Text>
-        </TouchableOpacity>
-        <Text style={{ fontSize: 18, fontWeight: '600', color: theme.colors.text.primary }}>
-          {t('logistics.loadingHandover.title')}
-        </Text>
-        <Text
-          style={{
-            fontSize: 14,
-            color: theme.colors.text.secondary,
-            marginTop: 4,
-            lineHeight: 18,
-          }}
-        >
-          {t('logistics.loadingHandover.subtitle')}
-        </Text>
-      </View>
+      <GrowerStackHeader
+        title={t('logistics.loadingHandover.title')}
+        subtitle={t('logistics.loadingHandover.subtitle')}
+        onBack={() => router.back()}
+      />
 
       <ScrollView
         style={{ flex: 1 }}
@@ -306,7 +279,7 @@ export default function HandoverLoadingScreen() {
                         {m.missionNumber || m.id.slice(0, 8)}
                       </Text>
                       <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginTop: 2 }}>
-                        {m.batch?.batchId || m.batchId || '—'} · {m.status}
+                        {m.batch?.batchId || m.batchId || '—'} · {getMissionStatusLabelLocalized(m.status, t)}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -497,10 +470,10 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: theme.colors.border,
-    borderRadius: 10,
+    borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 11,
-    fontSize: 16,
+    fontSize: 15,
     color: theme.colors.text.primary,
     backgroundColor: theme.colors.surface,
   },
@@ -522,7 +495,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: 52,
   },
-  submitText: { fontSize: 17, fontWeight: '700', color: '#fff' },
+  submitText: { fontSize: 15, fontWeight: '600', color: '#fff' },
   retake: {
     flexDirection: 'row',
     alignItems: 'center',

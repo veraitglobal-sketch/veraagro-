@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MapPin, Sprout, Package, Check } from 'lucide-react-native';
 import { estatesAPI, parcelsAPI, batchesAPI, harvestAnnouncementsAPI } from '../../../lib/api';
 import { offlineStorage } from '../../../lib/offline-storage';
@@ -26,6 +26,7 @@ import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { EnterpriseButton, EnterpriseTextField } from '../../../design-system';
 import { normalizeHarvestParcelId } from '../harvest/useHarvestData';
+import { harvestPlanLink } from '../../../lib/harvest-batch-link';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 
 type ParcelRow = {
@@ -63,13 +64,14 @@ async function fetchHarvestPlanRows(): Promise<HarvestPickRow[]> {
       id: string;
       parcelId?: string;
       announcementType?: string;
+      status?: string;
       cropType: string;
       estimatedDate: string;
       parcel?: { id?: string } | null;
     }>;
     if (Array.isArray(list)) {
       server = list
-        .filter((r) => String(r.announcementType ?? '').toUpperCase() === 'HARVEST')
+        .filter((r) => String(r.announcementType ?? '').toUpperCase() === 'HARVEST' && r.status !== 'CANCELLED')
         .map((r) => ({
           id: r.id,
           parcelId: normalizeHarvestParcelId(r.parcelId, r.parcel ?? null),
@@ -109,6 +111,9 @@ function StepChrome({
 export default function CreateBatchScreen() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
+  const route = useLocalSearchParams<{ harvestAnnouncementId?: string; parcelId?: string }>();
+  const requestedPlanId = typeof route.harvestAnnouncementId === 'string' ? route.harvestAnnouncementId : '';
+  const appliedPlan = useRef('');
   const p = useBioVeraScreenPadding();
   const langSr = !!i18n.language?.startsWith('sr');
   const dateLocale = useAppLocaleTag();
@@ -125,6 +130,7 @@ export default function CreateBatchScreen() {
   const [quantity, setQuantity] = useState('50');
   const [unit, setUnit] = useState('kg');
   const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
   const [formErr, setFormErr] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -208,6 +214,17 @@ export default function CreateBatchScreen() {
     if (row) setProductName(row.cropType);
   }, [selectedHarvestPlanId, harvestAnnouncements]);
 
+  const requestedPlan = harvestAnnouncements.find(plan => plan.id === requestedPlanId &&
+    (!route.parcelId || plan.parcelId === route.parcelId) && parcelsRows.some(parcel => parcel.id === plan.parcelId));
+  const requestedPlanUnavailable = Boolean(requestedPlanId && !loading && !requestedPlan);
+  useEffect(() => {
+    if (loading || !requestedPlan || appliedPlan.current === requestedPlanId) return;
+    appliedPlan.current = requestedPlanId;
+    setParcelId(requestedPlan.parcelId);
+    setSelectedHarvestPlanId(requestedPlan.id);
+    setProductName(requestedPlan.cropType);
+  }, [loading, requestedPlan, requestedPlanId]);
+
   const formatWhen = useCallback(
     (iso: string) => {
       try {
@@ -219,7 +236,7 @@ export default function CreateBatchScreen() {
     [dateLocale],
   );
 
-  const step1Ok = Boolean(parcelId);
+  const step1Ok = Boolean(parcelId) && !requestedPlanUnavailable;
   const step2Ok =
     Boolean(parcelId) &&
     (harvestForParcel.length === 0
@@ -230,6 +247,8 @@ export default function CreateBatchScreen() {
   const step3Ok = productName.trim().length > 0 && !Number.isNaN(qtyNum) && qtyNum > 0;
 
   const submit = async () => {
+    if (savingRef.current) return;
+    if (requestedPlanUnavailable) { setFormErr(t('harvestWorkflow.planUnavailable')); return; }
     setFormErr(null);
     if (!selectedParcel) {
       Alert.alert(t('error'), t('producer.batches.createSelectParcel'));
@@ -250,14 +269,23 @@ export default function CreateBatchScreen() {
       Alert.alert(t('error'), t('producer.batches.createDateInvalid'));
       return;
     }
-    if (!(await isDeviceOnline())) {
-      Alert.alert(t('error'), t('producer.batches.createOffline'));
+    let planLink: { harvestAnnouncementId?: string };
+    try {
+      planLink = harvestPlanLink(selectedHarvestPlanId, selectedParcel.id, harvestAnnouncements);
+    } catch (error) {
+      const key = error instanceof Error && error.message === 'PLAN_NOT_SYNCED' ? 'planNotSynced' : 'planUnavailable';
+      setFormErr(t(`harvestWorkflow.${key}`));
       return;
     }
-
+    savingRef.current = true;
     setSaving(true);
     try {
-      await batchesAPI.create({
+      if (!(await isDeviceOnline())) {
+        Alert.alert(t('error'), t('producer.batches.createOffline'));
+        return;
+      }
+      const created = await batchesAPI.create({
+        ...planLink,
         estateId: selectedParcel.estateId,
         parcelId: selectedParcel.id,
         productName: productName.trim(),
@@ -266,12 +294,13 @@ export default function CreateBatchScreen() {
         harvestDate: parsed.iso.slice(0, 10),
       });
       Alert.alert(t('alerts.success'), t('producer.batches.createSuccess'), [
-        { text: t('common.ok'), onPress: () => router.replace('/(producer)/batches') },
+        { text: t('common.ok'), onPress: () => router.replace(created?.id ? { pathname: '/(producer)/batch/[id]', params: { id: created.id } } : '/(producer)/batches') },
       ]);
     } catch (e: unknown) {
       setFormErr(apiErrorMessage(e, t('producer.batches.createFailed')));
       Alert.alert(t('error'), apiErrorMessage(e, t('producer.batches.createFailed')));
     } finally {
+      savingRef.current = false;
       setSaving(false);
     }
   };
@@ -303,7 +332,8 @@ export default function CreateBatchScreen() {
             <ActivityIndicator style={{ marginTop: 24 }} color={enterpriseColors.primary} />
           ) : (
             <>
-              {formErr ? (
+              {requestedPlanUnavailable ? <Text style={{ color: enterpriseColors.destructive }}>{t('harvestWorkflow.planUnavailable')}</Text> : null}
+          {formErr ? (
                 <View style={styles.errBanner}>
                   <Text style={styles.errBannerText}>{formErr}</Text>
                 </View>
@@ -352,14 +382,14 @@ export default function CreateBatchScreen() {
                           style={[styles.parcelCard, sel && styles.parcelCardOn]}
                         >
                           <View style={styles.parcelCardInner}>
-                            <MapPin size={22} color={sel ? '#fff' : STEP_ACCENTS[0]} strokeWidth={2} />
+                            <MapPin size={18} color={sel ? enterpriseColors.primary : STEP_ACCENTS[0]} strokeWidth={2} />
                             <View style={{ flex: 1 }}>
                               <Text style={[styles.parcelTitle, sel && styles.parcelTitleOn]}>{row.estateName}</Text>
                               <Text style={[styles.parcelSub, sel && styles.parcelSubOn]}>
                                 {row.cropType?.trim() || row.id.slice(0, 8)}
                               </Text>
                             </View>
-                            {sel ? <Check size={24} color="#fff" strokeWidth={2.5} /> : null}
+                            {sel ? <Check size={18} color={enterpriseColors.primary} strokeWidth={2.5} /> : null}
                           </View>
                         </TouchableOpacity>
                       );
@@ -407,7 +437,7 @@ export default function CreateBatchScreen() {
                               {t('producer.batches.createLocalHarvestPending')}
                             </Text>
                           ) : null}
-                          {sel ? <Check size={22} color="#fff" style={styles.cropCheck} /> : null}
+                          {sel ? <Check size={18} color="#fff" style={styles.cropCheck} /> : null}
                         </TouchableOpacity>
                       );
                     })
@@ -504,17 +534,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#F59E0B40',
   },
-  errBannerText: { fontSize: 15, color: '#92400E', lineHeight: 22 },
+  errBannerText: { fontSize: 13.5, color: '#92400E', lineHeight: 19 },
   stepChrome: {
-    borderLeftWidth: 5,
-    paddingLeft: 14,
-    marginBottom: 18,
+    borderLeftWidth: 3,
+    paddingLeft: 12,
+    marginBottom: 14,
     marginTop: 4,
   },
-  stepFraction: { fontSize: 14, fontWeight: '600', color: enterpriseColors.gray600, marginBottom: 6 },
+  stepFraction: { fontSize: 11, fontWeight: '600', letterSpacing: 0.9, textTransform: 'uppercase', color: '#6B7A67', marginBottom: 4 },
   stepTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  stepTitle: { fontSize: 22, fontWeight: '800', color: enterpriseColors.gray900, flex: 1 },
-  stepLead: { fontSize: 16, color: enterpriseColors.gray600, lineHeight: 22, marginBottom: 14 },
+  stepTitle: { fontSize: 19, fontWeight: '700', letterSpacing: -0.4, color: enterpriseColors.gray900, flex: 1 },
+  stepLead: { fontSize: 13.5, color: enterpriseColors.gray600, lineHeight: 19, marginBottom: 12 },
   contextPill: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -528,65 +558,67 @@ const styles = StyleSheet.create({
     borderColor: enterpriseColors.gray200,
   },
   contextPillGreen: { borderColor: `${enterpriseColors.primary}40`, backgroundColor: `${enterpriseColors.primary}08` },
-  contextPillText: { fontSize: 15, fontWeight: '600', color: enterpriseColors.gray900, flex: 1 },
-  warnText: { fontSize: 16, color: '#B45309', lineHeight: 24 },
+  contextPillText: { fontSize: 13.5, fontWeight: '600', color: enterpriseColors.gray900, flex: 1 },
+  warnText: { fontSize: 13.5, color: '#B45309', lineHeight: 19 },
   parcelCard: {
     backgroundColor: enterpriseColors.white,
     borderRadius: 16,
-    borderWidth: 2,
-    borderColor: '#CBD5E1',
-    padding: 16,
-    minHeight: 72,
-    marginBottom: 12,
+    borderWidth: 1.5,
+    borderColor: 'rgba(17, 24, 39, 0.1)',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    minHeight: 60,
+    marginBottom: 8,
   },
-  parcelCardOn: { backgroundColor: '#475569', borderColor: '#475569' },
-  parcelCardInner: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  parcelTitle: { fontSize: 20, fontWeight: '700', color: enterpriseColors.gray900 },
-  parcelTitleOn: { color: '#fff' },
-  parcelSub: { fontSize: 15, color: enterpriseColors.gray600, marginTop: 4 },
-  parcelSubOn: { color: 'rgba(255,255,255,0.85)' },
+  parcelCardOn: { backgroundColor: 'rgba(45, 90, 39, 0.06)', borderColor: enterpriseColors.primary },
+  parcelCardInner: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  parcelTitle: { fontSize: 15.5, fontWeight: '600', letterSpacing: -0.25, color: enterpriseColors.gray900 },
+  parcelTitleOn: { color: enterpriseColors.primary },
+  parcelSub: { fontSize: 12.5, color: enterpriseColors.gray600, marginTop: 2 },
+  parcelSubOn: { color: enterpriseColors.gray700 },
   cropCard: {
     backgroundColor: `${enterpriseColors.primary}0A`,
     borderRadius: 16,
-    borderWidth: 2,
-    borderColor: enterpriseColors.primary,
-    padding: 18,
-    minHeight: 80,
-    marginBottom: 12,
+    borderWidth: 1.5,
+    borderColor: 'rgba(45, 90, 39, 0.35)',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    minHeight: 64,
+    marginBottom: 8,
     justifyContent: 'center',
   },
   cropCardOn: { backgroundColor: enterpriseColors.primary },
-  cropName: { fontSize: 24, fontWeight: '800', color: enterpriseColors.primary },
+  cropName: { fontSize: 17, fontWeight: '700', letterSpacing: -0.3, color: enterpriseColors.primary },
   cropNameOn: { color: '#fff' },
-  cropMeta: { fontSize: 15, fontWeight: '600', color: enterpriseColors.gray600, marginTop: 6 },
+  cropMeta: { fontSize: 12.5, fontWeight: '500', color: enterpriseColors.gray600, marginTop: 3 },
   cropMetaOn: { color: 'rgba(255,255,255,0.9)' },
-  cropCheck: { position: 'absolute', top: 14, right: 14 },
-  fieldLabel: { fontSize: 16, fontWeight: '700', color: enterpriseColors.gray900, marginBottom: 8 },
+  cropCheck: { position: 'absolute', top: 12, right: 12 },
+  fieldLabel: { fontSize: 12, fontWeight: '600', letterSpacing: 0.8, textTransform: 'uppercase', color: '#6B7A67', marginBottom: 6 },
   qtyInput: {
-    borderWidth: 2,
-    borderColor: enterpriseColors.gray200,
+    borderWidth: 1.5,
+    borderColor: 'rgba(17, 24, 39, 0.12)',
     borderRadius: 14,
-    paddingVertical: 16,
+    paddingVertical: 12,
     paddingHorizontal: 16,
-    fontSize: 28,
-    fontWeight: '800',
+    fontSize: 24,
+    fontWeight: '700',
     color: enterpriseColors.gray900,
     backgroundColor: enterpriseColors.white,
     textAlign: 'center',
   },
-  unitRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 4 },
+  unitRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 4 },
   unitChip: {
-    paddingHorizontal: 18,
-    paddingVertical: 14,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: enterpriseColors.gray200,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(17, 24, 39, 0.1)',
     backgroundColor: enterpriseColors.white,
-    minWidth: 72,
+    minWidth: 60,
     alignItems: 'center',
   },
-  unitChipOn: { borderColor: enterpriseColors.primary, backgroundColor: enterpriseColors.primary },
-  unitChipText: { fontSize: 18, fontWeight: '700', color: enterpriseColors.gray900 },
+  unitChipOn: { borderColor: '#1F3D1B', backgroundColor: '#1F3D1B' },
+  unitChipText: { fontSize: 14, fontWeight: '600', color: enterpriseColors.gray900 },
   unitChipTextOn: { color: '#fff' },
   footer: {
     position: 'absolute',

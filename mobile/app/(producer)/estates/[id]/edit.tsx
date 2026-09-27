@@ -199,7 +199,7 @@ export default function EditEstateScreen() {
             <TextInput
               value={name}
               onChangeText={setName}
-              placeholder="e.g. North field"
+              placeholder={t('producer.estates.estateNamePlaceholder')}
               style={{
                 fontSize: 15,
                 fontWeight: '400',
@@ -227,7 +227,7 @@ export default function EditEstateScreen() {
             <TextInput
               value={location}
               onChangeText={setLocation}
-              placeholder="e.g. Arilje, Serbia"
+              placeholder={t('producer.estates.locationPlaceholder')}
               style={{
                 fontSize: 15,
                 fontWeight: '400',

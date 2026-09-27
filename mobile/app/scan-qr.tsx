@@ -37,7 +37,7 @@ export default function ScanQRScreen() {
   if (!permission) {
     return (
       <View style={[styles.container, styles.center]}>
-        <Text style={styles.text}>Wait...</Text>
+        <Text style={styles.text}>{t('scanQr.wait')}</Text>
       </View>
     );
   }
@@ -45,12 +45,12 @@ export default function ScanQRScreen() {
   if (!permission.granted) {
     return (
       <View style={[styles.container, styles.center]}>
-        <Text style={[styles.text, styles.title]}>Allow camera</Text>
+        <Text style={[styles.text, styles.title]}>{t('scanQr.allowTitle')}</Text>
         <Text style={[styles.text, { marginBottom: 24, textAlign: 'center', paddingHorizontal: 32 }]}>
-          To scan the bag.
+          {t('scanQr.allowBody')}
         </Text>
         <TouchableOpacity onPress={requestPermission} style={[styles.btn, { backgroundColor: theme.colors.primary }]}>
-          <Text style={[styles.btnText, { color: '#fff' }]}>OK</Text>
+          <Text style={[styles.btnText, { color: '#fff' }]}>{t('scanQr.allowCta')}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -72,7 +72,7 @@ export default function ScanQRScreen() {
           <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
             <X size={24} color="#fff" strokeWidth={1.5} />
           </TouchableOpacity>
-          <Text style={styles.overlayTitle}>Scan</Text>
+          <Text style={styles.overlayTitle}>{t('scanQr.title')}</Text>
           <View style={{ width: 40 }} />
         </View>
         <View style={styles.scanArea}>
@@ -85,7 +85,7 @@ export default function ScanQRScreen() {
           </View>
         </View>
         <View style={styles.bottomInfo}>
-          <Text style={styles.instruction}>Point at QR code</Text>
+          <Text style={styles.instruction}>{t('scanQr.instruction')}</Text>
         </View>
       </View>
     </View>

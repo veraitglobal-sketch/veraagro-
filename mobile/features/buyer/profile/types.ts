@@ -36,12 +36,12 @@ export const EMPTY_LOCATION: Partial<DeliveryLocation> = {
   address: '',
   city: '',
   postalCode: '',
-  country: 'Germany',
+  country: '',
   latitude: 0,
   longitude: 0,
   responsiblePerson: '',
   responsiblePhone: '',
-  operatingHours: 'Mon-Fri: 08:00 - 18:00',
+  operatingHours: '',
 };
 
 export const EMPTY_STAFF: Partial<AuthorizedPerson> = {

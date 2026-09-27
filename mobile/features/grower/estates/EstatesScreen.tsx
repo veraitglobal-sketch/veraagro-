@@ -1,4 +1,4 @@
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react-native';
@@ -6,7 +6,7 @@ import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScree
 import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
-import { GrowerTabHeader } from '../../../components/grower/GrowerTabHeader';
+import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { useEstatesData } from './useEstatesData';
 import { EstateList } from './EstateList';
 import type { Estate } from '../../../lib/api';
@@ -23,7 +23,7 @@ export function EstatesScreen() {
       onRefresh={data.onRefresh}
       contentPaddingBottom={Math.max(p.bottomInset, 16) + 12}
       header={
-        <GrowerTabHeader
+        <GrowerStackHeader
           title={t('producer.estates.myFields')}
           subtitle={
             data.ready && data.estates.length === 0
@@ -34,11 +34,11 @@ export function EstatesScreen() {
             <TouchableOpacity
               onPress={() => router.push('/(producer)/estates/new')}
               activeOpacity={0.9}
-              style={growerUi.btnIcon}
+              style={styles.addBtn}
               accessibilityRole="button"
               accessibilityLabel={t('producer.estates.newEstate')}
             >
-              <Plus size={22} color={enterpriseColors.white} strokeWidth={2} />
+              <Plus size={18} color={enterpriseColors.white} strokeWidth={2.4} />
             </TouchableOpacity>
           }
         />
@@ -65,3 +65,14 @@ export function EstatesScreen() {
     </EnterpriseScreen>
   );
 }
+
+const styles = StyleSheet.create({
+  addBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: enterpriseColors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

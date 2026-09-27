@@ -1,10 +1,9 @@
 import { View, TouchableOpacity, Text, ScrollView, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Search } from 'lucide-react-native';
+import { EnterpriseSearchField } from '../../../design-system';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
-import { EnterpriseTextField } from '../../../design-system';
 import type { MaterialFilterType } from './useMaterialsData';
 
 export interface WhitelistSearchProps {
@@ -45,15 +44,10 @@ export function WhitelistSearch({
   return (
     <View style={styles.wrap}>
       <View style={[styles.searchRow, { paddingHorizontal: p.screenPaddingLeft }]}>
-        <Search size={18} color={enterpriseColors.gray600} strokeWidth={1.5} />
-        <EnterpriseTextField
+        <EnterpriseSearchField
           value={searchQuery}
           onChangeText={setSearchQuery}
           placeholder={t('producer.materials.searchPlaceholder')}
-          accessibilityLabel={t('producer.materials.searchPlaceholder')}
-          containerStyle={styles.searchField}
-          autoCapitalize="none"
-          autoCorrect={false}
         />
       </View>
 
@@ -86,20 +80,11 @@ export function WhitelistSearch({
 
 const styles = StyleSheet.create({
   wrap: {
-    backgroundColor: enterpriseColors.white,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: enterpriseColors.gray200,
+    backgroundColor: enterpriseColors.canvas,
   },
   searchRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 8,
-    paddingTop: 12,
-    paddingBottom: 4,
-  },
-  searchField: {
-    flex: 1,
-    marginBottom: 0,
+    paddingTop: 4,
+    paddingBottom: 10,
   },
   filterScroll: {
     flexGrow: 0,
@@ -107,6 +92,6 @@ const styles = StyleSheet.create({
   filterContent: {
     flexDirection: 'row',
     gap: 8,
-    paddingBottom: 12,
+    paddingBottom: 10,
   },
 });

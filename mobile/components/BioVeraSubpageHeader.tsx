@@ -1,13 +1,11 @@
-import { View, Text, TouchableOpacity, StyleSheet, type ViewStyle, type StyleProp } from 'react-native';
+import { View, Text, StyleSheet, type ViewStyle, type StyleProp } from 'react-native';
 import type { ReactNode } from 'react';
 import { router, useSegments } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { replaceToRoleHome } from '../lib/app-navigation';
-import { ArrowLeft } from 'lucide-react-native';
+import { BackButton } from '../design-system/BackButton';
 import { useBioVeraScreenPadding } from '../lib/screen-insets';
 import { enterpriseColors } from '../lib/enterprise-ui';
 import { growerUi } from '../lib/grower-ui';
-import { a11yIconButton } from '../lib/date-locale';
 
 type LeftMode = 'back' | 'none';
 
@@ -31,7 +29,6 @@ export function BioVeraSubpageHeader({
 }: BioVeraSubpageHeaderProps) {
   const p = useBioVeraScreenPadding();
   const segments = useSegments();
-  const { t } = useTranslation();
 
   return (
     <View
@@ -40,7 +37,7 @@ export function BioVeraSubpageHeader({
           paddingTop: p.headerTop,
           paddingLeft: p.screenPaddingLeft,
           paddingRight: p.screenPaddingRight,
-          paddingBottom: 14,
+          paddingBottom: 12,
           backgroundColor: enterpriseColors.canvas,
           borderBottomWidth: StyleSheet.hairlineWidth,
           borderBottomColor: enterpriseColors.gray200,
@@ -51,7 +48,8 @@ export function BioVeraSubpageHeader({
       ]}
     >
       {left === 'back' ? (
-        <TouchableOpacity
+        <BackButton
+          style={{ marginRight: 12 }}
           onPress={
             onBack ??
             (() => {
@@ -62,14 +60,9 @@ export function BioVeraSubpageHeader({
               }
             })
           }
-          hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
-          style={{ minWidth: 44, minHeight: 44, justifyContent: 'center', marginRight: 4 }}
-          {...a11yIconButton(t('common.back'))}
-        >
-          <ArrowLeft size={22} color={enterpriseColors.gray900} strokeWidth={1.5} />
-        </TouchableOpacity>
+        />
       ) : null}
-      <Text numberOfLines={2} style={[growerUi.pageTitle, { flex: 1, minWidth: 0, fontSize: 22 }]}>
+      <Text numberOfLines={2} style={[growerUi.pageTitle, { flex: 1, minWidth: 0, fontSize: 20, fontWeight: '600', letterSpacing: -0.45 }]}>
         {title}
       </Text>
       {right != null ? <View style={{ marginLeft: 8, justifyContent: 'center' }}>{right}</View> : null}

@@ -1,14 +1,19 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { loadGrowerProducts } from '../../../lib/grower-products';
 import { offlineStorage, PendingProduct } from '../../../lib/offline-storage';
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { syncService } from '../../../lib/sync-service';
 
 export function useProductsData() {
   const [products, setProducts] = useState<PendingProduct[]>([]);
+  const request = useRef(0);
+  const [loadError, setLoadError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [listRefreshing, setListRefreshing] = useState(false);
 
   const load = useCallback(async (opts?: { silent?: boolean }) => {
+    const generation = ++request.current;
     const silent = opts?.silent === true;
     if (silent) setListRefreshing(true);
     else setLoading(true);
@@ -16,20 +21,22 @@ export function useProductsData() {
       if (await isDeviceOnline()) {
         await syncService.syncPendingProducts();
       }
-      const list = await offlineStorage.getPendingProducts();
-      setProducts(list);
+      const result = await loadGrowerProducts();
+      if (generation !== request.current) return;
+      setProducts(result.products);
+      setLoadError(result.serverUnavailable);
     } catch (error) {
       console.error('Error loading products:', error);
-      setProducts([]);
+      if (generation === request.current) setLoadError(true);
     } finally {
-      if (silent) setListRefreshing(false);
-      else setLoading(false);
+      if (generation === request.current) { setListRefreshing(false); setLoading(false); }
     }
   }, []);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     void load();
-  }, [load]);
+    return () => { request.current++; };
+  }, [load]));
 
   const addProduct = useCallback(
     async (entry: Omit<PendingProduct, 'id' | 'timestamp' | 'status'>) => {
@@ -43,5 +50,5 @@ export function useProductsData() {
     [load],
   );
 
-  return { products, loading, listRefreshing, load, addProduct };
+  return { products, loadError, loading, listRefreshing, load, addProduct };
 }

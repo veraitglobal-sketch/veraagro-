@@ -11,7 +11,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { useState, useCallback, useRef } from 'react';
-import { ArrowLeft, Save, ChevronRight, MapPin } from 'lucide-react-native';
+import { Save, ChevronRight, MapPin } from 'lucide-react-native';
+import { BackButton } from '../../../design-system/BackButton';
 import MapView from 'react-native-maps';
 import { getCurrentGrowerPosition } from '../../../lib/grower-permissions';
 import {
@@ -189,12 +190,10 @@ export default function NewEstateScreen() {
     <FormKeyboardWrap style={styles.flexCanvas}>
     <View style={styles.flexCanvas}>
       <View style={[styles.header, { paddingTop: p.headerTop }]}>
-        <TouchableOpacity
-          onPress={() => (step > 1 ? setStep((s) => (s - 1) as EstateStep) : router.back())}
+        <BackButton
           style={styles.backBtn}
-        >
-          <ArrowLeft size={24} color={dsColors.gray900} strokeWidth={1.5} />
-        </TouchableOpacity>
+          onPress={() => (step > 1 ? setStep((s) => (s - 1) as EstateStep) : router.back())}
+        />
         <Text style={styles.headerTitle}>
           {t('producer.estates.newEstate')} · {t('producer.estates.step')} {step}/3
         </Text>
@@ -229,7 +228,7 @@ export default function NewEstateScreen() {
                 hint={t('form.helper.estateLocation')}
                 value={location}
                 onChangeText={setLocation}
-                placeholder="e.g. Arilje, Serbia"
+                placeholder={t('producer.estates.locationPlaceholder')}
                 size="farmer"
               />
               <EnterprisePanel variant="tint" style={{ marginBottom: 24 }}>
@@ -444,7 +443,7 @@ const styles = StyleSheet.create({
   header: {
     paddingBottom: 12,
     paddingHorizontal: 16,
-    backgroundColor: dsColors.surface,
+    backgroundColor: dsColors.canvas,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: dsColors.border,
     flexDirection: 'row',
@@ -452,13 +451,11 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     marginRight: 12,
-    ...farmerFormUi.touchTarget,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   headerTitle: {
     flex: 1,
-    fontSize: 18,
+    fontSize: 17,
+    letterSpacing: -0.3,
     fontWeight: '600',
     color: dsColors.gray900,
   },

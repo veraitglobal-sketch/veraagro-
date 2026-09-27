@@ -14,6 +14,18 @@ const FIELD_LOG_HISTORY_KEY = 'field_log_history_v1';
 const FIELD_LOG_HISTORY_MAX = 100;
 const PENDING_HARVEST_KEY = 'pending_harvest_plans';
 const PENDING_PRODUCTS_KEY = 'pending_products';
+
+export async function productOwnerId(): Promise<string> {
+  const raw = await AsyncStorage.getItem('auth_user');
+  try { const user = raw ? JSON.parse(raw) : null; return typeof user?.id === 'string' ? user.id : ''; }
+  catch { return ''; }
+}
+
+function productStorageKey(owner: string): string {
+  if (!owner) throw new Error('Sign in before saving products');
+  // Legacy unowned entries are left intact, never silently assigned to a different account.
+  return `${PENDING_PRODUCTS_KEY}:${owner}`;
+}
 const PENDING_COSTS_KEY = 'pending_costs';
 const PENDING_CERTIFICATE_PHOTOS_KEY = 'pending_certificate_photos';
 const WHITELIST_KEY = 'material_whitelist';
@@ -112,6 +124,7 @@ export interface FieldLogHistoryItem {
 /** Offline product (QR or manual). */
 export interface PendingProduct {
   id: string;
+  sourceOrderId?: string;
   source: 'qr' | 'manual';
   qrCode?: string;
   name: string;
@@ -164,14 +177,6 @@ export interface PendingHarvestPlan {
   status: 'pending' | 'syncing' | 'synced' | 'error';
   error?: string;
 }
-
-// Dev whitelist; production loads from server
-const MOCK_WHITELIST = [
-  'BIO-001-2024',
-  'BIO-002-2024',
-  'ORG-FERT-001',
-  'ORG-SEED-001',
-];
 
 const LEGACY_ACTIVITY_TO_EN: Record<string, FieldActivityType> = {
   Setva: 'Planting',
@@ -372,10 +377,11 @@ export const offlineStorage = {
     const harvestPlans = harvests.length - harvestKept.length;
     await AsyncStorage.setItem(PENDING_HARVEST_KEY, JSON.stringify(harvestKept));
 
-    const products = await this.getPendingProducts();
+    const productsOwner = await productOwnerId();
+    const products = await this.getPendingProducts(productsOwner);
     const productsKept = products.filter((p) => !unsent(p.status));
     const productsRemoved = products.length - productsKept.length;
-    await AsyncStorage.setItem(PENDING_PRODUCTS_KEY, JSON.stringify(productsKept));
+    if (productsOwner) await AsyncStorage.setItem(productStorageKey(productsOwner), JSON.stringify(productsKept));
 
     const costs = await this.getPendingCosts();
     const costsKept = costs.filter((c) => !unsent(c.status));
@@ -456,14 +462,14 @@ export const offlineStorage = {
     }
   },
 
-  // Get whitelist
+  /** Last server whitelist (barcodes). Empty until synced — never approve invented codes offline. */
   async getWhitelist(): Promise<string[]> {
     try {
       const data = await AsyncStorage.getItem(WHITELIST_KEY);
-      return data ? JSON.parse(data) : MOCK_WHITELIST;
+      return data ? JSON.parse(data) : [];
     } catch (error) {
       console.error('Error getting whitelist:', error);
-      return MOCK_WHITELIST;
+      return [];
     }
   },
 
@@ -478,9 +484,11 @@ export const offlineStorage = {
   },
 
   // --- Pending products (My products) ---
-  async getPendingProducts(): Promise<PendingProduct[]> {
+  async getPendingProducts(owner = ''): Promise<PendingProduct[]> {
     try {
-      const data = await AsyncStorage.getItem(PENDING_PRODUCTS_KEY);
+      const userId = owner || await productOwnerId();
+      if (!userId) return [];
+      const data = await AsyncStorage.getItem(productStorageKey(userId));
       return data ? JSON.parse(data) : [];
     } catch (error) {
       console.error('Error getting pending products:', error);
@@ -490,7 +498,8 @@ export const offlineStorage = {
 
   async savePendingProduct(entry: Omit<PendingProduct, 'id' | 'timestamp' | 'status'>): Promise<string> {
     try {
-      const list = await this.getPendingProducts();
+      const owner = await productOwnerId();
+      const list = await this.getPendingProducts(owner);
       const newEntry: PendingProduct = {
         ...entry,
         id: `prod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -498,7 +507,7 @@ export const offlineStorage = {
         status: 'pending',
       };
       list.push(newEntry);
-      await AsyncStorage.setItem(PENDING_PRODUCTS_KEY, JSON.stringify(list));
+      await AsyncStorage.setItem(productStorageKey(owner), JSON.stringify(list));
       return newEntry.id;
     } catch (error) {
       console.error('Error saving pending product:', error);
@@ -508,23 +517,25 @@ export const offlineStorage = {
 
   async removeProduct(id: string): Promise<void> {
     try {
-      const list = await this.getPendingProducts();
+      const owner = await productOwnerId();
+      const list = await this.getPendingProducts(owner);
       const filtered = list.filter((p) => p.id !== id);
-      await AsyncStorage.setItem(PENDING_PRODUCTS_KEY, JSON.stringify(filtered));
+      await AsyncStorage.setItem(productStorageKey(owner), JSON.stringify(filtered));
     } catch (error) {
       console.error('Error removing product:', error);
       throw error;
     }
   },
 
-  async updateProductStatus(id: string, status: PendingProduct['status'], error?: string): Promise<void> {
+  async updateProductStatus(id: string, status: PendingProduct['status'], error?: string, userId?: string): Promise<void> {
     try {
-      const list = await this.getPendingProducts();
+      const owner = userId || await productOwnerId();
+      const list = await this.getPendingProducts(owner);
       const item = list.find((p) => p.id === id);
       if (item) {
         item.status = status;
         if (error) item.error = error;
-        await AsyncStorage.setItem(PENDING_PRODUCTS_KEY, JSON.stringify(list));
+        await AsyncStorage.setItem(productStorageKey(owner), JSON.stringify(list));
       }
     } catch (e) {
       console.error('Error updating product status:', e);
@@ -702,7 +713,8 @@ export const offlineStorage = {
       });
       if (dirty) await AsyncStorage.setItem(PENDING_ENTRIES_KEY, JSON.stringify(entriesNext));
 
-      const products = await this.getPendingProducts();
+      const productsOwner = await productOwnerId();
+      const products = await this.getPendingProducts(productsOwner);
       dirty = false;
       const productsNext = products.map((p) => {
         if (p.status === 'syncing') {
@@ -711,7 +723,7 @@ export const offlineStorage = {
         }
         return p;
       });
-      if (dirty) await AsyncStorage.setItem(PENDING_PRODUCTS_KEY, JSON.stringify(productsNext));
+      if (dirty && productsOwner) await AsyncStorage.setItem(productStorageKey(productsOwner), JSON.stringify(productsNext));
 
       const costs = await this.getPendingCosts();
       dirty = false;

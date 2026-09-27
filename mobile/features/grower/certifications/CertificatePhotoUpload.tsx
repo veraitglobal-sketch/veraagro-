@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     backgroundColor: enterpriseColors.white,
   },
   outlineBtnText: {
-    fontSize: 16,
+    fontSize: 14.5,
     fontWeight: '600',
     color: enterpriseColors.primary,
   },
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   cancelText: {
-    fontSize: 16,
+    fontSize: 14.5,
     fontWeight: '500',
     color: enterpriseColors.gray600,
   },
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   closeText: {
-    fontSize: 16,
+    fontSize: 14.5,
     fontWeight: '500',
     color: enterpriseColors.gray600,
   },

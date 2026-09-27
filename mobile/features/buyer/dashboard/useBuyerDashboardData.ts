@@ -1,9 +1,10 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCameraPermissions } from 'expo-camera';
-import { inventoryAPI, batchesAPI, notificationsAPI, type BatchAvailability } from '../../../lib/api';
-import { enhanceProduct, type EnhancedProduct, type FieldStory, type FilterStatus } from './types';
+import { inventoryAPI, batchesAPI, notificationsAPI, ordersAPI, type Order, type BatchAvailability } from '../../../lib/api';
+import { activeBuyerDelivery } from '../../../lib/buyer-order-next-step';
+import { enhanceProduct, type EnhancedProduct, type FilterStatus } from './types';
 
 export function useBuyerDashboardData() {
   const { t } = useTranslation();
@@ -12,6 +13,7 @@ export function useBuyerDashboardData() {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterStatus>('all');
+  const [selectedEstateId, setSelectedEstateId] = useState<string | null>(null);
   const [showQRScanner, setShowQRScanner] = useState(false);
   const [scannedBatchId, setScannedBatchId] = useState<string | null>(null);
   const [showPassportModal, setShowPassportModal] = useState(false);
@@ -21,60 +23,82 @@ export function useBuyerDashboardData() {
   const [selectedProduct, setSelectedProduct] = useState<EnhancedProduct | null>(null);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
 
-  const fieldStories = useMemo<FieldStory[]>(
-    () =>
-      (['1', '2', '3', '4'] as const).map((id) => ({
-        id,
-        farmerName: t(`buyer.dashboard.demoStoryNames.${id}`),
-        subtitle: t(`buyer.dashboard.demoStorySubtitles.${id}`),
-      })),
-    [t],
-  );
+  const estates = useMemo(() => {
+    const result = new Map<string, { id: string; name: string; count: number }>();
+    for (const product of products) {
+      const estate = product.estate;
+      if (!estate?.id || estate.id === 'unknown') continue;
+      const entry = result.get(estate.id);
+      if (entry) entry.count++;
+      else result.set(estate.id, { id: estate.id, name: estate.name, count: 1 });
+    }
+    return [...result.values()];
+  }, [products]);
+  useEffect(() => {
+    if (selectedEstateId && !estates.some((estate) => estate.id === selectedEstateId)) setSelectedEstateId(null);
+  }, [estates, selectedEstateId]);
 
-  const activeDelivery = useMemo(
-    () => ({
-      orderNumber: '#2104',
-      location: t('buyer.dashboard.demoDeliveryLocation'),
-    }),
-    [t],
-  );
+  const [deliveryOrders, setDeliveryOrders] = useState<Order[]>([]);
+  const deliveryGeneration = useRef(0);
+  const activeDelivery = useMemo(() => activeBuyerDelivery(deliveryOrders), [deliveryOrders]);
+  const loadDeliveries = useCallback(async () => {
+    const generation = ++deliveryGeneration.current;
+    try {
+      const orders = await ordersAPI.getAll();
+      if (generation === deliveryGeneration.current) setDeliveryOrders(orders);
+    } catch {
+      if (generation === deliveryGeneration.current) setDeliveryOrders([]);
+    }
+  }, []);
+  useFocusEffect(useCallback(() => {
+    void loadDeliveries();
+    return () => { deliveryGeneration.current++; };
+  }, [loadDeliveries]));
 
+  const productGeneration = useRef(0);
   const loadProducts = useCallback(async () => {
+    const generation = ++productGeneration.current;
     try {
       setLoading(true);
       setError(null);
       const data = await inventoryAPI.getAvailableProducts();
-      setProducts(data.map((p) => enhanceProduct(p, t)));
+      if (generation === productGeneration.current) setProducts(data.map((p) => enhanceProduct(p, t)));
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '';
-      setError(message || t('buyer.dashboard.loadFailed'));
+      if (generation === productGeneration.current) setError(message || t('buyer.dashboard.loadFailed'));
       console.error('Error loading products:', err);
     } finally {
-      setLoading(false);
+      if (generation === productGeneration.current) setLoading(false);
     }
   }, [t]);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     void loadProducts();
-  }, [loadProducts]);
+    return () => { productGeneration.current++; };
+  }, [loadProducts]));
 
+  const availabilityGeneration = useRef(0);
   const loadBatchAvailabilities = useCallback(async (source: EnhancedProduct[]) => {
+    const generation = ++availabilityGeneration.current;
+    setBatchAvailabilities({});
     const availabilities: Record<string, BatchAvailability> = {};
-    for (const product of source) {
-      if (!product.batchId) continue;
-      try {
-        availabilities[product.batchId] = await batchesAPI.getAvailability(product.batchId);
-      } catch {
-        // availability optional for dashboard cards
-      }
+    const ids = [...new Set(source.map((product) => product.batchId).filter(Boolean))];
+    for (let offset = 0; offset < ids.length; offset += 4) {
+      if (generation !== availabilityGeneration.current) return;
+      await Promise.all(ids.slice(offset, offset + 4).map(async (id) => {
+        try {
+          availabilities[id] = await batchesAPI.getAvailability(id);
+        } catch {
+          // Missing availability must not be presented as confirmed stock.
+        }
+      }));
     }
-    setBatchAvailabilities(availabilities);
+    if (generation === availabilityGeneration.current) setBatchAvailabilities(availabilities);
   }, []);
 
   useEffect(() => {
-    if (products.length > 0) {
-      void loadBatchAvailabilities(products);
-    }
+    void loadBatchAvailabilities(products);
+    return () => { availabilityGeneration.current++; };
   }, [products, loadBatchAvailabilities]);
 
   useFocusEffect(
@@ -97,7 +121,7 @@ export function useBuyerDashboardData() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadProducts();
+    await Promise.all([loadProducts(), loadDeliveries()]);
     try {
       const notifData = await notificationsAPI.getAll();
       setUnreadNotifications(Array.isArray(notifData) ? notifData.filter((n) => !n.read).length : 0);
@@ -105,17 +129,20 @@ export function useBuyerDashboardData() {
       setUnreadNotifications(0);
     }
     setRefreshing(false);
-  }, [loadProducts]);
+  }, [loadProducts, loadDeliveries]);
 
   const filteredProducts = useMemo(() => {
-    const filtered = activeFilter === 'all' ? products : products.filter((p) => p.status === activeFilter);
+    const filtered = products.filter((p) =>
+      (activeFilter === 'all' || p.status === activeFilter) && (!selectedEstateId || p.estate?.id === selectedEstateId));
     return filtered.sort((a, b) => {
-      const dateA = a.expectedDeliveryDate ? new Date(a.expectedDeliveryDate).getTime() : Infinity;
-      const dateB = b.expectedDeliveryDate ? new Date(b.expectedDeliveryDate).getTime() : Infinity;
+      const parsedA = Date.parse(a.harvestDate || '');
+      const parsedB = Date.parse(b.harvestDate || '');
+      const dateA = Number.isFinite(parsedA) ? parsedA : Infinity;
+      const dateB = Number.isFinite(parsedB) ? parsedB : Infinity;
       if (dateA !== dateB) return dateA - dateB;
-      return (b.farmerTrustScore || 0) - (a.farmerTrustScore || 0);
+      return a.productName.localeCompare(b.productName);
     });
-  }, [products, activeFilter]);
+  }, [products, activeFilter, selectedEstateId]);
 
   const handleQRPress = useCallback(async () => {
     if (!cameraPermission?.granted) {
@@ -150,7 +177,9 @@ export function useBuyerDashboardData() {
     selectedProduct,
     setSelectedProduct,
     unreadNotifications,
-    fieldStories,
+    estates,
+    selectedEstateId,
+    setSelectedEstateId,
     activeDelivery,
     filteredProducts,
     loadProducts,

@@ -19,7 +19,7 @@ export default function SupplierLayout() {
             headerShadowVisible: true,
           })}
         >
-          <Stack.Screen name="dashboard" options={{ title: t('supplier.partnerStore') }} />
+          <Stack.Screen name="dashboard" options={{ title: t('supplier.partnerStore'), headerShown: false }} />
           <Stack.Screen name="notifications" options={{ headerShown: false }} />
           <Stack.Screen name="catalog" options={{ title: t('supplier.screenCatalog') }} />
           <Stack.Screen name="orders" options={{ title: t('supplier.screenOrders') }} />

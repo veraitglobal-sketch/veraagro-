@@ -46,6 +46,7 @@ export const digitalHandoverAPI = {
   },
   complete: async (data: {
     handoverId: string;
+    revision?: number;
     qualityCheck: {
       visualCheck: 'FRESH' | 'DAMAGED';
       temperature: number;

@@ -234,17 +234,21 @@ export default function SettingsScreen() {
 
         <EnterpriseSettingsGroup
           title={t('producer.settings.connectionTitle')}
-          icon={<Wifi size={20} color={enterpriseColors.primary} strokeWidth={1.5} />}
+          icon={<Wifi size={16} color={enterpriseColors.primary} strokeWidth={1.9} />}
         >
-          <Text style={growerUi.formLabel}>{t('producer.settings.apiUrlLabel')}</Text>
-          <Text selectable style={growerUi.settingsRowDesc}>
-            {API_URL}
-          </Text>
-          <EnterpriseSettingsButton
-            label={t('producer.settings.testConnection')}
-            onPress={() => void testApiConnection()}
-            disabled={connectionChecking}
-          />
+          {__DEV__ ? (
+            <>
+              <Text style={growerUi.formLabel}>{t('producer.settings.apiUrlLabel')}</Text>
+              <Text selectable style={growerUi.settingsRowDesc}>
+                {API_URL}
+              </Text>
+              <EnterpriseSettingsButton
+                label={t('producer.settings.testConnection')}
+                onPress={() => void testApiConnection()}
+                disabled={connectionChecking}
+              />
+            </>
+          ) : null}
           <EnterpriseSettingsButton
             label={t('producer.settings.retrySyncNow')}
             variant="outline"
@@ -262,7 +266,7 @@ export default function SettingsScreen() {
           <EnterpriseSettingsToggleRow
             title={t('producer.settings.notifications', 'Notifications')}
             description={t('producer.settings.orderNotifications')}
-            icon={<Bell size={20} color={enterpriseColors.primary} strokeWidth={1.5} />}
+            icon={<Bell size={16} color={enterpriseColors.primary} strokeWidth={1.9} />}
             value={notifications}
             onValueChange={handleNotificationsToggle}
           />
@@ -280,7 +284,7 @@ export default function SettingsScreen() {
           <EnterpriseSettingsToggleRow
             title={t('producer.settings.autoSync', 'Auto sync')}
             description={t('producer.settings.autoSyncRecords')}
-            icon={<RefreshCw size={20} color={enterpriseColors.primary} strokeWidth={1.5} />}
+            icon={<RefreshCw size={16} color={enterpriseColors.primary} strokeWidth={1.9} />}
             value={autoSync}
             onValueChange={handleAutoSyncToggle}
           />
@@ -290,7 +294,7 @@ export default function SettingsScreen() {
           <EnterpriseSettingsToggleRow
             title={t('producer.settings.gpsAlways')}
             description={t('producer.settings.autoGps')}
-            icon={<Shield size={20} color={enterpriseColors.primary} strokeWidth={1.5} />}
+            icon={<Shield size={16} color={enterpriseColors.primary} strokeWidth={1.9} />}
             value={gpsAlways}
             onValueChange={handleGpsToggle}
           />
@@ -300,7 +304,7 @@ export default function SettingsScreen() {
           <EnterpriseSettingsLinkRow
             title={t('producer.settings.about')}
             description={t('producer.settings.aboutSubtitle', { version: appVersion })}
-            icon={<Info size={20} color={enterpriseColors.primary} strokeWidth={1.5} />}
+            icon={<Info size={16} color={enterpriseColors.primary} strokeWidth={1.9} />}
             onPress={() =>
               Alert.alert(
                 t('producer.settings.aboutAlertTitle'),

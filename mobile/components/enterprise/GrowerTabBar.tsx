@@ -14,8 +14,9 @@ const GROWER_MAIN_TAB_ORDER = ['index', 'field', 'chain', 'supplies', 'profile']
 function isRouteVisibleInTabBar(
   routeName: string,
   options: BottomTabBarProps['descriptors'][string]['options'],
+  order: readonly string[],
 ): boolean {
-  if (!GROWER_MAIN_TAB_ORDER.includes(routeName as (typeof GROWER_MAIN_TAB_ORDER)[number])) {
+  if (!order.includes(routeName)) {
     return false;
   }
   const href = (options as { href?: string | null }).href;
@@ -24,21 +25,22 @@ function isRouteVisibleInTabBar(
 }
 
 /** Compact floating pill — icons + label only on active tab. */
-export function GrowerTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+export function GrowerTabBar({
+  state,
+  descriptors,
+  navigation,
+  routeOrder = GROWER_MAIN_TAB_ORDER,
+}: BottomTabBarProps & { routeOrder?: readonly string[] }) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const bottomInset = Math.max(insets.bottom, 8);
 
   const visibleRoutes = useMemo(() => {
     const routes = state.routes.filter((route) =>
-      isRouteVisibleInTabBar(route.name, descriptors[route.key].options),
+      isRouteVisibleInTabBar(route.name, descriptors[route.key].options, routeOrder),
     );
-    return [...routes].sort(
-      (a, b) =>
-        GROWER_MAIN_TAB_ORDER.indexOf(a.name as (typeof GROWER_MAIN_TAB_ORDER)[number]) -
-        GROWER_MAIN_TAB_ORDER.indexOf(b.name as (typeof GROWER_MAIN_TAB_ORDER)[number]),
-    );
-  }, [state.routes, descriptors]);
+    return [...routes].sort((a, b) => routeOrder.indexOf(a.name) - routeOrder.indexOf(b.name));
+  }, [state.routes, descriptors, routeOrder]);
 
   const focusedRouteKey = state.routes[state.index]?.key;
 

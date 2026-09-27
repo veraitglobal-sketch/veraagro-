@@ -1,7 +1,8 @@
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { randomUUID } from 'expo-crypto';
+import { useRef, useState } from 'react';
 import { useCart } from '../../../hooks/useCart';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
@@ -12,6 +13,8 @@ import { FormKeyboardWrap } from '../../../components/FormKeyboardWrap';
 import { FormHelperText } from '../../../components/FormHelperText';
 import { farmerFormUi } from '../../../lib/farmer-form-ui';
 import { ArrowLeft } from 'lucide-react-native';
+import { submitCartOrders } from '../../../lib/checkout-orders';
+import { useCartCatalogue } from '../../../hooks/useCartCatalogue';
 
 const fieldInputStyle = {
   fontSize: 16,
@@ -34,8 +37,10 @@ export default function CheckoutScreen() {
   const router = useRouter();
   const p = useBioVeraScreenPadding();
   const priceLocale = useAppLocaleTag();
-  const { items, getTotalPrice, clearCart } = useCart();
+  const { items, getTotalPrice, prepareCheckout, completeCheckout, loading: cartLoading } = useCart();
   const [loading, setLoading] = useState(false);
+  const submitting = useRef(false);
+  const catalogue = useCartCatalogue();
   
   // Form fields
   const [street, setStreet] = useState('');
@@ -45,8 +50,9 @@ export default function CheckoutScreen() {
   const [notes, setNotes] = useState('');
 
   const handleSubmit = async () => {
+    if (submitting.current || cartLoading || catalogue.blocked) return;
     // Validation
-    if (!street || !city || !postalCode) {
+    if (![street, city, postalCode, country].every((value) => value.trim())) {
       Alert.alert(t('error'), t('buyer.checkout.fillRequired'));
       return;
     }
@@ -56,43 +62,44 @@ export default function CheckoutScreen() {
       return;
     }
 
+    let createdCount = 0;
+    let recovered = false;
+    submitting.current = true;
     try {
       setLoading(true);
 
       const deliveryAddress = { street: street.trim(), city: city.trim(), postalCode: postalCode.trim(), country: country.trim() };
-      const hasReservation = items.some((i) => i.lineKind === 'reservation');
-      const deliveryNotes =
-        [
-          hasReservation ? t('buyer.checkout.reservationDeliveryNote') : null,
-          notes.trim() || null,
-        ]
-          .filter(Boolean)
-          .join('\n\n') || undefined;
-
-      const createdIds: string[] = [];
-      for (const line of items) {
+      const prepared = [];
+      for (const line of items) prepared.push(await prepareCheckout(line, randomUUID));
+      const result = await submitCartOrders(prepared, async (line) => {
         const p = line.product;
         const order = await ordersAPI.create({
+          clientRequestId: line.checkoutKey!,
+          productId: p.id,
           ...(p.estate?.id ? { estateId: p.estate.id } : {}),
           productName: p.productName,
           quantity: line.quantity,
           unit: typeof p.unit === 'string' && p.unit.trim() ? p.unit : 'kg',
           unitPrice: p.price ?? 0,
           deliveryAddress,
-          deliveryNotes,
+          deliveryNotes: [
+            line.lineKind === 'reservation' ? t('buyer.checkout.reservationDeliveryNote') : null,
+            notes.trim() || null,
+          ].filter(Boolean).join('\n\n') || undefined,
         });
-        if (!order?.id) {
-          throw new Error(t('buyer.checkout.orderMissingId'));
-        }
-        createdIds.push(order.id);
-      }
-
-      clearCart();
+        recovered = recovered || !!order.checkoutReplay;
+        return order;
+      }, completeCheckout, t('buyer.checkout.orderMissingId'));
+      const { createdIds } = result;
+      createdCount = createdIds.length;
+      if ('error' in result) throw result.error;
 
       if (createdIds.length === 1) {
-        router.replace(`/(buyer)/order/${createdIds[0]}`);
+        const openOrder = () => router.replace(`/(buyer)/order/${createdIds[0]}`);
+        if (recovered) Alert.alert(t('buyer.orders.title'), t('checkoutRecovery.recovered'), [{ text: t('alerts.ok'), onPress: openOrder }]);
+        else openOrder();
       } else {
-        Alert.alert(t('buyer.orders.title'), t('buyer.checkout.ordersCreated', { count: createdIds.length }), [
+        Alert.alert(t('buyer.orders.title'), [recovered ? t('checkoutRecovery.recovered') : '', t('buyer.checkout.ordersCreated', { count: createdIds.length })].filter(Boolean).join('\n\n'), [
           { text: t('alerts.ok'), onPress: () => router.replace('/(buyer)/orders') },
         ]);
       }
@@ -105,8 +112,15 @@ export default function CheckoutScreen() {
       } else if (error instanceof Error && error.message.trim()) {
         message = error.message;
       }
-      Alert.alert(t('error'), message);
+      if (recovered) message = `${t('checkoutRecovery.recovered')}\n\n${message}`;
+      Alert.alert(t('error'), createdCount > 0
+        ? `${t('buyer.checkout.partialSuccess', { count: createdCount })}\n\n${message}`
+        : message, createdCount > 0 ? [
+          { text: t('buyer.cartReview.remainingCart'), onPress: () => router.replace('/(buyer)/cart') },
+          { text: t('buyer.orders.title'), onPress: () => router.replace('/(buyer)/orders') },
+        ] : [{ text: t('alerts.ok') }]);
     } finally {
+      submitting.current = false;
       setLoading(false);
     }
   };
@@ -127,6 +141,7 @@ export default function CheckoutScreen() {
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity
             onPress={() => router.back()}
+            disabled={loading}
             style={{ marginRight: theme.spacing.md }}
             {...a11yIconButton(t('common.back'))}
           >
@@ -138,7 +153,7 @@ export default function CheckoutScreen() {
             color: theme.colors.text.primary,
             letterSpacing: 1,
           }}>
-            {t('buyer.checkout.payment')}
+            {t('buyer.cartReview.checkoutTitle')}
           </Text>
         </View>
       </View>
@@ -154,6 +169,19 @@ export default function CheckoutScreen() {
             paddingRight: p.screenPaddingRight,
           }}
         >
+          <Text style={{ color: theme.colors.text.secondary, marginBottom: theme.spacing.md }}>{t('buyer.cartReview.checkoutHint')}</Text>
+          {catalogue.loading ? <Text>{t('buyer.cartReview.checking')}</Text> : null}
+          {catalogue.pricesChanged ? <Text style={{ color: theme.colors.primary }}>{t('buyer.cartReview.pricesChanged')}</Text> : null}
+          {catalogue.failed ? (
+            <TouchableOpacity disabled={loading} onPress={() => void catalogue.reload()} style={{ paddingVertical: theme.spacing.md }}>
+              <Text style={{ color: theme.colors.error }}>{t('buyer.cartReview.loadFailed')}</Text>
+            </TouchableOpacity>
+          ) : null}
+          {!catalogue.loading && !catalogue.failed && catalogue.blocked ? (
+            <TouchableOpacity onPress={() => router.replace('/(buyer)/cart')} style={{ paddingVertical: theme.spacing.md }}>
+              <Text style={{ color: theme.colors.error }}>{t('buyer.cartReview.fixCart')}</Text>
+            </TouchableOpacity>
+          ) : null}
           {/* Delivery Address Section */}
           <Text style={{
             fontSize: 14,
@@ -179,6 +207,7 @@ export default function CheckoutScreen() {
               {t('buyer.checkout.street')}
             </Text>
             <TextInput
+              editable={!loading}
               value={street}
               onChangeText={setStreet}
               placeholder=""
@@ -200,6 +229,7 @@ export default function CheckoutScreen() {
               {t('buyer.checkout.city')}
             </Text>
             <TextInput
+              editable={!loading}
               value={city}
               onChangeText={setCity}
               placeholder=""
@@ -221,10 +251,11 @@ export default function CheckoutScreen() {
               {t('buyer.checkout.postalCode')}
             </Text>
             <TextInput
+              editable={!loading}
               value={postalCode}
               onChangeText={setPostalCode}
               placeholder=""
-              keyboardType="numeric"
+              autoCapitalize="characters"
               style={fieldInputStyle}
             />
             <FormHelperText>{t('form.helper.checkoutPostalCode')}</FormHelperText>
@@ -243,6 +274,7 @@ export default function CheckoutScreen() {
               {t('buyer.checkout.country')}
             </Text>
             <TextInput
+              editable={!loading}
               value={country}
               onChangeText={setCountry}
               placeholder=""
@@ -264,6 +296,7 @@ export default function CheckoutScreen() {
               {t('buyer.checkout.fieldNotes')}
             </Text>
             <TextInput
+              editable={!loading}
               value={notes}
               onChangeText={setNotes}
               placeholder=""
@@ -302,21 +335,23 @@ export default function CheckoutScreen() {
                 marginBottom: theme.spacing.xs,
               }}>
                 <Text style={{
+                  flex: 1,
+                  marginRight: theme.spacing.md,
                   fontSize: 13,
                   fontWeight: '400',
                   color: theme.colors.text.primary,
                 }}>
-                  {item.product.productName} × {item.quantity}
+                  {item.product.productName} × {item.quantity} {item.product.unit}
                 </Text>
                 <Text style={{
                   fontSize: 13,
                   fontWeight: '400',
                   color: theme.colors.text.primary,
                 }}>
-                  {((item.product.price || 0) * item.quantity).toLocaleString(priceLocale, {
+                  {item.product.price && item.product.price > 0 ? (item.product.price * item.quantity).toLocaleString(priceLocale, {
                     style: 'currency',
                     currency: 'EUR',
-                  })}
+                  }) : t('buyer.cart.priceOnRequest')}
                 </Text>
               </View>
             ))}
@@ -340,7 +375,7 @@ export default function CheckoutScreen() {
                 fontWeight: '400',
                 color: theme.colors.text.primary,
               }}>
-                {getTotalPrice().toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' })}
+                {items.some(item => !item.product.price || item.product.price <= 0) ? t('buyer.cartReview.totalIncomplete') : getTotalPrice().toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' })}
               </Text>
             </View>
           </View>
@@ -370,14 +405,14 @@ export default function CheckoutScreen() {
       }}>
         <TouchableOpacity
           onPress={handleSubmit}
-          disabled={loading}
+          disabled={loading || cartLoading || catalogue.blocked || items.length === 0}
           style={{
             backgroundColor: theme.colors.primary,
             ...farmerFormUi.touchTarget,
             borderRadius: theme.borderRadius.md,
             alignItems: 'center',
             justifyContent: 'center',
-            opacity: loading ? 0.6 : 1,
+            opacity: loading || cartLoading || catalogue.blocked || items.length === 0 ? 0.6 : 1,
           }}
         >
           <Text style={{

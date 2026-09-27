@@ -6,6 +6,8 @@ import { PendingCost } from '../../../lib/offline-storage';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerStyles, growerUi } from '../../../lib/grower-ui';
 import EmptyState from '../../../components/EmptyState';
+import { formatEur } from '../../../lib/format-money';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 interface CostListProps {
   costs: PendingCost[];
@@ -25,6 +27,7 @@ function CostItem({
   onDelete: (id: string) => void;
 }) {
   const { t } = useTranslation();
+  const locale = useAppLocaleTag();
   const statusLabel =
     item.status === 'pending'
       ? t('producer.costCalculator.savedOnDevice')
@@ -88,12 +91,12 @@ function CostItem({
           accessibilityRole="button"
           accessibilityLabel={t('producer.costCalculator.deleteConfirm')}
         >
-          <Trash2 size={20} color={enterpriseColors.destructive} strokeWidth={1.5} />
+          <Trash2 size={16} color={enterpriseColors.destructive} strokeWidth={1.9} />
         </TouchableOpacity>
       </View>
       <View style={styles.row}>
         <Text style={styles.amount}>
-          {item.amount} {item.currency || 'EUR'}
+          {formatEur(item.amount, locale, item.currency || 'EUR')}
         </Text>
         <View style={[growerStyles.statusPill, { backgroundColor: statusTone.bg }]}>
           <Text style={[growerStyles.statusPillText, { color: statusTone.text }]}>{statusLabel}</Text>
@@ -113,6 +116,7 @@ export default function CostList({
   contentPaddingBottom = 24,
 }: CostListProps) {
   const { t } = useTranslation();
+  const locale = useAppLocaleTag();
   const total = costs.reduce((sum, c) => sum + c.amount, 0);
 
   const renderItem: ListRenderItem<PendingCost> = ({ item }) => (
@@ -123,7 +127,7 @@ export default function CostList({
     costs.length > 0 ? (
       <View style={[enterpriseUi.inAppPanel, styles.totalBar]}>
         <Text style={enterpriseUi.navRowTitle}>{t('producer.costCalculator.total')}</Text>
-        <Text style={styles.totalAmount}>{total.toFixed(2)} EUR</Text>
+        <Text style={styles.totalAmount}>{formatEur(total, locale)}</Text>
       </View>
     ) : null;
 

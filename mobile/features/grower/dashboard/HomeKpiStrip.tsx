@@ -33,15 +33,17 @@ function chainCount(
   return batches;
 }
 
-function euroCompact(n: number, locale: string): string {
-  if (n >= 1000) {
-    return n.toLocaleString(locale, {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: 0,
-    });
+function formatKpiMoney(n: number, locale: string): string {
+  const amount = Math.round(n * 100) / 100;
+  if (amount >= 1000) {
+    const k = amount / 1000;
+    return `${k.toLocaleString(locale, { maximumFractionDigits: 1 })}k\u00A0€`;
   }
-  return n.toLocaleString(locale, { style: 'currency', currency: 'EUR' });
+  const decimals = Number.isInteger(amount) ? 0 : 2;
+  return `${amount.toLocaleString(locale, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: decimals,
+  })}\u00A0€`;
 }
 
 function KpiCell({
@@ -49,18 +51,29 @@ function KpiCell({
   value,
   accent,
   bordered,
+  compactValue,
 }: {
   label: string;
   value: string;
   accent?: boolean;
   bordered?: boolean;
+  compactValue?: boolean;
 }) {
   return (
     <View style={[styles.cell, bordered && styles.cellBorder]}>
-      <Text style={enterpriseUi.kpiLabel} numberOfLines={2}>
+      <Text style={[enterpriseUi.kpiLabel, styles.kpiLabel]} numberOfLines={2}>
         {label}
       </Text>
-      <Text style={[enterpriseUi.kpiValue, accent && enterpriseUi.kpiValueAccent]} numberOfLines={1}>
+      <Text
+        style={[
+          enterpriseUi.kpiValue,
+          compactValue && styles.kpiValueCompact,
+          accent && enterpriseUi.kpiValueAccent,
+        ]}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}
+      >
         {value}
       </Text>
     </View>
@@ -113,7 +126,7 @@ export function HomeKpiStrip({
 
   const thirdLabel = escrow > 0 ? t('producer.dashboard.homeKpi.escrow') : t('producer.dashboard.homeKpi.outbox');
   const thirdValue =
-    escrow > 0 ? euroCompact(escrow, locale) : offlinePending > 0 ? String(offlinePending) : '0';
+    escrow > 0 ? formatKpiMoney(escrow, locale) : offlinePending > 0 ? String(offlinePending) : '0';
 
   return (
     <View style={styles.kpiWrap}>
@@ -129,7 +142,12 @@ export function HomeKpiStrip({
         accent={chainAccent}
         bordered
       />
-      <KpiCell label={thirdLabel} value={thirdValue} accent={outboxAccent || escrow > 0} />
+      <KpiCell
+        label={thirdLabel}
+        value={thirdValue}
+        accent={outboxAccent || escrow > 0}
+        compactValue={escrow > 0}
+      />
     </View>
   );
 }
@@ -146,8 +164,18 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 6,
+    paddingHorizontal: 4,
     minHeight: 68,
+  },
+  kpiLabel: {
+    textAlign: 'center',
+    width: '100%',
+  },
+  kpiValueCompact: {
+    fontSize: 22,
+    letterSpacing: -0.4,
+    width: '100%',
+    textAlign: 'center',
   },
   cellBorder: {
     borderRightWidth: StyleSheet.hairlineWidth,

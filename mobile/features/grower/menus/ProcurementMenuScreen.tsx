@@ -2,9 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { Box, ShoppingBag, MapPinned } from 'lucide-react-native';
-import { View } from 'react-native';
 import { GrowerMenuScaffold } from '../../../design-system/scaffolds/GrowerMenuScaffold';
-import { EnterpriseButton } from '../../../design-system';
 
 /** Nabavka — materijali + partner porudžbine + mapa. */
 export default function ProcurementMenuScreen() {
@@ -27,6 +25,13 @@ export default function ProcurementMenuScreen() {
         icon: ShoppingBag,
         onPress: () => router.push('/(producer)/partner-orders'),
       },
+      {
+        key: 'map',
+        title: t('producer.hubs.supplies.workflow.mapTitle'),
+        subtitle: t('producer.hubs.supplies.workflow.mapDesc'),
+        icon: MapPinned,
+        onPress: () => router.push('/map'),
+      },
     ],
     [router, t],
   );
@@ -36,17 +41,6 @@ export default function ProcurementMenuScreen() {
       title={t('producer.hubs.supplies.groups.procurementTitle')}
       description={t('producer.hubs.supplies.groups.procurementDesc')}
       items={items}
-      footer={
-        <View style={{ marginTop: 12 }}>
-          <EnterpriseButton
-            label={t('producer.hubs.supplies.workflow.mapTitle')}
-            onPress={() => router.push('/map')}
-            variant="secondary"
-            fullWidth
-            icon={<MapPinned size={18} color="#2D5A27" strokeWidth={1.5} />}
-          />
-        </View>
-      }
     />
   );
 }

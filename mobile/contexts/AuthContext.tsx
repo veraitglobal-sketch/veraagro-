@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API_URL } from '../lib/api-url';
@@ -35,6 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const logoutPending = useRef<Promise<void> | null>(null);
 
   const loadStoredAuth = useCallback(async () => {
     try {
@@ -60,12 +61,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    await unregisterPushTokenFromBackend();
-    await AsyncStorage.removeItem('auth_token');
-    await AsyncStorage.removeItem('auth_user');
-    delete axios.defaults.headers.common['Authorization'];
-    setUser(null);
-    setToken(null);
+    if (logoutPending.current) return logoutPending.current;
+    logoutPending.current = (async () => {
+      try {
+        await unregisterPushTokenFromBackend();
+      } catch (error) {
+        console.warn('[Auth] push cleanup failed', error);
+      } finally {
+        try {
+          await AsyncStorage.multiRemove(['auth_token', 'auth_user']);
+        } finally {
+          delete axios.defaults.headers.common['Authorization'];
+          setUser(null);
+          setToken(null);
+        }
+      }
+    })();
+    try {
+      await logoutPending.current;
+    } finally {
+      logoutPending.current = null;
+    }
   }, []);
 
   useEffect(() => {
@@ -74,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const onUnauthorized = () => {
-      void (async () => {
+      return (async () => {
         await logout();
         try {
           replaceToSignIn();
@@ -97,7 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       let lastError: unknown = null;
       for (const url of urlsToTry) {
         try {
-          const response = await axios.post(url, body);
+          const response = await axios.post(url, body, { timeout: 25000 });
           const { access_token, user: u } = response.data;
           if (!access_token || !u) {
             throw new Error('Invalid response from server');

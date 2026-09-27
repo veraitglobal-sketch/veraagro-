@@ -1,13 +1,15 @@
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { ArrowLeft, MapPin, Plus, Minus, ShoppingCart } from 'lucide-react-native';
 import { inventoryAPI, Product } from '../../lib/api';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { useAppLocaleTag } from '../../lib/date-locale';
 import { useCart } from '../../hooks/useCart';
+import ErrorMessage from '../../components/ErrorMessage';
 
 /**
  * Product Detail Screen
@@ -17,16 +19,24 @@ export default function ProductDetailScreen() {
   const { t } = useTranslation();
   const { id, mode } = useLocalSearchParams<{ id: string; mode?: string }>();
   const router = useRouter();
-  const { addToCart } = useCart();
+  const { addToCart, items, loading: cartLoading } = useCart();
   const p = useBioVeraScreenPadding();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [error, setError] = useState<string | null>(null);
+  const loadGeneration = useRef(0);
+  const adding = useRef(false);
   const isReservationMode = mode === 'reserve';
   const localeTag = useAppLocaleTag();
+  const inCart = items.filter((item) => item.product.id === id).reduce((sum, item) => sum + item.quantity, 0);
+  const maxQuantity = Math.max(0, Number(product?.quantity) - inCart) || 0;
+  const canAdd = !cartLoading && !error && !!product && Number.isFinite(maxQuantity) &&
+    quantity > 0 && quantity <= maxQuantity;
 
   const loadProduct = useCallback(async (opts?: { background?: boolean }) => {
+    const generation = ++loadGeneration.current;
     if (!id) {
       setProduct(null);
       setLoading(false);
@@ -34,20 +44,27 @@ export default function ProductDetailScreen() {
     }
     const background = opts?.background === true;
     if (!background) setLoading(true);
+    setError(null);
     try {
       const products = await inventoryAPI.getAvailableProducts();
+      if (generation !== loadGeneration.current) return;
       const found = products.find((pRow) => pRow.id === id);
       setProduct(found || null);
-    } catch (error) {
-      console.error('Error loading product:', error);
+      setQuantity((current) => Math.min(current, Math.max(0, Number(found?.quantity) || 0)));
+    } catch {
+      if (generation === loadGeneration.current) setError(t('buyer.dashboard.loadFailed'));
     } finally {
-      if (!background) setLoading(false);
+      if (generation === loadGeneration.current) setLoading(false);
     }
-  }, [id]);
+  }, [id, t]);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
+    adding.current = false;
+    setQuantity(1);
+    setProduct(null);
     void loadProduct();
-  }, [loadProduct]);
+    return () => { loadGeneration.current++; };
+  }, [loadProduct]));
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -59,11 +76,12 @@ export default function ProductDetailScreen() {
   }, [loadProduct]);
 
   const handleAddToCart = () => {
-    if (product) {
+    if (product && canAdd && !adding.current) {
+      adding.current = true;
       addToCart(product, quantity, {
         lineKind: isReservationMode ? 'reservation' : 'purchase',
       });
-      router.back();
+      router.push('/(buyer)/cart');
     }
   };
 
@@ -103,7 +121,7 @@ export default function ProductDetailScreen() {
     );
   }
 
-  if (!product) {
+  if (!product || error) {
     return (
       <View
         style={{
@@ -114,9 +132,9 @@ export default function ProductDetailScreen() {
           padding: theme.spacing.lg,
         }}
       >
-        <Text style={{ fontSize: 16, color: theme.colors.text.secondary, textAlign: 'center' }}>
+        {error ? <ErrorMessage message={error} onRetry={() => void loadProduct()} /> : <Text style={{ fontSize: 16, color: theme.colors.text.secondary, textAlign: 'center' }}>
           {t('buyer.productDetail.notFound')}
-        </Text>
+        </Text>}
         <TouchableOpacity
           onPress={() => router.back()}
           style={{ marginTop: theme.spacing.md, padding: theme.spacing.md }}
@@ -348,7 +366,8 @@ export default function ProductDetailScreen() {
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.lg }}>
               <TouchableOpacity
-                onPress={() => setQuantity(Math.max(1, quantity - 1))}
+                onPress={() => setQuantity(Math.max(Math.min(1, maxQuantity), quantity - 1))}
+                disabled={quantity <= Math.min(1, maxQuantity)}
                 style={{ padding: theme.spacing.sm }}
                 accessibilityRole="button"
                 accessibilityLabel={t('buyer.cart.decreaseQty')}
@@ -368,7 +387,8 @@ export default function ProductDetailScreen() {
                 {quantity}
               </Text>
               <TouchableOpacity
-                onPress={() => setQuantity(quantity + 1)}
+                onPress={() => setQuantity(Math.min(maxQuantity, quantity + 1))}
+                disabled={quantity >= maxQuantity || cartLoading}
                 style={{ padding: theme.spacing.sm }}
                 accessibilityRole="button"
                 accessibilityLabel={t('buyer.cart.increaseQty')}
@@ -376,6 +396,9 @@ export default function ProductDetailScreen() {
                 <Plus size={20} color={theme.colors.text.primary} strokeWidth={1.5} />
               </TouchableOpacity>
             </View>
+            <Text style={{ color: theme.colors.text.secondary, marginTop: theme.spacing.sm }}>
+              {t('buyer.productDetail.remainingToAdd', { quantity: maxQuantity, unit: product.unit })}
+            </Text>
           </View>
         </View>
       </ScrollView>
@@ -391,8 +414,10 @@ export default function ProductDetailScreen() {
       >
         <TouchableOpacity
           onPress={handleAddToCart}
+          disabled={!canAdd}
           style={{
             backgroundColor: theme.colors.primary,
+            opacity: canAdd ? 1 : 0.5,
             paddingVertical: theme.spacing.md,
             paddingHorizontal: theme.spacing.lg,
             borderRadius: theme.borderRadius.md,

@@ -125,29 +125,30 @@ export const enterpriseUi = {
 
   /** In-app section titles — sentence case, private-banking tone. */
   inAppSectionLabel: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: enterpriseColors.gray600,
-    letterSpacing: -0.1,
-    marginBottom: 10,
-    marginLeft: 2,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6B7A67',
+    letterSpacing: 0.9,
+    textTransform: 'uppercase',
+    marginBottom: 8,
+    marginLeft: 4,
   } as TextStyle,
 
   inAppTitle: {
-    fontSize: 28,
-    fontWeight: '400',
+    fontSize: 24,
+    fontWeight: '600',
     color: enterpriseColors.gray900,
-    letterSpacing: -0.65,
-    lineHeight: 34,
+    letterSpacing: -0.6,
+    lineHeight: 30,
   } as TextStyle,
 
   inAppLead: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '400',
     color: enterpriseColors.gray600,
-    lineHeight: 22,
-    marginTop: 8,
-    letterSpacing: -0.12,
+    lineHeight: 20,
+    marginTop: 6,
+    letterSpacing: -0.1,
   } as TextStyle,
 
   /** Home-only trust ribbon — never use for nav/KPI/menus (premium = rare). */
@@ -188,34 +189,34 @@ export const enterpriseUi = {
   } as TextStyle,
 
   kpiValue: {
-    fontSize: 26,
-    fontWeight: '400',
+    fontSize: 22,
+    fontWeight: '600',
     color: enterpriseColors.gray900,
     fontVariant: ['tabular-nums'],
     letterSpacing: -0.6,
   } as TextStyle,
 
   kpiLabel: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '500',
     color: enterpriseColors.gray600,
     letterSpacing: -0.05,
-    marginBottom: 8,
+    marginBottom: 6,
   } as TextStyle,
 
   /** White panel on canvas — warm border + soft elevation. */
   inAppPanel: {
     width: '100%',
     borderRadius: 18,
-    borderWidth: 1,
-    borderColor: enterpriseColors.border,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(17, 24, 39, 0.09)',
     backgroundColor: enterpriseColors.white,
     overflow: 'hidden',
-    shadowColor: '#2D5A27',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.06,
-    shadowRadius: 14,
-    elevation: 3,
+    shadowColor: '#1a3328',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 2,
   } as ViewStyle,
 
   /** KPI / summary strip — tinted surface (not flat white). */
@@ -241,55 +242,57 @@ export const enterpriseUi = {
   } as ViewStyle,
 
   navRowIcon: {
-    width: 44,
-    height: 44,
+    width: 40,
+    height: 40,
     borderRadius: 12,
-    backgroundColor: enterpriseColors.primaryTint,
-    borderWidth: 1,
-    borderColor: enterpriseColors.premiumTintBorder,
+    backgroundColor: '#E8F1E4',
     alignItems: 'center',
     justifyContent: 'center',
   } as ViewStyle,
 
   kpiValueAccent: {
-    fontSize: 26,
-    fontWeight: '400',
+    fontSize: 22,
+    fontWeight: '600',
     color: enterpriseColors.primary,
     fontVariant: ['tabular-nums'],
     letterSpacing: -0.6,
   } as TextStyle,
 
   navRowTitle: {
-    fontSize: 17,
-    fontWeight: '500',
+    fontSize: 15,
+    fontWeight: '600',
     color: enterpriseColors.gray900,
-    letterSpacing: -0.28,
-    lineHeight: 22,
+    letterSpacing: -0.25,
+    lineHeight: 20,
   } as TextStyle,
 
   navRowSubtitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '400',
-    color: enterpriseColors.gray600,
-    marginTop: 3,
-    lineHeight: 19,
+    color: '#6b7280',
+    marginTop: 1,
+    lineHeight: 17,
   } as TextStyle,
 
   navPanel: {
     width: '100%',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
+    borderRadius: 18,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(17, 24, 39, 0.09)',
     backgroundColor: enterpriseColors.white,
     overflow: 'hidden',
   } as ViewStyle,
 
   card: {
     backgroundColor: enterpriseColors.white,
-    borderRadius: theme.borderRadius.lg,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
-    ...theme.shadows.sm,
+    borderRadius: 16,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(17, 24, 39, 0.09)',
+    shadowColor: '#1a3328',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
   } as ViewStyle,
 
   cardCurrent: {
@@ -305,7 +308,7 @@ export const enterpriseUi = {
 
   buttonPrimary: {
     minHeight: 48,
-    borderRadius: theme.borderRadius.lg,
+    borderRadius: 14,
     backgroundColor: enterpriseColors.primary,
     alignItems: 'center',
     justifyContent: 'center',
@@ -321,8 +324,8 @@ export const enterpriseUi = {
 
   buttonOutline: {
     minHeight: 48,
-    borderRadius: theme.borderRadius.lg,
-    borderWidth: 2,
+    borderRadius: 14,
+    borderWidth: 1.5,
     borderColor: enterpriseColors.primary,
     backgroundColor: enterpriseColors.white,
     alignItems: 'center',
@@ -458,25 +461,30 @@ export const enterpriseUi = {
   } as TextStyle,
 
   authBtnPrimary: {
-    minHeight: 52,
-    borderRadius: 12,
+    minHeight: 50,
+    borderRadius: 14,
     backgroundColor: enterpriseColors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 13,
+    shadowColor: '#1F3D1B',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    elevation: 3,
   } as ViewStyle,
 
   authBtnPrimaryText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     color: enterpriseColors.white,
     letterSpacing: -0.25,
   } as TextStyle,
 
   authBtnSecondary: {
-    minHeight: 52,
-    borderRadius: 12,
+    minHeight: 50,
+    borderRadius: 14,
     backgroundColor: enterpriseColors.gray100,
     borderWidth: 1,
     borderColor: enterpriseColors.gray200,
@@ -543,38 +551,43 @@ export const enterpriseUi = {
     alignItems: 'center',
     backgroundColor: enterpriseColors.white,
     borderRadius: 16,
-    borderWidth: 1,
-    borderColor: enterpriseColors.gray200,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    minHeight: 72,
-    marginBottom: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(17, 24, 39, 0.09)',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    minHeight: 64,
+    marginBottom: 8,
+    shadowColor: '#1a3328',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 1,
   } as ViewStyle,
 
   listRowIcon: {
-    width: 52,
-    height: 52,
+    width: 40,
+    height: 40,
     borderRadius: 12,
-    backgroundColor: enterpriseColors.gray100,
+    backgroundColor: '#E8F1E4',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 14,
+    marginRight: 12,
   } as ViewStyle,
 
   listRowTitle: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '600',
     color: enterpriseColors.gray900,
-    letterSpacing: -0.3,
-    lineHeight: 22,
+    letterSpacing: -0.25,
+    lineHeight: 20,
   } as TextStyle,
 
   listRowDesc: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '400',
-    color: enterpriseColors.gray600,
-    marginTop: 4,
-    lineHeight: 20,
+    color: '#6b7280',
+    marginTop: 2,
+    lineHeight: 17,
   } as TextStyle,
 
   screenTopWash: {

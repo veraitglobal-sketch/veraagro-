@@ -1,5 +1,6 @@
+import { useRouter } from 'expo-router';
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, type ListRenderItem } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, type ListRenderItem } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { PendingProduct } from '../../../lib/offline-storage';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
@@ -16,13 +17,14 @@ interface ProductListProps {
 }
 
 function ProductItem({ item }: { item: PendingProduct }) {
+  const router = useRouter();
   const { t } = useTranslation();
   const statusLabel =
     item.status === 'pending'
       ? t('producer.products.savedOnDevice')
       : item.status === 'syncing'
         ? t('producer.products.syncing')
-        : item.status;
+        : item.status === 'synced' ? t('connectedWorkflow.synced') : t('connectedWorkflow.productPending');
 
   const statusTone =
     item.status === 'synced'
@@ -47,6 +49,10 @@ function ProductItem({ item }: { item: PendingProduct }) {
           <Text style={enterpriseUi.navRowSubtitle}> · {item.parcelOrEstate}</Text>
         ) : null}
       </View>
+      {item.sourceOrderId ? <TouchableOpacity accessibilityRole="button" style={{ minHeight: 44, justifyContent: 'center' }}
+        onPress={() => router.push({ pathname: '/(producer)/partner-order/[orderId]', params: { orderId: item.sourceOrderId! } })}>
+        <Text style={{ color: enterpriseColors.primary }}>{t('connectedWorkflow.openOrder')}</Text>
+      </TouchableOpacity> : null}
       <View style={[growerStyles.statusPill, { backgroundColor: statusTone.bg, marginTop: 8 }]}>
         <Text style={[growerStyles.statusPillText, { color: statusTone.text }]}>{statusLabel}</Text>
       </View>

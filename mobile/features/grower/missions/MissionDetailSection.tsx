@@ -16,11 +16,11 @@ export function MissionDetailSection({ title, icon: Icon, children }: Props) {
     <View style={[enterpriseUi.inAppPanel, styles.panel]}>
       <View style={styles.header}>
         {Icon ? (
-          <View style={enterpriseUi.navRowIcon}>
-            <Icon size={20} color={enterpriseColors.gray600} strokeWidth={1.5} />
+          <View style={styles.icon}>
+            <Icon size={15} color={enterpriseColors.primary} strokeWidth={1.9} />
           </View>
         ) : null}
-        <Text style={enterpriseUi.navRowTitle}>{title}</Text>
+        <Text style={styles.title}>{title}</Text>
       </View>
       <View style={styles.body}>{children}</View>
     </View>
@@ -29,15 +29,30 @@ export function MissionDetailSection({ title, icon: Icon, children }: Props) {
 
 const styles = StyleSheet.create({
   panel: {
-    marginBottom: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
+    marginBottom: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginBottom: 12,
+    gap: 8,
+    marginBottom: 10,
+  },
+  icon: {
+    width: 26,
+    height: 26,
+    borderRadius: 8,
+    backgroundColor: '#E8F1E4',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 12,
+    fontWeight: '600',
+    letterSpacing: 0.9,
+    textTransform: 'uppercase',
+    color: '#6B7A67',
   },
   body: {
     gap: 8,

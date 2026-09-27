@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { View, Text, ActivityIndicator, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { useMissionDetailData } from './useMissionDetailData';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
 import MissionInfoBlock from './MissionInfoBlock';
 import MissionLogisticsBlock from './MissionLogisticsBlock';
+import { LogisticsAssignDriverBlock } from './LogisticsAssignDriverBlock';
 import BatchInfoBlock from './BatchInfoBlock';
 import JourneyMapBlock from './JourneyMapBlock';
 import TimelineBlock from './TimelineBlock';
@@ -15,6 +16,8 @@ import ConsumerFeedbackBlock from './ConsumerFeedbackBlock';
 import FinancialStatusBlock from './FinancialStatusBlock';
 import LogisticsMissionLifecycleBar from './LogisticsMissionLifecycleBar';
 import LogisticsClaimMissionBlock from './LogisticsClaimMissionBlock';
+import { useRouter } from 'expo-router';
+import { EnterpriseButton } from '../../../design-system/EnterpriseButton';
 
 interface MissionDetailScreenProps {
   missionId: string | undefined;
@@ -23,6 +26,7 @@ interface MissionDetailScreenProps {
 
 export default function MissionDetailScreen({ missionId, variant = 'grower' }: MissionDetailScreenProps) {
   const { t } = useTranslation();
+  const router = useRouter();
   const { mission, journeyMap, consumerFeedback, financialStatus, loading, onRefresh } =
     useMissionDetailData(missionId);
 
@@ -68,12 +72,41 @@ export default function MissionDetailScreen({ missionId, variant = 'grower' }: M
     >
       <View style={growerUi.scrollContent}>
         <MissionInfoBlock mission={mission} />
-        <MissionLogisticsBlock mission={mission} />
+        <MissionLogisticsBlock mission={mission} viewer={variant} />
         <BatchInfoBlock mission={mission} />
         {variant === 'logistics' && (
           <>
             <LogisticsClaimMissionBlock mission={mission} onClaimed={onRefresh} />
+            <LogisticsAssignDriverBlock mission={mission} onChanged={onRefresh} />
             <LogisticsMissionLifecycleBar mission={mission} onUpdated={onRefresh} />
+            {mission.delivery ? (
+              <View style={[enterpriseUi.inAppPanel, { padding: 14, gap: 10, marginBottom: 10 }]}>
+                <Text style={{ fontSize: 11, fontWeight: '600', letterSpacing: 0.9, textTransform: 'uppercase', color: '#6B7A67' }}>
+                  {t('logistics.delivery.title')}
+                </Text>
+                <Text style={{ fontSize: 14.5, fontWeight: '600', color: enterpriseColors.gray900 }}>
+                  {mission.delivery.deliveryNumber}
+                  <Text style={{ fontWeight: '400', color: enterpriseColors.gray600 }}>
+                    {' · '}
+                    {t(`logistics.delivery.status.${mission.delivery.status}`, { defaultValue: mission.delivery.status })}
+                  </Text>
+                </Text>
+                {mission.delivery.status === 'IN_TRANSIT' && !mission.delivery.digital_handovers ? (
+                  <EnterpriseButton
+                    label={t('handover.initTitle')}
+                    onPress={() => router.push({ pathname: '/driver/handover-initiate', params: { deliveryId: mission.delivery!.id } })}
+                  />
+                ) : null}
+                {mission.delivery.digital_handovers ? (
+                  <Text style={{ fontSize: 13, color: enterpriseColors.gray700 }}>
+                    {t('logistics.delivery.handover')}:{' '}
+                    {t(`logistics.delivery.handoverStatus.${mission.delivery.digital_handovers.status}`, {
+                      defaultValue: mission.delivery.digital_handovers.status,
+                    })}
+                  </Text>
+                ) : null}
+              </View>
+            ) : null}
           </>
         )}
         <JourneyMapBlock journeyMap={journeyMap} />

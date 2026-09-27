@@ -28,10 +28,8 @@ export default function WalletScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      if (loadError) {
-        void reload();
-      }
-    }, [loadError, reload]),
+      void reload();
+    }, [reload]),
   );
 
   const onRefresh = useCallback(async () => {

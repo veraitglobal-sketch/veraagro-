@@ -1,7 +1,7 @@
 import { View, Text, Image, StyleSheet } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
-import { dsColors, dsTypography } from '../../design-system';
+import { dsColors } from '../../design-system';
 
 const LOGO = require('../../assets/logo.png');
 
@@ -12,14 +12,9 @@ type Props = {
 /** Editorial brand block — hero typography, not form chrome. */
 export function AuthBrandHero({ compact = false }: Props) {
   const { t } = useTranslation();
-  const eyebrow = `${t('producer.brand.wordmarkA11y')} · ${t('producer.brand.productLine')}`;
 
   return (
     <View style={[styles.root, compact && styles.rootCompact]}>
-      <Animated.Text entering={FadeIn.duration(480)} style={styles.eyebrow}>
-        {eyebrow}
-      </Animated.Text>
-
       <Animated.View entering={FadeIn.delay(60).duration(520)}>
         <Image
           source={LOGO}
@@ -35,7 +30,6 @@ export function AuthBrandHero({ compact = false }: Props) {
             {t('growerJourney.taglineLine1')}
           </Text>
           <Text style={[styles.taglineLine, styles.taglineAccent]}>{t('growerJourney.taglineLine2')}</Text>
-          <Text style={styles.lead}>{t('growerJourney.heroLeadShort')}</Text>
         </Animated.View>
       ) : null}
     </View>
@@ -54,11 +48,6 @@ const styles = StyleSheet.create({
     flex: 0,
     paddingTop: 0,
     paddingBottom: 8,
-  },
-  eyebrow: {
-    ...dsTypography.eyebrow,
-    textAlign: 'center',
-    marginBottom: 22,
   },
   logo: {
     width: 176,
@@ -85,12 +74,5 @@ const styles = StyleSheet.create({
   taglineAccent: {
     color: dsColors.primary,
     marginTop: -2,
-  },
-  lead: {
-    ...dsTypography.pageLead,
-    textAlign: 'center',
-    marginTop: 14,
-    maxWidth: 300,
-    lineHeight: 22,
   },
 });

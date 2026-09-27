@@ -108,18 +108,18 @@ export const dsTypography = {
     textTransform: 'uppercase',
   } as TextStyle,
   pageTitle: {
-    fontSize: ds.type.pageTitle,
-    fontWeight: ds.type.weight.regular,
+    fontSize: 24,
+    fontWeight: ds.type.weight.semibold,
     color: '#1a3328',
-    letterSpacing: -0.65,
-    lineHeight: 34,
+    letterSpacing: -0.6,
+    lineHeight: 30,
   } as TextStyle,
   pageLead: {
-    fontSize: ds.type.body,
+    fontSize: 14,
     fontWeight: ds.type.weight.regular,
     color: dsColors.muted,
-    lineHeight: 22,
-    marginTop: 8,
+    lineHeight: 20,
+    marginTop: 6,
     letterSpacing: -0.12,
   } as TextStyle,
   statusLine: {
@@ -130,13 +130,13 @@ export const dsTypography = {
     marginTop: 10,
   } as TextStyle,
   sectionLabel: {
-    fontSize: ds.type.caption,
+    fontSize: 12,
     fontWeight: ds.type.weight.semibold,
-    color: dsColors.gray700,
-    letterSpacing: 0.4,
+    color: '#6B7A67',
+    letterSpacing: 0.9,
     textTransform: 'uppercase',
     marginBottom: 10,
-    marginLeft: 2,
+    marginLeft: 4,
   } as TextStyle,
   navRowTitle: {
     fontSize: ds.type.sectionTitle,
@@ -261,7 +261,7 @@ export function buttonContainerStyle(
 export function inputContainerStyle(focused: boolean, hasError: boolean): ViewStyle {
   return {
     borderWidth: focused || hasError ? 2 : 1,
-    borderColor: hasError ? dsColors.destructiveBorder : focused ? dsColors.primary : dsColors.borderNeutral,
+    borderColor: hasError ? dsColors.destructiveBorder : focused ? dsColors.primary : 'rgba(17, 24, 39, 0.12)',
     borderRadius: ds.radius.md,
     backgroundColor: dsColors.surface,
     minHeight: ds.touch.cta,

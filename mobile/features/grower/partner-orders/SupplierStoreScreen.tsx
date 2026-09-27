@@ -12,6 +12,8 @@ import {
   Platform,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useAppLocaleTag } from '../../../lib/date-locale';
+import { formatEur } from '../../../lib/format-money';
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { Package, MessageCircle, Send } from 'lucide-react-native';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
@@ -34,6 +36,7 @@ function paramFirst(raw: string | string[] | undefined): string {
 
 export default function SupplierStoreScreen() {
   const { t } = useTranslation();
+  const locale = useAppLocaleTag();
   const params = useLocalSearchParams<{
     userId: string;
     threadId?: string | string[];
@@ -184,6 +187,12 @@ export default function SupplierStoreScreen() {
     );
   }
 
+  // List prices are the supplier's indicative prices; the supplier confirms the final amount.
+  const orderTotal = store.catalog.reduce((sum, line) => {
+    const qty = Number(String(quantities[line.id] ?? '').replace(',', '.'));
+    return line.listPrice != null && Number.isFinite(qty) && qty > 0 ? sum + qty * line.listPrice : sum;
+  }, 0);
+
   const addressLine = [store.address, [store.postalCode, store.city].filter(Boolean).join(' '), store.country]
     .filter(Boolean)
     .join(' · ');
@@ -254,12 +263,14 @@ export default function SupplierStoreScreen() {
                           </Text>
                         ) : null}
                         <Text style={styles.productMeta}>
-                          {t('b2bSupplier.store.unit')} {line.unit}
-                          {line.listPrice != null
-                            ? ` · ${t('b2bSupplier.store.listPrice', { price: line.listPrice.toFixed(2) })}`
-                            : ''}
-                          {line.sku ? ` · ${line.sku}` : ''}
+                          {[`${t('b2bSupplier.store.unit')} ${line.unit}`, line.sku].filter(Boolean).join(' · ')}
                         </Text>
+                        {line.listPrice != null ? (
+                          <Text style={styles.price}>
+                            {formatEur(line.listPrice, locale)}
+                            <Text style={styles.priceUnit}> / {line.unit}</Text>
+                          </Text>
+                        ) : null}
                       </View>
                     </View>
                     <View style={styles.qtyRow}>
@@ -307,6 +318,12 @@ export default function SupplierStoreScreen() {
 
         {token && !successId ? (
           <View style={[styles.footer, { paddingBottom: Math.max(p.bottomInset, 12) }]}>
+            {orderTotal > 0 ? (
+              <View style={styles.totalRow}>
+                <Text style={styles.totalLabel}>{t('b2bSupplier.store.estimatedTotal')}</Text>
+                <Text style={styles.totalValue}>{formatEur(orderTotal, locale)}</Text>
+              </View>
+            ) : null}
             <EnterpriseButton
               label={t('b2bSupplier.store.submit')}
               onPress={() => void onSubmit()}
@@ -325,6 +342,11 @@ export default function SupplierStoreScreen() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
+  price: { fontSize: 15, fontWeight: '700', color: enterpriseColors.primary, marginTop: 4, fontVariant: ['tabular-nums'] },
+  priceUnit: { fontSize: 12, fontWeight: '500', color: enterpriseColors.gray600 },
+  totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 },
+  totalLabel: { fontSize: 13, color: enterpriseColors.gray600 },
+  totalValue: { fontSize: 17, fontWeight: '700', color: enterpriseColors.gray900, fontVariant: ['tabular-nums'] },
   centered: {
     flex: 1,
     justifyContent: 'center',

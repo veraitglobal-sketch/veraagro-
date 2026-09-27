@@ -3,12 +3,13 @@
 export interface LotListItem {
   id: string;
   batchId?: string | null;
+  estateId?: string;
   productName?: string;
   quantity?: number;
   unit?: string;
   status?: string;
   harvestDate?: string;
-  estates?: { name?: string } | null;
+  estates?: { id?: string; name?: string } | null;
   parcels?: { name?: string; cropType?: string | null } | null;
 }
 

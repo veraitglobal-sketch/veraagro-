@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Package, Plus, ChevronRight } from 'lucide-react-native';
 import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
@@ -9,6 +9,7 @@ import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { formatAppDate, useAppLocaleTag } from '../../../lib/date-locale';
 import { theme } from '../../../lib/theme';
 import { growerUi } from '../../../lib/grower-ui';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import {
   useBatchesData,
   type BatchFilter,
@@ -18,10 +19,13 @@ import {
 export function BatchesScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const params = useLocalSearchParams<{ estateId?: string; estateName?: string }>();
+  const estateId = typeof params.estateId === 'string' ? params.estateId : undefined;
   const p = useBioVeraScreenPadding();
   const dateLocale = useAppLocaleTag();
   const {
     loading,
+    loadError,
     refreshing,
     filter,
     setFilter,
@@ -30,7 +34,7 @@ export function BatchesScreen() {
     onRefresh,
     getStatusLabel,
     getStatusColor,
-  } = useBatchesData();
+  } = useBatchesData(estateId);
 
   const filters: { id: BatchFilter; labelKey: string; count: number }[] = [
     { id: 'all', labelKey: 'producer.batches.all', count: counts.all },
@@ -56,14 +60,21 @@ export function BatchesScreen() {
               hitSlop={12}
               style={styles.headerAction}
             >
-              <Plus size={26} color={theme.colors.primary} strokeWidth={2} />
+              <Plus size={18} color="#fff" strokeWidth={2.4} />
             </TouchableOpacity>
           }
         />
       }
     >
       <View style={growerUi.scrollContent}>
-        <View style={styles.filterRow}>
+        {estateId ? <View style={{ marginBottom: 12, gap: 8 }}>
+          <Text style={styles.productText}>{t('estateDeletion.lotsFor', { name: params.estateName || estateId })}</Text>
+          <TouchableOpacity accessibilityRole="button" onPress={() => router.replace('/(producer)/batches')}>
+            <Text style={{ color: theme.colors.primary, paddingVertical: 8 }}>{t('estateDeletion.allLots')}</Text>
+          </TouchableOpacity>
+        </View> : null}
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow} style={styles.filterScroll}>
           {filters.map((f) => {
             const selected = filter === f.id;
             return (
@@ -71,6 +82,8 @@ export function BatchesScreen() {
                 key={f.id}
                 onPress={() => setFilter(f.id)}
                 activeOpacity={0.85}
+                accessibilityRole="tab"
+                accessibilityState={{ selected }}
                 style={[growerUi.filterChip, selected && growerUi.filterChipOn]}
               >
                 <Text style={[growerUi.filterChipText, selected && growerUi.filterChipTextOn]}>
@@ -80,10 +93,14 @@ export function BatchesScreen() {
               </TouchableOpacity>
             );
           })}
-        </View>
+        </ScrollView>
 
         {loading ? (
           <Text style={styles.loadingText}>{t('producer.batches.loading')}</Text>
+        ) : loadError ? (
+          <TouchableOpacity accessibilityRole="button" onPress={() => void onRefresh()} style={styles.emptyWrap}>
+            <Text style={styles.emptyDesc}>{t('estateDeletion.lotsLoadFailed')}</Text>
+          </TouchableOpacity>
         ) : filteredBatches.length === 0 ? (
           <View style={styles.emptyWrap}>
             <Package size={48} color={theme.colors.text.tertiary} strokeWidth={1.25} />
@@ -154,117 +171,117 @@ function BatchCard({
   const statusLabel = getStatusLabel(batch.status);
 
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.88} style={styles.card}>
+    <TouchableOpacity onPress={onPress} accessibilityRole="button" activeOpacity={0.88} style={styles.card}>
       <View style={styles.cardBody}>
         <View style={styles.cardTop}>
-          <LotIdsBlock lot={batch} compact />
+          <Text style={styles.productText} numberOfLines={1}>
+            {product}
+          </Text>
           {statusLabel ? (
             <View style={[styles.statusBadge, { backgroundColor: statusColors.background }]}>
               <Text style={[styles.statusText, { color: statusColors.text }]}>{statusLabel}</Text>
             </View>
           ) : null}
         </View>
-        <Text style={styles.productText} numberOfLines={2}>
-          {product}
-        </Text>
+        <LotIdsBlock lot={batch} compact />
         {metaLine ? (
           <Text style={styles.metaText} numberOfLines={1}>
             {metaLine}
           </Text>
         ) : null}
       </View>
-      <ChevronRight size={20} color={theme.colors.text.secondary} strokeWidth={1.5} />
+      <ChevronRight size={16} color={theme.colors.text.secondary} strokeWidth={2} />
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   headerAction: {
-    minWidth: 48,
-    minHeight: 48,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: enterpriseColors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   filterRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 8,
-    marginBottom: 16,
+    paddingVertical: 2,
   },
+  filterScroll: { marginBottom: 12, flexGrow: 0 },
   loadingText: {
     padding: 32,
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '400',
     color: theme.colors.text.secondary,
   },
   emptyWrap: {
     alignItems: 'center',
-    paddingVertical: 40,
+    paddingVertical: 20,
     paddingHorizontal: 24,
   },
   emptyTitle: {
-    marginTop: 16,
-    fontSize: 16,
-    fontWeight: '500',
+    marginTop: 14,
+    fontSize: 15,
+    fontWeight: '600',
     color: theme.colors.text.primary,
     textAlign: 'center',
   },
   emptyDesc: {
-    marginTop: 8,
-    fontSize: 14,
+    marginTop: 6,
+    fontSize: 13,
     fontWeight: '400',
     color: theme.colors.text.secondary,
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 19,
   },
   list: {
-    gap: 12,
+    ...enterpriseUi.inAppPanel,
   },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.background,
-    borderWidth: 0.5,
-    borderColor: theme.colors.border,
-    borderRadius: theme.borderRadius.md,
-    padding: 16,
-    minHeight: 72,
-    gap: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: enterpriseColors.gray200,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    minHeight: 64,
+    gap: 10,
   },
   cardBody: {
     flex: 1,
     minWidth: 0,
+    gap: 2,
   },
   cardTop: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
+    alignItems: 'center',
     gap: 8,
-    flexWrap: 'wrap',
   },
   statusBadge: {
-    borderRadius: theme.borderRadius.full,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    borderRadius: 6,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
   },
   statusText: {
-    fontSize: 13,
-    fontWeight: '500',
+    fontSize: 11,
+    fontWeight: '600',
   },
   productText: {
-    marginTop: 8,
-    fontSize: 16,
-    fontWeight: '500',
+    flexShrink: 1,
+    fontSize: 15,
+    fontWeight: '600',
+    letterSpacing: -0.25,
     color: theme.colors.text.primary,
-    lineHeight: 22,
   },
   metaText: {
-    marginTop: 4,
-    fontSize: 14,
+    marginTop: 1,
+    fontSize: 12.5,
     fontWeight: '400',
     color: theme.colors.text.secondary,
-    lineHeight: 20,
+    fontVariant: ['tabular-nums'],
   },
 });
 

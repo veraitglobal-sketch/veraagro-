@@ -2,7 +2,8 @@ import { useState, type ReactNode } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { dsColors } from './theme';
-import { EnterprisePageTitle } from './EnterprisePageTitle';
+import { useRouter } from 'expo-router';
+import { BackButton } from './BackButton';
 
 export type SegmentDef = {
   key: string;
@@ -26,6 +27,7 @@ export function SegmentedGrowerScreen({
   renderSegment,
 }: Props) {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const [active, setActive] = useState(initialKey ?? segments[0]?.key ?? '');
 
   if (segments.length === 0) return null;
@@ -33,7 +35,16 @@ export function SegmentedGrowerScreen({
   return (
     <View style={[styles.root, { paddingTop: Math.max(insets.top, 12) }]}>
       <View style={styles.head}>
-        <EnterprisePageTitle title={title} description={description} style={styles.title} />
+        <View style={styles.headingRow}>
+          <BackButton
+            style={styles.back}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(producer)/(tabs)'))}
+          />
+          <View style={styles.headingCopy}>
+            <Text style={styles.title} accessibilityRole="header">{title}</Text>
+            {description ? <Text style={styles.description}>{description}</Text> : null}
+          </View>
+        </View>
         <View style={styles.segmentRow} accessibilityRole="tablist">
           {segments.map((seg) => {
             const on = seg.key === active;
@@ -41,7 +52,7 @@ export function SegmentedGrowerScreen({
               <TouchableOpacity
                 key={seg.key}
                 onPress={() => setActive(seg.key)}
-                activeOpacity={0.82}
+                activeOpacity={0.7}
                 accessibilityRole="tab"
                 accessibilityState={{ selected: on }}
                 style={[styles.segment, on && styles.segmentOn]}
@@ -65,39 +76,44 @@ const styles = StyleSheet.create({
     backgroundColor: dsColors.canvas,
   },
   head: {
-    paddingHorizontal: 20,
-    paddingBottom: 8,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
   },
-  title: {
-    marginBottom: 10,
-  },
+  headingRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 14, gap: 12 },
+  back: { marginTop: 1 },
+  headingCopy: { flex: 1, paddingTop: 5 },
+  title: { fontSize: 20, lineHeight: 25, fontWeight: '600', letterSpacing: -0.45, color: dsColors.gray900 },
+  description: { fontSize: 13, lineHeight: 18, color: dsColors.gray600, marginTop: 2 },
   segmentRow: {
     flexDirection: 'row',
-    gap: 8,
+    padding: 3,
+    borderRadius: 12,
+    backgroundColor: 'rgba(17, 24, 39, 0.06)',
   },
   segment: {
     flex: 1,
-    minHeight: 44,
+    height: 32,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 10,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: dsColors.borderNeutral,
-    backgroundColor: dsColors.surface,
+    borderRadius: 9,
   },
   segmentOn: {
-    borderColor: dsColors.primary,
-    backgroundColor: dsColors.primaryTint,
+    backgroundColor: dsColors.surface,
+    shadowColor: '#111827',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
   segmentText: {
-    fontSize: 14,
+    fontSize: 13.5,
     fontWeight: '500',
-    color: dsColors.muted,
-    letterSpacing: -0.1,
+    color: dsColors.gray600,
+    letterSpacing: -0.15,
   },
   segmentTextOn: {
-    color: dsColors.primary,
+    color: dsColors.gray900,
     fontWeight: '600',
   },
   body: {

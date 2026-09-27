@@ -1,4 +1,154 @@
 {
+  "scanQr": {
+    "wait": "Priprema kamere…",
+    "allowTitle": "Dozvoli kameru",
+    "allowBody": "Kamera je potrebna da skeniraš QR ili barkod na vreći semena.",
+    "allowCta": "Dozvoli",
+    "title": "Skeniraj",
+    "instruction": "Usmeri kameru na QR ili barkod"
+  },
+  "transportForm": {
+    "chooseLot": "Izaberite lot",
+    "checking": "Proveravamo dokumentaciju pakovanja…",
+    "ready": "Dokumentacija pakovanja je potpuna",
+    "incomplete": "Dokumentacija pakovanja nije potpuna",
+    "unchecked": "Provera dokumentacije trenutno nije dostupna",
+    "completeChecks": "Dopuni dokumentaciju",
+    "blockedHint": "Prevoz je moguć kad je dokumentacija pakovanja potpuna — dopuni je",
+    "pickup": "Preuzimanje",
+    "location": "Lokacija preuzimanja",
+    "refreshGps": "Osveži GPS lokaciju",
+    "locationHelp": "Označite mesto na kome vozač preuzima robu.",
+    "hideCoordinates": "Sakrij koordinate",
+    "addressHelp": "Unesite adresu ili jasan opis ulaza na imanje.",
+    "nextStep": "Operativa obrađuje zahtev i dodeljuje prevoznika. Status pratite u odeljku Prevoz.",
+    "loadFailed": "Lotovi nisu učitani. Pokušajte ponovo."
+  },
+  "estateDeletion": {
+    "title": "Njiva se ne može obrisati",
+    "batches": "Njiva „{{name}}” ima povezane lotove. Brisanje je blokirano da bi ostala sačuvana istorija porekla robe, pakovanja i isporuka. Možete da pregledate povezane lotove.",
+    "orders": "Njiva „{{name}}” povezana je sa porudžbinama. Brisanje je blokirano da bi ostala sačuvana istorija prodaje i isporuka.",
+    "system": "Ova njiva je deo sistemske evidencije i ne može se obrisati.",
+    "openLots": "Pogledaj lotove",
+    "lotsFor": "Lotovi njive: {{name}}",
+    "allLots": "Prikaži sve lotove",
+    "lotsLoadFailed": "Lotovi nisu učitani. Dodirnite za ponovni pokušaj."
+  },
+  "connectedWorkflow": {
+    "productsUnavailable": "Serverska lista proizvoda nije dostupna. Prikazani su samo zapisi ovog naloga sa uređaja. Dodirni za ponovni pokušaj.",
+    "synced": "Sačuvano na serveru",
+    "productPending": "Čeka sinhronizaciju",
+    "openLot": "Otvori lot",
+    "createLot": "Formiraj lot iz ove berbe",
+    "openWorkLog": "Evidentiraj rad za ovaj zasad",
+    "openOrder": "Otvori povezanu porudžbinu"
+  },
+  "workflowSteps": {
+    "parcel": "Parcela",
+    "crop": "Zasad",
+    "work": "Rad",
+    "instructions": "Uputstvo",
+    "photos": "Fotografije",
+    "location": "Lokacija"
+  },
+  "returnFlow": {
+    "title": "Povrati i refundacije",
+    "menuSubtitle": "Povrat robe od kupca i status refundacije",
+    "plan": "Otvori nalog za povrat",
+    "planHint": "Povrat cele pošiljke ide preko dodeljenog prevoznika do farme. Unesite tačnu adresu prijema i uputstva.",
+    "planned": "Nalog za povrat je sačuvan.",
+    "address": "Tačna adresa farme za prijem",
+    "instructions": "Uputstva za povrat (najmanje 10 znakova)",
+    "empty": "Nema povrata za ovaj nalog.",
+    "error": "Radnja nije uspela. Proverite podatke, osvežite i pokušajte ponovo.",
+    "collect": "Potvrdi preuzimanje povrata",
+    "receive": "Potvrdi prijem na farmi",
+    "fullShipment": "Potvrđujem da je cela pošiljka fizički preuzeta ili primljena u ovom koraku.",
+    "proofHint": "Snimite najmanje dve fotografije i opišite stanje robe. Prevoznik beleži preuzimanje, a farma prijem.",
+    "notes": "Stanje robe i napomene (najmanje 10 znakova)",
+    "photos": "Fotografije dokaza (2–6)",
+    "evidence": "Pogledaj dokaze povrata",
+    "collectedAt": "Preuzeto za povrat",
+    "receivedAt": "Primljeno na farmi",
+    "approveRefund": "Odobri pun povraćaj novca",
+    "refundHint": "Odobrenje rezerviše ceo iznos za povrat kupcu. Ova aplikacija ne šalje novac banci. Bankarski povraćaj se izvršava odvojeno.",
+    "reason": "Obrazloženje odobrenja (najmanje 20 znakova)",
+    "bankHint": "Unesite podatke samo za stvarno izvršen bankarski povraćaj odobrenog iznosa i priložite potvrdu.",
+    "bankReference": "Jedinstvena referenca bankarskog povraćaja",
+    "bankDate": "Vreme izvršenog bankarskog povraćaja",
+    "bankEvidence": "Potvrda banke (slika)",
+    "recordBank": "Evidentiraj izvršeni bankarski povraćaj",
+    "bankConfirm": "Potvrđujete da je banka već izvršila povraćaj {{amount}} {{currency}} kupcu? Aplikacija evidentira dokaz; ne izvršava transfer.",
+    "reconciliation": "Novac je ranije raspodeljen primaocima. Potrebno je finansijsko usaglašavanje: ovaj povraćaj ne stornira njihove novčanike.",
+    "listHint": "Poslednjih 200 naloga. Operativa može uneti fizički korak samo uz stvarne dokaze preuzimanja ili prijema.",
+    "states": {
+      "PLANNED": "Povrat planiran",
+      "COLLECTED": "Preuzeto od kupca",
+      "RECEIVED": "Primljeno na farmi"
+    },
+    "refundStates": {
+      "APPROVED": "Refundacija odobrena — čeka bankarski povraćaj",
+      "CONFIRMED": "Bankarski povraćaj evidentiran"
+    }
+  },
+  "deliveryReview": {
+    "startReview": "Započni obradu",
+    "decision": "Odluka",
+    "explanation": "Obrazloženje za kupca (najmanje 20 znakova)",
+    "saveDecision": "Sačuvaj odluku",
+    "conflict": "Prijava je u međuvremenu promenjena. Osveži i proveri odluku.",
+    "moneyHint": "Upisuje se operativna odluka, bez povraćaja ili oslobađanja novca. Ponovna kontrola zahteva nove dokaze i potpis kupca; kod povrata prijem ostaje blokiran.",
+    "states": {
+      "PENDING": "Primljeno",
+      "IN_REVIEW": "U obradi",
+      "RESOLVED": "Odluka zabeležena"
+    },
+    "outcomes": {
+      "ACCEPTED": "Reklamacija prihvaćena",
+      "REJECTED": "Reklamacija odbijena",
+      "REINSPECTION": "Potrebna ponovna kontrola kupca",
+      "RETURN_REQUIRED": "Potreban povrat — prijem ostaje blokiran"
+    }
+  },
+  "deliveryFlow": {
+    "title": "Prijem isporuke",
+    "loadFailed": "Podaci isporuke nisu učitani. Pokušaj ponovo.",
+    "saveFailed": "Podaci nisu sačuvani. Proveri vezu i pokušaj ponovo.",
+    "refresh": "Osveži isporuku",
+    "notAssigned": "Isporuka još nije dodeljena ovoj porudžbini.",
+    "completeHandover": "Završi pregled i primopredaju",
+    "viewEvidence": "Pogledaj dokaz primopredaje",
+    "confirm": "Potvrdi preuzimanje",
+    "confirmHint": "Potvrdi da si preuzeo robu. Ova potvrda pokreće postojeći obračun sredstava i rok od 24 sata za prijavu problema.",
+    "receivedAt": "Preuzimanje potvrđeno: {{at}}",
+    "reportDeadline": "Prijavu sa fotografijama možeš poslati do {{at}}.",
+    "description": "Opiši problem (najmanje 20 znakova)",
+    "addPhoto": "Dodaj fotografiju problema",
+    "removePhoto": "Ukloni fotografiju",
+    "report": "Pošalji prijavu",
+    "reportRequired": "Dodaj opis od najmanje 20 znakova i bar jednu fotografiju.",
+    "reportSaved": "Prijava je sačuvana i dostupna administraciji za pregled.",
+    "expired": "Rok od 24 sata je istekao. Obrati se operativi za dalji postupak.",
+    "openDelivery": "Otvori isporuku i potvrdu preuzimanja",
+    "missionUnavailable": "Misija iz obaveštenja nije dostupna za ovaj korak. Osveži podatke ili izaberi misiju.",
+    "events": {
+      "LINE_OPENED": "Misija otvorena",
+      "LINEHAUL_ASSIGNED": "Logistika dodeljena",
+      "LINEHAUL_ACCEPTED": "Prevoz prihvaćen",
+      "LOADING_QUALITY_CHECK_COMPLETE": "Kontrola utovara završena",
+      "DEPARTED_FARM": "Polazak sa farme",
+      "BORDER_STOP_ARRIVAL": "Dolazak na granicu",
+      "BORDER_STOP_DEPARTURE": "Odlazak sa granice",
+      "LINEHAUL_FINISHED": "Transport završen",
+      "DELIVERY_BOOKED": "Isporuka zakazana",
+      "LAST_MILE_DISPATCHED": "Dostava dodeljena",
+      "SHIPMENT_COLLECTED": "Roba preuzeta",
+      "SHIPMENT_ENTRY_TRANSIT_LINE": "Roba u prevozu",
+      "SHIPMENT_DROP_OFF_CONFIRMED": "Prijem na istovaru potvrđen",
+      "SHIPMENT_BUYER_RECEIPT_CONFIRMED": "Kupac potvrdio preuzimanje",
+      "ORDER_RECORDED": "Porudžbina sačuvana"
+    }
+  },
   "integrity": {
     "barcodeRequired": "Barkod je obavezan",
     "voidBarcode": "Ovaj barkod je poništen u sistemu. Kontaktirajte snabdevača.",
@@ -17,7 +167,9 @@
     "filterReminders": "Podsetnici",
     "filterAlerts": "Upozorenja",
     "loading": "Učitavanje…",
-    "empty": "Nema obaveštenja"
+    "empty": "Nema obaveštenja",
+    "today": "Danas",
+    "yesterday": "Juče"
   },
   "marketplace": {
     "title": "Tržnica",
@@ -40,7 +192,7 @@
       "traceability": "Tragabilnost",
       "certified": "Sertifikovano",
       "monitoring": "Nadzor i kontrola",
-      "fraudCases": "Slučajevi prevara"
+      "fraudCases": "QA nivoi"
     },
     "tagline": "BIO-Ready sertifikovana hrana sa digitalnim dokazom",
     "searchTitle": "Šta želiš danas?",
@@ -133,6 +285,30 @@
     "registerPrompt": "Nemaš nalog? Registruj svoju firmu"
   },
   "logistics": {
+    "assignDriver": {
+      "title": "Vozač za utovar",
+      "hint": "Izaberi ko vozi ovu vožnju. Može se promeniti do polaska sa farme.",
+      "noDrivers": "Nemaš dodatih vozača — dodaj vozača"
+    },
+    "delivery": {
+      "title": "Isporuka",
+      "handover": "Primopredaja",
+      "status": {
+        "PENDING": "Na čekanju",
+        "ASSIGNED": "Dodeljeno",
+        "PICKED_UP": "Preuzeto",
+        "IN_TRANSIT": "U transportu",
+        "DELIVERED": "Isporučeno",
+        "CONFIRMED": "Potvrđeno",
+        "COMPLETED": "Završeno"
+      },
+      "handoverStatus": {
+        "INITIATED": "Pokrenuta",
+        "IN_PROGRESS": "U toku",
+        "COMPLETED": "Završena",
+        "DISPUTED": "Sporna"
+      }
+    },
     "missionsTitle": "Zadaci transporta",
     "missionsSubtitle": "Preuzmi slobodne zadatke ili nastavi dodeljene. Za preuzimanje treba hladnjačko vozilo (slobodno).",
     "claim": {
@@ -170,7 +346,7 @@
       "vehicles": "Vozila",
       "vehiclesDesc": "{{count}} registrovanih · {{free}} hladnjača slobodno",
       "drivers": "Vozači",
-      "driversDesc": "Dodela vozača na vebu; ovde lista",
+      "driversDesc": "Dodaj vozače i dodeli ih vožnjama",
       "sectionHandover": "Predaja",
       "loadingDesc": "Temperatura, fotografije, potpis pri utovaru",
       "receiverDesc": "Ko je primio robu na destinaciji",
@@ -188,19 +364,64 @@
       "frigoYes": "Hladnjača",
       "frigoNo": "Bez hladnjaka",
       "errTitle": "Vozilo",
-      "errPlate": "Unesi tablicu"
+      "errPlate": "Unesi tablicu",
+      "status": {
+        "AVAILABLE": "Slobodno",
+        "IN_USE": "Na misiji",
+        "MAINTENANCE": "Na servisu",
+        "OFFLINE": "Van upotrebe"
+      }
     },
     "drivers": {
       "lead": "Osobe koje mogu biti dodeljene utovaru.",
       "webHint": "Za dodavanje ili izmenu vozača (foto) koristi web portal (Vozači).",
       "empty": "Još nema registrovanih vozača.",
-      "inactive": "neaktivan"
+      "inactive": "neaktivan",
+      "addCta": "Dodaj vozača",
+      "formTitle": "Novi vozač",
+      "firstName": "Ime",
+      "lastName": "Prezime",
+      "phone": "Telefon (opciono)",
+      "errName": "Unesi ime i prezime vozača."
     },
     "loadingHandover": {
       "link": "Predaja utovara",
       "needTitle": "Potrebna predaja utovara",
       "needBody": "Završi temperaturu i fotografije pre odlaska kamiona.",
-      "needCta": "Otvori predaju"
+      "needCta": "Otvori predaju",
+      "title": "Predaja utovara",
+      "subtitle": "Temperatura, fotografije i potpis vozača pre polaska",
+      "mission": "Vožnja",
+      "noMissions": "Nema vožnji spremnih za utovar.",
+      "driver": "Vozač",
+      "noDrivers": "Nema aktivnih vozača — dodaj vozača u delu Vozači.",
+      "temp": "Temperatura u tovarnom prostoru (°C)",
+      "tempPh": "npr. 4",
+      "tempRange": "Dozvoljeno od −10 do 15 °C; za sveže voće tipično 2–8 °C.",
+      "notes": "Napomene (opciono)",
+      "notesPh": "npr. stanje ambalaže, broj paleta…",
+      "pallet": "Paleta",
+      "palletHint": "Cela paleta sa robom i nalepnicom.",
+      "truckInside": "Unutrašnjost kamiona",
+      "truckInsideHint": "Tovarni prostor posle utovara.",
+      "badge": "Nalepnica / serijski broj",
+      "badgeHint": "Jasno vidljiv QR ili serijski broj na paleti.",
+      "snap": "Snimi",
+      "retake": "Snimi ponovo",
+      "sig": "Potpis vozača",
+      "clear": "Obriši",
+      "sigHint": "Vozač se potpisuje prstom u polju iznad.",
+      "save": "Sačuvaj predaju",
+      "errMission": "Izaberi vožnju.",
+      "errTemp": "Unesi temperaturu između −10 i 15 °C.",
+      "errDriver": "Izaberi vozača.",
+      "errPhotos": "Potrebne su sve tri fotografije.",
+      "errSig": "Potreban je potpis vozača.",
+      "errSigCapture": "Potpis nije sačuvan. Pokušaj ponovo.",
+      "doneTitle": "Predaja sačuvana",
+      "doneBody": "Utovar je evidentiran. Kamion može da krene sa farme.",
+      "errTitle": "Predaja nije sačuvana",
+      "errGeneric": "Proveri podatke i pokušaj ponovo."
     },
     "receiverProof": {
       "link": "Dokaz primaoca",
@@ -571,10 +792,10 @@
       "homeLead": "Obaveštenja, napredak lanca i sledeći korak — isti tok kao na web kontrolnoj tabli.",
       "homeLeadShort": "Pregled farme, lotova i sledećeg koraka.",
       "homeKpi": {
-        "parcels": "Aktivne parcele",
-        "chain": "Lotovi u procesu",
-        "outbox": "Spremno za otpremu",
-        "escrow": "U escrow-u"
+        "parcels": "Parcele",
+        "chain": "Lotovi",
+        "outbox": "Za slanje",
+        "escrow": "Escrow"
       },
       "homeSnapshot": {
         "title": "Tvoja farma",
@@ -947,6 +1168,7 @@
     },
     "estates": {
       "newEstate": "Dodaj njivu",
+      "locationPlaceholder": "npr. Arilje, Srbija",
       "step": "Korak",
       "estateName": "Naziv njive",
       "estateNamePlaceholder": "npr. Velika njiva",
@@ -1101,6 +1323,8 @@
     "orders": {
       "title": "Porudžbine",
       "filterAll": "Sve",
+      "menuTitle": "Porudžbine kupaca",
+      "menuSubtitle": "Šta je prodato sa tvojih imanja i status isporuke",
       "empty": "Nema porudžbina",
       "buyer": "Kupac",
       "paid": "Plaćeno",
@@ -1130,7 +1354,7 @@
     "wallet": {
       "subtitle": "Transakcije, stanje i isplate sa lotova",
       "pending": "Na čekanju",
-      "totalEarned": "Ukupno zarađeno",
+      "totalEarned": "Ukupni prilivi pre zaduženja",
       "available": "Dostupno",
       "noTransactions": "Nema transakcija",
       "transactions": "Transakcije",
@@ -1278,7 +1502,7 @@
       "validationPlanting": "Izaberi zasad na parceli.",
       "validationName": "Unesi naziv troška.",
       "validationAmount": "Unesi ispravan iznos (EUR).",
-      "costLinesMetric": "Stavke na uređaju",
+      "costLinesMetric": "Stavke troškova",
       "costNameLabel": "Naziv troška",
       "noteLabel": "Napomena",
       "notePlaceholder": "npr. račun, dobavljač, gorivo na transport…",
@@ -1390,10 +1614,6 @@
       "faqTitle": "Česta pitanja",
       "faqItems": [
         {
-          "title": "„Experience needs permissions”",
-          "body": "To je Expo Go (test), ne prava Bio Vera aplikacija. Za njivu koristite instaliranu aplikaciju sa EAS build-a."
-        },
-        {
           "title": "Kamera i lokacija",
           "body": "Traže se samo kad pritisnete fotografiju ili GPS. Prvo kratko objašnjenje na srpskom, zatim sistemski dijalog."
         },
@@ -1404,10 +1624,6 @@
         {
           "title": "Dnevnik rasta",
           "body": "Posle „Na dalje” obavezna fotografija na parceli + GPS za pasoš."
-        },
-        {
-          "title": "Greška 404",
-          "body": "Često nedostaje push modul na serveru — ne blokira dnevnik. Tim treba da deploy-uje noviji API."
         }
       ]
     },
@@ -1615,6 +1831,7 @@
       "ratingWithMax": "Ocena: {{n}}/5"
     },
     "missionsCreate": {
+      "selectedBatchLabel": "Lot za ovaj prevoz",
       "title": "Zatraži transport",
       "submitCta": "Pošalji zahtev",
       "introShort": "Spakovani lot + adresa preuzimanja na farmi.",
@@ -1742,7 +1959,7 @@
       "removePhoto": "Ukloni"
     },
     "products": {
-      "deviceLinesMetric": "Stavke na uređaju",
+      "deviceLinesMetric": "Evidentirani proizvodi",
       "screenLeadShort": "Skeniraj QR ili ručno unesi — za pasoš proizvoda.",
       "savedOnDevice": "Sačuvano na uređaju",
       "syncing": "Sinhronizacija…",
@@ -2078,8 +2295,13 @@
       "profile": "Profil"
     },
     "dashboard": {
+      "farms": "Gazdinstva u ponudi",
+      "allFarms": "Sva gazdinstva",
+      "offerCount": "Ponude: {{count}}",
+      "harvestSoon": "Berba do 7 dana",
+      "harvestLater": "Kasnija berba",
       "scanCode": "Skeniraj Bio Vera kod",
-      "reserve": "Rezerviši gajbe",
+      "reserve": "Rezerviši",
       "soldOut": "Rasprodato",
       "noProducts": "Nema proizvoda",
       "marketplaceTitle": "Tržište",
@@ -2095,20 +2317,7 @@
       "unitsAvailable": "{{qty}} {{unit}} na stanju",
       "unitsDefault": "jedinica",
       "soldOutBadge": "Rasprodato — sledeća berba uskoro",
-      "reserveCrates": "Rezerviši kutije",
-      "demoDeliveryLocation": "Mađarska",
-      "demoStoryNames": {
-        "1": "Marko",
-        "2": "Petar",
-        "3": "Jovan",
-        "4": "Milan"
-      },
-      "demoStorySubtitles": {
-        "1": "Berba · centralni region",
-        "2": "Kontrola kvaliteta · severna ravnica",
-        "3": "Utovar · nacionalno",
-        "4": "Berba · istočni region"
-      }
+      "reserveCrates": "Rezerviši kutije"
     },
     "shop": {
       "title": "Bio Vera marketplejs",
@@ -2118,6 +2327,23 @@
       "viewHistory": "Pogledaj istoriju",
       "noProducts": "Trenutno nema dostupnih proizvoda",
       "loading": "Učitavanje proizvoda..."
+    },
+    "cartReview": {
+      "backToShop": "Vrati se na ponudu",
+      "checking": "Proveravam aktuelne cene i dostupnost…",
+      "pricesChanged": "Cene su ažurirane prema ponudi. Proveri novi ukupan iznos pre slanja.",
+      "stockHint": "Prikazana je poslednja učitana ponuda. Zaliha se ponovo proverava pri kreiranju porudžbine.",
+      "loadFailed": "Ponuda nije mogla da se proveri. Dodirni za ponovni pokušaj.",
+      "unavailable": "Ovaj proizvod više nije u ponudi. Ukloni stavku ili izaberi drugi proizvod.",
+      "priceMissing": "Cena još nije dostupna. Ukloni ovu stavku da nastaviš sa ostalima.",
+      "quantity": "Količina u korpi prelazi ponudu ({{quantity}} {{unit}}) ili nije ispravna. Smanji je ili ukloni stavku.",
+      "retryHint": "Ova stavka ima prethodni pokušaj slanja. Nastavak koristi isti zahtev; postojeća porudžbina biće otvorena sa originalnim podacima.",
+      "totalIncomplete": "Nedostaje cena za deo korpe",
+      "remainingCart": "Preostala korpa",
+      "checkoutTitle": "Potvrda porudžbine",
+      "checkoutHint": "Ovde šalješ porudžbinu. Uputstvo za uplatu dobijaš u njenim detaljima nakon odobrenja i rezervacije robe.",
+      "fixCart": "Neke stavke zahtevaju ispravku. Otvori korpu.",
+      "checkoutCta": "Pregledaj i potvrdi porudžbinu"
     },
     "cart": {
       "empty": "Korpa je prazna",
@@ -2198,6 +2424,7 @@
       "viewOrders": "Pogledaj porudžbine",
       "logout": "Odjavi se",
       "logoutConfirm": "Da li ste sigurni da želite da se odjavite?",
+      "saveFailed": "Podaci kompanije nisu sačuvani. Proverite vezu i pokušajte ponovo.",
       "tabGeneral": "Opšte",
       "tabLocations": "Lokacije",
       "tabStaff": "Osoblje",
@@ -2248,6 +2475,7 @@
       "total": "Ukupno",
       "multiOrderHint": "Svaka stavka u korpi se šalje kao posebna porudžbina uz istu adresu (isto kao na web prodavnici).",
       "ordersCreated": "Uspešno poslato {{count}} porudžbina.",
+      "partialSuccess": "Kreirano je {{count}} porudžbina. U korpi su ostale samo stavke koje nisu potvrđene. Potvrđene porudžbine možeš videti u odeljku Moje porudžbine.",
       "fieldStreet": "Ulica i broj",
       "fieldCity": "Grad",
       "fieldPostal": "Poštanski broj",
@@ -2257,6 +2485,7 @@
       "orderMissingId": "Porudžbina je kreirana ali sistem nije vratio ID"
     },
     "productDetail": {
+      "remainingToAdd": "Još možeš dodati: {{quantity}} {{unit}} (uračunata korpa)",
       "notFound": "Proizvod nije pronađen",
       "farmerFallback": "Bio Vera proizvođač",
       "originHeading": "Poreklo",
@@ -2326,6 +2555,29 @@
     "growerFallback": "Proizvođač",
     "growerReceivedAtFarm": "Proizvođač primio na farmi: {{when}}",
     "threadUntitledShort": "Nit {{id}}",
+    "dashboard": {
+      "noProfile": "Radnja još nije podešena",
+      "kpiNew": "Nove porudžbine",
+      "kpiOpen": "U isporuci",
+      "kpiProducts": "Proizvodi",
+      "pendingAlert": "{{count}} porudžbina čeka tvoju potvrdu",
+      "sectionStore": "Radnja",
+      "ordersHint": "Potvrdi, pošalji i prati prijem na farmi",
+      "messagesHint": "Razgovori sa proizvođačima: {{count}}",
+      "noThreads": "Još nema razgovora. Proizvođači ti pišu iz tvoje radnje na mapi.",
+      "allThreads": "Svi razgovori"
+    },
+    "orderActions": {
+      "CONFIRMED": "Potvrdi",
+      "REJECTED": "Odbij",
+      "FULFILLED": "Označi isporučeno",
+      "CANCELLED": "Otkaži",
+      "confirm_REJECTED": "Odbiti porudžbinu?",
+      "confirm_CANCELLED": "Otkazati porudžbinu?",
+      "confirmBody": "Proizvođač dobija obaveštenje. Ova promena se ne može vratiti.",
+      "filterOpen": "Otvorene ({{count}})",
+      "filterAll": "Sve"
+    },
     "b2bOrderStatus": {
       "PENDING": "Na čekanju",
       "CONFIRMED": "Potvrđeno",
@@ -2415,6 +2667,8 @@
     "ok": "U redu"
   },
   "common": {
+    "noResults": "Nema rezultata",
+    "apiErrorGeneric": "Radnja nije uspela. Proveri vezu i pokušaj ponovo.",
     "currency": "EUR",
     "total": "Ukupno",
     "back": "Nazad",
@@ -2474,7 +2728,6 @@
     "contactCta": "Kontakt i porudžbina",
     "emptyTitle": "Još nema lokacija na mapi",
     "emptyBody": "Partnerske radnje se vide tek posle odobrenja adrese za javnu mapu. Tačke preuzimanja dolaze iz registrovanih hubova. Ako ste skoro menjali adresu, možda treba ponovo odobrenje.",
-    "loading": "Učitavanje mape…",
     "loading": "Učitavanje mape…"
   },
   "register": {
@@ -2566,6 +2819,35 @@
       "mapSubtitle": "Prodavnice u blizini"
     }
   },
+  "harvestWorkflow": {
+    "planNotSynced": "Izabrani plan berbe još nije poslat serveru. Sinhronizuj plan i osveži listu pre kreiranja lota.",
+    "planUnavailable": "Izabrani plan nije dostupan za ovu parcelu. Osveži listu i ponovo ga izaberi.",
+    "savedWithoutTransport": "Plan berbe je sačuvan, ali zahtev za prevoz nije napravljen. Ponovi zahtev za prevoz ovde; ne unosi berbu ponovo.",
+    "savedPlans": "Sačuvane berbe i prevoz",
+    "retryTransport": "Ponovi zahtev za prevoz",
+    "retryFailed": "Prevoz nije zatražen. Pokušaj ponovo.",
+    "openMission": "Otvori povezanu misiju",
+    "reload": "Veze berbe i prevoza nisu učitane. Pokušaj ponovo",
+    "planTitle": "Povezani plan berbe",
+    "noPlan": "Ovaj lot nema sačuvanu vezu sa planom berbe.",
+    "noMission": "Nema povezane misije. Nastavi kroz „Zatraži prevoz“.",
+    "planMissionNotLinked": "Ovo je misija plana berbe. Lot još nije priključen toj misiji; nastavi kroz „Zatraži prevoz“."
+  },
+  "batchWorkflow": {
+    "labels": "Nalepnice za ovaj lot",
+    "qualityLoadFailed": "Podaci o kvalitetu nisu učitani.",
+    "continueTitle": "Nastavi rad sa ovim lotom",
+    "packing": "Evidentiraj pakovanje",
+    "quality": "Kontrola kvaliteta",
+    "compliance": "Nalepnice i kontrolne fotografije",
+    "transport": "Zatraži prevoz",
+    "detail": "Otvori detalj lota",
+    "selectBatch": "Izaberi lot za pakovanje",
+    "unavailable": "Ovaj lot nije dostupan za ovaj korak. Osveži listu ili izaberi drugi lot.",
+    "loadFailed": "Lotovi nisu učitani. Proveri vezu i pokušaj ponovo.",
+    "packingSaved": "Provera pakovanja sačuvana: {{at}}",
+    "packingNotSaved": "Za ovaj lot još nema evidentirane provere pakovanja."
+  },
   "packingFlow": {
     "title": "Proces pakovanja",
     "submit": "Pošalji",
@@ -2575,7 +2857,7 @@
     "successTitle": "Pakovanje zabeleženo",
     "successBodyWithPhotos": "Lokacija, vreme i fotografije su sačuvani na serveru za ovu seriju.",
     "successBodyLocationOnly": "Lokacija i vreme su sačuvani na serveru za ovu seriju.",
-    "successHint": "Proces je završen. Vratićemo te na prethodni ekran.",
+    "successHint": "Nastavi sa kontrolom kvaliteta ovog lota ili otvori njegov sačuvani zapis.",
     "finishButton": "Gotovo — nazad",
     "step1": {
       "title": "Uputstvo za pakovanje",
@@ -2674,14 +2956,15 @@
     "registrationFailed": "Registracija nije uspela"
   },
   "reservationModal": {
+    "recovered": "Otvorena je porudžbina iz prethodnog pokušaja. Proveri njenu količinu, adresu i status.",
     "missingInfo": "Nedostaju podaci o proizvodu ili korisniku",
-    "quantityRange": "Izaberi količinu od 1 do {{max}}",
+    "quantityRange": "Unesi količinu veću od 0, najviše {{max}}",
     "estateMissing": "Nedostaju podaci o farmi",
     "priceMissing": "Nedostaje cena proizvoda",
     "addressRequired": "Unesi ulicu i grad za isporuku.",
-    "success": "Rezervisano {{quantity}} {{unit}} — {{name}}",
+    "success": "Kreirana porudžbina {{number}}: {{quantity}} {{unit}} — {{name}}. Status i sledeći korak su u detaljima porudžbine.",
     "createFailed": "Nije moguće kreirati rezervaciju",
-    "title": "Rezerviši kutije",
+    "title": "Rezerviši proizvod",
     "quantitySection": "Količina",
     "deliveryAddressHeading": "Adresa isporuke",
     "maxAvailable": "{{max}} {{unit}} na stanju",
@@ -2697,7 +2980,12 @@
     "addPhotoFailed": "Dodavanje fotografije nije uspelo",
     "categorySeed": "Seme i setva",
     "categoryTreatment": "Tretman",
-    "categoryHarvest": "Žetva"
+    "categoryHarvest": "Žetva",
+    "bagTitle": "Vera digitalna torba",
+    "batchLine": "Lot {{id}}",
+    "noPhotos": "Nema fotografija u ovoj kategoriji",
+    "takePhoto": "Snimi fotografiju",
+    "chooseGallery": "Izaberi iz galerije"
   },
   "b2bSupplier": {
     "signInTitle": "Prijava",
@@ -2720,6 +3008,7 @@
       "noteLabel": "Napomena (opciono)",
       "notePlaceholder": "npr. rok isporuke…",
       "submit": "Pošalji porudžbinu",
+      "estimatedTotal": "Okvirno ukupno (po cenovniku)",
       "successTitle": "Porudžbina poslata",
       "successBody": "Partner vidi zahtev u svom nalogu. Status pratiš pod Porudžbine.",
       "placeAnother": "Još jedna porudžbina",
@@ -2728,6 +3017,137 @@
       "inquiryLineLabel": "Upit: {{snippet}}",
       "messagePlaceholder": "Poruka snabdevaču…",
       "sendMessage": "Pošalji"
+    }
+  },
+  "refundReconciliation": {
+    "title": "Finansijsko usaglašavanje",
+    "open": "Otvori pregled knjiženja",
+    "closed": "Usaglašavanje zabeleženo",
+    "recovered": "Vraćeno iz salda",
+    "platformCost": "Trošak platforme",
+    "uncredited": "Deo platforme bez knjiženja u novčaniku",
+    "available": "Trenutno dostupno u novčaniku",
+    "choose": "Izaberite način za ovaj deo",
+    "hint": "Za svaki prvobitno raspodeljeni deo izaberite povraćaj iz dostupnog salda ili odluku da trošak snosi platforma. Odluka mora imati obrazloženje. Knjiženje iz salda smanjuje raspoloživi iznos; trošak platforme ne predstavlja naplaćeni novac. Ovaj obrazac ne izvršava bankarski transfer.",
+    "reason": "Obrazloženje odluke o trošku (najmanje 20 znakova)",
+    "confirm": "Potvrdite usaglašavanje: iz salda se zadužuje {{recovered}}, a platforma snosi {{cost}}. Ova odluka se ne može prepisati drugim zahtevom.",
+    "save": "Potvrdi i zabeleži usaglašavanje",
+    "error": "Usaglašavanje nije sačuvano. Osvežite podatke i proverite stanje.",
+    "methods": {
+      "WALLET_RECOVERY": "Vrati iz dostupnog salda",
+      "PLATFORM_COST": "Platforma snosi trošak"
+    },
+    "walletEntry": "Zaduženje zbog refundacije kupcu",
+    "orderReference": "Porudžbina",
+    "participantMethods": {
+      "WALLET_RECOVERY": "Zaduženje vašeg salda zbog refundacije",
+      "PLATFORM_COST": "Platforma snosi vaš deo troška; saldo nije zadužen"
+    }
+  },
+  "returnDisposition": {
+    "title": "Postupanje sa vraćenom robom",
+    "states": {
+      "QUARANTINED": "Karantin — čeka odluku",
+      "WRITTEN_OFF": "Otpisano",
+      "RESTOCKED": "Odobreno za prodaju uz popis"
+    },
+    "actions": {
+      "QUARANTINE": "Zadrži u karantinu",
+      "WRITE_OFF": "Evidentiraj otpis",
+      "RESTOCK": "Odobri prodaju uz fizički popis"
+    },
+    "open": "Otvori kontrolu i istoriju",
+    "initial": "Roba je primljena i čeka odluku o daljoj upotrebi. Povrat nije povećao prodajnu zalihu.",
+    "action": "Odluka za celu pošiljku",
+    "choose": "Izaberite",
+    "quantity": "Unesite pregledanu količinu cele pošiljke: {{quantity}} {{unit}}",
+    "notes": "Nalaz kontrole i obrazloženje odluke (najmanje 20 znakova)",
+    "countHint": "Stare porudžbine nemaju pouzdano knjiženje izlaza robe. Ovde se upisuje ukupno fizički prebrojano prodajno stanje izabrane zalihe, uključujući ovaj odobreni povrat. Ne unosite samo dodatnu količinu. Ostala roba u karantinu i otpisana roba moraju biti izuzete.",
+    "noStock": "Nema odgovarajuće zalihe ove farme za isti proizvod i jedinicu. Povrat ostaje u karantinu dok se evidencija ne usaglasi.",
+    "stock": "Zaliha i stvarna lokacija robe",
+    "currentCount": "Trenutno knjiženo stanje",
+    "currentExpiry": "Postojeći rok upotrebe",
+    "counted": "Ukupno fizički popisano prodajno stanje, sa ovim povratom",
+    "expiry": "Potvrđen rok upotrebe zalihe (bez produženja postojećeg)",
+    "quality": "Kontrola cele vraćene pošiljke je završena i roba je odobrena za prodaju.",
+    "countConfirmed": "Popisano stanje uključuje ovu pošiljku i isključuje robu koja nije odobrena za prodaju.",
+    "location": "Roba se fizički nalazi na izabranoj lokaciji zalihe.",
+    "confirmCount": "Postaviti ukupno prodajno stanje na {{count}} {{unit}} na osnovu fizičkog popisa? Ovo nije dodavanje na postojeću količinu.",
+    "confirmDecision": "Zabeležiti odluku „{{action}}“ za celu vraćenu pošiljku? Otpis i odobrenje prodaje su konačni u ovom toku.",
+    "save": "Sačuvaj kontrolu i odluku",
+    "savedCount": "Fizički popis: prethodno {{before}}, potvrđeno {{after}} {{unit}}.",
+    "error": "Odluka nije sačuvana. Osvežite podatke i proverite dokaze i stanje zalihe.",
+    "writeOffHint": "Otpis se odnosi na izdvojenu vraćenu količinu. Postojeća prodajna zaliha se ne umanjuje automatski: prethodni izlaz robe nije pouzdano povezan. Ako je ta roba već uračunata u prodajnu zalihu, potreban je zaseban popis i usaglašavanje."
+  },
+  "orderStock": {
+    "states": {
+      "UNALLOCATED": "Zaliha nije dodeljena",
+      "RESERVED": "Roba rezervisana",
+      "ISSUED": "Roba otpremljena",
+      "RELEASED": "Rezervacija oslobođena"
+    },
+    "choose": "Izaberi zalihu",
+    "noStock": "Nema odgovarajuće raspoložive zalihe. Proverite gazdinstvo i povezivanje lota.",
+    "reserve": "Rezerviši za ovu porudžbinu",
+    "cancel": "Otkaži neplaćenu porudžbinu",
+    "cancelConfirm": "Da li želite da otkažete ovu neplaćenu porudžbinu i oslobodite rezervisanu robu? Ako ste već uplatili novac, nemojte otkazivati ovde — javite se operativi.",
+    "keep": "Zadrži porudžbinu",
+    "error": "Promena nije sačuvana",
+    "retry": "Osvežite podatke i pokušajte ponovo."
+  },
+  "checkoutRecovery": {
+    "recovered": "Pronađena je porudžbina iz prethodnog pokušaja. Nije napravljena kopija. Proverite njenu originalnu količinu, adresu i status u porudžbinama; eventualni ostatak je sačuvan u korpi.",
+    "storageError": "Korpa nije mogla bezbedno da se sačuva. Proverite prostor i dozvole za čuvanje podataka, pa pokušajte ponovo.",
+    "missingOrder": "Nedostaje potvrda porudžbine. Pokušajte ponovo sa istom korpom.",
+    "partial": "Sačuvano porudžbina: {{count}}. Preostale stavke su u korpi."
+  },
+  "buyerDeliveryStatus": {
+    "ASSIGNED": "Dodeljena prevozniku",
+    "PICKED_UP": "Preuzeta za prevoz",
+    "IN_TRANSIT": "U transportu",
+    "DELIVERED": "Dopremljena — čeka prijem",
+    "CONFIRMED": "Prijem potvrđen",
+    "CANCELLED": "Otkazana"
+  },
+  "buyerOrderActions": {
+    "search": "Pretraži broj porudžbine ili proizvod",
+    "loadFailed": "Porudžbine trenutno ne mogu da se učitaju.",
+    "stale": "Prikazani su prethodno učitani podaci. Osvežite pre dalje radnje.",
+    "noMatches": "Nema porudžbina za izabrani filter i pretragu.",
+    "openOrder": "Otvori porudžbinu {{number}}",
+    "openDelivery": "Otvori dostavu za {{number}}",
+    "orderDetails": "Detalji porudžbine",
+    "filters": {
+      "all": "Sve",
+      "active": "Aktivne",
+      "action": "Uplata / prijem",
+      "closed": "Zatvorene"
+    },
+    "buttons": {
+      "paymentPending": "Pregledaj evidenciju uplate",
+      "preparing": "Pregledaj pripremu porudžbine",
+      "closed": "Pregledaj porudžbinu",
+      "report": "Prijavi problem / pregledaj dostavu",
+      "evidence": "Pregledaj dokaze i prijave",
+      "receipt": "Pregledaj prijem robe",
+      "track": "Prati dostavu",
+      "payment": "Pogledaj podatke za uplatu",
+      "approval": "Pregledaj zahtev",
+      "allocation": "Pregledaj zahtev",
+      "details": "Detalji porudžbine"
+    },
+    "hints": {
+      "paymentPending": "Evidencija uplate je u obradi. Sačekajte potvrdu statusa; ne šaljite ponovo istu uplatu.",
+      "preparing": "Uplata je evidentirana. Operativa priprema robu i organizuje dostavu; povezana dostava pojaviće se ovde.",
+      "closed": "Porudžbina je zatvorena. Detalji i postojeća evidencija ostaju dostupni.",
+      "report": "Prijem je zabeležen. Ako postoji problem sa pošiljkom, otvorite dostavu i pošaljite prijavu sa fotografijama.",
+      "evidence": "Pregledajte evidentirani prijem, dokaze i odluke o prijavama.",
+      "receipt": "Dostava je označena kao isporučena. Pregledajte primopredaju i potvrdite prijem kada stvarno preuzmete robu.",
+      "track": "Otvorite povezanu dostavu za njen trenutni status i primopredaju.",
+      "payment": "Porudžbina je odobrena, a roba rezervisana. Podaci i poziv na broj nalaze se u detaljima.",
+      "approval": "Roba je rezervisana. Operativa obrađuje zahtev.",
+      "allocation": "Operativa treba da dodeli konkretnu zalihu pre daljeg odobrenja i naplate.",
+      "details": "Priprema i sledeće promene dostupne su u detaljima porudžbine."
     }
   }
 }

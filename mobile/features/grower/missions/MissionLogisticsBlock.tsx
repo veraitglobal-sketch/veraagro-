@@ -15,6 +15,8 @@ import { MissionDetailSection } from './MissionDetailSection';
 
 interface MissionLogisticsBlockProps {
   mission: Mission;
+  /** Carrier sees its own mission: no "the carrier must name a driver" hints (it assigns below). */
+  viewer?: 'grower' | 'logistics';
 }
 
 function InfoRow({ label, value }: { label: string; value: string }) {
@@ -27,7 +29,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-export default function MissionLogisticsBlock({ mission }: MissionLogisticsBlockProps) {
+export default function MissionLogisticsBlock({ mission, viewer = 'grower' }: MissionLogisticsBlockProps) {
   const { t } = useTranslation();
   const raw = mission as unknown as Record<string, unknown>;
   if (!missionShouldShowLogisticsBlock(raw)) return null;
@@ -42,7 +44,7 @@ export default function MissionLogisticsBlock({ mission }: MissionLogisticsBlock
 
   return (
     <MissionDetailSection title={t('producer.missions.logisticsTitle')} icon={Truck}>
-      {status === 'ASSIGNED' && !driverName ? (
+      {viewer === 'grower' && status === 'ASSIGNED' && !driverName ? (
         <Text style={styles.hintBanner}>{t('producer.missions.assignedToCarrierHint')}</Text>
       ) : null}
 
@@ -71,7 +73,7 @@ export default function MissionLogisticsBlock({ mission }: MissionLogisticsBlock
             </TouchableOpacity>
           ) : null}
         </View>
-      ) : hasPartner ? (
+      ) : hasPartner && viewer === 'grower' ? (
         <Text style={[styles.pendingDriver, { marginTop: 4 }]}>{t('producer.missions.driverNotAssigned')}</Text>
       ) : null}
 
@@ -80,7 +82,7 @@ export default function MissionLogisticsBlock({ mission }: MissionLogisticsBlock
       ) : hasPartner || driverName ? (
         <Text style={[enterpriseUi.navRowSubtitle, { marginTop: 8 }]}>{t('producer.missions.vehicleNotAssigned')}</Text>
       ) : null}
-      {vehicle?.licensePlate ? (
+      {vehicle?.licensePlate && !vehicleLine.includes(String(vehicle.licensePlate)) ? (
         <InfoRow label={t('producer.missions.licensePlateLabel')} value={String(vehicle.licensePlate)} />
       ) : null}
     </MissionDetailSection>
@@ -89,8 +91,8 @@ export default function MissionLogisticsBlock({ mission }: MissionLogisticsBlock
 
 const styles = StyleSheet.create({
   hintBanner: {
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 13,
+    lineHeight: 18,
     color: enterpriseColors.gray700,
     backgroundColor: enterpriseColors.primaryTint,
     padding: 12,
@@ -98,13 +100,13 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   pendingDriver: {
-    fontSize: 15,
-    lineHeight: 21,
+    fontSize: 13,
+    lineHeight: 18,
     color: enterpriseColors.gray600,
     marginBottom: 8,
   },
   row: {
-    marginBottom: 12,
+    marginBottom: 10,
   },
   labelRow: {
     flexDirection: 'row',
@@ -113,13 +115,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   value: {
-    fontSize: 16,
+    fontSize: 14.5,
     fontWeight: '600',
     color: enterpriseColors.gray900,
     letterSpacing: -0.2,
   },
   link: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '600',
     color: enterpriseColors.primary,
     marginTop: 4,

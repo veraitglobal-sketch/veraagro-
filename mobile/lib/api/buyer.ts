@@ -223,3 +223,27 @@ export const b2bSuppliersAPI = {
     return response.data;
   },
 };
+
+export type BuyerCompanyProfile = {
+  company: {
+    legalEntity: string;
+    taxId: string;
+    headquarters: string;
+    generalDirector: string;
+    financeManager: string;
+  };
+  deliveryLocations: unknown[];
+  authorizedPersonnel: unknown[];
+};
+
+/** Buyer company document (company data, delivery locations, staff) — stored on the user row. */
+export const buyerCompanyAPI = {
+  get: async (): Promise<BuyerCompanyProfile> => {
+    const response = await api.get('/buyers/company-profile');
+    return response.data;
+  },
+  update: async (profile: BuyerCompanyProfile): Promise<BuyerCompanyProfile> => {
+    const response = await api.put('/buyers/company-profile', profile);
+    return response.data;
+  },
+};

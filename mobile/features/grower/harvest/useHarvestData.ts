@@ -58,13 +58,14 @@ async function fetchPlantingRows(): Promise<PlantingPickRow[]> {
       id: string;
       parcelId?: string;
       announcementType?: string;
+      status?: string;
       cropType: string;
       estimatedDate: string;
       parcel?: { id?: string } | null;
     }>;
     if (Array.isArray(list)) {
       server = list
-        .filter((r) => String(r.announcementType ?? '').toUpperCase() === 'PLANTING')
+        .filter((r) => String(r.announcementType ?? '').toUpperCase() === 'PLANTING' && !['CANCELLED', 'REJECTED'].includes(r.status ?? ''))
         .map((r) => ({
           id: r.id,
           parcelId: normalizeHarvestParcelId(r.parcelId, r.parcel),
@@ -270,6 +271,7 @@ export function useHarvestData(
     const parcelChoice = approvedParcels.find((p) => p.id === parcelId);
 
     if (planMode === 'HARVEST') {
+      if (selectedPlantingId?.startsWith('local:')) missing.push(t('harvestWorkflow.planNotSynced'));
       if (parcelId && !parcelChoice?.harvestPlanEligible) {
         missing.push(t('producer.harvest.submitMissingApprovedParcel'));
       }
@@ -346,6 +348,7 @@ export function useHarvestData(
         const loadKg = loadQuantity.trim() ? parseFloat(loadQuantity) : estQty;
         payload = {
           ...basePayload,
+          sourcePlantingId: selectedPlantingId || undefined,
           estimatedQuantity: estQty,
           plannedLoadingStart,
           plannedLoadingEnd,
@@ -377,8 +380,9 @@ export function useHarvestData(
           resetAfterSuccess();
           return;
         }
-        await harvestAnnouncementsAPI.create(payload);
-        Alert.alert(t('alerts.success'), t('producer.harvest.planSent'));
+        const result = await harvestAnnouncementsAPI.create(payload);
+        Alert.alert(t('alerts.success'), result?.transportStatus === 'RETRY_REQUIRED'
+          ? t('harvestWorkflow.savedWithoutTransport') : t('producer.harvest.planSent'));
         resetAfterSuccess();
         void loadApprovedParcels({ silent: true });
       } catch (e: unknown) {

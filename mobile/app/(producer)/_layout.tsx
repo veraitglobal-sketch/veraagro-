@@ -50,14 +50,8 @@ export default function ProducerLayout() {
         <Stack.Screen name="orders/[id]" />
         <Stack.Screen name="notifications" />
         <Stack.Screen name="compliance-photos" />
-        <Stack.Screen
-          name="education"
-          options={{
-            headerShown: true,
-            title: i18n.t('producer.education.screenTitle'),
-            headerBackTitle: i18n.t('common.back'),
-          }}
-        />
+        {/* Screen renders its own BioVeraSubpageHeader — native header would duplicate it. */}
+        <Stack.Screen name="education" options={{ headerShown: false }} />
         <Stack.Screen name="app-guide" options={{ headerShown: false }} />
         <Stack.Screen name="quality-entry" />
         <Stack.Screen name="materials" />

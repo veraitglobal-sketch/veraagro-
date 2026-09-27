@@ -125,9 +125,9 @@ export default function MissionsListScreen() {
               const title =
                 mission.missionNumber ||
                 t('producer.missions.missionPrefix', { id: mission.id.slice(0, 8) });
-              const batch = mission.batch as { batchId?: string } | undefined;
-              const batchLine = batch?.batchId || mission.batchId
-                ? `${t('producer.missionsCreate.batchLabel')}: ${batch?.batchId || mission.batchId}`
+              const batchCode = mission.batch?.batchId?.trim();
+              const batchLine = batchCode
+                ? [batchCode, mission.batch?.productName].filter(Boolean).join(' · ')
                 : null;
               const dateLine = new Date(mission.createdAt).toLocaleDateString(dateLocale);
               const raw = mission as unknown as Record<string, unknown>;
@@ -184,13 +184,12 @@ export default function MissionsListScreen() {
 const styles = StyleSheet.create({
   filterScroll: {
     flexGrow: 0,
-    backgroundColor: enterpriseColors.white,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: enterpriseColors.gray200,
+    backgroundColor: enterpriseColors.canvas,
   },
   filterRow: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingHorizontal: 16,
+    paddingTop: 2,
+    paddingBottom: 10,
     gap: 8,
     flexDirection: 'row',
   },
@@ -216,10 +215,10 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 18,
-    paddingVertical: 16,
-    minHeight: 76,
-    gap: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    minHeight: 64,
+    gap: 10,
   },
   rowBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -230,9 +229,10 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   rowDate: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '400',
     color: enterpriseColors.gray600,
-    marginTop: 6,
+    marginTop: 4,
+    fontVariant: ['tabular-nums'],
   },
 });

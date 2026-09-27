@@ -107,10 +107,10 @@ const styles = StyleSheet.create({
     paddingBottom: 14,
   },
   empty: {
-    fontSize: 15,
+    fontSize: 13.5,
     color: enterpriseColors.gray600,
     paddingVertical: 12,
-    lineHeight: 21,
+    lineHeight: 19,
   },
   row: {
     paddingVertical: 12,
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.1,
   },
   activity: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '500',
     color: enterpriseColors.primary,
     marginTop: 4,

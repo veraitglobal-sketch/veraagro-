@@ -155,11 +155,11 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
               </Text>
             </View>
             <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.primary, letterSpacing: 0.3 }}>
-              Vera Digital Bag
+              {t('veraBag.bagTitle')}
             </Text>
             {batchId && (
               <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary, marginTop: 2 }}>
-                Batch {batchId}
+                {t('veraBag.batchLine', { id: batchId })}
               </Text>
             )}
           </View>
@@ -258,7 +258,7 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
                   textAlign: 'center',
                 }}
               >
-                No photos in this category
+                {t('veraBag.noPhotos')}
               </Text>
             </View>
           ) : (
@@ -355,7 +355,7 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
                 <Camera size={18} color={theme.colors.primary} strokeWidth={1} />
               )}
               <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.primary, letterSpacing: 0.3 }}>
-                Take Photo
+                {t('veraBag.takePhoto')}
               </Text>
             </TouchableOpacity>
 
@@ -377,7 +377,7 @@ export default function VeraBag({ batchId, parcelId, onSave }: VeraBagProps) {
             >
               <ImageIcon size={18} color={theme.colors.text.secondary} strokeWidth={1} />
               <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.text.secondary, letterSpacing: 0.3 }}>
-                Choose from Gallery
+                {t('veraBag.chooseGallery')}
               </Text>
             </TouchableOpacity>
           </View>

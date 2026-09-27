@@ -1,3 +1,4 @@
+import { walletTransactionView, type WalletTransactionResponse } from '../lib/wallet-transaction';
 import {
   createContext,
   useCallback,
@@ -9,6 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import api from '../lib/api';
+import { AppState } from 'react-native';
 import { isLikelyNetworkError } from '../lib/api-error';
 import { fetchGrowerOrdersFinancial, type OrdersFinancialSnapshot } from '../features/grower/dashboard/fetchGrowerOrdersFinancial';
 
@@ -22,6 +24,7 @@ export interface WalletData {
 export interface Transaction {
   id: string;
   type: 'CREDIT' | 'DEBIT';
+  sourceType?: string;
   amount: number;
   status: string;
   description: string;
@@ -67,13 +70,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     try {
       const [walletResponse, transactionsResponse, ordersFin] = await Promise.all([
         api.get<WalletData>('/wallets/me'),
-        api.get<Transaction[]>('/wallets/me/transactions'),
+        api.get<WalletTransactionResponse[]>('/wallets/me/transactions'),
         fetchGrowerOrdersFinancial(),
       ]);
       if (!mountedRef.current || gen !== requestGenRef.current) return;
       setWallet(walletResponse.data);
       hasWalletRef.current = true;
-      setTransactions(Array.isArray(transactionsResponse.data) ? transactionsResponse.data : []);
+      setTransactions(Array.isArray(transactionsResponse.data) ? transactionsResponse.data.map(walletTransactionView) : []);
       setOrdersFinancial(ordersFin);
       setLoadError(false);
     } catch (error) {
@@ -97,6 +100,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const reload = useCallback(async () => {
     await loadWalletData({ background: hasWalletRef.current });
   }, [loadWalletData]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', state => {
+      if (state === 'active') void reload();
+    });
+    return () => subscription.remove();
+  }, [reload]);
 
   const value = useMemo(
     () => ({ wallet, transactions, ordersFinancial, loading, loadError, reload }),

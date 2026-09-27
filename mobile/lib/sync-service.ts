@@ -1,3 +1,4 @@
+import { productOwnerId } from './offline-storage';
 import {
   offlineStorage,
   PendingFieldEntry,
@@ -377,17 +378,20 @@ export const syncService = {
    * Sync pending products to backend (when endpoint exists)
    */
   async syncPendingProducts(): Promise<{ success: number; failed: number }> {
-    const pending = await offlineStorage.getPendingProducts();
+    const owner = await productOwnerId();
+    const token = await AsyncStorage.getItem('auth_token');
+    if (!owner || !token) return { success: 0, failed: 0 };
+    const pending = await offlineStorage.getPendingProducts(owner);
     const toSync = pending.filter((p) => needsSync(p.status));
     if (toSync.length === 0) return { success: 0, failed: 0 };
 
-    const token = await AsyncStorage.getItem('auth_token');
     let success = 0;
     let failed = 0;
 
     for (const product of toSync) {
+      if (await productOwnerId() !== owner || await AsyncStorage.getItem('auth_token') !== token) break;
       try {
-        await offlineStorage.updateProductStatus(product.id, 'syncing');
+        await offlineStorage.updateProductStatus(product.id, 'syncing', undefined, owner);
         await syncApi.post(
           '/grower-portal/products',
           {
@@ -403,15 +407,16 @@ export const syncService = {
           },
           { headers: { Authorization: token ? `Bearer ${token}` : '' } }
         );
-        await offlineStorage.removeProduct(product.id);
+        // Keep the acknowledged entry available offline and if the list endpoint is unavailable.
+        await offlineStorage.updateProductStatus(product.id, 'synced', undefined, owner);
         success++;
       } catch (err: unknown) {
         const status = axiosResponseStatus(err);
         const isNotImplemented = status === 404 || status === 501;
         if (isNotImplemented) {
-          await offlineStorage.updateProductStatus(product.id, 'skipped', 'ENDPOINT_UNAVAILABLE');
+          await offlineStorage.updateProductStatus(product.id, 'skipped', 'ENDPOINT_UNAVAILABLE', owner);
         } else {
-          await offlineStorage.updateProductStatus(product.id, 'error', apiErrorMessage(err, 'Sync failed'));
+          await offlineStorage.updateProductStatus(product.id, 'error', apiErrorMessage(err, 'Sync failed'), owner);
           failed++;
         }
       }

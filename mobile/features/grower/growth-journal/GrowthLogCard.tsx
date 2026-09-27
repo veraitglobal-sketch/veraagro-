@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Linking,
-  Pressable,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Calendar, ExternalLink, X } from 'lucide-react-native';
@@ -47,9 +46,10 @@ export function GrowthLogCard({ log }: GrowthLogCardProps) {
 
   return (
     <>
-      <Pressable
+      <TouchableOpacity
         onPress={() => setDetailOpen(true)}
-        style={({ pressed }) => [enterpriseUi.inAppPanel, { padding: 16, opacity: pressed ? 0.92 : 1 }]}
+        activeOpacity={0.7}
+        style={[enterpriseUi.inAppPanel, { padding: 14 }]}
       >
         {canShowImage ? (
           <Image
@@ -139,7 +139,7 @@ export function GrowthLogCard({ log }: GrowthLogCardProps) {
         <Text style={{ fontSize: 14, color: theme.colors.text.tertiary, marginTop: 8 }}>
           {t('producer.growthJournal.tapForDetail')}
         </Text>
-      </Pressable>
+      </TouchableOpacity>
 
       <BioVeraBottomSheet visible={detailOpen} onClose={() => setDetailOpen(false)}>
           <View style={{ paddingBottom: 24 }}>
@@ -153,7 +153,7 @@ export function GrowthLogCard({ log }: GrowthLogCardProps) {
                 borderBottomColor: theme.colors.border,
               }}
             >
-              <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
+              <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
                 {t('producer.growthJournal.logDetail')}
               </Text>
               <TouchableOpacity
@@ -185,7 +185,7 @@ export function GrowthLogCard({ log }: GrowthLogCardProps) {
                 }}
               >
                 <ExternalLink size={18} color={theme.colors.primary} />
-                <Text style={{ fontSize: 15, color: theme.colors.primary, fontWeight: '600' }}>
+                <Text style={{ fontSize: 13.5, color: theme.colors.primary, fontWeight: '600' }}>
                   {t('producer.growthJournal.openInMaps')}
                 </Text>
               </TouchableOpacity>
@@ -196,12 +196,12 @@ export function GrowthLogCard({ log }: GrowthLogCardProps) {
                 {new Date(log.createdAt).toLocaleString(dateLocale, combinedDateOpts)}
               </Text>
               {log.growthStage ? (
-                <Text style={{ fontSize: 15, color: theme.colors.text.primary, marginBottom: 8 }}>
+                <Text style={{ fontSize: 13.5, color: theme.colors.text.primary, marginBottom: 8 }}>
                   {t('producer.growthJournal.stageLabel')}: {log.growthStage}
                 </Text>
               ) : null}
               {log.notes ? (
-                <Text style={{ fontSize: 15, color: theme.colors.text.secondary, lineHeight: 22 }}>
+                <Text style={{ fontSize: 13.5, color: theme.colors.text.secondary, lineHeight: 19 }}>
                   {log.notes}
                 </Text>
               ) : null}

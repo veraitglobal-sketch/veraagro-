@@ -23,6 +23,7 @@ import {
   useMaterialCompliance,
 } from './useMaterialCompliance';
 import { BatchSelector } from '../quality-entry/BatchSelector';
+import { BatchWorkflowActions } from '../batches/BatchWorkflowActions';
 
 /**
  * Web-parity flow: one label roll + three required photos (PUNNETS, LABELING, PALLETIZATION) per batch.
@@ -54,6 +55,9 @@ export function MaterialComplianceForm() {
       }
     >
       <View style={growerUi.scrollContent}>
+        {c.missingRequestedBatch && !c.batchesLoading ? (
+          <Text style={complianceUi.warnText}>{t('batchWorkflow.unavailable')}</Text>
+        ) : null}
         {c.batchesLoading ? (
           <ActivityIndicator color={enterpriseColors.primary} style={{ marginVertical: 24 }} />
         ) : c.totalBatchCount === 0 ? (
@@ -78,6 +82,9 @@ export function MaterialComplianceForm() {
           />
         )}
 
+        {c.complianceStatus?.complete && !c.statusLoading ? (
+          <BatchWorkflowActions batchId={c.selectedBatchId} steps={['transport', 'detail']} />
+        ) : null}
         {c.selectedBatchId && c.statusLoading ? (
           <Text style={complianceUi.body}>{t('producer.compliance.batchForm.loadingStatus')}</Text>
         ) : null}
@@ -296,7 +303,7 @@ function PhotoRow({
               }}
             >
               <Check size={18} color={enterpriseColors.primary} />
-              <Text style={{ fontSize: 16, color: enterpriseColors.primary, fontWeight: '600' }}>
+              <Text style={{ fontSize: 14.5, color: enterpriseColors.primary, fontWeight: '600' }}>
                 {t('producer.compliance.batchForm.photoAdded')}
               </Text>
             </View>
@@ -308,7 +315,7 @@ function PhotoRow({
             ) : (
               <Camera size={44} color={enterpriseColors.gray600} strokeWidth={1.5} />
             )}
-            <Text style={{ marginTop: 12, fontSize: 16, color: enterpriseColors.gray600 }}>
+            <Text style={{ marginTop: 12, fontSize: 14.5, color: enterpriseColors.gray600 }}>
               {t('producer.compliance.batchForm.clickToTakePhoto')}
             </Text>
           </View>

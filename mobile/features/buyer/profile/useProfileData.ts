@@ -1,9 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '../../../hooks/useAuth';
+import { buyerCompanyAPI, type BuyerCompanyProfile } from '../../../lib/api';
 import type {
   AuthorizedPerson,
   CompanyData,
@@ -12,53 +13,13 @@ import type {
 } from './types';
 import { EMPTY_LOCATION, EMPTY_STAFF } from './types';
 
-const INITIAL_LOCATIONS: DeliveryLocation[] = [
-  {
-    id: '1',
-    alias: 'Main distribution center — Hamburg',
-    address: 'Hamburger Straße 123',
-    city: 'Hamburg',
-    postalCode: '20095',
-    country: 'Germany',
-    latitude: 53.5511,
-    longitude: 9.9937,
-    responsiblePerson: 'Klaus Schmidt',
-    responsiblePhone: '+49 40 12345678',
-    operatingHours: 'Mon-Fri: 08:00 - 18:00',
-  },
-  {
-    id: '2',
-    alias: 'Market Eimsbüttel',
-    address: 'Eimsbütteler Chaussee 45',
-    city: 'Hamburg',
-    postalCode: '20259',
-    country: 'Germany',
-    latitude: 53.5714,
-    longitude: 9.9602,
-    responsiblePerson: 'Anna Müller',
-    responsiblePhone: '+49 40 98765432',
-    operatingHours: 'Mon-Sat: 07:00 - 20:00',
-  },
-];
-
-const INITIAL_STAFF: AuthorizedPerson[] = [
-  {
-    id: '1',
-    firstName: 'Thomas',
-    lastName: 'Klein',
-    email: 'thomas.klein@aldinord.de',
-    phone: '+49 201 123456',
-    role: 'Purchasing Manager',
-  },
-  {
-    id: '2',
-    firstName: 'Maria',
-    lastName: 'Schneider',
-    email: 'maria.schneider@aldinord.de',
-    phone: '+49 201 234567',
-    role: 'Warehouse Lead',
-  },
-];
+const EMPTY_COMPANY: CompanyData = {
+  legalEntity: '',
+  taxId: '',
+  headquarters: '',
+  generalDirector: '',
+  financeManager: '',
+};
 
 export function useProfileData() {
   const { t } = useTranslation();
@@ -67,20 +28,67 @@ export function useProfileData() {
 
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<ProfileTabType>('general');
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditingState] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showStaffModal, setShowStaffModal] = useState(false);
 
-  const [companyData, setCompanyData] = useState<CompanyData>({
-    legalEntity: 'Aldi Nord',
-    taxId: 'DE123456789',
-    headquarters: 'Essen, Germany',
-    generalDirector: 'Dr. Michael Kretz',
-    financeManager: 'Sarah Weber',
-  });
+  const [companyData, setCompanyData] = useState<CompanyData>(EMPTY_COMPANY);
+  const [deliveryLocations, setDeliveryLocations] = useState<DeliveryLocation[]>([]);
+  const [authorizedPersonnel, setAuthorizedPersonnel] = useState<AuthorizedPerson[]>([]);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const snapshot = useRef<BuyerCompanyProfile | null>(null);
 
-  const [deliveryLocations, setDeliveryLocations] = useState<DeliveryLocation[]>(INITIAL_LOCATIONS);
-  const [authorizedPersonnel, setAuthorizedPersonnel] = useState<AuthorizedPerson[]>(INITIAL_STAFF);
+  const applyProfile = useCallback((p: BuyerCompanyProfile) => {
+    snapshot.current = p;
+    setCompanyData({ ...EMPTY_COMPANY, ...p.company });
+    setDeliveryLocations((p.deliveryLocations ?? []) as DeliveryLocation[]);
+    setAuthorizedPersonnel((p.authorizedPersonnel ?? []) as AuthorizedPerson[]);
+  }, []);
+
+  const loadProfile = useCallback(async () => {
+    try {
+      applyProfile(await buyerCompanyAPI.get());
+    } catch (error) {
+      console.error('Error loading company profile:', error);
+    } finally {
+      setLoadingProfile(false);
+    }
+  }, [applyProfile]);
+
+  useEffect(() => {
+    void loadProfile();
+  }, [loadProfile]);
+
+  /** Persist the whole document; roll back the screen to the last saved copy on failure. */
+  const persist = useCallback(
+    async (next: Partial<BuyerCompanyProfile>) => {
+      const base = snapshot.current ?? {
+        company: EMPTY_COMPANY,
+        deliveryLocations: [],
+        authorizedPersonnel: [],
+      };
+      const merged: BuyerCompanyProfile = { ...base, ...next };
+      try {
+        applyProfile(await buyerCompanyAPI.update(merged));
+      } catch (error) {
+        console.error('Error saving company profile:', error);
+        applyProfile(base);
+        Alert.alert(t('error'), t('buyer.profile.saveFailed'));
+      }
+    },
+    [applyProfile, t],
+  );
+
+  const setIsEditing = useCallback(
+    (value: boolean) => {
+      if (!value && isEditing) {
+        void persist({ company: companyData });
+      }
+      setIsEditingState(value);
+    },
+    [isEditing, companyData, persist],
+  );
+
   const [newLocation, setNewLocation] = useState<Partial<DeliveryLocation>>(EMPTY_LOCATION);
   const [newStaff, setNewStaff] = useState<Partial<AuthorizedPerson>>(EMPTY_STAFF);
 
@@ -92,17 +100,17 @@ export function useProfileData() {
       address: newLocation.address,
       city: newLocation.city,
       postalCode: newLocation.postalCode || '',
-      country: newLocation.country || 'Germany',
+      country: newLocation.country || '',
       latitude: newLocation.latitude || 0,
       longitude: newLocation.longitude || 0,
       responsiblePerson: newLocation.responsiblePerson || '',
       responsiblePhone: newLocation.responsiblePhone || '',
-      operatingHours: newLocation.operatingHours || 'Mon-Fri: 08:00 - 18:00',
+      operatingHours: newLocation.operatingHours || '',
     };
-    setDeliveryLocations((prev) => [...prev, location]);
+    void persist({ deliveryLocations: [...deliveryLocations, location] });
     setNewLocation(EMPTY_LOCATION);
     setShowLocationModal(false);
-  }, [newLocation]);
+  }, [newLocation, deliveryLocations, persist]);
 
   const handleAddStaff = useCallback(() => {
     if (!newStaff.firstName || !newStaff.lastName || !newStaff.email || !newStaff.role) return;
@@ -114,27 +122,33 @@ export function useProfileData() {
       phone: newStaff.phone || '',
       role: newStaff.role,
     };
-    setAuthorizedPersonnel((prev) => [...prev, staff]);
+    void persist({ authorizedPersonnel: [...authorizedPersonnel, staff] });
     setNewStaff(EMPTY_STAFF);
     setShowStaffModal(false);
-  }, [newStaff]);
+  }, [newStaff, authorizedPersonnel, persist]);
 
-  const handleDeleteLocation = useCallback((id: string) => {
-    setDeliveryLocations((prev) => prev.filter((loc) => loc.id !== id));
-  }, []);
+  const handleDeleteLocation = useCallback(
+    (id: string) => {
+      void persist({ deliveryLocations: deliveryLocations.filter((loc) => loc.id !== id) });
+    },
+    [deliveryLocations, persist],
+  );
 
-  const handleDeleteStaff = useCallback((id: string) => {
-    setAuthorizedPersonnel((prev) => prev.filter((staff) => staff.id !== id));
-  }, []);
+  const handleDeleteStaff = useCallback(
+    (id: string) => {
+      void persist({ authorizedPersonnel: authorizedPersonnel.filter((p) => p.id !== id) });
+    },
+    [authorizedPersonnel, persist],
+  );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await Promise.resolve();
+      await loadProfile();
     } finally {
       setRefreshing(false);
     }
-  }, []);
+  }, [loadProfile]);
 
   const handleLogout = useCallback(() => {
     Alert.alert(t('buyer.profile.logout'), t('buyer.profile.logoutConfirm'), [
@@ -154,6 +168,7 @@ export function useProfileData() {
   return {
     user,
     refreshing,
+    loadingProfile,
     activeTab,
     setActiveTab,
     isEditing,

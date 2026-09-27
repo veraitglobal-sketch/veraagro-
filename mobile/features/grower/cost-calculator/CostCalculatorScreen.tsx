@@ -11,6 +11,8 @@ import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader'
 import { HubMetricsStrip } from '../hubs/HubMetricsStrip';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
+import { formatEur } from '../../../lib/format-money';
+import { useAppLocaleTag } from '../../../lib/date-locale';
 
 export default function CostCalculatorScreen() {
   const { t } = useTranslation();
@@ -42,6 +44,8 @@ export default function CostCalculatorScreen() {
     [addCost],
   );
 
+  const locale = useAppLocaleTag();
+
   const metricRows = useMemo(
     () => [
       {
@@ -50,8 +54,14 @@ export default function CostCalculatorScreen() {
         label: t('producer.costCalculator.costLinesMetric'),
         count: costs.length,
       },
+      {
+        key: 'total',
+        type: 'text' as const,
+        label: t('producer.costCalculator.total'),
+        value: formatEur(costs.reduce((sum, c) => sum + c.amount, 0), locale),
+      },
     ],
-    [t, costs.length],
+    [t, costs, locale],
   );
 
   const goBack = () => {
@@ -72,7 +82,7 @@ export default function CostCalculatorScreen() {
         activeOpacity={0.88}
         style={[enterpriseUi.authBtnPrimary, styles.addBtn]}
       >
-        <Plus size={22} color={enterpriseColors.white} strokeWidth={1.5} />
+        <Plus size={18} color={enterpriseColors.white} strokeWidth={2.2} />
         <Text style={enterpriseUi.authBtnPrimaryText}>{t('producer.costCalculator.addCostAmount')}</Text>
       </TouchableOpacity>
       {showForm ? (

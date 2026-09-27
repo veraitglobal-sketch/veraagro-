@@ -181,15 +181,15 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     flex: 1,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '800',
     color: enterpriseColors.gray900,
     lineHeight: 26,
   },
   modalIntro: {
-    fontSize: 15,
+    fontSize: 13.5,
     color: enterpriseColors.gray600,
-    lineHeight: 22,
+    lineHeight: 19,
     marginBottom: 14,
   },
   bulletRow: {
@@ -207,8 +207,8 @@ const styles = StyleSheet.create({
   },
   bulletText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 13.5,
     color: enterpriseColors.gray900,
-    lineHeight: 22,
+    lineHeight: 19,
   },
 });

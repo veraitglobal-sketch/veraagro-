@@ -1,4 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useWorkflowBatchSelection } from '../../hooks/useWorkflowBatchSelection';
+import { batchWorkflowHref } from '../../lib/batch-workflow';
+import { EnterpriseButton } from '../../design-system/EnterpriseButton';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -67,13 +71,17 @@ function PickerPanel({
 export default function PackageBadgesScreen() {
   const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
+  const router = useRouter();
+  const params = useLocalSearchParams<{ batchId?: string }>();
+  const submitLock = useRef(false);
+  const [batchLoadError, setBatchLoadError] = useState(false);
 
   const [batches, setBatches] = useState<{ id: string; batchId: string; productName?: string }[]>([]);
   const [batchesLoading, setBatchesLoading] = useState(true);
   const [parentSerial, setParentSerial] = useState('');
   const [badgeType, setBadgeType] = useState<ParentType>('PALLET_MASTER');
   const [childrenRaw, setChildrenRaw] = useState('');
-  const [batchInternalId, setBatchInternalId] = useState<string | null>(null);
+  const { selectedBatchId: batchInternalId, setSelectedBatchId: setBatchInternalId, missingRequestedBatch } = useWorkflowBatchSelection(batches, false);
   const [submitting, setSubmitting] = useState(false);
   const [openBatchPicker, setOpenBatchPicker] = useState(false);
   const [printOrders, setPrintOrders] = useState<{ id: string; status: string }[]>([]);
@@ -84,6 +92,7 @@ export default function PackageBadgesScreen() {
 
   const loadBatches = useCallback(async () => {
     setBatchesLoading(true);
+    setBatchLoadError(false);
     try {
       const data = await batchesAPI.getAll();
       const arr = Array.isArray(data) ? data : [];
@@ -95,6 +104,7 @@ export default function PackageBadgesScreen() {
         })),
       );
     } catch {
+      setBatchLoadError(true);
       setBatches([]);
     } finally {
       setBatchesLoading(false);
@@ -145,11 +155,17 @@ export default function PackageBadgesScreen() {
     : null;
 
   const onSubmit = async () => {
+    if (submitLock.current) return;
+    if (batchesLoading || missingRequestedBatch || (params.batchId && !batchInternalId)) {
+      Alert.alert(t('error'), t('batchWorkflow.unavailable'));
+      return;
+    }
     const parent = parentSerial.trim();
     if (!parent) {
       Alert.alert('', t('producer.packageBadges.errParent'));
       return;
     }
+    submitLock.current = true;
     setSubmitting(true);
     try {
       const childSerials = parseChildSerials(childrenRaw);
@@ -165,11 +181,11 @@ export default function PackageBadgesScreen() {
       const url = publicBadgeUrl(parent);
       Alert.alert(t('producer.packageBadges.successTitle'), t('producer.packageBadges.successBody'), [
         { text: t('producer.packageBadges.shareUrl'), onPress: () => void Share.share({ message: url, title: url }) },
-        { text: 'OK' },
+        ...(batchInternalId ? [{ text: t('batchWorkflow.compliance'), onPress: () => router.push(batchWorkflowHref('compliance', batchInternalId)) }] : []),
+        { text: t('common.ok') },
       ]);
       setParentSerial('');
       setChildrenRaw('');
-      setBatchInternalId(null);
     } catch (e: unknown) {
       const raw =
         e && typeof e === 'object' && 'response' in e
@@ -181,6 +197,7 @@ export default function PackageBadgesScreen() {
         typeof msg === 'string' && msg.trim() ? msg : t('producer.packageBadges.errGeneric'),
       );
     } finally {
+      submitLock.current = false;
       setSubmitting(false);
     }
   };
@@ -199,14 +216,19 @@ export default function PackageBadgesScreen() {
       }
     >
       <View style={growerUi.scrollContent}>
+        {batchLoadError || missingRequestedBatch ? <>
+          <Text style={enterpriseUi.navRowSubtitle}>{t('batchWorkflow.unavailable')}</Text>
+          <EnterpriseButton label={t('common.tryAgain')} onPress={() => void loadBatches()} />
+        </> : null}
         <Text style={[enterpriseUi.inAppLead, styles.footerNote]}>
           {t('producer.packageBadges.printOrderFooterNote')}
         </Text>
 
-        <View style={enterpriseUi.authPanel}>
+        <View style={enterpriseUi.authPanel} pointerEvents={submitting ? 'none' : 'auto'}>
           <FieldLabel>{t('producer.packageBadges.parentLabel')}</FieldLabel>
           <FieldHint>{t('producer.packageBadges.parentHint')}</FieldHint>
           <TextInput
+            editable={!submitting}
             value={parentSerial}
             onChangeText={setParentSerial}
             placeholder={t('producer.packageBadges.parentPh')}
@@ -227,6 +249,7 @@ export default function PackageBadgesScreen() {
               return (
                 <TouchableOpacity
                   key={v}
+                  disabled={submitting}
                   onPress={() => setBadgeType(v)}
                   style={[growerUi.filterChip, styles.typeChip, on && growerUi.filterChipOn]}
                 >
@@ -289,6 +312,7 @@ export default function PackageBadgesScreen() {
           <FieldLabel>{t('producer.packageBadges.childrenLabel')}</FieldLabel>
           <FieldHint>{t('producer.packageBadges.childrenHint')}</FieldHint>
           <TextInput
+            editable={!submitting}
             value={childrenRaw}
             onChangeText={setChildrenRaw}
             placeholder={t('producer.packageBadges.childrenPh')}
@@ -317,8 +341,9 @@ export default function PackageBadgesScreen() {
           {openBatchPicker && !batchesLoading ? (
             <PickerPanel>
               <TouchableOpacity
+                disabled={Boolean(params.batchId)}
                 onPress={() => {
-                  setBatchInternalId(null);
+                  setBatchInternalId('');
                   setOpenBatchPicker(false);
                 }}
                 style={complianceStyles.pickerRow}
@@ -346,7 +371,7 @@ export default function PackageBadgesScreen() {
 
         <TouchableOpacity
           onPress={onSubmit}
-          disabled={submitting}
+          disabled={submitting || batchesLoading || missingRequestedBatch || Boolean(params.batchId && !batchInternalId)}
           activeOpacity={0.88}
           style={[enterpriseUi.authBtnPrimary, submitting && styles.btnDisabled]}
         >

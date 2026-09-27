@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   },
   guideTitle: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 14.5,
     fontWeight: '600',
     color: enterpriseColors.gray900,
   },
@@ -279,9 +279,9 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   glanceBody: {
-    fontSize: 15,
+    fontSize: 13.5,
     color: enterpriseColors.gray700,
-    lineHeight: 22,
+    lineHeight: 19,
     marginTop: 8,
   },
   glanceLink: {
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   linkText: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '500',
     color: enterpriseColors.primary,
   },
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   stepTitle: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '600',
     color: enterpriseColors.gray900,
     marginTop: 6,

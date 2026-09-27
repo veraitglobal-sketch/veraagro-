@@ -122,6 +122,10 @@ export const growthLogsAPI = {
 };
 
 export const harvestAnnouncementsAPI = {
+  retryTransport: async (id: string): Promise<{ id: string; missionNumber: string; status: string }> => {
+    const response = await api.post(`/harvest-announcements/${encodeURIComponent(id)}/retry-transport`);
+    return response.data;
+  },
   create: async (data: CreateHarvestPlanBody) => {
     const response = await api.post('/harvest-announcements', data);
     return response.data;

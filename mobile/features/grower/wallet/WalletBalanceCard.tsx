@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Wallet } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
-import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 
 interface WalletBalanceCardProps {
@@ -22,9 +23,21 @@ export function WalletBalanceCard({
   const locale = useAppLocaleTag();
 
   return (
-    <View style={styles.card}>
-      <Text style={styles.amount}>{formatEur(availableBalance ?? 0, locale)}</Text>
-      <Text style={styles.amountLabel}>{t('producer.wallet.available')}</Text>
+    <LinearGradient
+      colors={['#2D5A27', '#1F3D1B']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.card}
+    >
+      <View style={styles.topRow}>
+        <Text style={styles.amountLabel}>{t('producer.wallet.available')}</Text>
+        <View style={styles.badge}>
+          <Wallet size={15} color="#fff" strokeWidth={1.9} />
+        </View>
+      </View>
+      <Text style={styles.amount} numberOfLines={1} adjustsFontSizeToFit>
+        {formatEur(availableBalance ?? 0, locale)}
+      </Text>
 
       <View style={styles.meta}>
         {pendingBalance > 0 ? (
@@ -40,56 +53,76 @@ export function WalletBalanceCard({
           </View>
         ) : null}
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    ...enterpriseUi.inAppPanel,
+    borderRadius: 20,
     paddingHorizontal: 18,
     paddingTop: 16,
-    paddingBottom: 18,
+    paddingBottom: 16,
     marginBottom: 16,
+    shadowColor: '#1F3D1B',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.22,
+    shadowRadius: 16,
+    elevation: 6,
+  },
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  badge: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.14)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   amount: {
-    fontSize: 34,
-    fontWeight: '400',
-    color: enterpriseColors.primary,
-    letterSpacing: -0.9,
-    lineHeight: 40,
+    fontSize: 32,
+    fontWeight: '600',
+    color: '#fff',
+    letterSpacing: -1,
+    lineHeight: 38,
+    marginTop: 6,
+    fontVariant: ['tabular-nums'],
   },
   amountLabel: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: enterpriseColors.gray600,
-    marginTop: 4,
+    fontSize: 13,
+    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.72)',
   },
   meta: {
     flexDirection: 'row',
-    marginTop: 16,
-    paddingTop: 14,
+    marginTop: 14,
+    paddingTop: 12,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: enterpriseColors.gray200,
+    borderTopColor: 'rgba(255, 255, 255, 0.2)',
   },
   metaItem: {
     flex: 1,
     minWidth: 0,
   },
   metaItemBorder: {
-    paddingLeft: 16,
+    paddingLeft: 14,
     borderLeftWidth: StyleSheet.hairlineWidth,
-    borderLeftColor: enterpriseColors.gray200,
+    borderLeftColor: 'rgba(255, 255, 255, 0.2)',
   },
   metaLabel: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '500',
-    color: enterpriseColors.gray600,
-    marginBottom: 4,
+    color: 'rgba(255, 255, 255, 0.66)',
+    marginBottom: 2,
   },
   metaValue: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: enterpriseColors.gray900,
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#fff',
+    fontVariant: ['tabular-nums'],
   },
 });

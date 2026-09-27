@@ -1,3 +1,4 @@
+import { loadGrowerProducts } from '../../../lib/grower-products';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { harvestAnnouncementsAPI, growerPortalAPI } from '../../../lib/api';
@@ -128,7 +129,7 @@ export function useCostCalculatorData() {
     try {
       await syncPortalQueuesIfOnline();
       const costList = await loadMergedCosts();
-      const productList = await offlineStorage.getPendingProducts();
+      const { products: productList } = await loadGrowerProducts();
       setCosts(costList);
       setProducts(productList);
     } catch (error) {

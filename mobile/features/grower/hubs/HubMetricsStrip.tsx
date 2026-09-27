@@ -63,17 +63,17 @@ export function HubMetricsStrip({ rows }: { rows: HubMetricRow[] }) {
 const styles = StyleSheet.create({
   strip: {
     flexDirection: 'row',
-    paddingVertical: 22,
-    paddingHorizontal: 12,
-    marginBottom: 18,
-    minHeight: 100,
+    paddingVertical: 14,
+    paddingHorizontal: 8,
+    marginBottom: 14,
+    minHeight: 76,
   },
   cell: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 8,
-    minHeight: 72,
+    minHeight: 48,
   },
   cellBorder: {
     borderRightWidth: StyleSheet.hairlineWidth,

@@ -12,7 +12,7 @@ import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { MessageCircle, Store } from 'lucide-react-native';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
-import { enterpriseColors } from '../../../lib/enterprise-ui';
+import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi, growerStyles } from '../../../lib/grower-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useAppLocaleTag } from '../../../lib/date-locale';
@@ -193,6 +193,10 @@ export default function PartnerOrderDetailScreen() {
           ) : null}
         </View>
 
+        {resolved.farmerReceivedAt ? <TouchableOpacity accessibilityRole="button" style={[styles.actionRow, { marginTop: 12 }]}
+          onPress={() => router.push('/(producer)/(tabs)/products')}>
+          <Text style={enterpriseUi.navRowTitle}>{t('producer.dashboard.myProducts')}</Text>
+        </TouchableOpacity> : null}
         <View style={styles.actions}>
           <TouchableOpacity onPress={openStore} activeOpacity={0.72} style={styles.actionRow}>
             <Store size={20} color={enterpriseColors.primary} strokeWidth={1.5} />
@@ -216,7 +220,7 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   empty: {
-    fontSize: 15,
+    fontSize: 13.5,
     color: enterpriseColors.gray600,
     textAlign: 'center',
   },
@@ -247,9 +251,9 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   line: {
-    fontSize: 15,
+    fontSize: 13.5,
     color: enterpriseColors.gray900,
-    lineHeight: 22,
+    lineHeight: 19,
     marginTop: 4,
   },
   noteBlock: {
@@ -305,7 +309,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   actionText: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '500',
     color: enterpriseColors.gray900,
   },

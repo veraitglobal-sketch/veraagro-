@@ -1,7 +1,9 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useWorkflowBatchSelection } from '../../../hooks/useWorkflowBatchSelection';
+import { batchWorkflowHref } from '../../../lib/batch-workflow';
 import { qualityEntryAPI, QualityEntry, batchesAPI } from '../../../lib/api';
 import { theme } from '../../../lib/theme';
 import { growerOfflineCache } from '../../../lib/grower-offline-cache';
@@ -62,12 +64,14 @@ export function useQualityEntryData() {
   const [batches, setBatches] = useState<BatchItem[]>([]);
   /** `all` = every plot; parcel UUID; `__none__` = lots without parcel on file */
   const [parcelFilterId, setParcelFilterId] = useState<string>(PARCEL_ALL_KEY);
-  const [selectedBatchId, setSelectedBatchId] = useState<string>('');
-  const [qualityEntry, setQualityEntry] = useState<QualityEntry | null>(null);
+  const [qualityResult, setQualityResult] = useState<{ batchId: string; entry: QualityEntry | null } | null>(null);
+  const qualityRequest = useRef(0);
   const [qualityScore, setQualityScore] = useState('');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
+  const [qualityError, setQualityError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const parcelFilterOptions = useMemo((): ParcelFilterOption[] => {
@@ -122,18 +126,25 @@ export function useQualityEntryData() {
     }
   }, []);
 
-  useEffect(() => {
-    setSelectedBatchId((prev) => {
-      if (prev && filteredBatches.some((b) => b.id === prev)) return prev;
-      return filteredBatches[0]?.id ?? '';
-    });
-  }, [filteredBatches]);
+  const { selectedBatchId, setSelectedBatchId, missingRequestedBatch } = useWorkflowBatchSelection(filteredBatches);
+  const activeBatch = useRef(selectedBatchId);
+  activeBatch.current = selectedBatchId;
+
+  const qualityEntry = qualityResult?.batchId === selectedBatchId ? qualityResult.entry : null;
+  const qualityLoaded = qualityResult?.batchId === selectedBatchId;
 
   const loadQualityEntry = useCallback(async () => {
+    if (activeBatch.current !== selectedBatchId) return;
+    const request = ++qualityRequest.current;
+    setQualityError(false);
+    setQualityResult(null);
+    setQualityScore('');
+    setNotes('');
     if (!selectedBatchId) return;
     try {
       const entry = await qualityEntryAPI.getByBatch(selectedBatchId);
-      setQualityEntry(entry);
+      if (request !== qualityRequest.current || activeBatch.current !== selectedBatchId) return;
+      setQualityResult({ batchId: selectedBatchId, entry });
       if (entry) {
         setQualityScore(entry.qualityScore?.toString() || '');
         setNotes(entry.notes || '');
@@ -142,6 +153,7 @@ export function useQualityEntryData() {
         setNotes('');
       }
     } catch (error) {
+      if (request === qualityRequest.current && activeBatch.current === selectedBatchId) setQualityError(true);
       console.error('Error loading quality entry:', error);
     }
   }, [selectedBatchId]);
@@ -154,14 +166,15 @@ export function useQualityEntryData() {
     if (selectedBatchId) {
       loadQualityEntry();
     } else {
-      setQualityEntry(null);
+      setQualityResult(null);
     }
+    return () => { qualityRequest.current++; };
   }, [selectedBatchId, loadQualityEntry]);
 
   /** Only draft (or no row yet) can be edited; sent / finished rows are read-only. */
   const canEditQuality = useMemo(
-    () => !qualityEntry || qualityEntry.status === 'DRAFT',
-    [qualityEntry],
+    () => qualityLoaded && (!qualityEntry || qualityEntry.status === 'DRAFT'),
+    [qualityEntry, qualityLoaded],
   );
 
   const onRefresh = useCallback(async () => {
@@ -177,7 +190,7 @@ export function useQualityEntryData() {
       Alert.alert(t('error'), t('producer.qualityEntry.selectBatch'));
       return;
     }
-    if (qualityEntry && qualityEntry.status !== 'DRAFT') {
+    if (!canEditQuality || savingRef.current) {
       return;
     }
     const scored = qualityScore.trim();
@@ -194,6 +207,7 @@ export function useQualityEntryData() {
       return;
     }
     try {
+      savingRef.current = true;
       setSaving(true);
       const parcelId = selectedBatch?.parcelId?.trim();
       await qualityEntryAPI.create({
@@ -205,10 +219,9 @@ export function useQualityEntryData() {
       await loadQualityEntry();
       Alert.alert(t('alerts.success'), t('producer.qualityEntry.saveSuccessBody'), [
         {
-          text: t('common.ok'),
+          text: t('batchWorkflow.compliance'),
           onPress: () => {
-            if (router.canGoBack()) router.back();
-            else router.replace('/(producer)/(tabs)/supplies');
+            router.push(batchWorkflowHref('compliance', selectedBatchId));
           },
         },
       ]);
@@ -221,9 +234,10 @@ export function useQualityEntryData() {
       Alert.alert(t('error'), message);
       console.error('Error saving quality entry:', error);
     } finally {
+      savingRef.current = false;
       setSaving(false);
     }
-  }, [selectedBatchId, selectedBatch, qualityEntry, qualityScore, notes, loadQualityEntry, router, t]);
+  }, [selectedBatchId, selectedBatch, canEditQuality, saving, qualityScore, notes, loadQualityEntry, router, t]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -258,8 +272,10 @@ export function useQualityEntryData() {
     parcelFilterOptions,
     selectedBatchId,
     setSelectedBatchId,
+    missingRequestedBatch,
     selectedBatch,
     qualityEntry,
+    qualityError,
     qualityScore,
     setQualityScore,
     notes,
