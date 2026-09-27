@@ -251,6 +251,22 @@ export class OrdersService {
   async reserveStock(orderId: string, inventoryId: string, actor: string) {
     return this.prisma.$transaction(tx => reserveOrderStock(tx, orderId, inventoryId, actor));
   }
+  async reopenForDispatch(orderId: string, actor: string) {
+    return this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM orders WHERE id = ${orderId} FOR UPDATE`;
+      const order = await tx.orders.findUnique({ where: { id: orderId }, include: { payments: true, deliveries: true, stockReservation: true } });
+      if (!order) throw new NotFoundException('Order not found');
+      if (!['PICKED_UP', 'IN_TRANSIT'].includes(order.status)) throw new BadRequestException('Only picked-up / in-transit orders can be reopened');
+      if (order.deliveries) throw new BadRequestException('This order has a delivery; use the delivery workflow instead');
+      if (order.stockReservation?.status === 'ISSUED') throw new BadRequestException('Stock was already issued for this order');
+      if (order.payments?.status !== 'IN_ESCROW') throw new BadRequestException('Payment must be held in escrow');
+      const updated = await tx.orders.update({ where: { id: orderId }, data: { status: 'PAID', updatedAt: new Date() } });
+      await tx.audit_trails.create({ data: { id: crypto.randomUUID(), eventType: 'STATUS_CHANGE', entityType: 'Order', entityId: orderId,
+        performedByUserId: actor, oldValue: { status: order.status }, newValue: { status: 'PAID', action: 'REOPEN_DISPATCH_NO_DELIVERY' } } });
+      return updated;
+    });
+  }
+
   private async cancelTx(tx: import('@prisma/client').Prisma.TransactionClient, orderId: string, actor: string) {
     const order = await tx.orders.findUnique({ where: { id: orderId }, include: { payments: true, deliveries: true } });
     if (!order) throw new NotFoundException('Order not found');

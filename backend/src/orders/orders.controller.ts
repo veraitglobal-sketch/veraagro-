@@ -79,6 +79,9 @@ export class OrdersController {
   stockOptions(@Param('id') id: string) { return this.ordersService.stockOptions(id); }
   @Post('admin/:id/reserve-stock') @UseGuards(RolesGuard) @Roles('ADMIN', 'SUPER_ADMIN')
   reserveStock(@Param('id') id: string, @Body() body: ReserveStockDto, @Request() req: any) { return this.ordersService.reserveStock(id, body.inventoryId, req.user.id); }
+  /** Legacy repair: an order marked picked up / in transit without any delivery record goes back to dispatch. */
+  @Post('admin/:id/reopen-dispatch') @UseGuards(RolesGuard) @Roles('ADMIN', 'SUPER_ADMIN')
+  reopenDispatch(@Param('id') id: string, @Request() req: any) { return this.ordersService.reopenForDispatch(id, req.user.id); }
   @Post(':id/cancel')
   cancel(@Param('id') id: string, @Request() req: any) { return this.ordersService.cancelByBuyer(id, req.user.id); }
 

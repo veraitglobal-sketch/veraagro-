@@ -5354,6 +5354,9 @@
     "partial": "Sačuvano porudžbina: {{count}}. Preostale stavke su u korpi."
   },
   "orderOperations": {
+    "stuckNoDelivery": "Označeno kao preuzeto / u tranzitu, ali isporuka ne postoji (stari podaci). Vratite na dispečing, pa rezervišite zalihu i povežite misiju.",
+    "reopenDispatch": "Vrati na dispečing",
+    "reopenDispatchConfirm": "Vratiti {{number}} u status Plaćeno da bi se ponovo otpremila?",
     "title": "Operativni pregled porudžbina",
     "open": "Otvorene porudžbine",
     "held": "Ukupno rezervisano",

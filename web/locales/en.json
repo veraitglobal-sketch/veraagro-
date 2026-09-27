@@ -5370,6 +5370,9 @@
     "partial": "Orders saved: {{count}}. Remaining items are in the cart."
   },
   "orderOperations": {
+    "stuckNoDelivery": "Marked picked up / in transit but no delivery exists (legacy). Reopen it for dispatch, then reserve stock and link a mission.",
+    "reopenDispatch": "Reopen for dispatch",
+    "reopenDispatchConfirm": "Return {{number}} to Paid so it can be dispatched again?",
     "title": "Order operations overview",
     "open": "Open orders",
     "held": "Total reserved goods",

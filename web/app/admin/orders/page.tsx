@@ -6,7 +6,7 @@ import { OrderPaymentSettlement } from '@/components/orders/OrderPaymentSettleme
 import { OrderStockAllocation } from '@/components/orders/OrderStockAllocation';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
-import { ordersAPI, estatesAPI, missionsAPI } from '@/lib/api';
+import api, { ordersAPI, estatesAPI, missionsAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
 import { ShoppingCart, Truck } from 'lucide-react';
 
@@ -46,6 +46,19 @@ export default function OrdersManagementPage() {
     orderNumber: string;
   } | null>(null);
   const [missionOpsNotes, setMissionOpsNotes] = useState('');
+  const reopenDispatch = async (order: any) => {
+    if (!window.confirm(t('orderOperations.reopenDispatchConfirm', { number: order.orderNumber }))) return;
+    setSavingId(order.id);
+    try {
+      await api.post(`/orders/admin/${encodeURIComponent(order.id)}/reopen-dispatch`);
+      await loadOrders();
+    } catch (e: unknown) {
+      setError(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
+    } finally {
+      setSavingId(null);
+    }
+  };
+
   const [missionChannel, setMissionChannel] = useState<'' | 'INDUSTRIAL' | 'RETAIL' | 'MIXED'>('');
   const [missionTargetKg, setMissionTargetKg] = useState('');
   const [missionSaving, setMissionSaving] = useState(false);
@@ -258,6 +271,19 @@ export default function OrdersManagementPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {order.productName}
                         <OrderStockAllocation orderId={order.id} status={order.status} reservation={order.stockReservation} reload={loadOrders} />
+                        {['PICKED_UP', 'IN_TRANSIT'].includes(order.status) && !order.deliveries && order.payments?.status === 'IN_ESCROW' && (
+                          <div className="mt-2 max-w-[16rem] whitespace-normal rounded border border-amber-200 bg-amber-50 p-2 text-xs text-amber-900">
+                            <p>{t('orderOperations.stuckNoDelivery')}</p>
+                            <button
+                              type="button"
+                              disabled={savingId === order.id}
+                              className="mt-1 underline disabled:opacity-50"
+                              onClick={() => void reopenDispatch(order)}
+                            >
+                              {t('orderOperations.reopenDispatch')}
+                            </button>
+                          </div>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {order.quantity} {order.unit}

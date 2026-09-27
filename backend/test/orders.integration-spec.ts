@@ -545,6 +545,17 @@ describe('Orders, payments and delivery — real PostgreSQL + HTTP', () => {
     await post('/deliveries/admin/link-mission', 'admin').send({ missionId: mission.id, orderId }).expect(400);
     expect(await prisma.deliveries.count()).toBe(0);
   });
+  it('lets admin reopen a legacy in-transit order that never got a delivery', async () => {
+    const orderId = await paidOrder();
+    await prisma.orders.update({ where: { id: orderId }, data: { status: 'IN_TRANSIT' } });
+    await post(`/orders/admin/${orderId}/reopen-dispatch`, 'buyer').expect(403);
+    await post(`/orders/admin/${orderId}/reopen-dispatch`, 'admin').expect(201);
+    expect((await prisma.orders.findUnique({ where: { id: orderId } })).status).toBe('PAID');
+    await post(`/orders/admin/${orderId}/reopen-dispatch`, 'admin').expect(400);
+    const other = (await readyForRelease()).orderId;
+    await prisma.orders.update({ where: { id: other }, data: { status: 'IN_TRANSIT' } });
+    await post(`/orders/admin/${other}/reopen-dispatch`, 'admin').expect(400);
+  });
   it('serializes duplicate and competing dispatch links without making a second delivery', async () => {
     const orderId = await paidOrder();
     await dispatchMission(); await dispatchMission('mission-two');
