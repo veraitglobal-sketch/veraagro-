@@ -16,8 +16,9 @@ export async function saveWorkflowMission(prisma: PrismaService, data: Prisma.mi
     for (const key of keys) {
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`mission-workflow:${key}`}, 0))`;
     }
+    // Cancelled runs are history only — a lot/plan may get a fresh request after operations cancels one.
     const candidates = await tx.missions.findMany({
-      where: { OR: [
+      where: { status: { not: 'CANCELLED' }, OR: [
         ...(data.harvestAnnouncementId ? [{ harvestAnnouncementId: data.harvestAnnouncementId }] : []),
         ...(data.batchId ? [{ batchId: data.batchId }] : []),
       ] }, orderBy: { createdAt: 'desc' },
@@ -53,6 +54,13 @@ export async function saveWorkflowMission(prisma: PrismaService, data: Prisma.mi
         return { mission, created: false, attached: true };
       }
       return { mission: existing, created: false, attached: false };
+    }
+    if (data.harvestAnnouncementId) {
+      // Older cancelled runs may still hold the (unique) plan link — free it for the new request.
+      await tx.missions.updateMany({
+        where: { harvestAnnouncementId: data.harvestAnnouncementId, status: 'CANCELLED' },
+        data: { harvestAnnouncementId: null },
+      });
     }
     return { mission: await tx.missions.create({ data, include }), created: true, attached: false };
   });

@@ -15,6 +15,8 @@ import {
   CreateMissionDto,
   AcceptMissionDto,
   AdminAssignMissionDto,
+  AdminSetMissionDestinationDto,
+  AdminCancelMissionDto,
   AdminCreateMissionFromOrderDto,
   LogisticsMissionLifecycleDto,
 } from './dto/mission.dto';
@@ -141,6 +143,28 @@ export class MissionsController {
     @Body() body: { reason?: string },
   ) {
     return this.missionsService.adminRejectTransport(req.user.id, id, body?.reason);
+  }
+
+  @Patch('admin/:id/destination')
+  @UseGuards(RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  adminSetDestination(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() dto: AdminSetMissionDestinationDto,
+  ) {
+    return this.missionsService.adminSetDestination(req.user.id, id, dto);
+  }
+
+  @Patch('admin/:id/cancel')
+  @UseGuards(RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  adminCancelMission(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() dto: AdminCancelMissionDto,
+  ) {
+    return this.missionsService.adminCancelMission(req.user.id, id, dto?.reason);
   }
 
   @Patch('admin/:id/assign')

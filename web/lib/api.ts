@@ -264,6 +264,19 @@ export const missionsAPI = {
     );
     return response.data;
   },
+  setMissionDestinationAdmin: async (
+    missionId: string,
+    body: { destinationCity: string; destinationAddress: string },
+  ) => {
+    const response = await api.patch(`/missions/admin/${encodeURIComponent(missionId)}/destination`, body);
+    return response.data;
+  },
+  cancelMissionAdmin: async (missionId: string, reason?: string) => {
+    const response = await api.patch(`/missions/admin/${encodeURIComponent(missionId)}/cancel`, {
+      ...(reason?.trim() ? { reason: reason.trim() } : {}),
+    });
+    return response.data;
+  },
   assignMissionAdmin: async (
     missionId: string,
     body: { logisticsPartnerId: string; vehicleId?: string },

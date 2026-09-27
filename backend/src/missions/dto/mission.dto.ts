@@ -84,6 +84,25 @@ export class AdminAssignMissionDto {
   vehicleId?: string;
 }
 
+/** Operations sets / corrects where the load goes (growers never see this). */
+export class AdminSetMissionDestinationDto {
+  @IsString()
+  @MaxLength(200)
+  destinationCity: string;
+
+  @IsString()
+  @MaxLength(2000)
+  destinationAddress: string;
+}
+
+/** Operations cancels a run before the truck leaves the farm (e.g. duplicate request). */
+export class AdminCancelMissionDto {
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  reason?: string;
+}
+
 /** Create a PENDING grower mission from a buyer order (operativa: prep + later pickup for that order). */
 export class AdminCreateMissionFromOrderDto {
   @IsString()

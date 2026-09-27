@@ -26,6 +26,9 @@ const MISSION_FILTER_STATUSES = [
   'CANCELLED',
 ] as const;
 
+const PRE_DEPARTURE = new Set(['AWAITING_APPROVAL', 'PENDING', 'ASSIGNED', 'ACCEPTED', 'READY_FOR_LOADING']);
+const isBlankDest = (v?: string | null) => !v || /^\{\s*\}$/.test(v.trim()) || v.trim() === '—';
+
 type Lp = {
   id: string;
   firstName: string;
@@ -53,6 +56,13 @@ function MissionsManagementContent() {
   const [selectedVehicleId, setSelectedVehicleId] = useState('');
   const [assignSubmitting, setAssignSubmitting] = useState(false);
   const [assignError, setAssignError] = useState<string | null>(null);
+  const [destMission, setDestMission] = useState<any | null>(null);
+  const [destCity, setDestCity] = useState('');
+  const [destAddress, setDestAddress] = useState('');
+  const [cancelMission, setCancelMission] = useState<any | null>(null);
+  const [cancelReason, setCancelReason] = useState('');
+  const [actionBusy, setActionBusy] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
     loadMissions();
@@ -115,6 +125,56 @@ function MissionsManagementContent() {
       setAssignSubmitting(false);
     }
   };
+
+  const openDestination = (mission: any) => {
+    setDestMission(mission);
+    setDestCity(isBlankDest(mission.destinationCity) ? '' : mission.destinationCity);
+    setDestAddress(isBlankDest(mission.destinationAddress) ? '' : mission.destinationAddress);
+    setActionError(null);
+  };
+
+  const submitDestination = async () => {
+    if (!destMission || !destCity.trim() || !destAddress.trim()) return;
+    setActionBusy(true);
+    setActionError(null);
+    try {
+      await missionsAPI.setMissionDestinationAdmin(destMission.id, {
+        destinationCity: destCity.trim(),
+        destinationAddress: destAddress.trim(),
+      });
+      setDestMission(null);
+      await loadMissions();
+    } catch (e: unknown) {
+      setActionError(apiErrorOrT(e, t, 'adminPages.missions.errDestination'));
+    } finally {
+      setActionBusy(false);
+    }
+  };
+
+  const submitCancel = async () => {
+    if (!cancelMission) return;
+    setActionBusy(true);
+    setActionError(null);
+    try {
+      await missionsAPI.cancelMissionAdmin(cancelMission.id, cancelReason);
+      setCancelMission(null);
+      await loadMissions();
+    } catch (e: unknown) {
+      setActionError(apiErrorOrT(e, t, 'adminPages.missions.errCancel'));
+    } finally {
+      setActionBusy(false);
+    }
+  };
+
+  /** Open runs that share one lot — usually a repeated transport request. */
+  const duplicateLotIds = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const m of missions) {
+      if (!m.batchId || !PRE_DEPARTURE.has(m.status)) continue;
+      counts.set(m.batchId, (counts.get(m.batchId) ?? 0) + 1);
+    }
+    return new Set([...counts].filter(([, n]) => n > 1).map(([id]) => id));
+  }, [missions]);
 
   const displayed = useMemo(() => {
     if (focusedMissionId) return missions.filter(m => m.id === focusedMissionId);
@@ -231,6 +291,14 @@ function MissionsManagementContent() {
                                 {mission.batches.batchId}
                               </span>
                             ) : null}
+                            {mission.batchId && PRE_DEPARTURE.has(mission.status) && duplicateLotIds.has(mission.batchId) && (
+                              <span
+                                className="inline-block w-fit px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[11px] font-medium"
+                                title={t('adminPages.missions.duplicateTitle')}
+                              >
+                                {t('adminPages.missions.duplicateBadge')}
+                              </span>
+                            )}
                           </div>
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
@@ -286,6 +354,7 @@ function MissionsManagementContent() {
                           {new Date(mission.createdAt).toLocaleString(dateLocale)}
                         </td>
                         <td className="px-4 py-3 text-right">
+                          <div className="flex flex-wrap justify-end gap-1.5">
                           {canAssign && (
                             <button
                               type="button"
@@ -296,6 +365,31 @@ function MissionsManagementContent() {
                               {t('adminPages.missions.assignDriver')}
                             </button>
                           )}
+                          {mission.status !== 'COMPLETED' && mission.status !== 'CANCELLED' && (
+                            <button
+                              type="button"
+                              onClick={() => openDestination(mission)}
+                              className="text-sm font-medium text-gray-700 border border-gray-300 hover:bg-gray-50 rounded-md px-3 py-1.5"
+                            >
+                              {isBlankDest(mission.destinationAddress)
+                                ? t('adminPages.missions.setDestination')
+                                : t('adminPages.missions.editDestination')}
+                            </button>
+                          )}
+                          {PRE_DEPARTURE.has(mission.status) && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setCancelMission(mission);
+                                setCancelReason('');
+                                setActionError(null);
+                              }}
+                              className="text-sm font-medium text-red-700 border border-red-200 hover:bg-red-50 rounded-md px-3 py-1.5"
+                            >
+                              {t('adminPages.missions.cancelRun')}
+                            </button>
+                          )}
+                          </div>
                         </td>
                       </tr>
                     );
@@ -386,6 +480,85 @@ function MissionsManagementContent() {
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
                   >
                     {assignSubmitting ? t('adminPages.missions.assigning') : t('adminPages.missions.assign')}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {destMission && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" role="dialog" aria-modal="true">
+              <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 space-y-4">
+                <h2 className="text-lg font-semibold text-gray-900">{t('adminPages.missions.destinationModalTitle')}</h2>
+                <p className="text-sm text-gray-600">
+                  {destMission.missionNumber} · {t('adminPages.missions.destinationModalHint')}
+                </p>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.missions.labelDestCity')}</label>
+                  <input
+                    value={destCity}
+                    onChange={(e) => setDestCity(e.target.value)}
+                    maxLength={200}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.missions.labelDestAddress')}</label>
+                  <textarea
+                    value={destAddress}
+                    onChange={(e) => setDestAddress(e.target.value)}
+                    rows={3}
+                    maxLength={2000}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                {actionError && <p className="text-sm text-red-600">{actionError}</p>}
+                <div className="flex justify-end gap-2 pt-2">
+                  <button type="button" onClick={() => setDestMission(null)} className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                    {t('adminPages.missions.cancel')}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!destCity.trim() || !destAddress.trim() || actionBusy}
+                    onClick={submitDestination}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                  >
+                    {actionBusy ? t('adminPages.missions.saving') : t('adminPages.missions.save')}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {cancelMission && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" role="dialog" aria-modal="true">
+              <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 space-y-4">
+                <h2 className="text-lg font-semibold text-gray-900">{t('adminPages.missions.cancelModalTitle')}</h2>
+                <p className="text-sm text-gray-600">
+                  {t('adminPages.missions.cancelModalBody', { missionNumber: cancelMission.missionNumber })}
+                </p>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('adminPages.missions.labelCancelReason')}</label>
+                  <textarea
+                    value={cancelReason}
+                    onChange={(e) => setCancelReason(e.target.value)}
+                    rows={2}
+                    maxLength={500}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                {actionError && <p className="text-sm text-red-600">{actionError}</p>}
+                <div className="flex justify-end gap-2 pt-2">
+                  <button type="button" onClick={() => setCancelMission(null)} className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                    {t('adminPages.missions.keepRun')}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={actionBusy}
+                    onClick={submitCancel}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                  >
+                    {actionBusy ? t('adminPages.missions.saving') : t('adminPages.missions.confirmCancelRun')}
                   </button>
                 </div>
               </div>

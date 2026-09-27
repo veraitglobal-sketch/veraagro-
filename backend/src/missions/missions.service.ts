@@ -1670,6 +1670,8 @@ export class MissionsService {
       where: { id: missionId },
       data: {
         status: 'CANCELLED',
+        // Release the harvest plan (unique per mission) so the grower can request a new run.
+        harvestAnnouncementId: null,
         updatedAt: new Date(),
       },
       include: {
@@ -1690,6 +1692,118 @@ export class MissionsService {
       this.logger.warn(`notifyGrowerTransportDecision reject: ${e instanceof Error ? e.message : e}`);
     }
 
+    return MissionsService.missionCreateHttpPayload(updated as unknown as Record<string, unknown>);
+  }
+
+  /** Statuses in which the truck has not left the farm yet — routing can still change or the run can be cancelled. */
+  private static readonly PRE_DEPARTURE_STATUSES = new Set([
+    'AWAITING_APPROVAL',
+    'PENDING',
+    'ASSIGNED',
+    'ACCEPTED',
+    'READY_FOR_LOADING',
+  ]);
+
+  async adminSetDestination(
+    adminId: string,
+    missionId: string,
+    dto: { destinationCity: string; destinationAddress: string },
+  ) {
+    const city = dto.destinationCity?.trim() ?? '';
+    const address = dto.destinationAddress?.trim() ?? '';
+    if (!city || !address) {
+      throw new BadRequestException('Destination city and address are required');
+    }
+    const mission = await this.prisma.missions.findUnique({ where: { id: missionId } });
+    if (!mission) throw new NotFoundException('Mission not found');
+    if (mission.status === 'COMPLETED' || mission.status === 'CANCELLED') {
+      throw new BadRequestException('Destination cannot be changed on a closed mission');
+    }
+
+    const route =
+      mission.optimalRoute && typeof mission.optimalRoute === 'object' && !Array.isArray(mission.optimalRoute)
+        ? (mission.optimalRoute as Record<string, unknown>)
+        : {};
+    const updated = await this.prisma.missions.update({
+      where: { id: missionId },
+      data: {
+        destinationCity: city,
+        destinationAddress: address,
+        optimalRoute: { ...route, destination: { address, city } } as Prisma.InputJsonValue,
+        updatedAt: new Date(),
+      },
+      include: { users_missions_growerIdTousers: true, batches: true },
+    });
+
+    if (mission.logisticsPartnerId) {
+      try {
+        await this.notificationsService.create({
+          userId: mission.logisticsPartnerId,
+          type: 'SYSTEM',
+          title: 'Odredište ažurirano',
+          message: `${mission.missionNumber}: isporuka — ${address}`,
+          actionUrl: '/logistics-partner/missions',
+        });
+      } catch (e) {
+        this.logger.warn(`adminSetDestination notify: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+    this.logger.log(`Admin ${adminId} set destination on ${mission.missionNumber}`);
+    return MissionsService.missionCreateHttpPayload(updated as unknown as Record<string, unknown>);
+  }
+
+  async adminCancelMission(adminId: string, missionId: string, reason?: string) {
+    const mission = await this.prisma.missions.findUnique({ where: { id: missionId } });
+    if (!mission) throw new NotFoundException('Mission not found');
+    if (!MissionsService.PRE_DEPARTURE_STATUSES.has(mission.status)) {
+      throw new BadRequestException('Only missions that have not left the farm can be cancelled');
+    }
+
+    const updated = await this.prisma.missions.update({
+      where: { id: missionId },
+      // Release the harvest plan (unique per mission) so the grower can request a new run; the lot link stays for history.
+      data: { status: 'CANCELLED', harvestAnnouncementId: null, updatedAt: new Date() },
+      include: { users_missions_growerIdTousers: true, batches: true },
+    });
+
+    // Free the truck if no other open run still uses it.
+    if (mission.vehicleId) {
+      const stillBusy = await this.prisma.missions.count({
+        where: {
+          vehicleId: mission.vehicleId,
+          id: { not: mission.id },
+          status: { in: ['ASSIGNED', 'ACCEPTED', 'READY_FOR_LOADING', 'IN_PROGRESS', 'PICKED_UP', 'IN_TRANSIT'] },
+        },
+      });
+      if (stillBusy === 0) {
+        await this.prisma.vehicles
+          .update({ where: { id: mission.vehicleId }, data: { status: 'AVAILABLE' } })
+          .catch((e) => this.logger.warn(`adminCancelMission vehicle: ${e instanceof Error ? e.message : e}`));
+      }
+    }
+
+    const why = reason?.trim() ? ` Razlog: ${reason.trim()}` : '';
+    try {
+      await this.notificationsService.create({
+        userId: mission.growerId,
+        type: 'ALERT',
+        title: 'Prevoz otkazan',
+        message: `${mission.missionNumber}: operativa je otkazala ovaj prevoz.${why}`,
+        actionUrl: `/(producer)/mission/${encodeURIComponent(mission.id)}`,
+      });
+      if (mission.logisticsPartnerId) {
+        await this.notificationsService.create({
+          userId: mission.logisticsPartnerId,
+          type: 'ALERT',
+          title: 'Prevoz otkazan',
+          message: `${mission.missionNumber}: operativa je otkazala ovaj prevoz.${why}`,
+          actionUrl: '/logistics-partner/missions',
+        });
+      }
+    } catch (e) {
+      this.logger.warn(`adminCancelMission notify: ${e instanceof Error ? e.message : e}`);
+    }
+    this.logger.log(`Admin ${adminId} cancelled ${mission.missionNumber}`);
     return MissionsService.missionCreateHttpPayload(updated as unknown as Record<string, unknown>);
   }
 
