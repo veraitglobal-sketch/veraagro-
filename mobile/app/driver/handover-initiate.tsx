@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, StyleSheet } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { QrCode } from 'lucide-react-native';
@@ -19,6 +19,7 @@ export default function HandoverInitiateScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanning, setScanning] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [manualCode, setManualCode] = useState('');
 
   const handleScanQR = async () => {
     if (!permission?.granted) {
@@ -30,6 +31,8 @@ export default function HandoverInitiateScreen() {
     }
     setScanning(true);
   };
+
+  const submitCode = (code: string) => handleBarcodeScanned({ data: code.trim() });
 
   const handleBarcodeScanned = async ({ data }: { data: string }) => {
     if (!deliveryId) {
@@ -139,6 +142,26 @@ export default function HandoverInitiateScreen() {
               </Text>
             </View>
           </TouchableOpacity>
+          <Text style={[styles.instructions, { marginTop: 20 }]}>{t('handover.manualLabel')}</Text>
+          <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
+            <TextInput
+              value={manualCode}
+              onChangeText={setManualCode}
+              placeholder="STORE-…"
+              autoCapitalize="characters"
+              autoCorrect={false}
+              style={styles.codeInput}
+              accessibilityLabel={t('handover.manualLabel')}
+            />
+            <TouchableOpacity
+              onPress={() => void submitCode(manualCode)}
+              disabled={!manualCode.trim()}
+              style={[styles.codeBtn, !manualCode.trim() && { opacity: 0.45 }]}
+              accessibilityRole="button"
+            >
+              <Text style={{ color: '#fff', fontWeight: '600', fontSize: 14 }}>{t('handover.manualSubmit')}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
@@ -164,5 +187,18 @@ const styles = StyleSheet.create({
   },
   cancelBar: { padding: 16, backgroundColor: theme.colors.background, borderTopWidth: 0.5, borderTopColor: theme.colors.border },
   cancelText: { fontSize: 14, fontWeight: '400', color: theme.colors.text.primary, textAlign: 'center' },
+  codeInput: {
+    flex: 1,
+    height: 46,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    paddingHorizontal: 12,
+    fontSize: 16,
+    letterSpacing: 1,
+    color: theme.colors.text.primary,
+    backgroundColor: theme.colors.background,
+  },
+  codeBtn: { height: 46, paddingHorizontal: 16, borderRadius: 10, backgroundColor: theme.colors.primary, justifyContent: 'center' },
   instructions: { fontSize: 13, fontWeight: '400', color: theme.colors.text.primary, letterSpacing: 0.3, lineHeight: 20 },
 });

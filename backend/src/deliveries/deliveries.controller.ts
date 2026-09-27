@@ -120,6 +120,13 @@ export class DeliveriesController {
     return this.deliveriesService.getBuyerShipment(id, req.user.id);
   }
 
+  @Get('buyer/:deliveryId/receiving-code')
+  @UseGuards(RolesGuard)
+  @Roles('BUYER')
+  async buyerReceivingCode(@Param('deliveryId') id: string, @Request() req: any) {
+    return this.deliveriesService.getBuyerReceivingCode(id, req.user.id);
+  }
+
   @Get('buyer/order/:orderId')
   @UseGuards(RolesGuard)
   @Roles('BUYER')

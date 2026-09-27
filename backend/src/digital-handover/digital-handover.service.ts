@@ -1,4 +1,5 @@
 import { durableImage } from '../common/durable-image';
+import { receivingCodeMatches } from './receiving-code';
 import { Injectable, ConflictException, NotFoundException, BadRequestException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -55,10 +56,9 @@ export class DigitalHandoverService {
       throw new BadRequestException('Delivery must be in transit to initiate handover');
     }
 
-    // Verify QR code matches (in production, validate against store QR codes)
-    // For now, we'll accept any QR code that starts with "STORE-"
-    if (!dto.qrCode.startsWith('STORE-')) {
-      throw new BadRequestException('Invalid store QR code');
+    // The buyer shows this delivery's receiving code at the dock; any other STORE- code is rejected.
+    if (!receivingCodeMatches(delivery.id, dto.qrCode)) {
+      throw new BadRequestException('Receiving code does not match this delivery. Ask the buyer to open the code for this order.');
     }
 
     // Create handover record

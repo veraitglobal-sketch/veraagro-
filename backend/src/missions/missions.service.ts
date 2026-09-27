@@ -1373,6 +1373,7 @@ export class MissionsService {
         vehicles: true,
         batches: true,
         harvest_announcement: true,
+        delivery: { select: { id: true, status: true, deliveryNumber: true, digital_handovers: { select: { id: true, status: true } } } },
       };
       const logisticsPoolWhere: Prisma.missionsWhereInput = {
         OR: [

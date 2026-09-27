@@ -2559,6 +2559,15 @@
     "refresh": "Refresh"
   },
   "logisticsPages": {
+    "receivingTitle": "At the buyer — start receipt",
+    "receivingHint": "Scan or type the receiving code the buyer shows (Deliveries → Show receiving code). The buyer then checks the goods and signs.",
+    "receivingStart": "Start handover",
+    "receivingErr": "Code not accepted — check it with the buyer.",
+    "receivingStatus": "Buyer receipt: {{status}}",
+    "receivingHandover_INITIATED": "waiting for the buyer to check and sign",
+    "receivingHandover_IN_PROGRESS": "buyer is checking",
+    "receivingHandover_COMPLETED": "received and signed",
+    "receivingHandover_DISPUTED": "disputed — operations will review",
     "handoverChecklistTitle": "Before you can finish:",
     "handoverReqMission": "Select a mission",
     "handoverReqTemp": "Temperature 2–8 °C",
@@ -5406,5 +5415,14 @@
     "noMission": "No available mission matches this farm and order. Prepare or assign transport in orders/missions.",
     "backOrders": "Back to orders",
     "allDispatch": "Show all dispatches"
+  },
+  "buyerReceiving": {
+    "title": "Receiving code",
+    "hint": "When the truck arrives, show this code to the driver — they scan it to start the handover. Then you check the goods and sign.",
+    "show": "Show receiving code",
+    "loading": "Loading…",
+    "manualCode": "Code (if scanning fails)",
+    "handoverStartedHint": "The driver is at your dock. Check the goods, add photos and sign to receive the shipment.",
+    "completeReceipt": "Complete receipt (photos + signature)"
   }
 }

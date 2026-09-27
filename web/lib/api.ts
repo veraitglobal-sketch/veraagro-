@@ -389,6 +389,11 @@ export const logisticsDriversAPI = {
 
 // Deliveries API
 export const deliveriesAPI = {
+  /** Buyer's per-shipment receiving code (+ QR) the carrier scans at the dock to start the handover. */
+  getBuyerReceivingCode: async (deliveryId: string) => {
+    const response = await api.get(`/deliveries/buyer/${encodeURIComponent(deliveryId)}/receiving-code`);
+    return response.data as { deliveryId: string; code: string; qrDataUrl: string; status: string; orderNumber?: string };
+  },
   getBuyerDeliveries: async (status?: string) => {
     const response = await api.get('/deliveries/buyer/my-deliveries', { params: status ? { status } : {} });
     return response.data;
@@ -424,6 +429,11 @@ export const deliveriesAPI = {
 
 /** Store / warehouse ramp handover — buyer completes after driver scans STORE- QR. See `buyer-portal/handover/[id]`. */
 export const digitalHandoverAPI = {
+  /** Carrier at the buyer's dock: scanned or typed buyer receiving code starts the handover. */
+  initiate: async (body: { deliveryId: string; qrCode: string }) => {
+    const response = await api.post('/digital-handover/initiate', body);
+    return response.data;
+  },
   getOne: async (handoverId: string) => {
     const response = await api.get(`/digital-handover/${encodeURIComponent(handoverId)}`);
     return response.data;

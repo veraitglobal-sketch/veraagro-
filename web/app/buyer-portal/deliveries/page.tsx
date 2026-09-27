@@ -8,6 +8,7 @@ import { deliveriesAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
 import { Truck, MapPin, Calendar, Package, Clock, CheckCircle, XCircle, Eye, QrCode, Search, RefreshCw, FileDown, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
+import BuyerReceivingStep from '@/components/buyer/BuyerReceivingStep';
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 
 const REPORT_WINDOW_MS = 24 * 60 * 60 * 1000;
@@ -505,7 +506,9 @@ export default function DeliveriesPage() {
                   </div>
 
                   {/* QR Code for confirmation (curb / direct scan — also sets takeover time) */}
-                  {delivery.status === 'IN_TRANSIT' && delivery.deliveryQRCode && (
+                  <BuyerReceivingStep delivery={delivery} />
+
+                  {delivery.status === 'IN_TRANSIT' && delivery.deliveryQRCode && !delivery.missionId && !delivery.digital_handovers && (
                     <div className="mt-4 pt-4 border-t border-green-200/50">
                       <p className="text-sm text-gray-600 mb-2 font-light">{t('buyerPortalDeliveries.qrConfirmLead')}</p>
                       <div className="flex items-center gap-2">
@@ -807,7 +810,11 @@ export default function DeliveriesPage() {
                   )}
 
                   {/* QR Code for confirmation */}
-                  {selectedDelivery.status === 'IN_TRANSIT' && selectedDelivery.deliveryQRCode && (
+                  <div className="mb-6">
+                    <BuyerReceivingStep delivery={selectedDelivery} />
+                  </div>
+
+                  {selectedDelivery.status === 'IN_TRANSIT' && selectedDelivery.deliveryQRCode && !selectedDelivery.missionId && !selectedDelivery.digital_handovers && (
                     <div className="mb-6 border-b border-gray-200/50 pb-6">
                       <h3 className="text-sm font-light text-gray-500 mb-4">
                         {t('buyerPortalDeliveries.modalConfirmQrTitle')}

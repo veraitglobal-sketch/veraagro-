@@ -18,6 +18,8 @@ import { WaybillsService } from '../waybills/waybills.service';
 import { InvoicesService } from '../invoices/invoices.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import * as crypto from 'crypto';
+import * as QRCode from 'qrcode';
+import { receivingCodeFor } from '../digital-handover/receiving-code';
 
 /**
  * Deliveries Service
@@ -483,6 +485,37 @@ export class DeliveriesService {
   /**
    * Get delivery by order ID (for buyer)
    */
+  /**
+   * Buyer's receiving code (+ QR) for a shipment on its way. The carrier scans or types it at the dock
+   * to start the digital handover — proof the truck is physically at this buyer.
+   */
+  async getBuyerReceivingCode(deliveryId: string, buyerId: string) {
+    const delivery = await this.prisma.deliveries.findUnique({
+      where: { id: deliveryId },
+      select: {
+        id: true,
+        status: true,
+        deliveryNumber: true,
+        orders: { select: { buyerId: true, orderNumber: true } },
+        digital_handovers: { select: { id: true, status: true } },
+      },
+    });
+    if (!delivery || delivery.orders.buyerId !== buyerId) throw new NotFoundException('Delivery not found');
+    if (!['ASSIGNED', 'PICKED_UP', 'IN_TRANSIT'].includes(delivery.status) || delivery.digital_handovers) {
+      throw new BadRequestException('Receiving code is only available until the handover has started');
+    }
+    const code = receivingCodeFor(delivery.id);
+    const qrDataUrl = await QRCode.toDataURL(code, { margin: 1, width: 320 });
+    return {
+      deliveryId: delivery.id,
+      deliveryNumber: delivery.deliveryNumber,
+      orderNumber: delivery.orders.orderNumber,
+      status: delivery.status,
+      code,
+      qrDataUrl,
+    };
+  }
+
   async getBuyerShipment(id: string, buyerId: string) {
     const delivery = await this.prisma.deliveries.findFirst({ where: { id, orders: { buyerId } }, select: { orderId: true } });
     if (!delivery) throw new NotFoundException('Delivery not found');

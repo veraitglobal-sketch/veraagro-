@@ -8,7 +8,7 @@ import SidebarLayout from '@/components/SidebarLayout';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
-import { missionsAPI, logisticsDriversAPI } from '@/lib/api';
+import { missionsAPI, logisticsDriversAPI, digitalHandoverAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
 import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
 
@@ -57,7 +57,17 @@ interface Mission {
     email?: string | null;
     phone?: string | null;
   } | null;
+  delivery?: {
+    id: string;
+    status: string;
+    deliveryNumber: string;
+    digital_handovers?: { id: string; status: string } | null;
+  } | null;
 }
+
+/** Linked buyer delivery still on the truck: the run is only finished once the buyer receives it. */
+const awaitingBuyerReceipt = (m: Mission) =>
+  Boolean(m.delivery && m.delivery.status === 'IN_TRANSIT' && !m.delivery.digital_handovers);
 
 type LogisticsDriverRow = {
   id: string;
@@ -150,6 +160,9 @@ export default function LogisticsMissionsPage() {
   const [savingDriverForMission, setSavingDriverForMission] = useState<string | null>(null);
   const [driverFeedback, setDriverFeedback] = useState<string | null>(null);
   const [lifecycleBusy, setLifecycleBusy] = useState<string | null>(null);
+  const [receivingCodes, setReceivingCodes] = useState<Record<string, string>>({});
+  const [receivingBusy, setReceivingBusy] = useState<string | null>(null);
+  const [receivingError, setReceivingError] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (isLoading) return;
@@ -265,7 +278,26 @@ export default function LogisticsMissionsPage() {
     }
   };
 
-  const acceptedMissions = missions.filter((m) => ACTIVE_STATUSES.includes(m.status));
+  const startBuyerHandover = async (mission: Mission) => {
+    const deliveryId = mission.delivery?.id;
+    const code = (receivingCodes[mission.id] ?? '').trim();
+    if (!deliveryId || !code) return;
+    setReceivingBusy(mission.id);
+    setReceivingError((prev) => ({ ...prev, [mission.id]: '' }));
+    try {
+      await digitalHandoverAPI.initiate({ deliveryId, qrCode: code });
+      setReceivingCodes((prev) => ({ ...prev, [mission.id]: '' }));
+      reloadMissions();
+    } catch (e: unknown) {
+      setReceivingError((prev) => ({ ...prev, [mission.id]: apiErrorOrT(e, t, 'logisticsPages.receivingErr') }));
+    } finally {
+      setReceivingBusy(null);
+    }
+  };
+
+  const acceptedMissions = missions.filter(
+    (m) => ACTIVE_STATUSES.includes(m.status) || (m.status === 'COMPLETED' && awaitingBuyerReceipt(m)),
+  );
   const availableMissions = missions.filter((m) => m.status === 'PENDING');
 
   const isLoadingStatus = (s: string) => LOADING_STATUSES.includes(s);
@@ -509,6 +541,43 @@ export default function LogisticsMissionsPage() {
                             )}
                           </div>
                         </div>
+                      )}
+                      {awaitingBuyerReceipt(mission) && (
+                        <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50/60 p-3">
+                          <p className="text-xs font-semibold text-slate-900">{t('logisticsPages.receivingTitle')}</p>
+                          <p className="text-xs text-slate-600 mt-1">{t('logisticsPages.receivingHint')}</p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <input
+                              value={receivingCodes[mission.id] ?? ''}
+                              onChange={(e) => setReceivingCodes((prev) => ({ ...prev, [mission.id]: e.target.value }))}
+                              placeholder="STORE-…"
+                              autoCapitalize="characters"
+                              className="min-w-[180px] flex-1 rounded-lg border border-gray-300 px-3 py-2 font-mono text-sm uppercase"
+                            />
+                            <button
+                              type="button"
+                              disabled={receivingBusy !== null || !(receivingCodes[mission.id] ?? '').trim()}
+                              onClick={() => void startBuyerHandover(mission)}
+                              className="rounded-lg bg-[#2D5A27] px-3 py-2 text-xs font-medium text-white hover:bg-[#23471f] disabled:opacity-60"
+                            >
+                              {receivingBusy === mission.id
+                                ? t('logisticsPages.missionsLifecycleWorking')
+                                : t('logisticsPages.receivingStart')}
+                            </button>
+                          </div>
+                          {receivingError[mission.id] ? (
+                            <p className="mt-2 text-xs text-red-600">{receivingError[mission.id]}</p>
+                          ) : null}
+                        </div>
+                      )}
+                      {mission.delivery?.digital_handovers && (
+                        <p className="mt-3 text-xs text-slate-700">
+                          {t('logisticsPages.receivingStatus', {
+                            status: t(`logisticsPages.receivingHandover_${mission.delivery.digital_handovers.status}`, {
+                              defaultValue: mission.delivery.digital_handovers.status,
+                            }),
+                          })}
+                        </p>
                       )}
                       {siblingsByCity(missions, mission).length > 0 && (
                         <div className="mt-3 pt-2 border-t border-dashed border-gray-200 text-xs text-gray-600">

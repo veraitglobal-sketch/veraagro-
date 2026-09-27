@@ -457,6 +457,8 @@
     "lifecycleErr": "Something went wrong"
   },
   "handover": {
+    "manualLabel": "Or type the code the buyer shows",
+    "manualSubmit": "Start",
     "permCamera": "Camera permission is required",
     "completeTitle": "Handover completed",
     "stepScan": "Scan",
@@ -3139,5 +3141,12 @@
       "allocation": "Operations must allocate specific stock before further approval and payment.",
       "details": "Preparation and further updates are available in the order details."
     }
+  },
+  "buyerReceiving": {
+    "title": "Receiving code",
+    "hint": "When the truck arrives, show this code to the driver — they scan it to start the handover. Then you check the goods and sign.",
+    "show": "Show receiving code",
+    "loading": "Loading…",
+    "manualCode": "Code (if scanning fails)"
   }
 }

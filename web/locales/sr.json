@@ -2560,6 +2560,15 @@
     "refresh": "Osveži"
   },
   "logisticsPages": {
+    "receivingTitle": "Kod kupca — započni prijem",
+    "receivingHint": "Skenirajte ili ukucajte kod za prijem koji kupac pokaže (Isporuke → Prikaži kod za prijem). Kupac zatim proverava robu i potpisuje.",
+    "receivingStart": "Započni primopredaju",
+    "receivingErr": "Kod nije prihvaćen — proverite ga sa kupcem.",
+    "receivingStatus": "Prijem kod kupca: {{status}}",
+    "receivingHandover_INITIATED": "čeka da kupac proveri i potpiše",
+    "receivingHandover_IN_PROGRESS": "kupac proverava",
+    "receivingHandover_COMPLETED": "primljeno i potpisano",
+    "receivingHandover_DISPUTED": "sporno — operativa pregleda",
     "handoverChecklistTitle": "Pre završetka potrebno je:",
     "handoverReqMission": "Izaberite misiju",
     "handoverReqTemp": "Temperatura 2–8 °C",
@@ -5390,5 +5399,14 @@
     "noMission": "Nema dostupne misije za ovo gazdinstvo i porudžbinu. Pripremite ili dodelite transport u pregledu porudžbina/misija.",
     "backOrders": "Nazad na porudžbine",
     "allDispatch": "Prikaži sve otpreme"
+  },
+  "buyerReceiving": {
+    "title": "Kod za prijem",
+    "hint": "Kada kamion stigne, pokažite ovaj kod vozaču — on ga skenira i pokreće primopredaju. Zatim proverite robu i potpišite.",
+    "show": "Prikaži kod za prijem",
+    "loading": "Učitavanje…",
+    "manualCode": "Kod (ako skeniranje ne uspe)",
+    "handoverStartedHint": "Vozač je kod vas. Proverite robu, dodajte fotografije i potpišite prijem.",
+    "completeReceipt": "Završi prijem (fotografije + potpis)"
   }
 }

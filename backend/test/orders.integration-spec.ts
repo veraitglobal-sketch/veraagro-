@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import { receivingCodeFor } from '../src/digital-handover/receiving-code';
 import { ReturnDispositionService } from '../src/deliveries/return-disposition.service';
 import { RefundReconciliationService } from '../src/deliveries/refund-reconciliation.service';
 import { WalletsController } from '../src/wallets/wallets.controller';
@@ -365,7 +366,8 @@ describe('Orders, payments and delivery — real PostgreSQL + HTTP', () => {
     const delivery = (await post('/deliveries/assign', 'admin').send({ orderId, driverId: 'driver' }).expect(201)).body;
     await post(`/deliveries/${delivery.id}/pickup`, 'driver').expect(201);
     await post(`/deliveries/${delivery.id}/in-transit`, 'driver').expect(201);
-    const handover = (await post('/digital-handover/initiate', 'driver').send({ deliveryId: delivery.id, qrCode: 'STORE-TEST' }).expect(201)).body;
+    await post('/digital-handover/initiate', 'driver').send({ deliveryId: delivery.id, qrCode: 'STORE-TEST' }).expect(400);
+    const handover = (await post('/digital-handover/initiate', 'driver').send({ deliveryId: delivery.id, qrCode: receivingCodeFor(delivery.id) }).expect(201)).body;
     jest.spyOn(app.get(DigitalHandoverService) as any, 'generateDeliveryReceipt').mockResolvedValue(undefined);
     const image = `data:image/png;base64,${(await sharp({ create: { width: 24, height: 24, channels: 3, background: '#298040' } }).png().toBuffer()).toString('base64')}`;
     const body = { handoverId: handover.id, qualityCheck: { visualCheck: 'FRESH', temperature: 4, photoUrls: [image, image, image, image], signature: image } };
@@ -374,11 +376,11 @@ describe('Orders, payments and delivery — real PostgreSQL + HTTP', () => {
 
   it('retries driver initiation without duplicating the handover', async () => {
     const { delivery, handover } = await transitHandover();
-    const again = await post('/digital-handover/initiate', 'driver').send({ deliveryId: delivery.id, qrCode: 'STORE-TEST' }).expect(201);
+    const again = await post('/digital-handover/initiate', 'driver').send({ deliveryId: delivery.id, qrCode: receivingCodeFor(delivery.id) }).expect(201);
     expect(again.body.id).toBe(handover.id);
     expect(await prisma.digital_handovers.count()).toBe(1);
     await prisma.digital_handovers.deleteMany();
-    const simultaneous = await Promise.all([1, 2, 3].map(() => post('/digital-handover/initiate', 'driver').send({ deliveryId: delivery.id, qrCode: 'STORE-TEST' })));
+    const simultaneous = await Promise.all([1, 2, 3].map(() => post('/digital-handover/initiate', 'driver').send({ deliveryId: delivery.id, qrCode: receivingCodeFor(delivery.id) })));
     expect(simultaneous.map((r) => r.status)).toEqual([201, 201, 201]);
     expect(new Set(simultaneous.map((r) => r.body.id)).size).toBe(1);
   });
@@ -564,7 +566,14 @@ describe('Orders, payments and delivery — real PostgreSQL + HTTP', () => {
     await lifecycle(mission.id, 'COMPLETE_DELIVERY').expect(200);
     expect((await prisma.orders.findUnique({ where: { id: orderId } })).status).toBe('IN_TRANSIT');
     await post(`/deliveries/confirm/${delivery.deliveryQRCode}`).expect(400);
-    const handover = (await post('/digital-handover/initiate', 'logistics').send({ deliveryId: delivery.id, qrCode: 'STORE-TEST' }).expect(201)).body;
+    const codeUrl = `/deliveries/buyer/${delivery.id}/receiving-code`;
+    await request(app.getHttpServer()).get(codeUrl).auth(token('logistics'), { type: 'bearer' }).expect(403);
+    const shown = (await request(app.getHttpServer()).get(codeUrl).auth(token('buyer'), { type: 'bearer' }).expect(200)).body;
+    expect(shown.code).toBe(receivingCodeFor(delivery.id));
+    expect(shown.qrDataUrl).toMatch(/^data:image\/png;base64,/);
+    await post('/digital-handover/initiate', 'logistics').send({ deliveryId: delivery.id, qrCode: 'STORE-ANYTHING' }).expect(400);
+    const handover = (await post('/digital-handover/initiate', 'logistics').send({ deliveryId: delivery.id, qrCode: shown.code.toLowerCase() }).expect(201)).body;
+    await request(app.getHttpServer()).get(codeUrl).auth(token('buyer'), { type: 'bearer' }).expect(400);
     const image = `data:image/png;base64,${(await sharp({ create: { width: 24, height: 24, channels: 3, background: '#298040' } }).png().toBuffer()).toString('base64')}`;
     jest.spyOn(app.get(DigitalHandoverService) as any, 'generateDeliveryReceipt').mockResolvedValue(undefined);
     await post('/digital-handover/complete').send({ handoverId: handover.id, qualityCheck: { visualCheck: 'FRESH', temperature: 4, photoUrls: [image, image], signature: image } }).expect(201);

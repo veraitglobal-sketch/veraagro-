@@ -458,6 +458,8 @@
     "lifecycleErr": "Došlo je do greške"
   },
   "handover": {
+    "manualLabel": "Ili ukucajte kod koji kupac pokaže",
+    "manualSubmit": "Započni",
     "permCamera": "Dozvola za kameru je obavezna",
     "completeTitle": "Predaja završena",
     "stepScan": "Skeniraj",
@@ -3149,5 +3151,12 @@
       "allocation": "Operativa treba da dodeli konkretnu zalihu pre daljeg odobrenja i naplate.",
       "details": "Priprema i sledeće promene dostupne su u detaljima porudžbine."
     }
+  },
+  "buyerReceiving": {
+    "title": "Kod za prijem",
+    "hint": "Kada kamion stigne, pokažite ovaj kod vozaču — on ga skenira i pokreće primopredaju. Zatim proverite robu i potpišite.",
+    "show": "Prikaži kod za prijem",
+    "loading": "Učitavanje…",
+    "manualCode": "Kod (ako skeniranje ne uspe)"
   }
 }

@@ -11,6 +11,30 @@ import { apiErrorMessage } from '../../../lib/api-error';
 import { EnterpriseButton } from '../../../design-system/EnterpriseButton';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 
+const BEFORE_HANDOVER = new Set(['ASSIGNED', 'PICKED_UP', 'IN_TRANSIT']);
+
+/** Receiving code the buyer shows to the driver on arrival (QR + typed fallback). */
+function ReceivingCode({ deliveryId }: { deliveryId: string }) {
+  const { t } = useTranslation();
+  const [code, setCode] = useState<{ code: string; qrDataUrl: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const open = async () => {
+    setBusy(true);
+    try { setCode(await buyerDeliveriesAPI.receivingCode(deliveryId)); }
+    catch (e) { Alert.alert(t('error'), apiErrorMessage(e, t('deliveryFlow.loadFailed'))); }
+    finally { setBusy(false); }
+  };
+  return <View style={{ gap: 8, padding: 14, borderRadius: 14, backgroundColor: '#fff', borderWidth: 1, borderColor: 'rgba(17,24,39,0.1)' }}>
+    <Text style={{ fontSize: 15, fontWeight: '600', color: '#111827' }}>{t('buyerReceiving.title')}</Text>
+    <Text style={{ fontSize: 13, lineHeight: 18, color: '#4B5563' }}>{t('buyerReceiving.hint')}</Text>
+    {code ? <View style={{ alignItems: 'center', gap: 6, paddingTop: 4 }}>
+      <Image source={{ uri: code.qrDataUrl }} style={{ width: 200, height: 200 }} accessibilityLabel={code.code} />
+      <Text style={{ fontSize: 11, color: '#6B7280', textTransform: 'uppercase', letterSpacing: 0.8 }}>{t('buyerReceiving.manualCode')}</Text>
+      <Text selectable style={{ fontSize: 20, fontWeight: '700', letterSpacing: 2, color: '#111827', fontVariant: ['tabular-nums'] }}>{code.code}</Text>
+    </View> : <EnterpriseButton label={busy ? t('buyerReceiving.loading') : t('buyerReceiving.show')} onPress={() => void open()} disabled={busy} variant="secondary" />}
+  </View>;
+}
+
 export function BuyerDeliveryPanel({ orderId, deliveryId, onChanged }: { orderId?: string; deliveryId?: string; onChanged?: () => void }) {
   const { t } = useTranslation();
   const locale = useAppLocaleTag();
@@ -90,6 +114,7 @@ export function BuyerDeliveryPanel({ orderId, deliveryId, onChanged }: { orderId
         {delivery.returnCase.status === 'RECEIVED' && delivery.returnCase.stockStatus ? <Text>{t('returnDisposition.title')}: {t(`returnDisposition.states.${delivery.returnCase.stockStatus}`)}</Text> : null}
         {delivery.returnCase.refund ? <Text>{t(`returnFlow.refundStates.${delivery.returnCase.refund.status}`)} · {(delivery.returnCase.refund.amountCents / 100).toFixed(2)} {delivery.returnCase.refund.currency}</Text> : null}
       </View> : null}
+      {!delivery.digital_handovers && BEFORE_HANDOVER.has(String(delivery.status)) ? <ReceivingCode deliveryId={delivery.id} /> : null}
       {delivery.digital_handovers ? <EnterpriseButton
         disabled={busy}
         label={actions?.canCompleteHandover ? t('deliveryFlow.completeHandover') : t('deliveryFlow.viewEvidence')}

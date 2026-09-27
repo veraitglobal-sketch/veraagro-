@@ -5,6 +5,7 @@ import { json, urlencoded } from 'express';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { execSync } from 'child_process';
+import { StripSecretsInterceptor } from './common/interceptors/strip-secrets.interceptor';
 
 async function bootstrap() {
   // Run Prisma migrations before starting the app; see backend/MIGRATIONS.md (squashed baseline, Railway).
@@ -89,6 +90,9 @@ async function bootstrap() {
       },
     }),
   );
+
+  // Never serialize password hashes etc., even when a query includes a full users row.
+  app.useGlobalInterceptors(new StripSecretsInterceptor());
 
   // Global exception filter for consistent error responses
   app.useGlobalFilters(new HttpExceptionFilter());

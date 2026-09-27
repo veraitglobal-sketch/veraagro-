@@ -21,6 +21,10 @@ export const buyerDeliveriesAPI = {
   async confirm(deliveryId: string): Promise<unknown> {
     return (await api.post('/deliveries/buyer/confirm-pickup', { deliveryId })).data;
   },
+  /** Code (+ QR image) the buyer shows at the dock; the carrier scans it to start the handover. */
+  async receivingCode(deliveryId: string): Promise<{ code: string; qrDataUrl: string }> {
+    return (await api.get(`/deliveries/buyer/${encodeURIComponent(deliveryId)}/receiving-code`)).data;
+  },
   async report(deliveryId: string, description: string, photosBase64: string[]): Promise<{ id: string }> {
     return (await api.post('/deliveries/buyer/report-issue', { deliveryId, description, photosBase64 })).data;
   },
