@@ -80,7 +80,7 @@
 
 1. Kada nešto uradite — promenite status u tabeli i po potrebi dodajte red (kratko, jedna ideja po ćeliji „Problem“).
 2. Kanalni paritet (env, socket, CI) ostaje u **`WEB_MOBILE_CHANNEL_PARITY_PLAN.md`**.
-3. Širi funkcionalni TODO po modulima: **`TODO_WEB_MOBILE.md`** u korenu repozitorijuma.
+3. Širi funkcionalni TODO po modulima: [raniji TODO web/mobile](archive/legacy-root/TODO_WEB_MOBILE.md).
 
 **Poslednji sync (docs):** grower `/grower/portal` koristi mapirane poruke i milestone ključeve; mobilni grower login ujedinjen preko `/login?partner=1` — vidi taj plan i `partnerSignInHref` u `mobile/lib/post-login-redirect.ts`.
 

@@ -24,6 +24,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check repository hygiene and documentation links
+        run: node scripts/check-repository.mjs
+
       - uses: dorny/paths-filter@v3
         id: filter
         if: github.event_name != 'workflow_dispatch'
@@ -92,6 +95,7 @@ jobs:
         working-directory: mobile
         run: |
           npm ci
+          npm test
           npm run typecheck
 
   backend-build:
@@ -106,9 +110,53 @@ jobs:
           node-version: '22'
           cache: npm
           cache-dependency-path: backend/package-lock.json
-      - name: Install, Prisma generate, Nest build
+      - name: Install PostgreSQL tools for isolated integration tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql libpq-dev
+      - name: Install, Prisma generate, test, Nest build
         working-directory: backend
         run: |
           npm ci
           npx prisma generate
+          npm test -- --runInBand
+          npm run test:integration
           npm run build
+
+  buyer-browser:
+    needs: changes
+    if: needs.changes.outputs.web == 'true' || needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            web/package-lock.json
+      - name: Install PostgreSQL tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql libpq-dev
+      - name: Install backend
+        working-directory: backend
+        run: |
+          npm ci
+          npx prisma generate
+      - name: Install web and Chromium
+        working-directory: web
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Verify buyer checkout with isolated database
+        working-directory: backend
+        run: npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: buyer-browser-results
+          path: backend/test-results/browser
+          if-no-files-found: ignore

@@ -2,6 +2,7 @@
   "private": true,
   "name": "veraagrar",
   "scripts": {
+    "check:repo": "node scripts/check-repository.mjs",
     "parity:typecheck": "npm run typecheck --prefix web && npm run typecheck --prefix mobile",
     "parity:backend": "npm run prisma:generate --prefix backend && npm run build --prefix backend",
     "sync:tokens": "node scripts/sync-design-tokens.mjs",

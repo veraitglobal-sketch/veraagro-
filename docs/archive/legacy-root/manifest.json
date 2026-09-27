@@ -1,0 +1,602 @@
+[
+  {
+    "original": "502_BAD_GATEWAY_FIX.md",
+    "archive": "docs/archive/legacy-root/502_BAD_GATEWAY_FIX.md",
+    "sha256BeforeMove": "ce13d896638fbb61c94269df44d5f5a69eda75fa84130e66c4d1f1e651d1d387"
+  },
+  {
+    "original": "ADMIN_FARMER_CORRELATION.md",
+    "archive": "docs/archive/legacy-root/ADMIN_FARMER_CORRELATION.md",
+    "sha256BeforeMove": "0eb4df73954fb7dd46c9234538201d0e0be42f631831fc00c52db83b5c39e80d"
+  },
+  {
+    "original": "AI_WIDGET_SETUP.md",
+    "archive": "docs/archive/legacy-root/AI_WIDGET_SETUP.md",
+    "sha256BeforeMove": "940cfd5882cf0ba98ca01c82e4d2616d11958ce8d3c77521e5266e332d1bc96a"
+  },
+  {
+    "original": "API_BIOVERA_APP_SETUP.md",
+    "archive": "docs/archive/legacy-root/API_BIOVERA_APP_SETUP.md",
+    "sha256BeforeMove": "038c9f4a996affd1ec888198de93c04c0f81a3cf70199b5a0ca423a01f4df679"
+  },
+  {
+    "original": "API_CUSTOM_DOMAIN_POVEZIVANJE.md",
+    "archive": "docs/archive/legacy-root/API_CUSTOM_DOMAIN_POVEZIVANJE.md",
+    "sha256BeforeMove": "e218865c21c993e79bf22347b0bf9f12866248d110020e86677bc026d0e92e5a"
+  },
+  {
+    "original": "API_DOMAIN_NOT_WORKING_FIX.md",
+    "archive": "docs/archive/legacy-root/API_DOMAIN_NOT_WORKING_FIX.md",
+    "sha256BeforeMove": "287d78b0653b8a0e8389ac6b5bbc2c55bc2373088eff8b913d42ba2c5077dfd5"
+  },
+  {
+    "original": "API_URL_PROTOCOL_FIX.md",
+    "archive": "docs/archive/legacy-root/API_URL_PROTOCOL_FIX.md",
+    "sha256BeforeMove": "532e46bf1618c2a4636a646854001609351976c081fefac5f566befebf759e55"
+  },
+  {
+    "original": "ARCHITECTURE.md",
+    "archive": "docs/archive/legacy-root/ARCHITECTURE.md",
+    "sha256BeforeMove": "34de6a7e8df1582ea5e99bc0ab78072e62b76d81af3ae7bc97f00593c43c445a"
+  },
+  {
+    "original": "ARCHITECTURE_DESIGN_DOCUMENT.md",
+    "archive": "docs/archive/legacy-root/ARCHITECTURE_DESIGN_DOCUMENT.md",
+    "sha256BeforeMove": "bacd090c98f5f4b21fd0518570705dac38c680d9504cdd7c5f18b75181e75c42"
+  },
+  {
+    "original": "BACKEND_COMPLETE_DEBUG.md",
+    "archive": "docs/archive/legacy-root/BACKEND_COMPLETE_DEBUG.md",
+    "sha256BeforeMove": "6159430a7813b5c8f542885777fb54fc4dbff2b3e172042c5d5a1590ebc50e34"
+  },
+  {
+    "original": "BACKEND_CONNECTION_FIX.md",
+    "archive": "docs/archive/legacy-root/BACKEND_CONNECTION_FIX.md",
+    "sha256BeforeMove": "5fb81277062f456a252fe888833338616fbd13105a311be191da89ce0345eb00"
+  },
+  {
+    "original": "BACKEND_DEPLOYMENT_OPTIONS.md",
+    "archive": "docs/archive/legacy-root/BACKEND_DEPLOYMENT_OPTIONS.md",
+    "sha256BeforeMove": "ddb16866cf8d8e028360dd52f81ea7cdd8d3ed5ce0e5c1a1e2312856ab3cf647"
+  },
+  {
+    "original": "BACKEND_LOGS_CHECK.md",
+    "archive": "docs/archive/legacy-root/BACKEND_LOGS_CHECK.md",
+    "sha256BeforeMove": "3c1865d41c58dd23ad859f9ca898fee4f52c2b74b6290145af89c0b2b04f36d5"
+  },
+  {
+    "original": "BIOVERA_APP_DOMAIN_SETUP.md",
+    "archive": "docs/archive/legacy-root/BIOVERA_APP_DOMAIN_SETUP.md",
+    "sha256BeforeMove": "2a6dd3aec8bc3f0c0ca5b6fc569bdb0ab5e2619ad8a64cda8978a5e4976d87d3"
+  },
+  {
+    "original": "BUILD_ERRORS_FIX.md",
+    "archive": "docs/archive/legacy-root/BUILD_ERRORS_FIX.md",
+    "sha256BeforeMove": "77fc6360b4dfa1037d72a3a220af32f4d0d5129cacf2af43481320e47fb7ed3a"
+  },
+  {
+    "original": "BUSINESS_LOGIC_COMPLETE.md",
+    "archive": "docs/archive/legacy-root/BUSINESS_LOGIC_COMPLETE.md",
+    "sha256BeforeMove": "6cb1b32113fa9b83fe1bd16898c1fabac8a0790faed237c7bc3d9cf48dd9f2a8"
+  },
+  {
+    "original": "BUYER_DASHBOARD_IMPROVEMENTS.md",
+    "archive": "docs/archive/legacy-root/BUYER_DASHBOARD_IMPROVEMENTS.md",
+    "sha256BeforeMove": "fd337ded21d38c385d60c73dd4a62f0db33101d5eb3b79066feb8ff896e48a1f"
+  },
+  {
+    "original": "BUYER_PORTAL_ENHANCEMENT.md",
+    "archive": "docs/archive/legacy-root/BUYER_PORTAL_ENHANCEMENT.md",
+    "sha256BeforeMove": "d44fcc9c795a97f7b43aafcef0124c19463356e1d79131fdb4834c90ca3e46b0"
+  },
+  {
+    "original": "COMMON_ISSUES.md",
+    "archive": "docs/archive/legacy-root/COMMON_ISSUES.md",
+    "sha256BeforeMove": "c3f3d1903f56e3559923931b7679c34d32ac06a22df0c2034b5871ab3d5e6133"
+  },
+  {
+    "original": "CONTACT_FORM_DEBUG.md",
+    "archive": "docs/archive/legacy-root/CONTACT_FORM_DEBUG.md",
+    "sha256BeforeMove": "04643b9c8d0f928834cddb9141aa50ebc86160b251943bb696de6e077e97fbfd"
+  },
+  {
+    "original": "CONTACT_FORM_NETWORK_ERROR_FIX.md",
+    "archive": "docs/archive/legacy-root/CONTACT_FORM_NETWORK_ERROR_FIX.md",
+    "sha256BeforeMove": "d7f9d8d2f1de1ca13d4e3747480621393913a362f06a81e45a630f3c0c3b1c37"
+  },
+  {
+    "original": "CONTACT_FORM_TROUBLESHOOTING.md",
+    "archive": "docs/archive/legacy-root/CONTACT_FORM_TROUBLESHOOTING.md",
+    "sha256BeforeMove": "e25887b819335bfcfdb09f5ad765e1497ace90615b46a1c99010ee5de21d7fce"
+  },
+  {
+    "original": "CTO_ARCHITECTURE_REVIEW.md",
+    "archive": "docs/archive/legacy-root/CTO_ARCHITECTURE_REVIEW.md",
+    "sha256BeforeMove": "75533effc0876eba86b1e23a7541f95f5e19dcce480b2e4a8a6b98d85cb59ed0"
+  },
+  {
+    "original": "CTO_FINAL_REPORT.md",
+    "archive": "docs/archive/legacy-root/CTO_FINAL_REPORT.md",
+    "sha256BeforeMove": "be4e4e1d3e1c8067ed5df3a3c2923bab04d3bd72724b0b92e4cec147eca7e470"
+  },
+  {
+    "original": "CTO_OPTIMIZATION_IMPLEMENTATION.md",
+    "archive": "docs/archive/legacy-root/CTO_OPTIMIZATION_IMPLEMENTATION.md",
+    "sha256BeforeMove": "b8ea84fcade87b02b2a060ad5d665fe410030c570a8bbe712ea809df43d0a573"
+  },
+  {
+    "original": "CUSTOM_DOMAIN_BACKEND_FIX.md",
+    "archive": "docs/archive/legacy-root/CUSTOM_DOMAIN_BACKEND_FIX.md",
+    "sha256BeforeMove": "29e75b16bc70fb540de6b731cb49362c24bc6719273cc495fabf632685c9b9ae"
+  },
+  {
+    "original": "CUSTOM_DOMAIN_FIX.md",
+    "archive": "docs/archive/legacy-root/CUSTOM_DOMAIN_FIX.md",
+    "sha256BeforeMove": "06773acf7050e08b23048f139ed06f9382151a68fbd694e32f6a8baeb943327b"
+  },
+  {
+    "original": "DEBUG_NETWORK_ERROR.md",
+    "archive": "docs/archive/legacy-root/DEBUG_NETWORK_ERROR.md",
+    "sha256BeforeMove": "347571be47182c6680776488b697c3ba659dec960c56ae4987a9657d7e1f19c7"
+  },
+  {
+    "original": "DEPLOYMENT_FAQ.md",
+    "archive": "docs/archive/legacy-root/DEPLOYMENT_FAQ.md",
+    "sha256BeforeMove": "15db16333ec50c0bdcfea37c96c62b5992f8fe7b36e1891e936ee7c746e5ee54"
+  },
+  {
+    "original": "DEPLOY_NO_CHANGES_WHY.md",
+    "archive": "docs/archive/legacy-root/DEPLOY_NO_CHANGES_WHY.md",
+    "sha256BeforeMove": "8694cf9c371d537cf31fb83cb4f8d8c37e8543fd4914f9961b0ba6c918c97f80"
+  },
+  {
+    "original": "DNS_CNAME_FIX.md",
+    "archive": "docs/archive/legacy-root/DNS_CNAME_FIX.md",
+    "sha256BeforeMove": "185aadfaaf611c4b752d0a569ccf43b60a50f2ff91ca9e9b4131b26ca12210a6"
+  },
+  {
+    "original": "DNS_FIX_VERCEL.md",
+    "archive": "docs/archive/legacy-root/DNS_FIX_VERCEL.md",
+    "sha256BeforeMove": "98c081c71fca2bc9e413dea0921347b5f595fae0693346d5421ddab9d63fc19a"
+  },
+  {
+    "original": "EMAIL_RECEIVING_FIX.md",
+    "archive": "docs/archive/legacy-root/EMAIL_RECEIVING_FIX.md",
+    "sha256BeforeMove": "91026118cae3b52ac0f1b4c0a4c0962e60ffd61d28909560fb19a4060c0a418d"
+  },
+  {
+    "original": "ENTERPRISE_FEATURES.md",
+    "archive": "docs/archive/legacy-root/ENTERPRISE_FEATURES.md",
+    "sha256BeforeMove": "0c434a3415ba19087aaf2cee5e948cd80fb57057fe979596e3397aa8c4d714eb"
+  },
+  {
+    "original": "EXPORT_AUTOMATOR_GUIDE.md",
+    "archive": "docs/archive/legacy-root/EXPORT_AUTOMATOR_GUIDE.md",
+    "sha256BeforeMove": "9507b6d074e15314b2fe85f87077cfdc0e35964ed58bb8f147d445ee2f932d7c"
+  },
+  {
+    "original": "FARMER_FIELD_MANAGEMENT_GUIDE.md",
+    "archive": "docs/archive/legacy-root/FARMER_FIELD_MANAGEMENT_GUIDE.md",
+    "sha256BeforeMove": "9dfbe1d26ac76f29f5d351c67a443a3245ac6721a20b2c548597b1daf5b2b362"
+  },
+  {
+    "original": "FINAL_CONTACT_FORM_FIX.md",
+    "archive": "docs/archive/legacy-root/FINAL_CONTACT_FORM_FIX.md",
+    "sha256BeforeMove": "42aa340bdfa6e15eb49ff6fa8c829ad0ee82e7b9b6fb4f34c54ab9d62ef5fbf9"
+  },
+  {
+    "original": "FINAL_DEPLOYMENT_CHECKLIST.md",
+    "archive": "docs/archive/legacy-root/FINAL_DEPLOYMENT_CHECKLIST.md",
+    "sha256BeforeMove": "04316d7b6d5b48423f02ee1339a93d963a98fb5df7e1577184d0770f8b65fa6c"
+  },
+  {
+    "original": "FINAL_FIX.md",
+    "archive": "docs/archive/legacy-root/FINAL_FIX.md",
+    "sha256BeforeMove": "a9394ab597496e6a3d05aeb4e79faaf77e86abc2a1f6d59b16ceb7218c108a9d"
+  },
+  {
+    "original": "FINAL_REDEPLOY_FIX.md",
+    "archive": "docs/archive/legacy-root/FINAL_REDEPLOY_FIX.md",
+    "sha256BeforeMove": "084f322fb17717a5805670882910cb4fe1dd3d5f0c827f8942a3af0db2e2f87a"
+  },
+  {
+    "original": "FIXES_APPLIED.md",
+    "archive": "docs/archive/legacy-root/FIXES_APPLIED.md",
+    "sha256BeforeMove": "bb5e05c9aca24b0bee7607765dbc166792f0205f4e8bfeeb2f01df9f8dccacac"
+  },
+  {
+    "original": "FIX_NETWORK_ERROR.md",
+    "archive": "docs/archive/legacy-root/FIX_NETWORK_ERROR.md",
+    "sha256BeforeMove": "4ae4abc6dbc33ca62d9988526446ba971b871afecb347d81036dff0498fd0180"
+  },
+  {
+    "original": "FIX_PDF_IMAGES.md",
+    "archive": "docs/archive/legacy-root/FIX_PDF_IMAGES.md",
+    "sha256BeforeMove": "9a739705e4e3666a3f252886259a9e784bc10e0f35347a4dbf802e8e943e6165"
+  },
+  {
+    "original": "GITHUB_SSH_SETUP.md",
+    "archive": "docs/archive/legacy-root/GITHUB_SSH_SETUP.md",
+    "sha256BeforeMove": "1e3fe00c5c9c46f37b757046b8729c83537ee96135c2eb69a37d1fedf54ac46b"
+  },
+  {
+    "original": "IMPLEMENTATION_GUIDE.md",
+    "archive": "docs/archive/legacy-root/IMPLEMENTATION_GUIDE.md",
+    "sha256BeforeMove": "016338549f1409b7b819cbc776961072688369a140966e43be9aab57b8401371"
+  },
+  {
+    "original": "IMPROVMX_MX_FIX.md",
+    "archive": "docs/archive/legacy-root/IMPROVMX_MX_FIX.md",
+    "sha256BeforeMove": "413105d4706849ea64ca79a8f7cddc1c4e24ac27ccc0231da9ec4022c852bbfc"
+  },
+  {
+    "original": "INTELLIGENCE_TERMINAL_SPEC.md",
+    "archive": "docs/archive/legacy-root/INTELLIGENCE_TERMINAL_SPEC.md",
+    "sha256BeforeMove": "6d333a0439ba27f1c355a3917d2484b55b1dd5b9dc7bee1f53b56704e7d37fc3"
+  },
+  {
+    "original": "IONOS_EMAIL_FINAL_CHECK.md",
+    "archive": "docs/archive/legacy-root/IONOS_EMAIL_FINAL_CHECK.md",
+    "sha256BeforeMove": "175eba336465639606eeb3d2a27ed56501bad57b80f450a209ef5bb2161ccb50"
+  },
+  {
+    "original": "IONOS_EMAIL_MX_FIX.md",
+    "archive": "docs/archive/legacy-root/IONOS_EMAIL_MX_FIX.md",
+    "sha256BeforeMove": "5e3841e0a9923a3b76a53a8cf2df4a1501f9d4a4a2095386164d027b6dc3365e"
+  },
+  {
+    "original": "IONOS_EMAIL_TROUBLESHOOTING.md",
+    "archive": "docs/archive/legacy-root/IONOS_EMAIL_TROUBLESHOOTING.md",
+    "sha256BeforeMove": "17311bc3f6923345b987a69235cbd8fab545b2bab0ae82ce534b617cdc4747ce"
+  },
+  {
+    "original": "IONOS_VERCEL_NAMESERVER_FIX.md",
+    "archive": "docs/archive/legacy-root/IONOS_VERCEL_NAMESERVER_FIX.md",
+    "sha256BeforeMove": "8bfe012bba37ae53f8bebf9557a97b9e05011a8175a40732640761a977a47023"
+  },
+  {
+    "original": "KAKO_POKRENUTI.md",
+    "archive": "docs/archive/legacy-root/KAKO_POKRENUTI.md",
+    "sha256BeforeMove": "ef1821502120c08e3f8fb29f11c947358a6044951a1ee651642fcb9008b0e7bb"
+  },
+  {
+    "original": "KONTAKT_FORMA_PODESAVANJA.md",
+    "archive": "docs/archive/legacy-root/KONTAKT_FORMA_PODESAVANJA.md",
+    "sha256BeforeMove": "b8021bdc6fc1bc78194701a2af2e10139db589f572f895e2a16f103c96568036"
+  },
+  {
+    "original": "LOCALIZATION_REVIEW.md",
+    "archive": "docs/archive/legacy-root/LOCALIZATION_REVIEW.md",
+    "sha256BeforeMove": "618e952aea0dd14a306cb57dbd631bf519390a691756a6e306f5a2af32d3a932"
+  },
+  {
+    "original": "LOGISTICS_OPTIMIZER_GUIDE.md",
+    "archive": "docs/archive/legacy-root/LOGISTICS_OPTIMIZER_GUIDE.md",
+    "sha256BeforeMove": "fa982553fe529c91e9f2e118bdc4c2e822dc0b83356da52ee8e70868c997a7fd"
+  },
+  {
+    "original": "MARKET_SCRAPER_GUIDE.md",
+    "archive": "docs/archive/legacy-root/MARKET_SCRAPER_GUIDE.md",
+    "sha256BeforeMove": "c4ced17bf500b9389916836ccf30118d8fb30d84b4771faf4b3f675bcd6a16b1"
+  },
+  {
+    "original": "MOBILE_ARCHITECTURE_PLAN.md",
+    "archive": "docs/archive/legacy-root/MOBILE_ARCHITECTURE_PLAN.md",
+    "sha256BeforeMove": "d2ee344138e4d25056fe3c5c37e5701d7cf06126851597305f8c25b09322b736"
+  },
+  {
+    "original": "MOBILE_GROWERS_URADJENO_I_OSTALO.md",
+    "archive": "docs/archive/legacy-root/MOBILE_GROWERS_URADJENO_I_OSTALO.md",
+    "sha256BeforeMove": "e4549a83754883b1bedf8c4342722a50e59339ca5baf84b5c4dd99bc4582d779"
+  },
+  {
+    "original": "MOBILE_NAREDBE_2H.md",
+    "archive": "docs/archive/legacy-root/MOBILE_NAREDBE_2H.md",
+    "sha256BeforeMove": "41be90becc5ae02f818183751fe6d8882f36edfe1ba3c38acf2f9b800a18a5c5"
+  },
+  {
+    "original": "MOBILE_OPTIMIZATION_WEB_BACKLOG.md",
+    "archive": "docs/archive/legacy-root/MOBILE_OPTIMIZATION_WEB_BACKLOG.md",
+    "sha256BeforeMove": "486e4ad24dfa2a9c6499e0a0c372f7fc04c8ee9404353db6e792659331814422"
+  },
+  {
+    "original": "MOBILE_STA_OSTALO_I_DALJE.md",
+    "archive": "docs/archive/legacy-root/MOBILE_STA_OSTALO_I_DALJE.md",
+    "sha256BeforeMove": "8046c869fdc55155e5f3196a8fee3ed86d6d3bd926ee7519e2b4e37ab34f2398"
+  },
+  {
+    "original": "MX_RECORDS_CLEANUP.md",
+    "archive": "docs/archive/legacy-root/MX_RECORDS_CLEANUP.md",
+    "sha256BeforeMove": "c245b676d390b979a706bcc9af1daef081425a18ec4f10dface526d8423c1c1b"
+  },
+  {
+    "original": "NAMESERVER_VS_DNS_RECORDS.md",
+    "archive": "docs/archive/legacy-root/NAMESERVER_VS_DNS_RECORDS.md",
+    "sha256BeforeMove": "6ca95f78ed906451be734c9671b665670eece9e50d9ff9b6e99b673737f3fa01"
+  },
+  {
+    "original": "OPENAI_API_KEY_SETUP.md",
+    "archive": "docs/archive/legacy-root/OPENAI_API_KEY_SETUP.md",
+    "sha256BeforeMove": "91a85ed7d6149ec8a96dd725e39e1e6c2d0c8586ff38d45ec5f4944b254a14af"
+  },
+  {
+    "original": "PDF_IMAGES_FIX_SUMMARY.md",
+    "archive": "docs/archive/legacy-root/PDF_IMAGES_FIX_SUMMARY.md",
+    "sha256BeforeMove": "151c9b7daa3d36eb03ba293a3b834943917cb900554cd027be6a50abbfc57a87"
+  },
+  {
+    "original": "POSTGRES_LOG_ANALYSIS.md",
+    "archive": "docs/archive/legacy-root/POSTGRES_LOG_ANALYSIS.md",
+    "sha256BeforeMove": "870ab0ab9395c32444bd48f53541382d8f3840892e1c7c5ada80f702e8341cc7"
+  },
+  {
+    "original": "PRODUCT_MANAGEMENT_SYSTEM.md",
+    "archive": "docs/archive/legacy-root/PRODUCT_MANAGEMENT_SYSTEM.md",
+    "sha256BeforeMove": "c96b57af79b894b33be788f1ac0cb7bae74aa392c1625dd0762dfebb598b0656"
+  },
+  {
+    "original": "PROJECT_OVERVIEW.md",
+    "archive": "docs/archive/legacy-root/PROJECT_OVERVIEW.md",
+    "sha256BeforeMove": "38da4f4125bbf761d2090b16d7ef87d605797cfa299f71b28d38fd171173ab99"
+  },
+  {
+    "original": "PROSPECT_DOWNLOAD_TROUBLESHOOTING.md",
+    "archive": "docs/archive/legacy-root/PROSPECT_DOWNLOAD_TROUBLESHOOTING.md",
+    "sha256BeforeMove": "44719a3e6ff86bd235e9ea655454083771ff4443cb9046b039d2fb998fa3f923"
+  },
+  {
+    "original": "PROVERA_MAIL_I_VERA_BOT.md",
+    "archive": "docs/archive/legacy-root/PROVERA_MAIL_I_VERA_BOT.md",
+    "sha256BeforeMove": "9f0879bc166cabc429519fe452566916cc9adeae258ee29e21f0732058e6761c"
+  },
+  {
+    "original": "PUTOKAZ_SISTEMA.md",
+    "archive": "docs/archive/legacy-root/PUTOKAZ_SISTEMA.md",
+    "sha256BeforeMove": "ff48473a61cc10f9b5bdab47c18cf621cb465e4797fe52146b907543a0b22a5e"
+  },
+  {
+    "original": "QA_STRESS_TEST_REPORT.md",
+    "archive": "docs/archive/legacy-root/QA_STRESS_TEST_REPORT.md",
+    "sha256BeforeMove": "0462fb305e00775989363170bd83732a10e6c7ba615cc7e8bff1e4e87a8c8fb4"
+  },
+  {
+    "original": "QUICK_START.md",
+    "archive": "docs/archive/legacy-root/QUICK_START.md",
+    "sha256BeforeMove": "eef5c38d7189f3244140895d1f661889a8c556c08f8258fd8eaaa439ae7c6f3c"
+  },
+  {
+    "original": "RAILWAY_BACKEND_URL.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_BACKEND_URL.md",
+    "sha256BeforeMove": "5a1ea84ed3df08cf1a71563860779f36433008e5897af8be1b1309e79f784e08"
+  },
+  {
+    "original": "RAILWAY_BUILDER_FIX.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_BUILDER_FIX.md",
+    "sha256BeforeMove": "63032bae50b07105b8e4087a10a8dd127cf3098cef91075503bf0e546ab7dd38"
+  },
+  {
+    "original": "RAILWAY_BUILD_FIX.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_BUILD_FIX.md",
+    "sha256BeforeMove": "146998164322cf8f631cadcc829a4b6ca0902ab9d3113f265884e150b06db8cc"
+  },
+  {
+    "original": "RAILWAY_CACHE_CLEAR.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_CACHE_CLEAR.md",
+    "sha256BeforeMove": "d7f8ea85022b7e948dd5089baf61bee62b841183a1de9a90b0f78277c81ecd72"
+  },
+  {
+    "original": "RAILWAY_CRASH_DEBUG.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_CRASH_DEBUG.md",
+    "sha256BeforeMove": "7189474952c81769cbbfedd7ce6efadcad1298edfee65a2206dec22d81ccf91c"
+  },
+  {
+    "original": "RAILWAY_CRASH_FIX.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_CRASH_FIX.md",
+    "sha256BeforeMove": "ec1fb8acbff3601501cbd693761e0356176d046d277f1d5a63ebd0987f1b431d"
+  },
+  {
+    "original": "RAILWAY_DEBIAN_BULLSEYE_FIX.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_DEBIAN_BULLSEYE_FIX.md",
+    "sha256BeforeMove": "3ab1468d803969e4f010367263a5f298a37e27d794a02952edab7cb326c51c1d"
+  },
+  {
+    "original": "RAILWAY_DOCKERFILE_FIX.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_DOCKERFILE_FIX.md",
+    "sha256BeforeMove": "821556050b8eb898a80b8fb4f55a7102a9c29af4ae771e050b39f4f4c9e578fe"
+  },
+  {
+    "original": "RAILWAY_ENV_VARIABLES.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_ENV_VARIABLES.md",
+    "sha256BeforeMove": "9cec34673ceefe7c344026a7eb817932439002ef9554307d589a6acc65027d60"
+  },
+  {
+    "original": "RAILWAY_FIX.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_FIX.md",
+    "sha256BeforeMove": "322ce9ac53ef01a3303d9918903a4959fc228da61eb1eb4d740762c6a6897620"
+  },
+  {
+    "original": "RAILWAY_JWT_FIX.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_JWT_FIX.md",
+    "sha256BeforeMove": "ca145af36f97e7ac1b92f0653363284541d0b59e0ba27cad862bbe2dfc9e9b21"
+  },
+  {
+    "original": "RAILWAY_JWT_SECRET_FIX.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_JWT_SECRET_FIX.md",
+    "sha256BeforeMove": "dd2cd10790e49b259888e367350154691570c3754f82ac9c07e25aba0337d076"
+  },
+  {
+    "original": "RAILWAY_NEXT_STEPS.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_NEXT_STEPS.md",
+    "sha256BeforeMove": "ceeabba94928ee23a4fb2090d5188a41dfe5c520d6b57937364e51b527459185"
+  },
+  {
+    "original": "RAILWAY_OPENSSL_FINAL_FIX.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_OPENSSL_FINAL_FIX.md",
+    "sha256BeforeMove": "fb6069ee4ca0fe9f700f71ee46ab2767e881eaf22f6c7a9680d94a63fbe05c08"
+  },
+  {
+    "original": "RAILWAY_PRISMA_OPENSSL3_FIX.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_PRISMA_OPENSSL3_FIX.md",
+    "sha256BeforeMove": "949bd05d06f098154f21602626023f949c1f8a4e5df1aa81ba09ae7f4b158089"
+  },
+  {
+    "original": "RAILWAY_PRISMA_OPENSSL_FIX.md",
+    "archive": "docs/archive/legacy-root/RAILWAY_PRISMA_OPENSSL_FIX.md",
+    "sha256BeforeMove": "83606191ff990e120c8af4521e9e1b95be0ff945521b06398c8dfed9e7c68f5d"
+  },
+  {
+    "original": "README.md",
+    "archive": "docs/archive/legacy-root/README.md",
+    "sha256BeforeMove": "e8bbc255c1e07847f3ce6d0d7b6f4d751b8a663b6e307d68cef1fe51534d8ee1"
+  },
+  {
+    "original": "RESEND_ACTIVATION.md",
+    "archive": "docs/archive/legacy-root/RESEND_ACTIVATION.md",
+    "sha256BeforeMove": "92043bfc3f809dce69bbd56569912a05ea52ecdb6db4fa1ffbd88c0d437d821c"
+  },
+  {
+    "original": "RESEND_DNS_CORRECT.md",
+    "archive": "docs/archive/legacy-root/RESEND_DNS_CORRECT.md",
+    "sha256BeforeMove": "3fc33964fcedb36db5f72f5f57246689451c982f6f7a47aaad724e68bd7a5f37"
+  },
+  {
+    "original": "RESEND_DNS_FIX.md",
+    "archive": "docs/archive/legacy-root/RESEND_DNS_FIX.md",
+    "sha256BeforeMove": "a6c831a052ffada33cef9203868a8c60e1d9601ed448cace24de70c7b990d9f1"
+  },
+  {
+    "original": "RESEND_DNS_PROPAGATION.md",
+    "archive": "docs/archive/legacy-root/RESEND_DNS_PROPAGATION.md",
+    "sha256BeforeMove": "23e45d486d2f5c486bde874d76c0eb8bf4fc64c7b0ef55dc3908601007a3ad48"
+  },
+  {
+    "original": "RESEND_DOMAIN_VERIFY_API.md",
+    "archive": "docs/archive/legacy-root/RESEND_DOMAIN_VERIFY_API.md",
+    "sha256BeforeMove": "36a0301ce84f466805151916b0efcda4e222ab74d6d43249613241c2a9db2b1c"
+  },
+  {
+    "original": "RESEND_IONOS_CHECKLIST.md",
+    "archive": "docs/archive/legacy-root/RESEND_IONOS_CHECKLIST.md",
+    "sha256BeforeMove": "c05f0f2ba0a226d2af80a645e739119e6e5bd626a021576bcd77bf05877dd69b"
+  },
+  {
+    "original": "RESEND_VERIFICATION_WAIT.md",
+    "archive": "docs/archive/legacy-root/RESEND_VERIFICATION_WAIT.md",
+    "sha256BeforeMove": "3e7663fd7a7e6f29e6f7475808500f8a50dbc3b5b10295074f446584c8ced57a"
+  },
+  {
+    "original": "RESEND_VERIFY_NOW.md",
+    "archive": "docs/archive/legacy-root/RESEND_VERIFY_NOW.md",
+    "sha256BeforeMove": "1a717cf61574d1b55111b45cc742ec0c745fec0d71e6dabd16851fb35f51aef7"
+  },
+  {
+    "original": "SLEDECI_KORACI.md",
+    "archive": "docs/archive/legacy-root/SLEDECI_KORACI.md",
+    "sha256BeforeMove": "89f0a35315ba7dddc8df8b17d0839dd10ebec01565c7201345a077f10f748e30"
+  },
+  {
+    "original": "SSL_CERT_FIX.md",
+    "archive": "docs/archive/legacy-root/SSL_CERT_FIX.md",
+    "sha256BeforeMove": "dbfd2a6f017b0419110e54ff59b599a9a2654e4f04362980433247aaf2ae6b4f"
+  },
+  {
+    "original": "STATUS.md",
+    "archive": "docs/archive/legacy-root/STATUS.md",
+    "sha256BeforeMove": "d5a11286da15a36e313631a236022324760c44fbcd2d3b492231e5147312bc90"
+  },
+  {
+    "original": "STATUS_OSTALO.md",
+    "archive": "docs/archive/legacy-root/STATUS_OSTALO.md",
+    "sha256BeforeMove": "d64081d0fa7fce1578ee1ae47e9771b3c0f83fb458a9614d35cafe325d842a2c"
+  },
+  {
+    "original": "TEST_PROSPECT_DOWNLOAD.md",
+    "archive": "docs/archive/legacy-root/TEST_PROSPECT_DOWNLOAD.md",
+    "sha256BeforeMove": "95ed8dccd50269b90b43dbc0626d47772133665e4ca240f0d7501c8ebb93ddbf"
+  },
+  {
+    "original": "TODO.md",
+    "archive": "docs/archive/legacy-root/TODO.md",
+    "sha256BeforeMove": "a8cdb2b18bcc31c9b2a5f2e1d81a99882302571df1b31e6899a8707e7cc007a6"
+  },
+  {
+    "original": "TODO_CUSTOM_DOMAIN_LOGIN.md",
+    "archive": "docs/archive/legacy-root/TODO_CUSTOM_DOMAIN_LOGIN.md",
+    "sha256BeforeMove": "760e257cb1646b15a3c3ead632ddd43c24cae7f745b2cdeecc1ddac8f8856072"
+  },
+  {
+    "original": "TODO_WEB_MOBILE.md",
+    "archive": "docs/archive/legacy-root/TODO_WEB_MOBILE.md",
+    "sha256BeforeMove": "055ed24124b240a09924a1e2c4246f42562d02bb5685166ece2b51fa2319e802"
+  },
+  {
+    "original": "TRACEABILITY_SYSTEM_SUMMARY.md",
+    "archive": "docs/archive/legacy-root/TRACEABILITY_SYSTEM_SUMMARY.md",
+    "sha256BeforeMove": "9480c57420f708650a2f4ce0d6453e7fcbe62ae1150ef5434dc639eee4516703"
+  },
+  {
+    "original": "UPDATE_EXISTING_ENV_VAR.md",
+    "archive": "docs/archive/legacy-root/UPDATE_EXISTING_ENV_VAR.md",
+    "sha256BeforeMove": "59991fd77fd6aebe7e8164fb58d8e2e0641f77e0addd2e0eb1ae50c13d578b8c"
+  },
+  {
+    "original": "VERA_TRANSPARENCY_MODULE.md",
+    "archive": "docs/archive/legacy-root/VERA_TRANSPARENCY_MODULE.md",
+    "sha256BeforeMove": "cd0a81413abd76b2126b453bb2a1700e950fa3dabdd2ca684c14080614e14c9e"
+  },
+  {
+    "original": "VERCEL_API_URL_UPDATE.md",
+    "archive": "docs/archive/legacy-root/VERCEL_API_URL_UPDATE.md",
+    "sha256BeforeMove": "25ce552ea0384ba8c599af1f3032ac36c77873b10007321ff47b3035da971bb6"
+  },
+  {
+    "original": "VERCEL_BUILD_FIX.md",
+    "archive": "docs/archive/legacy-root/VERCEL_BUILD_FIX.md",
+    "sha256BeforeMove": "22406f79aaedae3de48a3c790c8cc11d4125da3cd26b3d414b50c8b754c31244"
+  },
+  {
+    "original": "VERCEL_CACHE_CLEAR.md",
+    "archive": "docs/archive/legacy-root/VERCEL_CACHE_CLEAR.md",
+    "sha256BeforeMove": "ed9c35ce1f9ae241f9cf65f2f319158701e731a1cce9cfe0658b9909a06fa60f"
+  },
+  {
+    "original": "VERCEL_CACHE_FIX.md",
+    "archive": "docs/archive/legacy-root/VERCEL_CACHE_FIX.md",
+    "sha256BeforeMove": "a50f496ee3fe8b2eabc4b1cbda3029d93c06616ed6ad91a79b58fe7662ab3805"
+  },
+  {
+    "original": "VERCEL_DNS_RECORDS.md",
+    "archive": "docs/archive/legacy-root/VERCEL_DNS_RECORDS.md",
+    "sha256BeforeMove": "f2ff7531647ff83d5c4abcacb1b7269f03afb46a214dec6c42c129c4ee25bf3e"
+  },
+  {
+    "original": "VERCEL_ENV_SETUP.md",
+    "archive": "docs/archive/legacy-root/VERCEL_ENV_SETUP.md",
+    "sha256BeforeMove": "5aef9ae3d9da3e0a7524c9eca443096d5433286ffca9baac031d6971b5984f2e"
+  },
+  {
+    "original": "VERCEL_ENV_VARS_NEEDED.md",
+    "archive": "docs/archive/legacy-root/VERCEL_ENV_VARS_NEEDED.md",
+    "sha256BeforeMove": "e9b75ce20f77f86deb7c592541fc8fa7d4f9c13103243bd501346d90fa3b13e0"
+  },
+  {
+    "original": "VERCEL_NAMESERVER_SETUP.md",
+    "archive": "docs/archive/legacy-root/VERCEL_NAMESERVER_SETUP.md",
+    "sha256BeforeMove": "6d5c9da1c3b035faa4a6ca7e17665facae15a053f1bb57f8c79954a4fb6b9081"
+  },
+  {
+    "original": "VERIFY_API_URL.md",
+    "archive": "docs/archive/legacy-root/VERIFY_API_URL.md",
+    "sha256BeforeMove": "df9864255ff6fdb674cfa0103fdc0990d4d721df0a0f3a2247b2e59b12a6cb2e"
+  },
+  {
+    "original": "VISION_ENHANCEMENT_PROPOSALS.md",
+    "archive": "docs/archive/legacy-root/VISION_ENHANCEMENT_PROPOSALS.md",
+    "sha256BeforeMove": "2e2beb4dcc164130f3134bc522eea618f7c136f11c1b8716220a1fb231a63fcd"
+  },
+  {
+    "original": "WHY_ERRORS.md",
+    "archive": "docs/archive/legacy-root/WHY_ERRORS.md",
+    "sha256BeforeMove": "3bc590d84bcfe82b9fddc0c810a2cba902e8df2878f171382c08d7b49abb6da8"
+  }
+]

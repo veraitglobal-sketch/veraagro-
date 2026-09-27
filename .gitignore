@@ -1,7 +1,22 @@
-.DS_Store
+# Dependencies and generated build output
+node_modules/
+dist/
+.next/
+out/
+coverage/
+test-results/
+*.tsbuildinfo
+
+# Local tool state and caches
+.expo/
+.vercel/
+__pycache__/
+*.py[cod]
+
+# Local environment and diagnostic files
+.env*
 *.log
-.env
-.env.*
+.DS_Store
 
 # Accidental placeholder file (breaks EAS ignore — invalid path "...")
 ...

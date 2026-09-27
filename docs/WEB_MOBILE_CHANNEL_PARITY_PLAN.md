@@ -190,5 +190,5 @@ Radi se **nakon** što su P0–P3 zategnuti (ili u paraleli tamo gde nema konfli
 
 ## Povezani dokumenti
 
-- Opšti backlog web/mobilni: [`TODO_WEB_MOBILE.md`](../TODO_WEB_MOBILE.md) u korenu repozitorijuma.
+- Opšti backlog web/mobilni: [`TODO_WEB_MOBILE.md`](archive/legacy-root/TODO_WEB_MOBILE.md) u arhivi ranijih planova.
 - Unapređenja stranica i povezivanja (rute, CTAs, javni sajt): [`PAGE_IMPROVEMENTS_AND_LINKING_BACKLOG.md`](PAGE_IMPROVEMENTS_AND_LINKING_BACKLOG.md).
