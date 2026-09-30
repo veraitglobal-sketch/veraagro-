@@ -853,6 +853,59 @@ Bio Vera Team
     return this.sendSimpleEmail({ to: data.email, subject, html, text });
   }
 
+  /** Invite a seed factory user to the producer portal (not the grower welcome template). */
+  async sendProducerPortalInviteEmail(data: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    partnerCode: string;
+    temporaryPassword: string;
+    portalUrl: string;
+    loginUrl: string;
+  }): Promise<boolean> {
+    const subject = 'Bio Vera seed producer portal — your access';
+    const html = `
+      <!DOCTYPE html><html><head><meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #2D5A27; color: white; padding: 20px; text-align: center; }
+        .content { background-color: #f9f9f9; padding: 30px; }
+        .credentials { background: white; border: 2px solid #2D5A27; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .button { display: inline-block; padding: 12px 24px; background-color: #2D5A27; color: white; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+      </style></head><body>
+      <div class="container">
+        <div class="header"><h1>Bio Vera</h1><p>Seed producer portal</p></div>
+        <div class="content">
+          <p>Dear <strong>${data.firstName} ${data.lastName}</strong>,</p>
+          <p>You have access to the Bio Vera seed producer portal. Sign in to download label PDFs and confirm production for your factory lots.</p>
+          <div class="credentials">
+            <p><strong>Partner code:</strong> ${data.partnerCode}</p>
+            <p><strong>Email:</strong> ${data.email}</p>
+            <p><strong>Temporary password:</strong> ${data.temporaryPassword}</p>
+          </div>
+          <p><a href="${data.loginUrl}" class="button">Sign in to producer portal</a></p>
+          <p>Portal: <a href="${data.portalUrl}">${data.portalUrl}</a></p>
+          <p>Please change your password after first sign-in.</p>
+        </div>
+      </div></body></html>`;
+    const text = `Dear ${data.firstName} ${data.lastName},
+
+You have access to the Bio Vera seed producer portal.
+
+Partner code: ${data.partnerCode}
+Email: ${data.email}
+Temporary password: ${data.temporaryPassword}
+
+Sign in: ${data.loginUrl}
+Portal: ${data.portalUrl}
+
+Please change your password after first sign-in.
+
+— Bio Vera`;
+    return this.sendSimpleEmail({ to: data.email, subject, html, text });
+  }
+
   private async sendSimpleEmail(data: {
     to: string;
     subject: string;

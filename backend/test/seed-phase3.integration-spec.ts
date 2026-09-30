@@ -42,7 +42,10 @@ describe('Seed phase 3 — integration', () => {
       .overrideProvider(NotificationsService)
       .useValue({ create: jest.fn().mockResolvedValue({}), notifyAdmins: jest.fn().mockResolvedValue(undefined) })
       .overrideProvider(EmailService)
-      .useValue({ sendFarmerWelcomeEmail: jest.fn().mockResolvedValue(undefined) })
+      .useValue({
+        sendFarmerWelcomeEmail: jest.fn().mockResolvedValue(undefined),
+        sendProducerPortalInviteEmail: jest.fn().mockResolvedValue(undefined),
+      })
       .compile();
 
     app = module.createNestApplication();

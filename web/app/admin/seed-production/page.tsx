@@ -24,6 +24,14 @@ import { useTranslation } from 'react-i18next';
 import { formatDateEn } from '@/lib/en-locale-dates';
 import { Loader2, Plus, Sprout, X } from 'lucide-react';
 
+function ReportTh({ label, tip }: { label: string; tip: string }) {
+  return (
+    <th className="px-3 py-2 text-right font-medium text-gray-600" title={tip}>
+      {label}
+    </th>
+  );
+}
+
 function runStatusClass(status: string): string {
   if (status === 'RELEASED') return 'bg-green-100 text-green-800';
   if (status === 'PRODUCED') return 'bg-blue-100 text-blue-800';
@@ -272,25 +280,29 @@ export default function SeedProductionDashboardPage() {
                             <tr>
                               <th className="px-3 py-2 text-left font-medium text-gray-600">{t('seedProduction.runs.product')}</th>
                               <th className="px-3 py-2 text-left font-medium text-gray-600">{t('seedProduction.runs.seedYear')}</th>
-                              <th className="px-3 py-2 text-right font-medium text-gray-600">{t('seedProduction.stats.labeled')}</th>
-                              <th className="px-3 py-2 text-right font-medium text-gray-600">{t('seedProduction.stats.available')}</th>
-                              <th className="px-3 py-2 text-right font-medium text-gray-600">{t('seedProduction.reports.shipped', { defaultValue: 'Shipped' })}</th>
-                              <th className="px-3 py-2 text-right font-medium text-gray-600">{t('seedProduction.reports.sold', { defaultValue: 'Sold' })}</th>
-                              <th className="px-3 py-2 text-right font-medium text-gray-600">{t('seedProduction.stats.planted')}</th>
-                              <th className="px-3 py-2 text-right font-medium text-gray-600">{t('seedProduction.stats.recalled')}</th>
+                              <ReportTh label={t('seedProduction.stats.labeled')} tip={t('seedProduction.reports.tooltip.labeled')} />
+                              <ReportTh label={t('seedProduction.runs.bagsProduced')} tip={t('seedProduction.reports.tooltip.produced')} />
+                              <ReportTh label={t('seedProduction.stats.available')} tip={t('seedProduction.reports.tooltip.atProducer')} />
+                              <ReportTh label={t('seedProduction.reports.shipped')} tip={t('seedProduction.reports.tooltip.shipped')} />
+                              <ReportTh label={t('seedProduction.reports.sold')} tip={t('seedProduction.reports.tooltip.sold')} />
+                              <ReportTh label={t('seedProduction.stats.assigned')} tip={t('seedProduction.reports.tooltip.assignedAdmin')} />
+                              <ReportTh label={t('seedProduction.stats.planted')} tip={t('seedProduction.reports.tooltip.planted')} />
+                              <ReportTh label={t('seedProduction.stats.recalled')} tip={t('seedProduction.reports.tooltip.recalled')} />
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-gray-100">
                             {reports.byProductYear.length === 0 ? (
-                              <tr><td colSpan={8} className="px-3 py-6 text-gray-500">{t('seedProduction.runs.empty')}</td></tr>
+                              <tr><td colSpan={10} className="px-3 py-6 text-gray-500">{t('seedProduction.runs.empty')}</td></tr>
                             ) : reports.byProductYear.map((row) => (
                               <tr key={`${row.productId}-${row.seedCropYear}`}>
                                 <td className="px-3 py-2">{String(row.product)}{row.variety ? ` (${String(row.variety)})` : ''}</td>
                                 <td className="px-3 py-2 tabular-nums">{String(row.seedCropYear)}</td>
                                 <td className="px-3 py-2 text-right tabular-nums">{Number(row.labeled)}</td>
+                                <td className="px-3 py-2 text-right tabular-nums">{Number(row.produced ?? 0)}</td>
                                 <td className="px-3 py-2 text-right tabular-nums">{Number(row.atProducer)}</td>
                                 <td className="px-3 py-2 text-right tabular-nums">{Number(row.shipped)}</td>
                                 <td className="px-3 py-2 text-right tabular-nums">{Number(row.sold)}</td>
+                                <td className="px-3 py-2 text-right tabular-nums">{Number(row.assignedAdmin ?? 0)}</td>
                                 <td className="px-3 py-2 text-right tabular-nums">{Number(row.planted)}</td>
                                 <td className="px-3 py-2 text-right tabular-nums">{Number(row.recalled)}</td>
                               </tr>
@@ -333,7 +345,11 @@ export default function SeedProductionDashboardPage() {
                           {reports.plantedParcels.map((p) => (
                             <li key={String(p.parcelId)} className="py-2 flex flex-wrap gap-x-4 gap-y-1">
                               <span className="font-mono text-xs">{String(p.growerPartnerCode ?? '—')}</span>
-                              <span>{String(p.lot ?? '—')}</span>
+                              <span>
+                                {Array.isArray(p.lots) && p.lots.length
+                                  ? (p.lots as Array<{ lot: string; bags: number }>).map((l) => `${l.lot} (${l.bags})`).join(', ')
+                                  : String(p.lot ?? '—')}
+                              </span>
                               <span>{Number(p.bags)} bag(s)</span>
                               {p.plantedAt ? <span>{String(p.plantedAt)}</span> : null}
                               <Link href={`/admin/farm?parcel=${encodeURIComponent(String(p.parcelId))}`} className="text-[#2D5A27] hover:underline">

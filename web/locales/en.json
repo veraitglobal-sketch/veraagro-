@@ -1973,7 +1973,17 @@
       "sold": "Sold",
       "received": "Received",
       "inStock": "In stock",
-      "viewParcel": "View parcel"
+      "viewParcel": "View parcel",
+      "tooltip": {
+        "labeled": "All Bio Vera codes issued (every bag serial created for runs in this filter).",
+        "produced": "Sum of bags actually confirmed at the factory (bagsProduced on each run).",
+        "atProducer": "Bags still at the producer (AVAILABLE, not yet shipped to a supplier).",
+        "shipped": "Bags ever shipped to a supplier (cumulative — includes bags already sold or planted).",
+        "sold": "Bags sold to growers through suppliers (SOLD status).",
+        "assignedAdmin": "Bags assigned directly to a grower by Bio Vera admin.",
+        "planted": "Bags recorded as planted or partially used in the field.",
+        "recalled": "Bags marked recalled from this lot."
+      }
     }
   },
   "seedProducer": {

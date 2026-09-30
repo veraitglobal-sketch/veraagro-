@@ -1279,6 +1279,14 @@ model field_entries {
   @@index([seedId])
 }
 
+model stored_documents {
+  id        String   @id @default(uuid())
+  mimeType  String
+  fileName  String?
+  data      Bytes
+  createdAt DateTime @default(now())
+}
+
 model seeds {
   id                String                 @id
   serialNumber      String                 @unique

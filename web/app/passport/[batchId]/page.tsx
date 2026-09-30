@@ -10,6 +10,8 @@ import { getFirstName } from '@/lib/farmer-utils';
 import { BlockchainVerification } from '@/components/BlockchainVerification';
 import { WEB_API_BASE } from '@/lib/api-base';
 import { apiErrorOrT } from '@/lib/api-error';
+import { formatRouteDisplay } from '@/lib/format-route';
+import { formatSeedProductName } from '@/lib/format-seed-product-name';
 
 interface Treatment {
   appliedAt: string;
@@ -320,7 +322,15 @@ export default function ProductPassportPage() {
             loaded: apiData.timeline?.loaded != null ? toIso(apiData.timeline.loaded) : null,
             arrived: arrived || undefined,
             stored: apiData.timeline?.stored ? { date: apiData.timeline.stored.date, temperature: apiData.timeline.stored.temperature ?? 4, humidity: apiData.timeline.stored.humidity ?? 60 } : null,
-            transport: apiData.missions?.[0] ? { vehicleNumber: apiData.missions[0].vehicle?.vehicleNumber || apiData.missions[0].vehicle?.licensePlate || '—', licensePlate: apiData.missions[0].vehicle?.licensePlate, route: apiData.sustainability?.route || 'Origin → Destination' } : apiData.timeline?.transport || null,
+            transport: apiData.missions?.[0]
+              ? {
+                  vehicleNumber: apiData.missions[0].vehicle?.vehicleNumber || apiData.missions[0].vehicle?.licensePlate || '—',
+                  licensePlate: apiData.missions[0].vehicle?.licensePlate,
+                  route: formatRouteDisplay(apiData.sustainability?.route) || 'Origin → Destination',
+                }
+              : apiData.timeline?.transport
+                ? { ...apiData.timeline.transport, route: formatRouteDisplay(apiData.timeline.transport.route) || 'Origin → Destination' }
+                : null,
             arrival: arrived ? { estimated: arrived, location: 'European Market' } : null,
           };
         })(),
@@ -357,7 +367,13 @@ export default function ProductPassportPage() {
             }
           : null,
         freshness: apiData.freshness ? { remainingShelfLifeHours: apiData.freshness.remainingShelfLifeHours, expiresAt: apiData.freshness.expiresAt != null ? (typeof apiData.freshness.expiresAt === 'string' ? apiData.freshness.expiresAt : new Date(apiData.freshness.expiresAt).toISOString()) : undefined, timestampHarvested: apiData.freshness.timestampHarvested != null ? (typeof apiData.freshness.timestampHarvested === 'string' ? apiData.freshness.timestampHarvested : new Date(apiData.freshness.timestampHarvested).toISOString()) : undefined, isExpired: apiData.freshness.isExpired } : null,
-        sustainability: apiData.sustainability ? { totalDistanceKm: apiData.sustainability.totalDistanceKm, sustainabilityScore: apiData.sustainability.sustainabilityScore, route: apiData.sustainability.route } : null,
+        sustainability: apiData.sustainability
+          ? {
+              totalDistanceKm: apiData.sustainability.totalDistanceKm,
+              sustainabilityScore: apiData.sustainability.sustainabilityScore,
+              route: formatRouteDisplay(apiData.sustainability.route),
+            }
+          : null,
         missions: apiData.missions?.map((m: any) => ({
           missionNumber: m.missionNumber,
           status: m.status,
@@ -785,8 +801,7 @@ export default function ProductPassportPage() {
                     </p>
                   ) : null}
                   <p className="font-medium text-gray-900">
-                    {run.product}
-                    {run.variety ? ` — ${run.variety}` : ''}
+                    {formatSeedProductName(run.product, run.variety)}
                   </p>
                   <p className="text-gray-600 mt-1">
                     Lot {run.lotNumber} · Seed year {run.seedCropYear}

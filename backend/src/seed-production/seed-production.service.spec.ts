@@ -12,11 +12,14 @@ describe('SeedProductionService', () => {
     seed_production_runs: {
       findUnique: jest.fn(),
       update: jest.fn(),
+      findMany: jest.fn(),
     },
     seeds: {
       findMany: jest.fn(),
       findUnique: jest.fn(),
       update: jest.fn(),
+      groupBy: jest.fn(),
+      count: jest.fn(),
     },
     users: { findMany: jest.fn().mockResolvedValue([]) },
     parcels: { findMany: jest.fn().mockResolvedValue([]) },
@@ -25,7 +28,7 @@ describe('SeedProductionService', () => {
     audit_trails: { create: jest.fn() },
   };
   const notifications = { create: jest.fn() };
-  const email = { sendFarmerWelcomeEmail: jest.fn() };
+  const email = { sendFarmerWelcomeEmail: jest.fn(), sendProducerPortalInviteEmail: jest.fn() };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -122,6 +125,56 @@ describe('SeedProductionService', () => {
         }),
       }),
     );
+  });
+
+  it('getReportsSummary aggregates funnel columns from runs and bags', async () => {
+    prisma.seed_production_runs.findMany.mockResolvedValue([
+      {
+        id: 'run-a',
+        approvedProductId: 'prod1',
+        seedCropYear: 2026,
+        bagsProduced: 22,
+        approvedProduct: { name: 'Raspberry seed', variety: 'Willamette' },
+        producer: { name: 'NS Seme' },
+      },
+      {
+        id: 'run-b',
+        approvedProductId: 'prod1',
+        seedCropYear: 2026,
+        bagsProduced: 8,
+        approvedProduct: { name: 'Raspberry seed', variety: 'Willamette' },
+        producer: { name: 'NS Seme' },
+      },
+    ]);
+    prisma.seeds.groupBy
+      .mockResolvedValueOnce([
+        { status: 'AVAILABLE', _count: 5 },
+        { status: 'VOIDED', _count: 2 },
+        { status: 'SOLD', _count: 3 },
+        { status: 'PLANTED', _count: 4 },
+      ])
+      .mockResolvedValueOnce([
+        { status: 'AVAILABLE', _count: 1 },
+        { status: 'ASSIGNED', _count: 2 },
+        { status: 'IN_SUPPLIER_STOCK', _count: 1 },
+      ]);
+    prisma.seeds.count
+      .mockResolvedValueOnce(4)
+      .mockResolvedValueOnce(1);
+    prisma.seeds.findMany.mockResolvedValue([]);
+    prisma.users.findMany.mockResolvedValue([]);
+
+    const summary = await service.getReportsSummary({ year: 2026 });
+    expect(summary.byProductYear).toHaveLength(1);
+    const row = summary.byProductYear[0];
+    expect(row.produced).toBe(30);
+    expect(row.labeled).toBe(18);
+    expect(row.voided).toBe(2);
+    expect(row.atProducer).toBe(6);
+    expect(row.shipped).toBe(5);
+    expect(row.sold).toBe(3);
+    expect(row.assignedAdmin).toBe(2);
+    expect(row.planted).toBe(4);
   });
 
   it('recall notifies growers and marks bags', async () => {

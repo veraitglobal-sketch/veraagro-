@@ -7,13 +7,14 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
 } from 'react-native';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
-import { Check, ScanLine } from 'lucide-react-native';
+import { Check, ScanLine, X } from 'lucide-react-native';
 import { EnterpriseButton, EnterprisePanel, EnterpriseTextField, EnterpriseTextArea } from '../../../design-system';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { GrowerSelectField } from '../../../components/grower/GrowerSelectField';
@@ -23,9 +24,9 @@ import { seedsAPI, estatesAPI, parcelsAPI, harvestAnnouncementsAPI, fieldEntries
 import { apiErrorMessage, isLikelyNetworkError } from '../../../lib/api-error';
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { offlineStorage } from '../../../lib/offline-storage';
-import { syncService } from '../../../lib/sync-service';
 import { pickFromCamera } from '../../../lib/camera-picker';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
+import { formatSeedProductName } from '../../../lib/format-seed-product-name';
 import type { Estate, Parcel } from '../../../lib/api/types';
 
 type BagLine = {
@@ -58,23 +59,35 @@ export default function PlantingEntryScreen() {
   const [notes, setNotes] = useState('');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [location, setLocation] = useState<{ lat: number; lng: number; accuracy?: number } | null>(null);
+  const [locating, setLocating] = useState(false);
   const [busy, setBusy] = useState(false);
   const [savedSummary, setSavedSummary] = useState<string | null>(null);
   const [offlineQueued, setOfflineQueued] = useState(false);
   const [manualSerial, setManualSerial] = useState('');
   const [addingManual, setAddingManual] = useState(false);
 
-  const totalKg = useMemo(() => bags.reduce((s, b) => s + b.quantityKg, 0), [bags]);
+  const validBags = useMemo(() => bags.filter((b) => b.ok), [bags]);
+  const rejectedBags = useMemo(() => bags.filter((b) => !b.ok), [bags]);
+  const totalKg = useMemo(() => validBags.reduce((s, b) => s + b.quantityKg, 0), [validBags]);
 
-  const loadLocation = useCallback(async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') return;
+  const loadLocation = useCallback(async (): Promise<{ lat: number; lng: number; accuracy?: number } | null> => {
+    setLocating(true);
     try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') return null;
       const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-      setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy ?? undefined });
+      const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy ?? undefined };
+      setLocation(loc);
+      return loc;
     } catch {
-      /* optional until save */
+      return null;
+    } finally {
+      setLocating(false);
     }
+  }, []);
+
+  const removeBag = useCallback((serial: string) => {
+    setBags((prev) => prev.filter((b) => b.serial !== serial));
   }, []);
 
   const addBagFromSerial = useCallback(
@@ -115,10 +128,10 @@ export default function PlantingEntryScreen() {
             serial,
             quantityKg: 0,
             maxKg: 0,
-            product: '?',
-            lot: '?',
+            product: '',
+            lot: '',
             seedCropYear: 0,
-            producer: '?',
+            producer: '',
             ok: false,
             error: apiErrorMessage(e, t('seedScan.notGenuine')),
           },
@@ -171,7 +184,7 @@ export default function PlantingEntryScreen() {
     }
     void (async () => {
       const all = await harvestAnnouncementsAPI.getMy();
-      const crop = bags[0]?.product?.toLowerCase() ?? '';
+      const crop = validBags[0]?.product?.toLowerCase() ?? '';
       const plantingPlans = (Array.isArray(all) ? all : [])
         .filter((p: { parcelId?: string; announcementType?: string; cropType?: string }) => {
           if (p.parcelId !== parcelId || p.announcementType !== 'PLANTING') return false;
@@ -187,46 +200,56 @@ export default function PlantingEntryScreen() {
       setPlans(plantingPlans);
       if (plantingPlans.length === 1) setPlantingId(plantingPlans[0].id);
     })();
-  }, [parcelId, bags]);
+  }, [parcelId, validBags]);
 
   const scanAnother = () => router.push('/scan-qr');
 
   const save = async () => {
-    if (!bags.length || bags.some((b) => !b.ok)) {
+    if (!validBags.length) {
       Alert.alert(t('error'), t('plantingEntry.fixBagsFirst'));
+      return;
+    }
+    if (rejectedBags.length) {
+      Alert.alert(t('error'), t('plantingEntry.removeRejectedBags'));
       return;
     }
     if (!farmId || !parcelId) {
       Alert.alert(t('error'), t('plantingEntry.parcelRequired'));
       return;
     }
-    if (!location) {
+
+    let loc = location;
+    if (!loc) {
+      loc = await loadLocation();
+    }
+    if (!loc) {
       Alert.alert(t('error'), t('plantingEntry.gpsRequired'));
       return;
     }
+
     setBusy(true);
     const clientReference = `plant-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     const payload = {
       type: 'SETVA',
       farmId,
       clientReference,
-      seedSerialNumber: bags[0].serial,
+      seedSerialNumber: validBags[0].serial,
       data: {
         date: new Date(occurredAt).toISOString(),
         parcelId,
         plantingId: plantingId || undefined,
-        materialName: bags[0].product,
+        materialName: formatSeedProductName(validBags[0].product, validBags[0].variety),
         materialQuantity: totalKg,
         materialUnit: 'kg',
         areaHa: areaHa ? parseFloat(areaHa) : undefined,
         notes: notes.trim() || undefined,
         photos: photoUri ? [photoUri] : [],
-        bags: bags.map((b) => ({ serial: b.serial, quantityKg: b.quantityKg })),
-        lot: bags[0]?.lot,
-        seedCropYear: bags[0]?.seedCropYear,
-        producer: bags[0]?.producer,
-        variety: bags[0]?.variety,
-        location,
+        bags: validBags.map((b) => ({ serial: b.serial, quantityKg: b.quantityKg })),
+        lot: validBags[0]?.lot,
+        seedCropYear: validBags[0]?.seedCropYear,
+        producer: validBags[0]?.producer,
+        variety: validBags[0]?.variety,
+        location: loc,
       },
     };
     try {
@@ -241,11 +264,11 @@ export default function PlantingEntryScreen() {
       const farmName = estates.find((e) => e.id === farmId)?.name ?? '';
       setSavedSummary(
         t('plantingEntry.summary', {
-          count: bags.length,
+          count: validBags.length,
           kg: totalKg,
-          product: bags[0].product,
-          variety: bags[0].variety ? ` – ${bags[0].variety}` : '',
-          lot: bags[0].lot,
+          product: formatSeedProductName(validBags[0].product, validBags[0].variety),
+          variety: '',
+          lot: validBags[0].lot,
           farm: farmName,
           area: areaHa ? ` · ${areaHa} ha` : '',
         }),
@@ -263,7 +286,17 @@ export default function PlantingEntryScreen() {
     }
   };
 
-  const parcelOptions = parcels.map((p) => ({ id: p.id, label: p.cropType ? `${p.cropType} (${p.id.slice(0, 8)})` : p.id.slice(0, 8) }));
+  const selectedFarm = estates.find((e) => e.id === farmId);
+  const parcelOptions = parcels.map((p) => ({
+    id: p.id,
+    label: selectedFarm?.name ? `${selectedFarm.name} — ${p.cropType}` : p.cropType,
+  }));
+
+  const saveBlockedReason = rejectedBags.length
+    ? t('plantingEntry.removeRejectedInline')
+    : !validBags.length
+      ? t('plantingEntry.addBagFirst')
+      : null;
 
   return (
     <SafeAreaView style={growerUi.canvas} edges={['bottom']}>
@@ -282,22 +315,37 @@ export default function PlantingEntryScreen() {
               <EnterprisePanel>
                 <Text style={styles.section}>{t('plantingEntry.bagsTitle')}</Text>
                 {bags.map((b) => (
-                  <View key={b.serial} style={styles.bagRow}>
+                  <View key={b.serial} style={[styles.bagRow, !b.ok && styles.bagRowRejected]}>
+                    <Pressable
+                      onPress={() => removeBag(b.serial)}
+                      accessibilityLabel={t('plantingEntry.removeBag')}
+                      style={styles.removeBtn}
+                      hitSlop={8}
+                    >
+                      <X size={18} color={b.ok ? enterpriseColors.gray600 : '#b91c1c'} />
+                    </Pressable>
                     {b.ok ? <Check size={18} color={enterpriseColors.primary} /> : null}
                     <View style={styles.bagBody}>
-                      <Text style={styles.bagTitle}>{b.product}{b.variety ? ` — ${b.variety}` : ''}</Text>
-                      <Text style={styles.bagMeta}>{t('plantingEntry.lotLine', { lot: b.lot, year: b.seedCropYear, producer: b.producer })}</Text>
-                      {b.error ? <Text style={styles.bagError}>{b.error}</Text> : (
-                        <EnterpriseTextField
-                          label={t('plantingEntry.quantityKg')}
-                          value={String(b.quantityKg)}
-                          onChangeText={(v) => {
-                            const n = parseFloat(v.replace(',', '.'));
-                            setBags((prev) => prev.map((x) => x.serial === b.serial ? { ...x, quantityKg: Math.min(b.maxKg, Math.max(0, n || 0)) } : x));
-                          }}
-                          keyboardType="decimal-pad"
-                          size="farmer"
-                        />
+                      {b.ok ? (
+                        <>
+                          <Text style={styles.bagTitle}>{formatSeedProductName(b.product, b.variety)}</Text>
+                          <Text style={styles.bagMeta}>{t('plantingEntry.lotLine', { lot: b.lot, year: b.seedCropYear, producer: b.producer })}</Text>
+                          <EnterpriseTextField
+                            label={t('plantingEntry.quantityKg')}
+                            value={String(b.quantityKg)}
+                            onChangeText={(v) => {
+                              const n = parseFloat(v.replace(',', '.'));
+                              setBags((prev) => prev.map((x) => x.serial === b.serial ? { ...x, quantityKg: Math.min(b.maxKg, Math.max(0, n || 0)) } : x));
+                            }}
+                            keyboardType="decimal-pad"
+                            size="farmer"
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <Text style={styles.bagRejectedSerial}>{b.serial}</Text>
+                          <Text style={styles.bagError}>{b.error}</Text>
+                        </>
                       )}
                     </View>
                   </View>
@@ -357,7 +405,15 @@ export default function PlantingEntryScreen() {
                 }} fullWidth />
               </EnterprisePanel>
 
-              <EnterpriseButton label={t('plantingEntry.save')} onPress={() => void save()} loading={busy} fullWidth size="large" />
+              {saveBlockedReason ? <Text style={styles.inlineBlock}>{saveBlockedReason}</Text> : null}
+              <EnterpriseButton
+                label={locating ? t('plantingEntry.gettingLocation') : t('plantingEntry.save')}
+                onPress={() => void save()}
+                loading={busy || locating}
+                disabled={!!saveBlockedReason}
+                fullWidth
+                size="large"
+              />
             </>
           )}
         </ScrollView>
@@ -370,11 +426,15 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   section: { fontSize: 16, fontWeight: '600', color: enterpriseColors.gray900, marginBottom: 12 },
   bagRow: { flexDirection: 'row', gap: 10, marginBottom: 16, alignItems: 'flex-start' },
+  bagRowRejected: { backgroundColor: '#fef2f2', borderRadius: 8, padding: 8, borderWidth: 1, borderColor: '#fecaca' },
+  removeBtn: { paddingTop: 2 },
   bagBody: { flex: 1 },
   bagTitle: { fontSize: 15, fontWeight: '600', color: enterpriseColors.gray900 },
   bagMeta: { fontSize: 13, color: enterpriseColors.gray600, marginBottom: 8 },
-  bagError: { color: '#b91c1c', fontSize: 13 },
+  bagRejectedSerial: { fontSize: 13, fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace', color: enterpriseColors.gray900 },
+  bagError: { color: '#b91c1c', fontSize: 13, marginTop: 4 },
   summary: { fontSize: 16, color: enterpriseColors.gray900, marginBottom: 12, lineHeight: 22 },
   hint: { fontSize: 13, color: enterpriseColors.gray600, marginBottom: 12 },
   manualRow: { marginTop: 16, gap: 8 },
+  inlineBlock: { color: '#b91c1c', fontSize: 13, marginBottom: 8, paddingHorizontal: 4 },
 });

@@ -20,6 +20,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { saveDurableDocument } from '../common/durable-document';
+import { StoredDocumentsService } from '../stored-documents/stored-documents.service';
 import { SeedProductionService } from './seed-production.service';
 import { ConfirmProductionDto } from './dto/confirm-production.dto';
 
@@ -27,7 +28,10 @@ import { ConfirmProductionDto } from './dto/confirm-production.dto';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('SEED_PRODUCER')
 export class SeedProducerController {
-  constructor(private service: SeedProductionService) {}
+  constructor(
+    private service: SeedProductionService,
+    private documents: StoredDocumentsService,
+  ) {}
 
   @Get('me')
   me(@Request() req: { user: { id: string } }) {
@@ -81,7 +85,7 @@ export class SeedProducerController {
 
   @Post('runs/:id/certificates')
   @UseInterceptors(FileInterceptor('file'))
-  uploadCertificate(
+  async uploadCertificate(
     @Request() req: { user: { id: string } },
     @Param('id') id: string,
     @UploadedFile() file: { buffer: Buffer; mimetype: string; originalname?: string; size: number },
@@ -92,7 +96,7 @@ export class SeedProducerController {
     if (!allowed.includes(file.mimetype)) {
       throw new BadRequestException('Certificate must be PDF or JPG');
     }
-    const url = saveDurableDocument(file, 'seed-certificates');
+    const url = await saveDurableDocument(this.documents, file);
     return this.service.appendProducerCertificate(req.user.id, id, url);
   }
 }

@@ -10,6 +10,7 @@ import { formatFarmerIdentity, getFirstName, extractRegion } from '@/lib/farmer-
 import { BlockchainVerification } from '@/components/BlockchainVerification';
 import { WEB_API_BASE } from '@/lib/api-base';
 import { apiErrorOrT } from '@/lib/api-error';
+import { formatSeedProductName } from '@/lib/format-seed-product-name';
 import { useTranslation } from 'react-i18next';
 
 interface VerificationData {
@@ -314,8 +315,7 @@ export default function VerifyPage() {
                     </p>
                   ) : null}
                   <p className="font-medium text-gray-900">
-                    {run.product}
-                    {run.variety ? ` — ${run.variety}` : ''}
+                    {formatSeedProductName(run.product, run.variety)}
                   </p>
                   <p className="text-gray-600 mt-1">
                     Lot {run.lotNumber} · Seed year {run.seedCropYear}

@@ -8,6 +8,7 @@ import { seedProducerAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
 import { useTranslation } from 'react-i18next';
 import { formatDateEn } from '@/lib/en-locale-dates';
+import { formatSeedProductName } from '@/lib/format-seed-product-name';
 import { Loader2 } from 'lucide-react';
 
 type RunRow = Awaited<ReturnType<typeof seedProducerAPI.listRuns>>[number];
@@ -79,17 +80,14 @@ export default function SeedProducerRunsPage() {
                         {run.lotNumber}
                       </Link>
                     </td>
-                    <td className="px-4 py-3">
-                      {run.product}
-                      {run.variety ? ` — ${run.variety}` : ''}
-                    </td>
+                    <td className="px-4 py-3">{formatSeedProductName(run.product, run.variety)}</td>
                     <td className="px-4 py-3">{run.seedCropYear}</td>
                     <td className="px-4 py-3">
                       {run.bagsProduced ?? '—'} / {run.bagsPlanned}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusClass(run.status)}`}>
-                        {run.status}
+                        {t(`seedProduction.runStatus.${run.status}`, { defaultValue: run.status })}
                       </span>
                     </td>
                     <td className="px-4 py-3">

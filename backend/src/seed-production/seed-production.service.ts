@@ -1459,14 +1459,15 @@ export class SeedProductionService implements OnModuleInit {
       data: { userId: user.id },
     });
 
-    await this.email.sendFarmerWelcomeEmail({
+    const webBase = (process.env.WEB_PUBLIC_URL || process.env.FRONTEND_URL || 'https://biovera.app').replace(/\/$/, '');
+    await this.email.sendProducerPortalInviteEmail({
       email: dto.email.trim(),
       firstName: dto.firstName.trim(),
       lastName: dto.lastName.trim(),
       partnerCode,
-      password: tempPassword,
-      farmerQrCode: '',
-      farmerProfileUrl: '',
+      temporaryPassword: tempPassword,
+      portalUrl: `${webBase}/seed-producer`,
+      loginUrl: `${webBase}/login/seed-producer`,
     });
 
     await this.audit(actorId, producerId, 'INVITE_PRODUCER_USER', { userId: user.id, email: dto.email });
@@ -1492,6 +1493,27 @@ export class SeedProductionService implements OnModuleInit {
 
   // --- Reporting ---
 
+  /** Funnel metrics for one production run (see admin reports tooltips). */
+  private async bagFunnelForRun(runId: string, run: { bagsProduced: number | null }) {
+    const counts = await this.bagCountsForRun(runId);
+    const labeled = Object.values(counts).reduce((sum, n) => sum + n, 0);
+    const shipped = await this.prisma.seeds.count({
+      where: { productionRunId: runId, supplierUserId: { not: null } },
+    });
+    return {
+      labeled,
+      produced: run.bagsProduced ?? 0,
+      voided: counts.VOIDED ?? 0,
+      atProducer: counts.AVAILABLE ?? 0,
+      shipped,
+      inSupplierStock: counts.IN_SUPPLIER_STOCK ?? 0,
+      sold: counts.SOLD ?? 0,
+      assignedAdmin: counts.ASSIGNED ?? 0,
+      planted: (counts.PLANTED ?? 0) + (counts.PARTIALLY_USED ?? 0),
+      recalled: counts.RECALLED ?? 0,
+    };
+  }
+
   async getReportsSummary(filters?: { year?: number; productId?: string }) {
     const where: Prisma.seed_production_runsWhereInput = {};
     if (filters?.year) where.seedCropYear = filters.year;
@@ -1516,6 +1538,7 @@ export class SeedProductionService implements OnModuleInit {
         shipped: number;
         inSupplierStock: number;
         sold: number;
+        assignedAdmin: number;
         planted: number;
         recalled: number;
       }
@@ -1536,21 +1559,23 @@ export class SeedProductionService implements OnModuleInit {
           shipped: 0,
           inSupplierStock: 0,
           sold: 0,
+          assignedAdmin: 0,
           planted: 0,
           recalled: 0,
         });
       }
       const row = byProductYear.get(key)!;
-      const counts = await this.bagCountsForRun(run.id);
-      row.labeled += counts.LABELED ?? 0;
-      row.produced += (counts.AVAILABLE ?? 0) + (counts.ASSIGNED ?? 0) + (counts.SOLD ?? 0) + (counts.PLANTED ?? 0) + (counts.PARTIALLY_USED ?? 0);
-      row.voided += counts.VOIDED ?? 0;
-      row.atProducer += counts.AVAILABLE ?? 0;
-      row.shipped += counts.IN_SUPPLIER_STOCK ?? 0;
-      row.inSupplierStock += counts.IN_SUPPLIER_STOCK ?? 0;
-      row.sold += counts.SOLD ?? 0;
-      row.planted += (counts.PLANTED ?? 0) + (counts.PARTIALLY_USED ?? 0);
-      row.recalled += counts.RECALLED ?? 0;
+      const funnel = await this.bagFunnelForRun(run.id, run);
+      row.labeled += funnel.labeled;
+      row.produced += funnel.produced;
+      row.voided += funnel.voided;
+      row.atProducer += funnel.atProducer;
+      row.shipped += funnel.shipped;
+      row.inSupplierStock += funnel.inSupplierStock;
+      row.sold += funnel.sold;
+      row.assignedAdmin += funnel.assignedAdmin;
+      row.planted += funnel.planted;
+      row.recalled += funnel.recalled;
     }
 
     const suppliers = await this.prisma.users.findMany({
@@ -1604,28 +1629,48 @@ export class SeedProductionService implements OnModuleInit {
 
     const byParcel = new Map<
       string,
-      { parcelId: string; growerPartnerCode: string | null; areaHa: number | null; bags: number; lot: string | null; plantedAt: string | null }
+      {
+        parcelId: string;
+        growerPartnerCode: string | null;
+        areaHa: number | null;
+        bags: number;
+        lots: Map<string, number>;
+        plantedAt: string | null;
+      }
     >();
     for (const b of bags) {
       const pid = b.plantedParcelId!;
       const parcel = parcelById.get(pid);
-      const existing = byParcel.get(pid);
+      const lot = b.productionRun?.lotNumber ?? '—';
       const plantedAt = b.plantedAt?.toISOString().slice(0, 10) ?? null;
+      const existing = byParcel.get(pid);
       if (existing) {
         existing.bags += 1;
+        existing.lots.set(lot, (existing.lots.get(lot) ?? 0) + 1);
         if (plantedAt && (!existing.plantedAt || plantedAt < existing.plantedAt)) existing.plantedAt = plantedAt;
       } else {
+        const lots = new Map<string, number>();
+        lots.set(lot, 1);
         byParcel.set(pid, {
           parcelId: pid,
           growerPartnerCode: parcel?.estates?.users?.partnerCode ?? null,
           areaHa: parcel?.calculatedArea ? parcel.calculatedArea / 10000 : null,
           bags: 1,
-          lot: b.productionRun?.lotNumber ?? null,
+          lots,
           plantedAt,
         });
       }
     }
-    return [...byParcel.values()];
+    return [...byParcel.values()].map((row) => ({
+      parcelId: row.parcelId,
+      growerPartnerCode: row.growerPartnerCode,
+      areaHa: row.areaHa,
+      bags: row.bags,
+      lots: [...row.lots.entries()]
+        .map(([lot, count]) => ({ lot, bags: count }))
+        .sort((a, b) => a.lot.localeCompare(b.lot)),
+      plantedAt: row.plantedAt,
+    }));
   }
 
   async streamBagsCsv(filters?: { runId?: string; status?: SeedStatus; supplierUserId?: string }) {

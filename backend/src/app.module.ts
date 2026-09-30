@@ -84,6 +84,7 @@ import { PackageBadgesModule } from './package-badges/package-badges.module';
 import { BioVeraFreshModule } from './biovera-fresh/biovera-fresh.module';
 import { CatalogModule } from './catalog/catalog.module';
 import { SeedProductionModule } from './seed-production/seed-production.module';
+import { StoredDocumentsModule } from './stored-documents/stored-documents.module';
 
 @Module({
   controllers: [AppController],
@@ -175,6 +176,7 @@ import { SeedProductionModule } from './seed-production/seed-production.module';
     BioVeraFreshModule,
     CatalogModule,
     SeedProductionModule,
+    StoredDocumentsModule,
   ],
   providers: [
     {

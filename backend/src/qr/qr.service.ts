@@ -5,6 +5,7 @@ import * as PDFDocument from 'pdfkit';
 import * as fs from 'fs';
 import * as path from 'path';
 import { QualityControlLevelsService } from '../quality-control-levels/quality-control-levels.service';
+import { formatOptimalRoute } from '../common/format-route';
 
 @Injectable()
 export class QrService {
@@ -340,11 +341,18 @@ export class QrService {
               farmColdChain: null,
               transportColdChain: null,
             },
-      sustainability: {
-        totalDistanceKm: totalDistance.toFixed(2),
-        sustainabilityScore: sustainabilityScore.toFixed(1),
-        route: mission?.optimalRoute || null,
-      },
+      sustainability: (() => {
+        const { route, routeDetail } = formatOptimalRoute(
+          mission?.optimalRoute,
+          mission?.pickupAddress ?? batch.estates?.name ?? null,
+        );
+        return {
+          totalDistanceKm: totalDistance.toFixed(2),
+          sustainabilityScore: sustainabilityScore.toFixed(1),
+          route,
+          routeDetail,
+        };
+      })(),
       freshness: batch.freshness_trackers ? {
         timestampHarvested: batch.freshness_trackers.timestampHarvested,
         remainingShelfLifeHours: batch.freshness_trackers.remainingShelfLifeHours,

@@ -18,6 +18,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { saveDurableDocument } from '../common/durable-document';
+import { StoredDocumentsService } from '../stored-documents/stored-documents.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -38,7 +39,10 @@ import { SeedStatus } from '@prisma/client';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'SUPER_ADMIN')
 export class SeedProductionController {
-  constructor(private service: SeedProductionService) {}
+  constructor(
+    private service: SeedProductionService,
+    private documents: StoredDocumentsService,
+  ) {}
 
   @Get('dashboard')
   dashboard() {
@@ -164,11 +168,11 @@ export class SeedProductionController {
 
   @Post('upload-certificate')
   @UseInterceptors(FileInterceptor('file'))
-  uploadCertificate(
+  async uploadCertificate(
     @UploadedFile() file: { buffer: Buffer; mimetype: string; originalname?: string; size: number },
   ) {
     if (!file) throw new BadRequestException('No file provided');
-    const url = saveDurableDocument(file, 'seed-certificates');
+    const url = await saveDurableDocument(this.documents, file);
     return { url };
   }
 

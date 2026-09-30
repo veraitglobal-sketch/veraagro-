@@ -1,14 +1,17 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import AuthGuard from '@/components/AuthGuard';
 import { PremiumButton, PremiumCard, PremiumPageTitle } from '@/components/ui/Premium';
 import { seedProducerAPI, type SeedProductionRun } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
+import { formatSeedProductName } from '@/lib/format-seed-product-name';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Download, Loader2 } from 'lucide-react';
+
+const STEPS = ['PLANNED', 'LABELS_ISSUED', 'PRODUCED', 'RELEASED'] as const;
 
 function downloadBlob(blob: Blob, filename: string) {
   const url = window.URL.createObjectURL(blob);
@@ -59,6 +62,15 @@ export default function SeedProducerRunDetailPage() {
     void load();
   }, [load]);
 
+  const statusLabel = run ? t(`seedProduction.runStatus.${run.status}`, { defaultValue: run.status }) : '';
+  const currentStep = useMemo(() => {
+    if (!run) return 0;
+    if (run.status === 'RECALLED') return STEPS.indexOf('PRODUCED');
+    const idx = STEPS.indexOf(run.status as (typeof STEPS)[number]);
+    return idx >= 0 ? idx : 0;
+  }, [run]);
+  const isRecalled = run?.status === 'RECALLED';
+
   const canConfirm = run?.status === 'LABELS_ISSUED';
   const labelsReady = run && ['LABELS_ISSUED', 'PRODUCED', 'RELEASED'].includes(run.status);
 
@@ -88,6 +100,10 @@ export default function SeedProducerRunDetailPage() {
     }
   };
 
+  const productTitle = run?.approvedProduct
+    ? formatSeedProductName(run.approvedProduct.name, run.approvedProduct.variety)
+    : '';
+
   return (
     <AuthGuard requiredRoles={['SEED_PRODUCER']}>
       <div className="space-y-6">
@@ -103,10 +119,40 @@ export default function SeedProducerRunDetailPage() {
         ) : (
           <>
             <PremiumPageTitle
-              title={`${run.lotNumber} · ${run.approvedProduct?.name ?? ''}`}
-              description={t('seedProducer.run.subtitle', { year: run.seedCropYear, status: run.status })}
+              title={`${run.lotNumber} · ${productTitle}`}
+              description={t('seedProducer.run.subtitle', { year: run.seedCropYear, status: statusLabel })}
             />
             {error ? <p className="text-red-600 text-sm">{error}</p> : null}
+
+            <PremiumCard padding="p-5 sm:p-6">
+              <ol className="flex flex-wrap items-center gap-2 sm:gap-4">
+                {STEPS.map((step, idx) => {
+                  const done = !isRecalled && idx <= currentStep;
+                  const active = !isRecalled && idx === currentStep;
+                  return (
+                    <li key={step} className="flex items-center gap-2">
+                      <span
+                        className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
+                          done ? 'bg-[#2D5A27] text-white' : 'border border-gray-300 bg-white text-gray-500'
+                        } ${active ? 'ring-2 ring-[#2D5A27] ring-offset-2' : ''}`}
+                      >
+                        {idx + 1}
+                      </span>
+                      <span className={`text-sm ${done ? 'font-medium text-gray-900' : 'text-gray-500'}`}>
+                        {t(`seedProduction.runDetail.stepper.${step === 'PLANNED' ? 'planned' : step === 'LABELS_ISSUED' ? 'labelsIssued' : step === 'PRODUCED' ? 'produced' : 'released'}`)}
+                      </span>
+                      {idx < STEPS.length - 1 && <span className="hidden text-gray-300 sm:inline">→</span>}
+                    </li>
+                  );
+                })}
+                {isRecalled && (
+                  <li className="ml-2 flex items-center gap-2">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-sm font-medium text-white">!</span>
+                    <span className="text-sm font-medium text-red-700">{t('seedProduction.runDetail.stepper.recalled')}</span>
+                  </li>
+                )}
+              </ol>
+            </PremiumCard>
 
             {labelsReady ? (
               <PremiumCard>
@@ -216,6 +262,13 @@ export default function SeedProducerRunDetailPage() {
                       onChange={(e) => setCertFiles(Array.from(e.target.files ?? []))}
                       className="mt-1 block w-full text-sm"
                     />
+                    {certFiles.length > 0 ? (
+                      <ul className="mt-2 text-sm text-gray-600 list-disc pl-5">
+                        {certFiles.map((f) => (
+                          <li key={`${f.name}-${f.size}`}>{f.name}</li>
+                        ))}
+                      </ul>
+                    ) : null}
                   </label>
                 </div>
                 <div className="mt-4">
