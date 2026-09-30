@@ -2311,6 +2311,12 @@
       "soldOutBadge": "Sold out — next harvest soon",
       "reserveCrates": "Reserve crates"
     },
+    "marketplace": {
+      "packaging": "Packaging",
+      "availableUntil": "Available until {{date}}",
+      "lineTotal": "{{count}} × {{label}} = {{kg}} kg · {{total}}",
+      "kgAvailable": "{{kg}} kg available"
+    },
     "shop": {
       "title": "Bio Vera Marketplace",
       "subtitle": "BIO-Ready certified food",
@@ -2318,7 +2324,11 @@
       "addToCart": "Add to cart",
       "viewHistory": "View history",
       "noProducts": "Currently no available products",
-      "loading": "Loading products..."
+      "loading": "Loading products...",
+      "marketplacePacks": "Marketplace · packs",
+      "farmStock": "Farm stock",
+      "availableKg": "{{kg}} kg available",
+      "availableUntil": "Available until {{date}}"
     },
     "cartReview": {
       "backToShop": "Back to marketplace",
@@ -2382,8 +2392,10 @@
         "DELIVERED": "Delivered",
         "COMPLETED": "Completed",
         "CANCELLED": "Cancelled",
+        "REJECTED": "Rejected",
         "REFUNDED": "Refunded"
       },
+      "rejectionReason": "Reason: {{reason}}",
       "timelinePlaced": "Order placed",
       "timelineConfirmed": "Confirmed & preparing",
       "timelineShipped": "On the way",
@@ -2478,6 +2490,7 @@
     },
     "productDetail": {
       "remainingToAdd": "You can add: {{quantity}} {{unit}} (cart included)",
+      "remainingPacks": "You can add up to {{packs}} packs ({{kg}} kg)",
       "notFound": "Product not found",
       "farmerFallback": "Bio Vera farmer",
       "originHeading": "Origin",
@@ -2696,9 +2709,10 @@
   "login": {
     "title": "Sign in",
     "subtitle": "Sign in to your Bio Vera account",
-    "username": "Sign-in",
-    "usernameHelper": "Email, username or partner code",
-    "usernamePlaceholder": "you@farm.com or your partner code",
+    "username": "E-mail or partner code",
+    "usernameHelper": "Use the e-mail or partner code from your registration",
+    "usernamePlaceholder": "your@email.com or BUYER-…",
+    "pendingApproval": "Your account is waiting for approval by Bio Vera.",
     "partnerCode": "Partner code",
     "password": "Password",
     "passwordPlaceholder": "Your password",
@@ -2942,7 +2956,10 @@
     "fillFields": "Please fill in email, name and password",
     "passwordMin": "Password must be at least 6 characters",
     "addressWithLocation": "Address and city are required when location is provided",
-    "successTitle": "Success",
+    "successTitle": "Thanks — registration received",
+    "successPending": "Your account is waiting for approval by Bio Vera. We will e-mail you when it is active.",
+    "successPartnerCode": "Your partner code: {{code}} — you can also sign in with your e-mail once approved.",
+    "successLoginHint": "You will receive an e-mail when your account is active.",
     "successHub": "Registration successful! Your location will appear on the map after admin approval.",
     "successNoHub": "Registration successful! You can add your location in your profile.",
     "registrationFailed": "Registration failed"
@@ -3072,6 +3089,9 @@
     "writeOffHint": "This write-off applies to the separate returned quantity. Existing saleable stock is not automatically reduced because the original stock issue is not reliably linked. If these goods are already included in saleable stock, a separate physical count and reconciliation are required."
   },
   "orderStock": {
+    "catalogReserved": "Reserved from marketplace stock: {{kg}} {{unit}}",
+    "catalogReservedForYou": "Reserved for you{{detail}}",
+    "catalogPending": "Marketplace stock reservation pending",
     "states": {
       "UNALLOCATED": "Stock not allocated",
       "RESERVED": "Goods reserved",
@@ -3148,5 +3168,61 @@
     "show": "Show receiving code",
     "loading": "Loading…",
     "manualCode": "Code (if scanning fails)"
+  },
+  "seedScan": {
+    "genuineTitle": "Genuine Bio Vera seed",
+    "lotLine": "Lot {{lot}} · Seed year {{year}} · {{producer}}, {{city}}",
+    "germination": "Germination {{pct}}%",
+    "manualSerial": "Printed serial on the bag",
+    "verifySerial": "Verify serial",
+    "offlineSavedTitle": "Saved — will be verified when online",
+    "offlineSavedBody": "Your scan was saved on this device and will be checked when the connection returns.",
+    "notGenuine": "This is not a Bio Vera seed code.",
+    "plantedBagsTitle": "Bio Vera seed on this parcel",
+    "plantedBagsSummary": "{{count}} bag(s) · {{kg}} kg · lots: {{lots}}"
+  },
+  "plantingEntry": {
+    "title": "Planting entry",
+    "subtitle": "Record seed you sowed on this parcel",
+    "openForm": "Record planting",
+    "bagsTitle": "Scanned bags",
+    "lotLine": "Lot {{lot}} · {{year}} · {{producer}}",
+    "quantityKg": "Quantity used (kg)",
+    "scanAnother": "Scan another bag",
+    "manualSerial": "Enter serial manually (damaged label)",
+    "addManual": "Add bag",
+    "parcel": "Parcel",
+    "selectParcel": "Choose parcel",
+    "plantingPlan": "Planting plan",
+    "optionalPlan": "Optional",
+    "date": "Date",
+    "areaHa": "Area sown (ha)",
+    "notes": "Notes",
+    "addPhoto": "Add photo",
+    "save": "Save planting entry",
+    "saveFailed": "Could not save planting entry",
+    "parcelRequired": "Choose a parcel before saving.",
+    "gpsRequired": "GPS location is required.",
+    "fixBagsFirst": "Remove or fix invalid bags before saving.",
+    "offlineSaved": "Saved on this device — will sync when online.",
+    "offlineScanHint": "Connect to verify this bag, or save offline from the field diary.",
+    "willSync": "Will sync automatically when you are back online.",
+    "summary": "Planted {{count}} bag(s) ({{kg}} kg) of {{product}}{{variety}}, lot {{lot}}, on {{farm}}{{area}}",
+    "openFieldDiary": "Open field diary"
+  },
+  "grower": {
+    "seedOrigin": {
+      "title": "Seed origin",
+      "lotLine": "Lot {{lot}} · Seed year {{year}}",
+      "germination": "Germination {{pct}}%",
+      "purity": "Purity {{pct}}%",
+      "planted": "Planted: {{count}} bag(s){{range}}",
+      "recalled": "This seed lot was recalled by Bio Vera."
+    }
+  },
+  "seedProducerMobile": {
+    "title": "Seed producer portal",
+    "body": "Production runs and label downloads are managed in the Bio Vera web portal. Open the link below on your computer or tablet browser.",
+    "openWeb": "Open web portal"
   }
 }

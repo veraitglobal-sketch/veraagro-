@@ -10,6 +10,7 @@ import { useParams, useRouter } from 'next/navigation';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { getFarmDetailSplit, FarmDetailData } from '@/lib/farm-detail-api';
+import { seedProductionAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +39,9 @@ export default function FarmDetailPage() {
   const [data, setData] = useState<FarmDetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [parcelSeedSummary, setParcelSeedSummary] = useState<
+    Record<string, { count: number; totalKg: number; lots: string[] }>
+  >({});
 
   useEffect(() => {
     if (!farmerId) return;
@@ -50,6 +54,27 @@ export default function FarmDetailPage() {
       setError(null);
       const result = await getFarmDetailSplit(farmerId);
       setData(result);
+      const parcelIds = (result.estates ?? []).flatMap((e: { parcels?: { id: string }[] }) =>
+        (e.parcels ?? []).map((p) => p.id),
+      );
+      const summaries: Record<string, { count: number; totalKg: number; lots: string[] }> = {};
+      await Promise.all(
+        parcelIds.map(async (pid) => {
+          try {
+            const row = await seedProductionAPI.getParcelPlantedBags(pid);
+            if (row.plantedBags?.count > 0) {
+              summaries[pid] = {
+                count: row.plantedBags.count,
+                totalKg: row.plantedBags.totalKg,
+                lots: row.plantedBags.lots ?? [],
+              };
+            }
+          } catch {
+            /* ignore per-parcel errors */
+          }
+        }),
+      );
+      setParcelSeedSummary(summaries);
     } catch (err: unknown) {
       setError(apiErrorOrT(err, t, 'adminPages.farmDetail.loadFailed'));
     } finally {
@@ -475,14 +500,22 @@ export default function FarmDetailPage() {
                     </div>
                     {e.parcels && e.parcels.length > 0 && (
                       <div className="mt-3 flex flex-wrap gap-2">
-                        {e.parcels.map((p: any) => (
-                          <span
-                            key={p.id}
-                            className="px-2 py-1 rounded bg-gray-100 text-sm text-gray-700"
-                          >
-                            {p.cropType || t('adminPages.farmDetail.cropParcel')} ({p.calculatedArea ?? '?'} m²)
-                          </span>
-                        ))}
+                        {e.parcels.map((p: any) => {
+                          const seed = parcelSeedSummary[p.id];
+                          return (
+                            <span
+                              key={p.id}
+                              className="px-2 py-1 rounded bg-gray-100 text-sm text-gray-700"
+                            >
+                              {p.cropType || t('adminPages.farmDetail.cropParcel')} ({p.calculatedArea ?? '?'} m²)
+                              {seed ? (
+                                <span className="block text-xs text-[#2D5A27] mt-0.5">
+                                  {seed.count} bag(s) · {seed.totalKg} kg · lots {seed.lots.join(', ')}
+                                </span>
+                              ) : null}
+                            </span>
+                          );
+                        })}
                       </div>
                     )}
                   </div>

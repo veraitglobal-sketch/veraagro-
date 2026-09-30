@@ -32,14 +32,16 @@ import {
   UpdateCatalogItemDto,
   UpdateSupplierMaterialBarcodeDto,
 } from './dto/b2b-suppliers.dto';
+import { AdminLinkCatalogItemDto } from './dto/link-catalog-item.dto';
+import { SeedBagSerialsDto, SellSeedBagsDto } from './dto/seed-bags.dto';
 
 @Controller('b2b-suppliers')
 export class B2bSuppliersController {
   constructor(private readonly svc: B2bSuppliersService) {}
 
   @Get('public/map')
-  getPublicMap() {
-    return this.svc.getPublicMapPins();
+  getPublicMap(@Query('category') category?: string, @Query('bioVeraOnly') bioVeraOnly?: string) {
+    return this.svc.getPublicMapPins({ category, bioVeraOnly });
   }
 
   /** No auth — grower app / field scanner: verify supplier-registered material unit */
@@ -105,6 +107,13 @@ export class B2bSuppliersController {
     return this.svc.updateMaterialBarcode(u.id, id, dto);
   }
 
+  @Get('my/approved-products')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  listApprovedProducts() {
+    return this.svc.listApprovedProductsForSupplier();
+  }
+
   @Get('my/catalog')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('MATERIAL_SUPPLIER')
@@ -157,6 +166,37 @@ export class B2bSuppliersController {
   @Roles('MATERIAL_SUPPLIER')
   deleteCatalogItemImage(@GetUser() u: { id: string }, @Param('id') id: string) {
     return this.svc.deleteCatalogItemImage(u.id, id);
+  }
+
+  @Post('me/seed-bags/receive')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  receiveSeedBags(@GetUser() u: { id: string }, @Body() body: SeedBagSerialsDto) {
+    return this.svc.receiveSeedBags(u.id, body.serials ?? []);
+  }
+
+  @Get('me/seed-bags')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  listMySeedBags(@GetUser() u: { id: string }, @Query('status') status?: string) {
+    return this.svc.listMySeedBags(u.id, status);
+  }
+
+  @Post('me/seed-bags/sell')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MATERIAL_SUPPLIER')
+  sellSeedBags(@GetUser() u: { id: string }, @Body() body: SellSeedBagsDto) {
+    return this.svc.sellSeedBags(u.id, body);
+  }
+
+  @Patch('admin/supplier-catalog-items/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  adminLinkCatalogItem(
+    @Param('id') id: string,
+    @Body() body: AdminLinkCatalogItemDto,
+  ) {
+    return this.svc.adminLinkCatalogItem(id, body);
   }
 
   @Post('admin/create-store')

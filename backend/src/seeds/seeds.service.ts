@@ -1,9 +1,18 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { PlantingCheckFailure, SeedProductionService } from '../seed-production/seed-production.service';
 
 @Injectable()
 export class SeedsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private seedProduction: SeedProductionService,
+  ) {}
 
   async findBySerialNumber(serialNumber: string) {
     return this.prisma.seeds.findUnique({
@@ -11,9 +20,6 @@ export class SeedsService {
     });
   }
 
-  /**
-   * Get available seed batches for purchase
-   */
   async getAvailableSeeds() {
     return this.prisma.seeds.findMany({
       where: {
@@ -26,38 +32,23 @@ export class SeedsService {
     });
   }
 
-  /**
-   * Validate seed serial number for manual entry
-   * Returns seed info if valid
-   */
   async validateSeed(serialNumber: string, userId: string) {
-    const seed = await this.prisma.seeds.findUnique({
-      where: { serialNumber },
-    });
-
-    if (!seed) {
-      throw new NotFoundException(`Seed with serial number ${serialNumber} not found`);
+    const check = await this.seedProduction.checkBagForPlanting(serialNumber, userId);
+    if (check.ok) {
+      return {
+        valid: true,
+        legacy: check.legacy,
+        seed: check.seed,
+        origin: check.origin,
+      };
     }
-
-    if (seed.status === 'USED' || seed.status === 'EXPIRED') {
-      throw new BadRequestException(`Seed ${serialNumber} is already used or expired`);
+    const failure = check as PlantingCheckFailure;
+    if (failure.code === 'NOT_A_BIO_VERA_CODE') {
+      throw new NotFoundException(failure.message);
     }
-
-    // Optional: Check if seed is assigned to this user (if assignedToUserId exists)
-    if (seed.assignedToUserId && seed.assignedToUserId !== userId) {
-      throw new ForbiddenException('This seed is not assigned to you');
+    if (failure.code === 'NOT_YOURS') {
+      throw new ForbiddenException(failure.message);
     }
-
-    return {
-      valid: true,
-      seed: {
-        id: seed.id,
-        serialNumber: seed.serialNumber,
-        name: seed.name,
-        type: seed.type,
-        batchNumber: seed.batchNumber,
-        status: seed.status,
-      },
-    };
+    throw new BadRequestException(failure.message);
   }
 }

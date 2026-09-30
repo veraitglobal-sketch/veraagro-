@@ -16,6 +16,7 @@ import {
   Inbox,
   Layers,
   PieChart,
+  Sprout,
 } from 'lucide-react';
 import { ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,7 +59,9 @@ export function buildAdminNavItems(t: TFunction) {
     { href: '/admin/partner-applications', label: t('adminNav.partnerApplications'), icon: <Inbox className="w-5 h-5" /> },
     { href: '/admin/supplier-stores', label: t('adminNav.supplierStores'), icon: <Store className="w-5 h-5" /> },
     { href: '/admin/supplier-growers', label: t('adminNav.supplierFarmers'), icon: <MessageCircle className="w-5 h-5" /> },
+    { href: '/admin/supply', label: t('adminNav.supply'), icon: <Layers className="w-5 h-5" /> },
     { href: '/admin/products', label: t('adminNav.products'), icon: <Package className="w-5 h-5" /> },
+    { href: '/admin/seed-production', label: t('adminNav.seedProduction'), icon: <Sprout className="w-5 h-5" /> },
     { href: '/admin/returns', label: t('returnFlow.title'), icon: <Package className="w-5 h-5" /> },
     { href: '/admin/dispatch', label: t('dispatchFlow.title'), icon: <Package className="w-5 h-5" /> },
     { href: '/admin/delivery-issues', label: t('deliveryReview.title'), icon: <AlertTriangle className="w-5 h-5" /> },

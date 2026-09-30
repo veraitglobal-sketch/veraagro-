@@ -114,6 +114,9 @@ export default function AdminSupplierGrowersPage() {
                               <Package className="h-3.5 w-3.5" />
                               {s.stats.orderCount} orders
                             </span>
+                            <span className="inline-flex items-center gap-1">
+                              {s.stats.approvedCatalogCount ?? 0} linked / {s.stats.unlinkedCatalogCount ?? 0} unlinked
+                            </span>
                           </div>
                         </button>
                         {isOpen && (

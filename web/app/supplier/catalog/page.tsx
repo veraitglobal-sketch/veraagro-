@@ -29,10 +29,12 @@ export default function SupplierCatalogPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [approvedProducts, setApprovedProducts] = useState<
+    Awaited<ReturnType<typeof b2bSupplierPortalAPI.getApprovedProducts>>
+  >([]);
   const [form, setForm] = useState({
-    name: '',
+    approvedProductId: '',
     description: '',
-    unit: 'bag',
     listPrice: '',
     sku: '',
   });
@@ -44,12 +46,14 @@ export default function SupplierCatalogPage() {
     setErr(null);
     setLoading(true);
     try {
-      const [c, b] = await Promise.all([
+      const [c, b, ap] = await Promise.all([
         b2bSupplierPortalAPI.getMyCatalog(),
         b2bSupplierPortalAPI.getMyMaterialBarcodes().catch(() => [] as BarcodeRow[]),
+        b2bSupplierPortalAPI.getApprovedProducts().catch(() => []),
       ]);
       setItems(c);
       setBarcodes(Array.isArray(b) ? b : []);
+      setApprovedProducts(ap);
     } catch (e: unknown) {
       setErr(apiErrorOrT(e, t, 'common.apiErrorGeneric'));
     } finally {
@@ -80,7 +84,7 @@ export default function SupplierCatalogPage() {
   }, [imageFile]);
 
   const resetForm = () => {
-    setForm({ name: '', description: '', unit: 'bag', listPrice: '', sku: '' });
+    setForm({ approvedProductId: '', description: '', listPrice: '', sku: '' });
     setCatalogErrors({});
     setEditingId(null);
     setImageFile(null);
@@ -96,17 +100,14 @@ export default function SupplierCatalogPage() {
     try {
       if (editingId) {
         await b2bSupplierPortalAPI.updateCatalogItem(editingId, {
-          name: form.name.trim(),
           description: form.description.trim() || undefined,
-          unit: form.unit.trim() || 'unit',
           listPrice: listPrice,
           sku: form.sku.trim() || undefined,
         });
       } else {
         const created = (await b2bSupplierPortalAPI.createCatalogItem({
-          name: form.name.trim(),
+          approvedProductId: form.approvedProductId.trim(),
           description: form.description.trim() || undefined,
-          unit: form.unit.trim() || 'unit',
           listPrice: listPrice,
           sku: form.sku.trim() || undefined,
         })) as { id: string };
@@ -129,9 +130,8 @@ export default function SupplierCatalogPage() {
     setCatalogErrors({});
     setTab('products');
     setForm({
-      name: it.name,
+      approvedProductId: it.approvedProductId ?? '',
       description: it.description || '',
-      unit: it.unit,
       listPrice: it.listPrice != null ? String(it.listPrice) : '',
       sku: it.sku || '',
     });
@@ -402,20 +402,34 @@ export default function SupplierCatalogPage() {
           </h2>
           <div className="grid sm:grid-cols-2 gap-3">
             <label className="block sm:col-span-2 text-xs text-gray-600">
-              {t('supplier.shop.nameLabel')} *
-              <input
-                className={`mt-0.5 w-full rounded-lg border px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-[#2D5A27]/25 ${
-                  catalogErrors.name ? 'border-red-400' : 'border-gray-300 focus:border-[#2D5A27]'
-                }`}
-                value={form.name}
-                onChange={(e) => {
-                  setForm((f) => ({ ...f, name: e.target.value }));
-                  if (catalogErrors.name) setCatalogErrors((er) => ({ ...er, name: undefined }));
-                }}
-                placeholder={t('supplier.shop.namePlaceholder')}
-                aria-invalid={Boolean(catalogErrors.name)}
-              />
-              {catalogErrors.name ? <p className="mt-1 text-xs text-red-600">{catalogErrors.name}</p> : null}
+              {t('supplier.shop.approvedProduct', { defaultValue: 'Approved product' })} *
+              {editingId ? (
+                <p className="mt-0.5 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-base text-gray-800">
+                  {items.find((x) => x.id === editingId)?.name ?? '—'}
+                </p>
+              ) : (
+                <select
+                  className={`mt-0.5 w-full rounded-lg border px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-[#2D5A27]/25 ${
+                    catalogErrors.approvedProductId ? 'border-red-400' : 'border-gray-300 focus:border-[#2D5A27]'
+                  }`}
+                  value={form.approvedProductId}
+                  onChange={(e) => {
+                    setForm((f) => ({ ...f, approvedProductId: e.target.value }));
+                    if (catalogErrors.approvedProductId) setCatalogErrors((er) => ({ ...er, approvedProductId: undefined }));
+                  }}
+                  aria-invalid={Boolean(catalogErrors.approvedProductId)}
+                >
+                  <option value="">{t('supplier.shop.selectProduct', { defaultValue: 'Select product…' })}</option>
+                  {approvedProducts.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}{p.variety ? ` · ${p.variety}` : ''} ({p.unit})
+                    </option>
+                  ))}
+                </select>
+              )}
+              {catalogErrors.approvedProductId ? (
+                <p className="mt-1 text-xs text-red-600">{catalogErrors.approvedProductId}</p>
+              ) : null}
             </label>
             <label className="block sm:col-span-2 text-xs text-gray-600">
               Description
@@ -425,15 +439,6 @@ export default function SupplierCatalogPage() {
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                 placeholder="Optional"
-              />
-            </label>
-            <label className="block text-xs text-gray-600">
-              Unit
-              <input
-                className="mt-0.5 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-                value={form.unit}
-                onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))}
-                placeholder="bag, L, kg"
               />
             </label>
             <label className="block text-xs text-gray-600">

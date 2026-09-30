@@ -40,7 +40,7 @@ export type CatalogItem = {
   imageUrl: string | null;
 };
 
-const UNITS = ['bag', 'kg', 'l', 'pcs', 'box', 'roll'];
+type ApprovedProduct = { id: string; name: string; variety: string | null; unit: string };
 
 export default function SupplierCatalogScreen() {
   const { t } = useTranslation();
@@ -58,10 +58,10 @@ export default function SupplierCatalogScreen() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [pendingImageUri, setPendingImageUri] = useState<string | null>(null);
+  const [approvedProducts, setApprovedProducts] = useState<ApprovedProduct[]>([]);
   const [form, setForm] = useState({
-    name: '',
+    approvedProductId: '',
     description: '',
-    unit: 'bag',
     listPrice: '',
     sku: '',
   });
@@ -69,11 +69,13 @@ export default function SupplierCatalogScreen() {
 
   const load = useCallback(async () => {
     try {
-      const [catalog, profile] = await Promise.all([
+      const [catalog, profile, ap] = await Promise.all([
         b2bSuppliersAPI.getMyCatalog(),
         b2bSuppliersAPI.getMyProfile().catch(() => null),
+        b2bSuppliersAPI.getApprovedProducts().catch(() => []),
       ]);
       setItems(Array.isArray(catalog) ? catalog : []);
+      setApprovedProducts(Array.isArray(ap) ? ap : []);
       if (profile && typeof profile === 'object') {
         const p = profile as {
           businessName?: string;
@@ -104,7 +106,7 @@ export default function SupplierCatalogScreen() {
   };
 
   const resetForm = () => {
-    setForm({ name: '', description: '', unit: 'bag', listPrice: '', sku: '' });
+    setForm({ approvedProductId: '', description: '', listPrice: '', sku: '' });
     setFieldErrors({});
     setEditingId(null);
     setPendingImageUri(null);
@@ -120,9 +122,8 @@ export default function SupplierCatalogScreen() {
     setPendingImageUri(null);
     setFieldErrors({});
     setForm({
-      name: it.name,
+      approvedProductId: '',
       description: it.description || '',
-      unit: it.unit || 'bag',
       listPrice: it.listPrice != null ? String(it.listPrice) : '',
       sku: it.sku || '',
     });
@@ -155,17 +156,14 @@ export default function SupplierCatalogScreen() {
     try {
       if (editingId) {
         await b2bSuppliersAPI.updateCatalogItem(editingId, {
-          name: form.name.trim(),
           description: form.description.trim() || undefined,
-          unit: form.unit.trim() || 'bag',
           listPrice: listPrice ?? null,
           sku: form.sku.trim() || undefined,
         });
       } else {
         const created = await b2bSuppliersAPI.createCatalogItem({
-          name: form.name.trim(),
+          approvedProductId: form.approvedProductId.trim(),
           description: form.description.trim() || undefined,
-          unit: form.unit.trim() || 'bag',
           listPrice,
           sku: form.sku.trim() || undefined,
         });
@@ -329,18 +327,37 @@ export default function SupplierCatalogScreen() {
               )}
             </TouchableOpacity>
 
-            <Text style={growerUi.formLabel}>{t('supplier.store.nameLabel')}</Text>
-            <TextInput
-              style={[growerUi.formInput, fieldErrors.name && styles.inputError]}
-              value={form.name}
-              onChangeText={(v) => {
-                setForm((f) => ({ ...f, name: v }));
-                if (fieldErrors.name) setFieldErrors((e) => ({ ...e, name: undefined }));
-              }}
-              placeholder={t('supplier.store.namePlaceholder')}
-              placeholderTextColor={enterpriseColors.gray600}
-            />
-            {fieldErrors.name ? <Text style={styles.fieldError}>{fieldErrors.name}</Text> : null}
+            <Text style={growerUi.formLabel}>{t('supplier.shop.approvedProduct', { defaultValue: 'Approved product' })}</Text>
+            {editingId ? (
+              <Text style={[growerUi.formInput, { paddingVertical: 12 }]}>
+                {items.find((x) => x.id === editingId)?.name ?? '—'}
+              </Text>
+            ) : (
+              <>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.productPicker}>
+                  {approvedProducts.map((p) => {
+                    const on = form.approvedProductId === p.id;
+                    return (
+                      <TouchableOpacity
+                        key={p.id}
+                        onPress={() => {
+                          setForm((f) => ({ ...f, approvedProductId: p.id }));
+                          if (fieldErrors.approvedProductId) setFieldErrors((e) => ({ ...e, approvedProductId: undefined }));
+                        }}
+                        style={[growerUi.filterChip, on && growerUi.filterChipOn, { marginRight: 8, maxWidth: 220 }]}
+                      >
+                        <Text style={[growerUi.filterChipText, on && growerUi.filterChipTextOn]} numberOfLines={2}>
+                          {p.name}{p.variety ? ` · ${p.variety}` : ''}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+                {fieldErrors.approvedProductId ? (
+                  <Text style={styles.fieldError}>{fieldErrors.approvedProductId}</Text>
+                ) : null}
+              </>
+            )}
 
             <Text style={growerUi.formLabel}>{t('supplier.store.descLabel')}</Text>
             <TextInput
@@ -351,22 +368,6 @@ export default function SupplierCatalogScreen() {
               placeholder={t('supplier.store.descPlaceholder')}
               placeholderTextColor={enterpriseColors.gray600}
             />
-
-            <Text style={growerUi.formLabel}>{t('supplier.store.unitLabel')}</Text>
-            <View style={styles.unitRow}>
-              {UNITS.map((u) => {
-                const on = form.unit === u;
-                return (
-                  <TouchableOpacity
-                    key={u}
-                    onPress={() => setForm((f) => ({ ...f, unit: u }))}
-                    style={[growerUi.filterChip, on && growerUi.filterChipOn]}
-                  >
-                    <Text style={[growerUi.filterChipText, on && growerUi.filterChipTextOn]}>{u}</Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
 
             <Text style={growerUi.formLabel}>{t('supplier.store.priceLabel')}</Text>
             <TextInput
@@ -564,6 +565,10 @@ const styles = StyleSheet.create({
   textArea: {
     minHeight: 80,
     textAlignVertical: 'top',
+  },
+  productPicker: {
+    marginBottom: 8,
+    maxHeight: 88,
   },
   unitRow: {
     flexDirection: 'row',

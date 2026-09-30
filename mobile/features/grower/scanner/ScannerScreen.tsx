@@ -8,6 +8,7 @@ import { ScanLine, X, Check } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { materialValidator } from '../../../lib/integrity-guard';
+import { looksLikeBioVeraSeedSerial } from '../../../lib/biovera-serial';
 
 /**
  * QR/Barcode Scanner Screen
@@ -48,6 +49,12 @@ export default function ScannerScreen() {
         await AsyncStorage.setItem('last_scanned_qr', data);
         setValidating(false);
         router.back();
+        return;
+      }
+
+      if (looksLikeBioVeraSeedSerial(data)) {
+        setValidating(false);
+        router.replace({ pathname: '/(producer)/planting-entry', params: { serial: data.trim() } });
         return;
       }
       if (isMaterialAdd) {

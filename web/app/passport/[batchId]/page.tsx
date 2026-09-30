@@ -202,6 +202,22 @@ interface PassportData {
     status: string;
   } | null;
   parcelSeed?: ParcelSeedInfo | null;
+  seedOrigin?: Array<{
+    product: string;
+    variety?: string | null;
+    lotNumber: string;
+    seedCropYear: number;
+    producer: { name: string; city?: string | null; country: string };
+    productionDate?: string | null;
+    germinationPct?: number | null;
+    purityPct?: number | null;
+    certificateUrls?: string[];
+    bagsPlanted: number;
+    plantedFrom?: string | null;
+    plantedTo?: string | null;
+    recalled?: boolean;
+    recallNotice?: string | null;
+  }>;
   materialScans?: PassportMaterialScan[];
 }
 
@@ -474,6 +490,28 @@ export default function ProductPassportPage() {
               seedType: String(apiData.parcelSeed.seedType ?? ''),
             }
           : null,
+        seedOrigin: Array.isArray(apiData.seedOrigin)
+          ? apiData.seedOrigin.map((s: Record<string, unknown>) => ({
+              product: String(s.product ?? ''),
+              variety: s.variety != null ? String(s.variety) : null,
+              lotNumber: String(s.lotNumber ?? ''),
+              seedCropYear: Number(s.seedCropYear ?? 0),
+              producer: {
+                name: String((s.producer as { name?: string })?.name ?? ''),
+                city: (s.producer as { city?: string })?.city ?? null,
+                country: String((s.producer as { country?: string })?.country ?? ''),
+              },
+              productionDate: s.productionDate != null ? String(s.productionDate) : null,
+              germinationPct: s.germinationPct != null ? Number(s.germinationPct) : null,
+              purityPct: s.purityPct != null ? Number(s.purityPct) : null,
+              certificateUrls: Array.isArray(s.certificateUrls) ? s.certificateUrls.map(String) : [],
+              bagsPlanted: Number(s.bagsPlanted ?? 0),
+              plantedFrom: s.plantedFrom != null ? String(s.plantedFrom) : null,
+              plantedTo: s.plantedTo != null ? String(s.plantedTo) : null,
+              recalled: Boolean(s.recalled),
+              recallNotice: s.recallNotice != null ? String(s.recallNotice) : null,
+            }))
+          : [],
         materialScans: Array.isArray(apiData.materialScans)
           ? apiData.materialScans.map((m: PassportMaterialScan & { networkTimestamp: string | Date; deviceTimestamp: string | Date }) => ({
               entryType: m.entryType,
@@ -724,6 +762,74 @@ export default function ProductPassportPage() {
             </div>
           </motion.div>
         )}
+
+        {data.seedOrigin && data.seedOrigin.length > 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.035 }}
+            className="mb-10 pb-8 border-b border-gray-200"
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <Package className="w-4 h-4 text-[#2D5A27]" strokeWidth={1.5} />
+              <span className="text-[10px] font-light tracking-[0.2em] text-gray-500 uppercase">
+                {t('passportPublic.batchPage.seedOriginEyebrow', { defaultValue: 'Seed origin' })}
+              </span>
+            </div>
+            <div className="space-y-4">
+              {data.seedOrigin.map((run) => (
+                <div key={`${run.lotNumber}-${run.seedCropYear}`} className="rounded-xl border border-gray-200 bg-white p-4 text-sm">
+                  {run.recalled ? (
+                    <p className="mb-3 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-amber-900 text-xs">
+                      {run.recallNotice ?? t('passportPublic.batchPage.seedRecalled', { defaultValue: 'This seed lot was recalled by Bio Vera.' })}
+                    </p>
+                  ) : null}
+                  <p className="font-medium text-gray-900">
+                    {run.product}
+                    {run.variety ? ` — ${run.variety}` : ''}
+                  </p>
+                  <p className="text-gray-600 mt-1">
+                    Lot {run.lotNumber} · Seed year {run.seedCropYear}
+                  </p>
+                  <p className="text-gray-600">
+                    {run.producer.name}
+                    {run.producer.city ? `, ${run.producer.city}` : ''}, {run.producer.country}
+                  </p>
+                  {run.productionDate ? (
+                    <p className="text-gray-500 text-xs mt-2">
+                      {t('passportPublic.batchPage.productionDate', { defaultValue: 'Production date' })}: {run.productionDate}
+                      {run.germinationPct != null ? ` · Germination ${run.germinationPct}%` : ''}
+                      {run.purityPct != null ? ` · Purity ${run.purityPct}%` : ''}
+                    </p>
+                  ) : null}
+                  <p className="text-gray-600 mt-2">
+                    {t('passportPublic.batchPage.plantedSummary', {
+                      defaultValue: 'Planted: {{count}} bags{{range}}',
+                      count: run.bagsPlanted,
+                      range:
+                        run.plantedFrom && run.plantedTo && run.plantedFrom !== run.plantedTo
+                          ? `, ${run.plantedFrom} – ${run.plantedTo}`
+                          : run.plantedFrom
+                            ? `, ${run.plantedFrom}`
+                            : '',
+                    })}
+                  </p>
+                  {run.certificateUrls && run.certificateUrls.length > 0 ? (
+                    <ul className="mt-2 text-xs">
+                      {run.certificateUrls.map((url) => (
+                        <li key={url}>
+                          <a href={url} target="_blank" rel="noopener noreferrer" className="text-[#2D5A27] hover:underline">
+                            {t('passportPublic.batchPage.certificateLink', { defaultValue: 'Certificate' })}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        ) : null}
 
         {data.parcelSeed && (data.parcelSeed.serialNumber || data.parcelSeed.name) ? (
           <motion.div

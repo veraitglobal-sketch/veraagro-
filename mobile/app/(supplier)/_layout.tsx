@@ -22,6 +22,7 @@ export default function SupplierLayout() {
           <Stack.Screen name="dashboard" options={{ title: t('supplier.partnerStore'), headerShown: false }} />
           <Stack.Screen name="notifications" options={{ headerShown: false }} />
           <Stack.Screen name="catalog" options={{ title: t('supplier.screenCatalog') }} />
+          <Stack.Screen name="seed-bags" options={{ title: t('supplier.seedBags.title', { defaultValue: 'Bio Vera seed' }) }} />
           <Stack.Screen name="orders" options={{ title: t('supplier.screenOrders') }} />
           <Stack.Screen name="messages" options={{ title: t('supplier.screenMessages') }} />
           <Stack.Screen name="badge-handover" options={{ title: t('supplier.badges.screenTitle') }} />

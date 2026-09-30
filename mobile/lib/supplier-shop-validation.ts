@@ -3,9 +3,8 @@ import type { TFunction } from 'i18next';
 export const SUPPLIER_CATALOG_UNITS = ['bag', 'kg', 'l', 'pcs', 'box', 'roll', 'unit'] as const;
 
 export type SupplierCatalogFormState = {
-  name: string;
+  approvedProductId: string;
   description: string;
-  unit: string;
   listPrice: string;
   sku: string;
 };
@@ -26,21 +25,13 @@ export function validateSupplierCatalogForm(
   t: TFunction,
 ): { valid: boolean; errors: SupplierCatalogFormErrors; listPrice?: number } {
   const errors: SupplierCatalogFormErrors = {};
-  const name = form.name.trim();
-  if (!name) {
-    errors.name = t('supplier.shop.validation.nameRequired');
-  } else if (name.length > 200) {
-    errors.name = t('supplier.shop.validation.nameTooLong');
+  if (!form.approvedProductId.trim()) {
+    errors.approvedProductId = t('supplier.shop.validation.productRequired', { defaultValue: 'Select an approved product' });
   }
 
   const description = form.description.trim();
   if (description.length > 2000) {
     errors.description = t('supplier.shop.validation.descriptionTooLong');
-  }
-
-  const unit = form.unit.trim() || 'unit';
-  if (unit.length > 32) {
-    errors.unit = t('supplier.shop.validation.unitTooLong');
   }
 
   const priceResult = parseOptionalPrice(form.listPrice);
@@ -61,9 +52,8 @@ export function validateSupplierCatalogForm(
 }
 
 export const emptyCatalogForm = (): SupplierCatalogFormState => ({
-  name: '',
+  approvedProductId: '',
   description: '',
-  unit: 'bag',
   listPrice: '',
   sku: '',
 });

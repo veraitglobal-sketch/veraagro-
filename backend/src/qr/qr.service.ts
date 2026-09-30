@@ -469,6 +469,7 @@ export class QrService {
             seedType: batch.parcels.seeds.type,
           }
         : null,
+      seedOrigin: await this.buildSeedOrigin(batch),
       /** Barcode / packaging / input scans linked to batch or parcel harvest window. */
       materialScans: complianceMaterialLogs.map((m) => ({
         entryType: m.entryType,
@@ -493,6 +494,64 @@ export class QrService {
           }
         : null,
     };
+  }
+
+  /** Bio Vera production-run bags planted on the harvest parcel (public-safe fields only). */
+  private async buildSeedOrigin(batch: {
+    parcelId: string | null;
+    harvestDate: Date | null;
+  }) {
+    if (!batch.parcelId) return [];
+
+    const harvestAnchor = batch.harvestDate ? new Date(batch.harvestDate) : new Date();
+    const windowStart = new Date(harvestAnchor.getTime() - 365 * 86_400_000);
+    const windowEnd = new Date(harvestAnchor.getTime() + 14 * 86_400_000);
+
+    const bags = await this.prisma.seeds.findMany({
+      where: {
+        plantedParcelId: batch.parcelId,
+        productionRunId: { not: null },
+        plantedAt: { gte: windowStart, lte: windowEnd },
+      },
+      include: {
+        productionRun: { include: { approvedProduct: true, producer: true } },
+      },
+      orderBy: { plantedAt: 'asc' },
+    });
+
+    const byRun = new Map<string, typeof bags>();
+    for (const b of bags) {
+      if (!b.productionRunId) continue;
+      const list = byRun.get(b.productionRunId) ?? [];
+      list.push(b);
+      byRun.set(b.productionRunId, list);
+    }
+
+    return [...byRun.values()].map((runBags) => {
+      const run = runBags[0].productionRun!;
+      const plantedDates = runBags.map((b) => b.plantedAt).filter(Boolean) as Date[];
+      const recalled = run.status === 'RECALLED' || runBags.some((b) => b.status === 'RECALLED');
+      return {
+        product: run.approvedProduct.name,
+        variety: run.approvedProduct.variety,
+        lotNumber: run.lotNumber,
+        seedCropYear: run.seedCropYear,
+        producer: {
+          name: run.producer.name,
+          city: run.producer.city,
+          country: run.producer.country,
+        },
+        productionDate: run.productionDate?.toISOString().slice(0, 10) ?? null,
+        germinationPct: run.germinationPct,
+        purityPct: run.purityPct,
+        certificateUrls: run.certificateUrls ?? [],
+        bagsPlanted: runBags.length,
+        plantedFrom: plantedDates[0]?.toISOString().slice(0, 10) ?? null,
+        plantedTo: plantedDates[plantedDates.length - 1]?.toISOString().slice(0, 10) ?? null,
+        recalled,
+        recallNotice: recalled ? 'This seed lot was recalled by Bio Vera.' : null,
+      };
+    });
   }
 
   /** Human-readable harvest-time weather for passports (JSON varies by client). */
@@ -775,6 +834,61 @@ export class QrService {
             .text(`Expected harvest: ${data.parcelInfo.expectedHarvestDate ? formatDate(data.parcelInfo.expectedHarvestDate) : '—'}`, 50, doc.y + 32);
           doc.y += 50;
           doc.moveDown(1);
+        }
+
+        if (data.seedOrigin?.length > 0) {
+          checkPage(80);
+          doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('2b. Seed origin (Bio Vera)', 50, doc.y);
+          doc.moveDown(0.5);
+          data.seedOrigin.forEach((run: {
+            product: string;
+            variety?: string | null;
+            lotNumber: string;
+            seedCropYear: number;
+            producer: { name: string; city?: string | null; country: string };
+            productionDate?: string | null;
+            germinationPct?: number | null;
+            purityPct?: number | null;
+            bagsPlanted: number;
+            plantedFrom?: string | null;
+            plantedTo?: string | null;
+            recalled?: boolean;
+          }) => {
+            checkPage(60);
+            if (run.recalled) {
+              doc.fontSize(9).fillColor('#B45309').text('This seed lot was recalled by Bio Vera.', 50, doc.y);
+              doc.y += 14;
+            }
+            doc.fontSize(10).fillColor(darkGray)
+              .text(
+                `${run.product}${run.variety ? ` — ${run.variety}` : ''} · Lot ${run.lotNumber} · Seed year ${run.seedCropYear}`,
+                50,
+                doc.y,
+                { width: doc.page.width - 100 },
+              );
+            doc.y += 14;
+            doc.text(
+              `${run.producer.name}${run.producer.city ? `, ${run.producer.city}` : ''}, ${run.producer.country}`,
+              50,
+              doc.y,
+            );
+            doc.y += 14;
+            const prodParts: string[] = [];
+            if (run.productionDate) prodParts.push(`Production: ${run.productionDate}`);
+            if (run.germinationPct != null) prodParts.push(`Germination ${run.germinationPct}%`);
+            if (run.purityPct != null) prodParts.push(`Purity ${run.purityPct}%`);
+            if (prodParts.length) {
+              doc.text(prodParts.join(' · '), 50, doc.y);
+              doc.y += 14;
+            }
+            const plantedRange =
+              run.plantedFrom && run.plantedTo && run.plantedFrom !== run.plantedTo
+                ? `${run.plantedFrom} – ${run.plantedTo}`
+                : run.plantedFrom ?? '—';
+            doc.text(`Planted: ${run.bagsPlanted} bag(s) · ${plantedRange}`, 50, doc.y);
+            doc.y += 18;
+          });
+          doc.moveDown(0.5);
         }
 
         // 3. Chronology (activities) – with sortKey for correct ordering

@@ -15,10 +15,38 @@ import type {
   FarmerProfileMeResponse,
 } from './types';
 
+export type GrowerParcelSeedOrigin = {
+  parcelId: string;
+  seedOrigin: Array<{
+    product: string;
+    variety?: string | null;
+    lotNumber: string;
+    seedCropYear: number;
+    producer: { name: string; city?: string | null; country: string };
+    productionDate?: string | null;
+    germinationPct?: number | null;
+    purityPct?: number | null;
+    bagsPlanted: number;
+    plantedFrom?: string | null;
+    plantedTo?: string | null;
+    recalled?: boolean;
+    recallNotice?: string | null;
+  }>;
+};
+
+export const growerSeedOriginAPI = {
+  getParcel: async (parcelId: string): Promise<GrowerParcelSeedOrigin> => {
+    const response = await api.get(`/grower/seed-origin/parcel/${encodeURIComponent(parcelId)}`);
+    return response.data;
+  },
+};
+
 export const fieldEntriesAPI = {
-  getAll: async (farmId?: string): Promise<FieldEntry[]> => {
+  getAll: async (farmId?: string, parcelId?: string): Promise<FieldEntry[]> => {
     try {
-      const params = farmId ? { farmId } : {};
+      const params: Record<string, string> = {};
+      if (farmId) params.farmId = farmId;
+      if (parcelId) params.parcelId = parcelId;
       const response = await api.get('/field-entries', { params });
       return response.data || [];
     } catch (error: unknown) {
@@ -29,6 +57,10 @@ export const fieldEntriesAPI = {
       console.warn('Error fetching field entries:', error instanceof Error ? error.message : error);
       return [];
     }
+  },
+  create: async (body: Record<string, unknown>): Promise<FieldEntry> => {
+    const response = await api.post('/field-entries', body);
+    return response.data;
   },
 };
 
@@ -307,7 +339,7 @@ export const seedsAPI = {
       }
       const status = axiosResponseStatus(error);
       if (status === 404) {
-        throw new Error('Seed not found. Please check the serial number.');
+        throw new Error(apiErrorMessage(error, 'This is not a Bio Vera seed code.'));
       }
       if (status === 400) {
         throw new Error(apiErrorMessage(error, 'Seed is already used or expired'));

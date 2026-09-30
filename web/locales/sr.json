@@ -2254,12 +2254,6 @@
       "noEstates": "Još nema gazdinstava",
       "cropParcel": "Parcela"
     },
-    "products": {
-      "heading": "Katalog proizvoda",
-      "subtitle": "Upravljanje katalogom (uskroro).",
-      "addProduct": "Dodaj proizvod",
-      "empty": "Upravljanje katalogom biće dostupno nakon implementacije na serveru."
-    },
     "estatesApproval": {
       "loading": "Učitavanje gazdinstava na odobrenje…",
       "emptyTitle": "Nema gazdinstava na čekanju",

@@ -9,7 +9,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API_URL } from './api-url';
-import { growthLogsAPI, type Estate } from './api';
+import { growthLogsAPI, seedsAPI, type Estate } from './api';
 import { imageUriToJpegDataUrl, assertDataUrlWithinSize } from './image-data-url';
 import { sha256HexFromImageUri } from './image-hash';
 import { getOrCreateDeviceId } from './device-id';
@@ -546,6 +546,47 @@ export const syncService = {
     return { success, failed };
   },
 
+  async syncPendingSeedScans(): Promise<{ success: number; failed: number }> {
+    const pending = await offlineStorage.getPendingSeedScans();
+    const toSync = pending.filter((p) => p.status === 'pending' || p.status === 'error');
+    if (toSync.length === 0) return { success: 0, failed: 0 };
+
+    let success = 0;
+    let failed = 0;
+    for (const row of toSync) {
+      try {
+        await seedsAPI.validate(row.serialInput);
+        await offlineStorage.updatePendingSeedScan(row.id, { status: 'synced', error: undefined });
+        success++;
+      } catch (err: unknown) {
+        await offlineStorage.updatePendingSeedScan(row.id, {
+          status: 'error',
+          error: apiErrorMessage(err, 'Validation failed'),
+        });
+        failed++;
+      }
+    }
+    return { success, failed };
+  },
+
+  async syncPendingPlantingEntries(): Promise<{ success: number; failed: number }> {
+    const { fieldEntriesAPI } = await import('./api/grower');
+    const pending = await offlineStorage.getPendingPlantingEntries();
+    let success = 0;
+    let failed = 0;
+    for (const row of pending.filter((r) => r.status === 'pending' || r.status === 'error')) {
+      try {
+        await fieldEntriesAPI.create(row.payload);
+        await offlineStorage.removePendingPlantingEntry(row.id);
+        success++;
+      } catch (e: unknown) {
+        failed++;
+        console.warn('[planting sync]', apiErrorMessage(e, 'failed'));
+      }
+    }
+    return { success, failed };
+  },
+
   /**
    * Sync all pending data: entries, products, costs, certificate photos
    */
@@ -555,6 +596,7 @@ export const syncService = {
     costs: { success: number; failed: number };
     certificatePhotos: { success: number; failed: number };
     harvestPlans: { success: number; failed: number };
+    seedScans: { success: number; failed: number };
   }> {
     const now = Date.now();
     if (now - lastSyncAllAt < SYNC_COOLDOWN_MS) {
@@ -564,6 +606,7 @@ export const syncService = {
         costs: { success: 0, failed: 0 },
         certificatePhotos: { success: 0, failed: 0 },
         harvestPlans: { success: 0, failed: 0 },
+        seedScans: { success: 0, failed: 0 },
       };
     }
     lastSyncAllAt = now;
@@ -577,13 +620,16 @@ export const syncService = {
     let costs = { success: 0, failed: 0 };
     let certificatePhotos = { success: 0, failed: 0 };
     let harvestPlans = { success: 0, failed: 0 };
+    let seedScans = { success: 0, failed: 0 };
 
     try {
       entries = await this.syncPendingEntries(false);
+      await this.syncPendingPlantingEntries();
       products = await this.syncPendingProducts();
       costs = await this.syncPendingCosts();
       certificatePhotos = await this.syncPendingCertificatePhotos();
       harvestPlans = await this.syncPendingHarvestPlans();
+      seedScans = await this.syncPendingSeedScans();
     } catch (e: unknown) {
       const msg = apiErrorMessage(e, 'Sync failed');
       await AsyncStorage.setItem(
@@ -594,7 +640,7 @@ export const syncService = {
           lastError: msg,
         }),
       );
-      return { entries, products, costs, certificatePhotos, harvestPlans };
+      return { entries, products, costs, certificatePhotos, harvestPlans, seedScans };
     }
 
     const totalFailed =
@@ -602,7 +648,8 @@ export const syncService = {
       products.failed +
       costs.failed +
       certificatePhotos.failed +
-      harvestPlans.failed;
+      harvestPlans.failed +
+      seedScans.failed;
     const detail = totalFailed > 0 ? await peekFirstRecordedQueueError() : null;
     await AsyncStorage.setItem(
       SYNC_STATUS_KEY,
@@ -616,7 +663,7 @@ export const syncService = {
       }),
     );
 
-    return { entries, products, costs, certificatePhotos, harvestPlans };
+    return { entries, products, costs, certificatePhotos, harvestPlans, seedScans };
   },
 
   /**

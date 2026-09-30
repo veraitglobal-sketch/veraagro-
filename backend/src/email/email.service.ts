@@ -827,6 +827,72 @@ Bio Vera Team
     return false;
   }
 
+  /** Notify buyer their account was approved by admin. */
+  async sendBuyerAccountApprovedEmail(data: {
+    email: string;
+    firstName: string;
+  }): Promise<boolean> {
+    const webUrl = process.env.FRONTEND_URL || process.env.WEB_URL || 'https://biovera.app';
+    const loginUrl = `${webUrl.replace(/\/$/, '')}/login/buyer`;
+    const marketplaceUrl = `${webUrl.replace(/\/$/, '')}/buyer-portal/marketplace`;
+    const subject = 'Your Bio Vera buyer account is active';
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head><meta charset="utf-8" /></head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
+        <p>Dear <strong>${data.firstName}</strong>,</p>
+        <p>Your Bio Vera buyer account is active — you can now order from the Marketplace.</p>
+        <p><a href="${marketplaceUrl}" style="display:inline-block;padding:12px 24px;background:#2D5A27;color:#fff;text-decoration:none;border-radius:8px;">Browse marketplace</a></p>
+        <p>Sign in with your e-mail or partner code: <a href="${loginUrl}">${loginUrl}</a></p>
+        <p style="color:#666;font-size:12px;">Bio Vera — transparency from field to shelf</p>
+      </body>
+      </html>
+    `;
+    const text = `Dear ${data.firstName},\n\nYour Bio Vera buyer account is active — you can now order from the Marketplace.\n\nSign in: ${loginUrl}\nMarketplace: ${marketplaceUrl}\n\n— Bio Vera`;
+    return this.sendSimpleEmail({ to: data.email, subject, html, text });
+  }
+
+  private async sendSimpleEmail(data: {
+    to: string;
+    subject: string;
+    html: string;
+    text: string;
+  }): Promise<boolean> {
+    const fromAddr = process.env.EMAIL_FROM || process.env.SMTP_USER || 'info@biovera.app';
+    try {
+      if (this.resend) {
+        const { error } = await this.resend.emails.send({
+          from: `"Bio Vera" <${fromAddr}>`,
+          to: data.to,
+          subject: data.subject,
+          html: data.html,
+          text: data.text,
+        });
+        if (error) {
+          this.logger.error(`Resend email error: ${JSON.stringify(error)}`);
+          return false;
+        }
+        return true;
+      }
+      if (this.transporter) {
+        await this.transporter.sendMail({
+          from: `"Bio Vera" <${fromAddr}>`,
+          to: data.to,
+          subject: data.subject,
+          html: data.html,
+          text: data.text,
+        });
+        return true;
+      }
+      this.logger.warn('Email not configured, skipping send');
+      return false;
+    } catch (e: unknown) {
+      this.logger.error(`sendSimpleEmail failed: ${e instanceof Error ? e.message : e}`);
+      return false;
+    }
+  }
+
   /**
    * Test email configuration
    */

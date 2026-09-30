@@ -9,6 +9,8 @@ import { MAP_PIN_ANCHOR, MapLocationPin } from './map/MapLocationPin';
 
 interface SuppliersMapProps {
   onMarkerPress?: (location: RetailLocation) => void;
+  category?: string;
+  bioVeraOnly?: boolean;
 }
 
 /**
@@ -16,7 +18,7 @@ interface SuppliersMapProps {
  * Shows all BioVera retail locations where products can be purchased
  * Works with Expo Go - no native build required
  */
-export default function SuppliersMap({ onMarkerPress }: SuppliersMapProps) {
+export default function SuppliersMap({ onMarkerPress, category, bioVeraOnly }: SuppliersMapProps) {
   const { t } = useTranslation();
   const [locations, setLocations] = useState<RetailLocation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,14 +31,14 @@ export default function SuppliersMap({ onMarkerPress }: SuppliersMapProps) {
 
   useEffect(() => {
     loadRetailLocations();
-  }, []);
+  }, [category, bioVeraOnly]);
 
   const loadRetailLocations = async () => {
     try {
       setLoading(true);
       const [retail, suppliers] = await Promise.all([
         retailLocationsAPI.getAllPublic(),
-        b2bSuppliersAPI.getPublicMap(),
+        b2bSuppliersAPI.getPublicMap({ category, bioVeraOnly }),
       ]);
       const retailMapped = (retail || []).map((r) => ({ ...r, kind: 'retail' as const }));
       const merged = [...retailMapped, ...(suppliers || [])].filter(

@@ -22,7 +22,14 @@ export class FieldEntriesController {
   }
 
   @Get()
-  async findAll(@Request() req, @Query('farmId') farmId?: string) {
-    return this.fieldEntriesService.findAll(req.user.id, farmId);
+  async findAll(
+    @Request() req,
+    @Query('farmId') farmId?: string,
+    @Query('parcelId') parcelId?: string,
+    @Query('type') type?: string,
+    @Query('from') from?: string,
+    @Query('to') to?: string,
+  ) {
+    return this.fieldEntriesService.findAll(req.user.id, { farmId, parcelId, type, from, to });
   }
 }

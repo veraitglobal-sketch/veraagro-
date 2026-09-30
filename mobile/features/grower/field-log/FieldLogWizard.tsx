@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { smartLockAPI } from '../../../lib/api/grower';
 import {
   View,
   Text,
@@ -50,7 +51,34 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
   const dateLocale = useAppLocaleTag();
   const [step, setStep] = useState(1);
   const [showOptional, setShowOptional] = useState(false);
+  const [plantedBags, setPlantedBags] = useState<{
+    count: number;
+    totalKg: number;
+    lots: string[];
+  } | null>(null);
   const data = useFieldLogData();
+
+  const loadPlantedBags = useCallback(async (parcelId: string) => {
+    try {
+      const status = await smartLockAPI.getParcelStatus(parcelId);
+      const pb = status?.plantedBags;
+      if (pb && pb.count > 0) {
+        setPlantedBags({ count: pb.count, totalKg: pb.totalKg, lots: pb.lots ?? [] });
+      } else {
+        setPlantedBags(null);
+      }
+    } catch {
+      setPlantedBags(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!data.selectedParcelId) {
+      setPlantedBags(null);
+      return;
+    }
+    void loadPlantedBags(data.selectedParcelId);
+  }, [data.selectedParcelId, loadPlantedBags]);
 
   const formatHistoryWhen = (iso: string) => {
     try {
@@ -226,6 +254,18 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
                   }}
                 />
               )}
+              {plantedBags ? (
+                <View style={[enterpriseUi.inAppPanel, styles.plantedBagsCard]}>
+                  <Text style={styles.plantedBagsTitle}>{t('seedScan.plantedBagsTitle')}</Text>
+                  <Text style={styles.plantedBagsBody}>
+                    {t('seedScan.plantedBagsSummary', {
+                      count: plantedBags.count,
+                      kg: plantedBags.totalKg,
+                      lots: plantedBags.lots.join(', '),
+                    })}
+                  </Text>
+                </View>
+              ) : null}
             </>
           ) : null}
 
@@ -505,6 +545,21 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: 10,
     marginBottom: 8,
+  },
+  plantedBagsCard: {
+    marginTop: 12,
+    padding: 14,
+  },
+  plantedBagsTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: enterpriseColors.primary,
+    marginBottom: 4,
+  },
+  plantedBagsBody: {
+    fontSize: 14,
+    color: enterpriseColors.gray700,
+    lineHeight: 20,
   },
   scanField: {
     flex: 1,

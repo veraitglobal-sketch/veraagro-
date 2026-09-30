@@ -28,7 +28,29 @@ function productStorageKey(owner: string): string {
 }
 const PENDING_COSTS_KEY = 'pending_costs';
 const PENDING_CERTIFICATE_PHOTOS_KEY = 'pending_certificate_photos';
+const PENDING_PLANTING_ENTRIES_KEY = 'pending_planting_entries_v1';
+
+export type PendingPlantingEntry = {
+  id: string;
+  payload: Record<string, unknown>;
+  timestamp: string;
+  status: 'pending' | 'syncing' | 'synced' | 'error';
+  error?: string;
+};
+const PENDING_SEED_SCANS_KEY = 'pending_seed_scans';
 const WHITELIST_KEY = 'material_whitelist';
+
+export interface PendingSeedScan {
+  id: string;
+  serialInput: string;
+  gpsLat?: number;
+  gpsLng?: number;
+  parcelId?: string;
+  deviceId?: string;
+  timestamp: string;
+  status: 'pending' | 'synced' | 'error';
+  error?: string;
+}
 
 export type FieldActivityType =
   | 'Planting'
@@ -760,5 +782,67 @@ export const offlineStorage = {
     } catch (e) {
       console.warn('[offlineStorage] resetStuckSyncingQueues:', e);
     }
+  },
+
+  async queueSeedScan(input: {
+    serialInput: string;
+    gpsLat?: number;
+    gpsLng?: number;
+    parcelId?: string;
+    deviceId?: string;
+  }): Promise<PendingSeedScan> {
+    const row: PendingSeedScan = {
+      id: `seed-scan-${Date.now()}`,
+      serialInput: input.serialInput.trim(),
+      gpsLat: input.gpsLat,
+      gpsLng: input.gpsLng,
+      parcelId: input.parcelId,
+      deviceId: input.deviceId,
+      timestamp: new Date().toISOString(),
+      status: 'pending',
+    };
+    const raw = await AsyncStorage.getItem(PENDING_SEED_SCANS_KEY);
+    const list: PendingSeedScan[] = raw ? JSON.parse(raw) : [];
+    list.push(row);
+    await AsyncStorage.setItem(PENDING_SEED_SCANS_KEY, JSON.stringify(list));
+    return row;
+  },
+
+  async getPendingSeedScans(): Promise<PendingSeedScan[]> {
+    const raw = await AsyncStorage.getItem(PENDING_SEED_SCANS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  },
+
+  async savePendingSeedScans(rows: PendingSeedScan[]): Promise<void> {
+    await AsyncStorage.setItem(PENDING_SEED_SCANS_KEY, JSON.stringify(rows));
+  },
+
+  async updatePendingSeedScan(
+    id: string,
+    patch: Partial<Pick<PendingSeedScan, 'status' | 'error'>>,
+  ): Promise<void> {
+    const rows = await this.getPendingSeedScans();
+    const next = rows.map((r) => (r.id === id ? { ...r, ...patch } : r));
+    await this.savePendingSeedScans(next);
+  },
+
+  async savePendingPlantingEntry(row: Omit<PendingPlantingEntry, 'status'>): Promise<void> {
+    const raw = await AsyncStorage.getItem(PENDING_PLANTING_ENTRIES_KEY);
+    const list: PendingPlantingEntry[] = raw ? JSON.parse(raw) : [];
+    list.push({ ...row, status: 'pending' });
+    await AsyncStorage.setItem(PENDING_PLANTING_ENTRIES_KEY, JSON.stringify(list));
+  },
+
+  async getPendingPlantingEntries(): Promise<PendingPlantingEntry[]> {
+    const raw = await AsyncStorage.getItem(PENDING_PLANTING_ENTRIES_KEY);
+    return raw ? JSON.parse(raw) : [];
+  },
+
+  async removePendingPlantingEntry(id: string): Promise<void> {
+    const list = await this.getPendingPlantingEntries();
+    await AsyncStorage.setItem(
+      PENDING_PLANTING_ENTRIES_KEY,
+      JSON.stringify(list.filter((r) => r.id !== id)),
+    );
   },
 };

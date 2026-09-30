@@ -24,7 +24,7 @@ const androidGoogleServices = firstExistingFile('google-services.json', 'google-
  */
 export default (): ExpoConfig => ({
   ...base,
-  owner: 'biovera',
+  // owner: 'biovera' — set only when your Expo user is a member of @biovera org
   ios: {
     ...base.ios,
     ...(iosGoogleServices ? { googleServicesFile: iosGoogleServices } : {}),

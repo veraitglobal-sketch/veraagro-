@@ -149,6 +149,8 @@ export interface BuyerOrderCreatePayload {
   unitPrice: number;
   deliveryAddress: { street: string; city: string; postalCode: string; country: string };
   deliveryNotes?: string;
+  packOptionId?: string;
+  packCount?: number;
 }
 
 // Orders API
@@ -189,6 +191,10 @@ export const ordersAPI = {
   },
   approveOrderAdmin: async (id: string) => {
     const response = await api.post(`/orders/admin/${id}/approve`);
+    return response.data;
+  },
+  rejectOrderAdmin: async (id: string, reason: string) => {
+    const response = await api.post(`/orders/admin/${id}/reject`, { reason });
     return response.data;
   },
   confirmBankPaymentAdmin: async (id: string, transactionId?: string) => {
@@ -516,6 +522,28 @@ export const parcelsAPI = {
     );
     return response.data;
   },
+};
+
+// Admin catalogue products (planned supply + packaging)
+export const catalogAPI = {
+  getSupply: async () => (await api.get('/catalog/admin/supply')).data,
+  listAdminProducts: async () => (await api.get('/catalog/admin/products')).data,
+  getAdminProduct: async (id: string) => (await api.get(`/catalog/admin/products/${encodeURIComponent(id)}`)).data,
+  createProduct: async (body: Record<string, unknown>) => (await api.post('/catalog/admin/products', body)).data,
+  updateProduct: async (id: string, body: Record<string, unknown>) =>
+    (await api.patch(`/catalog/admin/products/${encodeURIComponent(id)}`, body)).data,
+  publishProduct: async (id: string) => (await api.post(`/catalog/admin/products/${encodeURIComponent(id)}/publish`)).data,
+  archiveProduct: async (id: string) => (await api.post(`/catalog/admin/products/${encodeURIComponent(id)}/archive`)).data,
+  addPackOption: async (productId: string, body: Record<string, unknown>) =>
+    (await api.post(`/catalog/admin/products/${encodeURIComponent(productId)}/pack-options`, body)).data,
+  updatePackOption: async (id: string, body: Record<string, unknown>) =>
+    (await api.patch(`/catalog/admin/pack-options/${encodeURIComponent(id)}`, body)).data,
+  adjustStock: async (productId: string, body: Record<string, unknown>) =>
+    (await api.post(`/catalog/admin/products/${encodeURIComponent(productId)}/stock`, body)).data,
+  getStockHistory: async (productId: string) =>
+    (await api.get(`/catalog/admin/products/${encodeURIComponent(productId)}/stock`)).data,
+  listPublicProducts: async () => (await api.get('/catalog/products')).data,
+  getPublicProduct: async (id: string) => (await api.get(`/catalog/products/${encodeURIComponent(id)}`)).data,
 };
 
 // Harvest plans (harvest_announcements — grower notifies admin)
@@ -961,6 +989,58 @@ export const b2bSupplierPortalAPI = {
     const response = await api.patch(`/b2b-suppliers/orders/${encodeURIComponent(orderId)}/status`, data);
     return response.data;
   },
+  getApprovedProducts: async () => {
+    const response = await api.get('/b2b-suppliers/my/approved-products');
+    return response.data as Array<{
+      id: string;
+      category: string;
+      name: string;
+      variety: string | null;
+      unit: string;
+      packSize: string | null;
+      imageUrl: string | null;
+      isBioVeraBrand: boolean;
+      description: string | null;
+    }>;
+  },
+  getMySeedBags: async (status?: string) => {
+    const response = await api.get('/b2b-suppliers/me/seed-bags', { params: status ? { status } : {} });
+    return response.data as {
+      bags: Array<{
+        id: string;
+        serialNumber: string;
+        status: string;
+        bagNumber: number | null;
+        approvedProductId: string | null;
+        productName: string;
+        lotNumber: string | null;
+        seedCropYear: number | null;
+      }>;
+      grouped: Array<{
+        approvedProductId: string | null;
+        productName: string;
+        lotNumber: string;
+        seedCropYear: number | null;
+        count: number;
+      }>;
+    };
+  },
+  receiveSeedBags: async (serials: string[]) => {
+    const response = await api.post('/b2b-suppliers/me/seed-bags/receive', { serials });
+    return response.data as { results: Array<{ serial: string; ok: boolean; reason?: string }> };
+  },
+  sellSeedBags: async (body: {
+    growerPartnerCode?: string;
+    growerId?: string;
+    serials: string[];
+    directOrderId?: string;
+  }) => {
+    const response = await api.post('/b2b-suppliers/me/seed-bags/sell', body);
+    return response.data as {
+      growerId: string;
+      results: Array<{ serial: string; ok: boolean; reason?: string }>;
+    };
+  },
   getMyCatalog: async () => {
     const response = await api.get('/b2b-suppliers/my/catalog');
     return response.data as Array<{
@@ -975,12 +1055,13 @@ export const b2bSupplierPortalAPI = {
       sortOrder: number;
       createdAt: string;
       updatedAt: string;
+      approvedProductId?: string | null;
+      approvedProduct?: { id: string; name: string; category: string; isBioVeraBrand: boolean };
     }>;
   },
   createCatalogItem: async (data: {
-    name: string;
+    approvedProductId: string;
     description?: string;
-    unit?: string;
     listPrice?: number;
     sku?: string;
   }) => {
@@ -1117,6 +1198,13 @@ export const b2bSuppliersAdminAPI = {
     );
     return response.data;
   },
+  linkCatalogItem: async (catalogItemId: string, approvedProductId: string | null) => {
+    const response = await api.patch(
+      `/b2b-suppliers/admin/supplier-catalog-items/${encodeURIComponent(catalogItemId)}`,
+      { approvedProductId },
+    );
+    return response.data;
+  },
   getNetworkOverview: async () => {
     const response = await api.get('/b2b-suppliers/admin/network-overview');
     return response.data as {
@@ -1136,7 +1224,19 @@ export const b2bSuppliersAdminAPI = {
           email?: string | null;
           phone?: string | null;
         };
-        stats: { threadCount: number; orderCount: number; linkedFarmerCount: number };
+        stats: {
+          threadCount: number;
+          orderCount: number;
+          linkedFarmerCount: number;
+          approvedCatalogCount: number;
+          unlinkedCatalogCount: number;
+        };
+        catalogItems: Array<{
+          id: string;
+          name: string;
+          approvedProductId: string | null;
+          isActive: boolean;
+        }>;
         linkedFarmers: Array<{
           id: string;
           firstName: string;
@@ -2219,6 +2319,305 @@ export const careersApplyAPI = {
       throw err;
     }
     return { success: result.success ?? true, message: result.message };
+  },
+};
+
+// Seed production API (Bio Vera label traceability — admin)
+export type SeedRunStatus = 'PLANNED' | 'LABELS_ISSUED' | 'PRODUCED' | 'RELEASED' | 'RECALLED';
+
+export interface SeedInstructions {
+  sowingTime?: string;
+  spacingDepth?: string;
+  seedRate?: string;
+  soilTemperature?: string;
+  irrigation?: string;
+  firstSteps?: string;
+  storage?: string;
+  safety?: string;
+  harvestWindow?: string;
+}
+
+export interface SeedApprovedProduct {
+  id: string;
+  category: string;
+  name: string;
+  variety?: string | null;
+  cropType?: string | null;
+  manufacturer?: string | null;
+  isBioVeraBrand: boolean;
+  description?: string | null;
+  imageUrl?: string | null;
+  unit: string;
+  packSize?: string | null;
+  status: 'ACTIVE' | 'RETIRED';
+  instructions?: SeedInstructions | null;
+  instructionsPdfUrl?: string | null;
+  videoUrl?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SeedProducer {
+  id: string;
+  name: string;
+  country: string;
+  city?: string | null;
+  address?: string | null;
+  licenseNumber?: string | null;
+  contactName?: string | null;
+  contactEmail?: string | null;
+  userId?: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SeedBag {
+  id: string;
+  serialNumber: string;
+  status: string;
+  bagNumber?: number | null;
+  assignedToUserId?: string | null;
+  soldToGrowerId?: string | null;
+  plantedParcelId?: string | null;
+  plantedAt?: string | null;
+  manufacturedAt?: string | null;
+  expiresAt?: string | null;
+  custody?: Array<{
+    id: string;
+    event: string;
+    createdAt: string;
+    note?: string | null;
+    growerId?: string | null;
+    parcelId?: string | null;
+  }>;
+  productionRun?: SeedProductionRun | null;
+  approvedProduct?: SeedApprovedProduct | null;
+}
+
+export interface SeedProductionRun {
+  id: string;
+  approvedProductId: string;
+  producerId: string;
+  lotNumber: string;
+  seedCropYear: number;
+  productionDate?: string | null;
+  originCountry: string;
+  originRegion?: string | null;
+  bagSizeLabel: string;
+  bagsPlanned: number;
+  bagsProduced?: number | null;
+  germinationPct?: number | null;
+  purityPct?: number | null;
+  certificateUrls: string[];
+  expiresAt?: string | null;
+  status: SeedRunStatus;
+  recallReason?: string | null;
+  createdBy?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  approvedProduct?: SeedApprovedProduct;
+  producer?: SeedProducer;
+  bagCounts?: Record<string, number>;
+  bags?: SeedBag[];
+}
+
+export interface SeedDashboard {
+  totals: {
+    labeled: number;
+    produced: number;
+    voided: number;
+    available: number;
+    assigned: number;
+    planted: number;
+    recalled: number;
+  };
+  runs: SeedProductionRun[];
+  plantedParcels: Array<{
+    serialNumber: string;
+    plantedParcelId: string | null;
+    plantedAt: string | null;
+    productionRun: { lotNumber: string };
+  }>;
+}
+
+export const seedProductionAPI = {
+  getDashboard: async (): Promise<SeedDashboard> =>
+    (await api.get('/seed-production/dashboard')).data,
+  listApprovedProducts: async (): Promise<SeedApprovedProduct[]> =>
+    (await api.get('/seed-production/approved-products')).data,
+  createApprovedProduct: async (body: Record<string, unknown>): Promise<SeedApprovedProduct> =>
+    (await api.post('/seed-production/approved-products', body)).data,
+  updateApprovedProduct: async (id: string, body: Record<string, unknown>): Promise<SeedApprovedProduct> =>
+    (await api.patch(`/seed-production/approved-products/${encodeURIComponent(id)}`, body)).data,
+  retireApprovedProduct: async (id: string): Promise<SeedApprovedProduct> =>
+    (await api.post(`/seed-production/approved-products/${encodeURIComponent(id)}/retire`)).data,
+  listProducers: async (): Promise<SeedProducer[]> =>
+    (await api.get('/seed-production/producers')).data,
+  createProducer: async (body: Record<string, unknown>): Promise<SeedProducer> =>
+    (await api.post('/seed-production/producers', body)).data,
+  updateProducer: async (id: string, body: Record<string, unknown>): Promise<SeedProducer> =>
+    (await api.patch(`/seed-production/producers/${encodeURIComponent(id)}`, body)).data,
+  listRuns: async (): Promise<SeedProductionRun[]> =>
+    (await api.get('/seed-production/runs')).data,
+  getRun: async (id: string): Promise<SeedProductionRun> =>
+    (await api.get(`/seed-production/runs/${encodeURIComponent(id)}`)).data,
+  createRun: async (body: Record<string, unknown>): Promise<SeedProductionRun> =>
+    (await api.post('/seed-production/runs', body)).data,
+  issueLabels: async (id: string): Promise<SeedProductionRun> =>
+    (await api.post(`/seed-production/runs/${encodeURIComponent(id)}/issue-labels`)).data,
+  downloadLabelsCsv: async (runId: string): Promise<Blob> => {
+    const response = await api.get(`/seed-production/runs/${encodeURIComponent(runId)}/labels.csv`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+  downloadLabelsPdf: async (runId: string, format: 'sheet' | 'roll' = 'sheet'): Promise<Blob> => {
+    const response = await api.get(`/seed-production/runs/${encodeURIComponent(runId)}/labels.pdf`, {
+      params: { format },
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+  labelsCsvUrl: (runId: string) =>
+    `${WEB_API_BASE}/seed-production/runs/${encodeURIComponent(runId)}/labels.csv`,
+  labelsPdfUrl: (runId: string, format: 'sheet' | 'roll' = 'sheet') => {
+    const base = `${WEB_API_BASE}/seed-production/runs/${encodeURIComponent(runId)}/labels.pdf`;
+    return format === 'roll' ? `${base}?format=roll` : base;
+  },
+  confirmProduction: async (id: string, body: Record<string, unknown>): Promise<SeedProductionRun> =>
+    (await api.post(`/seed-production/runs/${encodeURIComponent(id)}/confirm-production`, body)).data,
+  releaseRun: async (id: string): Promise<SeedProductionRun> =>
+    (await api.post(`/seed-production/runs/${encodeURIComponent(id)}/release`)).data,
+  recallRun: async (id: string, reason: string) =>
+    (await api.post(`/seed-production/runs/${encodeURIComponent(id)}/recall`, { reason })).data as {
+      run: SeedProductionRun;
+      affectedGrowers: string[];
+      affectedParcels: Array<{ plantedParcelId: string | null; serialNumber: string }>;
+    },
+  getRecallPreview: async (id: string) =>
+    (await api.get(`/seed-production/runs/${encodeURIComponent(id)}/recall-preview`)).data as {
+      lotNumber: string;
+      bagsToRecall: number;
+      byStatus: Record<string, number>;
+      growers: Array<{ id: string; firstName: string; lastName: string; partnerCode: string }>;
+      affectedParcels: Array<{
+        parcelId: string;
+        serialNumbers: string[];
+        plantedAt: string | null;
+        cropType: string | null;
+        estateName: string | null;
+        areaM2: number | null;
+      }>;
+    },
+  previewAssignBags: async (id: string, serials: string[]) =>
+    (await api.post(`/seed-production/runs/${encodeURIComponent(id)}/assign-preview`, { serials })).data as {
+      results: Array<{ serial: string; ok: boolean; reason?: string }>;
+    },
+  uploadCertificate: async (file: File): Promise<{ url: string }> => {
+    const form = new FormData();
+    form.append('file', file);
+    const response = await api.post('/seed-production/upload-certificate', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+  getParcelPlantedBags: async (parcelId: string) =>
+    (await api.get(`/seed-production/parcels/${encodeURIComponent(parcelId)}/planted-bags`)).data as {
+      parcel: { id: string; cropType: string | null; calculatedArea: number };
+      plantedBags: {
+        count: number;
+        totalKg: number;
+        lots: string[];
+        bags: Array<{
+          serialNumber: string;
+          status: string;
+          lotNumber: string | null;
+          bagSizeLabel: string | null;
+          bagKg: number;
+          plantedAt: string | null;
+        }>;
+      };
+    },
+  assignBags: async (id: string, body: { growerId?: string; growerPartnerCode?: string; serials: string[] }) =>
+    (await api.post(`/seed-production/runs/${encodeURIComponent(id)}/assign`, body)).data,
+  shipBags: async (id: string, body: { supplierUserId: string; serials: string[] }) =>
+    (await api.post(`/seed-production/runs/${encodeURIComponent(id)}/ship`, body)).data as {
+      supplierUserId: string;
+      results: Array<{ serial: string; ok: boolean; reason?: string }>;
+    },
+  getBag: async (serial: string): Promise<SeedBag> =>
+    (await api.get(`/seed-production/bags/${encodeURIComponent(serial)}`)).data,
+  inviteProducer: async (id: string, body: { firstName: string; lastName: string; email: string }) =>
+    (await api.post(`/seed-production/producers/${encodeURIComponent(id)}/invite`, body)).data as {
+      userId: string;
+      partnerCode: string;
+      email: string;
+    },
+  unlinkProducer: async (id: string) =>
+    (await api.post(`/seed-production/producers/${encodeURIComponent(id)}/unlink-user`)).data,
+  getReportsSummary: async (params?: { year?: number; productId?: string }) =>
+    (await api.get('/seed-production/reports/summary', { params })).data as {
+      byProductYear: Array<Record<string, unknown>>;
+      suppliers: Array<Record<string, unknown>>;
+      plantedParcels: Array<Record<string, unknown>>;
+    },
+  downloadBagsRegisterCsv: async (params?: { runId?: string; status?: string; supplierUserId?: string }) => {
+    const response = await api.get('/seed-production/reports/bags.csv', { params, responseType: 'blob' });
+    return response.data as Blob;
+  },
+  getRecallImpact: async (runId: string) =>
+    (await api.get(`/seed-production/reports/recall-impact/${encodeURIComponent(runId)}`)).data as {
+      lotNumber: string;
+      bagsToRecall: number;
+      byStatus: Record<string, number>;
+      growers: Array<{ id: string; firstName: string; lastName: string; partnerCode: string; phone?: string | null }>;
+      affectedParcels: Array<{
+        parcelId: string;
+        serialNumbers: string[];
+        plantedAt: string | null;
+        cropType: string | null;
+        estateName: string | null;
+        areaM2: number | null;
+      }>;
+    },
+};
+
+export const seedProducerAPI = {
+  me: async () => (await api.get('/seed-producer/me')).data,
+  listRuns: async () => (await api.get('/seed-producer/runs')).data as Array<{
+    id: string;
+    lotNumber: string;
+    seedCropYear: number;
+    product: string;
+    variety?: string | null;
+    bagsPlanned: number;
+    bagsProduced?: number | null;
+    status: string;
+    productionDate?: string | null;
+    labelsReady: boolean;
+  }>,
+  getRun: async (id: string) => (await api.get(`/seed-producer/runs/${encodeURIComponent(id)}`)).data as SeedProductionRun,
+  downloadLabelsCsv: async (runId: string): Promise<Blob> => {
+    const response = await api.get(`/seed-producer/runs/${encodeURIComponent(runId)}/labels.csv`, { responseType: 'blob' });
+    return response.data;
+  },
+  downloadLabelsPdf: async (runId: string, format: 'sheet' | 'roll' = 'sheet'): Promise<Blob> => {
+    const response = await api.get(`/seed-producer/runs/${encodeURIComponent(runId)}/labels.pdf`, {
+      params: { format },
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+  confirmProduction: async (id: string, body: Record<string, unknown>) =>
+    (await api.post(`/seed-producer/runs/${encodeURIComponent(id)}/confirm-production`, body)).data,
+  uploadCertificate: async (runId: string, file: File): Promise<{ certificateUrls: string[] }> => {
+    const form = new FormData();
+    form.append('file', file);
+    const response = await api.post(`/seed-producer/runs/${encodeURIComponent(runId)}/certificates`, form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
   },
 };
 

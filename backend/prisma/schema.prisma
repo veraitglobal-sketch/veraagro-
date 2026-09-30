@@ -398,11 +398,72 @@ model estates {
   inventory              inventory[]
   line_orders            orders[]            @relation("OrderSellerEstate")
   fulfilling_orders      orders[]            @relation("OrderFulfillingEstate")
+  catalog_products       catalog_products[]
   parcels                parcels[]
   security_alerts        security_alerts[]
 
   @@index([ownerId])
   @@index([status])
+}
+
+/// Admin-managed marketplace product: planned season quantity sold in fixed packs.
+model catalog_products {
+  id                String                 @id @default(uuid())
+  name              String
+  category          String?
+  description       String?
+  imageUrl          String?
+  estateId          String?
+  sourcePlantingId  String?
+  plannedQuantityKg Float
+  availableFrom     DateTime?
+  availableUntil    DateTime?
+  status            CatalogProductStatus   @default(DRAFT)
+  createdBy         String?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  estate            estates?               @relation(fields: [estateId], references: [id])
+  source_planting   harvest_announcements? @relation("CatalogFromPlanting", fields: [sourcePlantingId], references: [id])
+  packOptions       catalog_pack_options[]
+  stockMovements    catalog_stock_movements[]
+  orders            orders[]
+
+  @@index([status])
+  @@index([estateId])
+  @@index([sourcePlantingId])
+}
+
+model catalog_stock_movements {
+  id         String                   @id @default(uuid())
+  productId  String
+  type       CatalogStockMovementType
+  quantityKg Float
+  orderId    String?
+  batchId    String?
+  reason     String?
+  actorId    String?
+  createdAt  DateTime                 @default(now())
+  product    catalog_products         @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([orderId, type])
+  @@index([productId, createdAt])
+}
+
+/// A sellable packaging of a catalogue product (500 g, 5 kg, 10 kg …) with its own price.
+model catalog_pack_options {
+  id           String           @id @default(uuid())
+  productId    String
+  label        String
+  packSizeKg   Float
+  pricePerPack Float
+  isActive     Boolean          @default(true)
+  sortOrder    Int              @default(0)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  product      catalog_products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orders       orders[]
+
+  @@index([productId])
 }
 
 model farmer_material_balances {
@@ -855,10 +916,18 @@ model orders {
   totalAmount          Float
   deliveryAddress      Json
   deliveryNotes        String?
+  rejectionReason      String?
+  catalogProductId     String?
+  packOptionId         String?
+  packLabel            String?
+  packSizeKg           Float?
+  packCount            Int?
   status               OrderStatus            @default(PENDING)
   createdAt            DateTime               @default(now())
   updatedAt            DateTime
   completedAt          DateTime?
+  catalogProduct       catalog_products?      @relation(fields: [catalogProductId], references: [id])
+  packOption           catalog_pack_options?  @relation(fields: [packOptionId], references: [id])
   deliveries           deliveries?
   discount_quota_usage discount_quota_usage[]
   invoices             invoices?
@@ -874,6 +943,7 @@ model orders {
   @@index([buyerId])
   @@index([estateId])
   @@index([fulfillingEstateId])
+  @@index([catalogProductId])
   @@index([orderNumber])
   @@index([status])
 }
@@ -946,6 +1016,8 @@ model harvest_announcements {
   user                users     @relation(fields: [userId], references: [id])
   batches             batches[]
   mission             missions?
+  catalog_products    catalog_products[] @relation("CatalogFromPlanting")
+  planted_seeds       seeds[]
 
   @@index([sourcePlantingId])
   @@index([parcelId])
@@ -1094,28 +1166,157 @@ model seed_scans {
   @@index([scannedByUserId])
 }
 
+model approved_products {
+  id                String                  @id @default(uuid())
+  category          ApprovedProductCategory
+  name              String
+  variety           String?
+  cropType          String?
+  manufacturer      String?
+  isBioVeraBrand    Boolean                 @default(false)
+  description       String?
+  imageUrl          String?
+  unit              String
+  packSize          String?
+  status            ApprovedProductStatus   @default(ACTIVE)
+  instructions      Json?
+  instructionsPdfUrl String?
+  videoUrl          String?
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  productionRuns    seed_production_runs[]
+  seeds             seeds[]
+  supplier_catalog_items supplier_catalog_items[]
+}
+
+model seed_producers {
+  id            String                 @id @default(uuid())
+  name          String
+  country       String
+  city          String?
+  address       String?
+  licenseNumber String?
+  contactName   String?
+  contactEmail  String?
+  userId        String?                @unique
+  isActive      Boolean                @default(true)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  runs          seed_production_runs[]
+}
+
+model seed_production_runs {
+  id                String            @id @default(uuid())
+  approvedProductId String
+  producerId        String
+  lotNumber         String            @unique
+  seedCropYear      Int
+  productionDate    DateTime?
+  originCountry     String
+  originRegion      String?
+  bagSizeLabel      String
+  bagsPlanned       Int
+  bagsProduced      Int?
+  germinationPct    Float?
+  purityPct         Float?
+  certificateUrls   String[]
+  expiresAt         DateTime?
+  status            SeedRunStatus     @default(PLANNED)
+  recallReason      String?
+  createdBy         String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  approvedProduct   approved_products @relation(fields: [approvedProductId], references: [id])
+  producer          seed_producers    @relation(fields: [producerId], references: [id])
+  bags              seeds[]
+
+  @@index([status])
+}
+
+model seed_custody_events {
+  id             String           @id @default(uuid())
+  seedId         String
+  event          SeedCustodyEvent
+  actorId        String?
+  supplierUserId String?
+  growerId       String?
+  parcelId       String?
+  lat            Float?
+  lng            Float?
+  note           String?
+  createdAt      DateTime         @default(now())
+  seed           seeds            @relation(fields: [seedId], references: [id], onDelete: Cascade)
+
+  @@index([seedId, createdAt])
+}
+
+model field_entries {
+  id                String   @id @default(uuid())
+  userId            String
+  farmId            String
+  parcelId          String?
+  plantingId        String?
+  type              String
+  occurredAt        DateTime
+  materialName      String?
+  materialQuantity  Float?
+  materialUnit      String?
+  areaHa            Float?
+  seedSerialNumber  String?
+  seedId            String?
+  fertilizerBarcode String?
+  lat               Float?
+  lng               Float?
+  notes             String?
+  photos            String[] @default([])
+  data              Json
+  clientReference   String?
+  createdAt         DateTime @default(now())
+
+  @@unique([userId, clientReference])
+  @@index([userId, occurredAt])
+  @@index([parcelId])
+  @@index([seedId])
+}
+
 model seeds {
-  id               String          @id
-  serialNumber     String          @unique
-  type             SeedType
-  name             String
-  batchNumber      String
-  quantity         Float
-  areaCoverage     Float
-  status           SeedStatus      @default(AVAILABLE)
-  assignedToUserId String?
-  assignedAt       DateTime?
-  manufacturedAt   DateTime
-  expiresAt        DateTime?
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime
-  parcels          parcels[]
-  seed_scans       seed_scans[]
-  vera_insights    vera_insights[]
+  id                String                 @id
+  serialNumber      String                 @unique
+  type              SeedType
+  name              String
+  batchNumber       String
+  quantity          Float
+  quantityRemaining Float?
+  areaCoverage      Float
+  status            SeedStatus             @default(AVAILABLE)
+  assignedToUserId  String?
+  assignedAt        DateTime?
+  manufacturedAt    DateTime
+  expiresAt         DateTime?
+  productionRunId   String?
+  approvedProductId String?
+  seedCropYear      Int?
+  bagNumber         Int?
+  supplierUserId    String?
+  soldToGrowerId    String?
+  soldAt            DateTime?
+  plantedParcelId   String?
+  plantedAt         DateTime?
+  plantingId        String?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime
+  parcels           parcels[]
+  seed_scans        seed_scans[]
+  vera_insights     vera_insights[]
+  productionRun     seed_production_runs?  @relation(fields: [productionRunId], references: [id])
+  approvedProduct   approved_products?     @relation(fields: [approvedProductId], references: [id])
+  planting          harvest_announcements? @relation(fields: [plantingId], references: [id])
+  custody           seed_custody_events[]
 
   @@index([batchNumber])
   @@index([serialNumber])
   @@index([status])
+  @@index([productionRunId])
 }
 
 model temperature_logs {
@@ -1353,6 +1554,7 @@ model material_supplier_profiles {
 model supplier_catalog_items {
   id                String                       @id @default(uuid())
   supplierUserId    String
+  approvedProductId String?
   name              String
   description       String?                      @db.Text
   unit              String                       @default("unit")
@@ -1365,10 +1567,12 @@ model supplier_catalog_items {
   createdAt         DateTime                     @default(now())
   updatedAt         DateTime                     @updatedAt
   supplier          users                        @relation("SupplierCatalogItems", fields: [supplierUserId], references: [id], onDelete: Cascade)
+  approvedProduct   approved_products?           @relation(fields: [approvedProductId], references: [id], onDelete: SetNull)
   material_barcodes supplier_material_barcodes[]
 
   @@index([supplierUserId, isActive])
   @@index([supplierUserId, sortOrder])
+  @@index([approvedProductId])
 }
 
 model supplier_threads {
@@ -1784,6 +1988,19 @@ enum PushPlatform {
   ANDROID
 }
 
+enum CatalogProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum CatalogStockMovementType {
+  ADMIN_ADD
+  ADMIN_REMOVE
+  ORDER_RESERVE
+  ORDER_RELEASE
+}
+
 enum OrderStatus {
   PENDING
   /// Platform (operativa) accepted the order; buyer may pay; further commercial terms can follow in parallel
@@ -1843,12 +2060,53 @@ enum RiskLevel {
   HIGH
 }
 
+enum ApprovedProductCategory {
+  SEED
+  FERTILIZER
+  PLANT_PROTECTION
+  PACKAGING
+  OTHER
+}
+
+enum ApprovedProductStatus {
+  ACTIVE
+  RETIRED
+}
+
+enum SeedRunStatus {
+  PLANNED
+  LABELS_ISSUED
+  PRODUCED
+  RELEASED
+  RECALLED
+}
+
+enum SeedCustodyEvent {
+  LABEL_ISSUED
+  PRODUCED
+  VOIDED
+  RELEASED
+  ASSIGNED_TO_GROWER
+  SHIPPED_TO_SUPPLIER
+  RECEIVED_BY_SUPPLIER
+  SOLD_TO_GROWER
+  PLANTED
+  RECALLED
+}
+
 enum SeedStatus {
   AVAILABLE
   ASSIGNED
   SCANNED
   USED
   EXPIRED
+  LABELED
+  VOIDED
+  IN_SUPPLIER_STOCK
+  SOLD
+  PLANTED
+  PARTIALLY_USED
+  RECALLED
 }
 
 enum SeedType {
@@ -1883,6 +2141,8 @@ enum UserRole {
   MATERIAL_SUPPLIER
   /// Commercial / field agent — supports growers, logistics, supplier stores (admin assigns accounts)
   COMMERCIAL_AGENT
+  /// Seed factory / producer portal (production runs for one seed_producers row)
+  SEED_PRODUCER
 }
 
 enum SupplierDirectOrderStatus {

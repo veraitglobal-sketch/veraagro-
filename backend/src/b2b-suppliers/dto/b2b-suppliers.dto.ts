@@ -274,15 +274,11 @@ export class UpdateOrderStatusDto {
 export class CreateCatalogItemDto {
   @IsString()
   @MinLength(1)
-  name: string;
+  approvedProductId: string;
 
   @IsString()
   @IsOptional()
   description?: string;
-
-  @IsString()
-  @IsOptional()
-  unit?: string;
 
   @IsNumber()
   @IsOptional()

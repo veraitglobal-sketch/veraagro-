@@ -8,6 +8,7 @@ import { RetailLocation } from '../lib/api';
 import { theme } from '../lib/theme';
 import { markStepComplete } from '../lib/grower-journey';
 import { useState } from 'react';
+import { Switch } from 'react-native';
 
 /**
  * Vera Supplier Map – Step 1 of Grower Journey
@@ -17,6 +18,7 @@ export default function SupplierMapScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const [selectedLocation, setSelectedLocation] = useState<RetailLocation | null>(null);
+  const [bioVeraOnly, setBioVeraOnly] = useState(false);
 
   useEffect(() => {
     markStepComplete(3);
@@ -85,7 +87,26 @@ export default function SupplierMapScreen() {
           backgroundColor: theme.colors.background,
         }}
       >
-        <SuppliersMap onMarkerPress={setSelectedLocation} />
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingHorizontal: theme.spacing.lg,
+            paddingVertical: theme.spacing.sm,
+            backgroundColor: theme.colors.background,
+          }}
+        >
+          <Text style={{ fontSize: 14, color: theme.colors.text.primary, flex: 1 }}>
+            {t('map.bioVeraSeedOnly', { defaultValue: 'Bio Vera seed in stock' })}
+          </Text>
+          <Switch
+            value={bioVeraOnly}
+            onValueChange={setBioVeraOnly}
+            trackColor={{ false: '#d1d5db', true: '#2D5A27' }}
+          />
+        </View>
+        <SuppliersMap onMarkerPress={setSelectedLocation} bioVeraOnly={bioVeraOnly} category={bioVeraOnly ? 'SEED' : undefined} />
       </View>
 
       {selectedLocation && (
@@ -144,6 +165,22 @@ export default function SupplierMapScreen() {
             >
               {selectedLocation.address}
             </Text>
+          )}
+          {selectedLocation.bioVeraSeedInStock && selectedLocation.bioVeraSeedInStock.length > 0 && (
+            <View style={{ marginTop: theme.spacing.sm }}>
+              {selectedLocation.bioVeraSeedInStock.map((s) => (
+                <Text
+                  key={s.approvedProductId}
+                  style={{ fontSize: 13, color: theme.colors.primary, marginTop: 2 }}
+                >
+                  {t('map.bioVeraSeedStock', {
+                    defaultValue: 'Bio Vera seed: {{count}} bags — {{name}}',
+                    count: s.bags,
+                    name: s.name,
+                  })}
+                </Text>
+              ))}
+            </View>
           )}
         </View>
       )}

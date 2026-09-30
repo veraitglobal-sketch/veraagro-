@@ -11,6 +11,7 @@ import { estatesAPI, Estate } from '../../../lib/api';
 import { growerOfflineCache } from '../../../lib/grower-offline-cache';
 import { useGrowerDashboard } from '../../../contexts/GrowerDashboardContext';
 import { useAppLocaleTag } from '../../../lib/date-locale';
+import { ParcelSeedOriginCard } from '../../../components/grower/ParcelSeedOriginCard';
 
 /**
  * Estate Details Screen
@@ -334,6 +335,7 @@ export default function EstateDetailsScreen() {
                         {t('producer.recentActivity.planting')}: {new Date(parcel.plantingDate).toLocaleDateString(dateLocale)}
                       </Text>
                     )}
+                    <ParcelSeedOriginCard parcelId={parcel.id} />
                     <TouchableOpacity
                       onPress={() =>
                         router.push({

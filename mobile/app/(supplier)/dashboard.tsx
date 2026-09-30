@@ -160,6 +160,14 @@ export default function SupplierDashboardScreen() {
             onPress: () => router.push('/(supplier)/catalog' as never),
           },
           {
+            key: 'seed-bags',
+            title: t('supplier.seedBags.title', { defaultValue: 'Bio Vera seed' }),
+            subtitle: t('supplier.seedBags.dashboardHint', { defaultValue: 'Receive, stock & sell seed bags' }),
+            icon: QrCode,
+            tone: 'green',
+            onPress: () => router.push('/(supplier)/seed-bags' as never),
+          },
+          {
             key: 'messages',
             title: t('supplier.messagesCard'),
             subtitle: t('supplier.dashboard.messagesHint', { count: threads }),

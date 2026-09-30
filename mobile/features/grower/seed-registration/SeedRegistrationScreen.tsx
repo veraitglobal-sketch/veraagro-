@@ -18,6 +18,8 @@ import { Camera, ScanLine, Image as ImageIcon, ChevronRight } from 'lucide-react
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { seedsAPI, seedRegistrationsAPI } from '../../../lib/api';
+import { offlineStorage } from '../../../lib/offline-storage';
+import { isLikelyNetworkError } from '../../../lib/api-error';
 import { apiErrorMessage, axiosResponseStatus } from '../../../lib/api-error';
 import { markStepComplete } from '../../../lib/grower-journey';
 import { pickFromCamera } from '../../../lib/camera-picker';
@@ -30,6 +32,15 @@ import { farmerFormUi } from '../../../lib/farmer-form-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 
 type Mode = 'select' | 'scan' | 'manual';
+
+type GenuineOrigin = {
+  product: string;
+  variety?: string | null;
+  lot: string;
+  seedCropYear: number;
+  producer: { name: string; city?: string | null; country: string };
+  germinationPct?: number | null;
+};
 
 /**
  * Seed Registration – Step 2 of Grower Journey
@@ -44,6 +55,10 @@ export default function SeedRegistrationScreen({ embedded = false }: { embedded?
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [genuineOrigin, setGenuineOrigin] = useState<GenuineOrigin | null>(null);
+  const [genuineSerial, setGenuineSerial] = useState<string | null>(null);
+  const [offlineQueued, setOfflineQueued] = useState(false);
+  const [manualSerial, setManualSerial] = useState('');
 
   useFocusEffect(
     useCallback(() => {
@@ -53,32 +68,34 @@ export default function SeedRegistrationScreen({ embedded = false }: { embedded?
         try {
           const result = await seedsAPI.validate(qr);
           markStepComplete(2);
+          await AsyncStorage.removeItem('last_scanned_qr');
+          if (result?.origin) {
+            setGenuineOrigin(result.origin);
+            setGenuineSerial(result.seed?.serialNumber || qr);
+            setMode('scan');
+            return;
+          }
           const seed = result?.seed;
           const info = seed ? `${seed.batchNumber || qr}${seed.name ? ` · ${seed.name}` : ''}` : qr;
-          Alert.alert(
-            t('producer.scanner.successTitle'),
-            t('growerJourney.step2.scanSuccess', { info }),
-            [
-              {
-                text: t('growerJourney.step2.addToProducts'),
-                onPress: () => router.replace('/(producer)/(tabs)/products'),
-              },
-              {
-                text: t('alerts.ok'),
-                onPress: () => {
-                  void AsyncStorage.removeItem('last_scanned_qr');
-                  router.back();
-                },
-              },
-            ],
-          );
+          Alert.alert(t('producer.scanner.successTitle'), t('growerJourney.step2.scanSuccess', { info }), [
+            { text: t('alerts.ok'), onPress: () => router.back() },
+          ]);
         } catch (e: unknown) {
+          if (isLikelyNetworkError(e)) {
+            await offlineStorage.queueSeedScan({ serialInput: qr, gpsLat: location?.lat, gpsLng: location?.lng });
+            await AsyncStorage.removeItem('last_scanned_qr');
+            setOfflineQueued(true);
+            setMode('scan');
+            return;
+          }
           await AsyncStorage.removeItem('last_scanned_qr');
           const status = axiosResponseStatus(e);
-          const msg = apiErrorMessage(e, '').toLowerCase();
-          if (status === 401 || msg.includes('401') || msg.includes('login') || msg.includes('session expired')) {
+          const msg = apiErrorMessage(e, '');
+          if (status === 401 || msg.toLowerCase().includes('session expired')) {
             Alert.alert(t('error'), t('growerJourney.step2.loginRequired'));
+            return;
           }
+          Alert.alert(t('error'), msg || t('growerJourney.step2.validationFailed'));
         }
       })();
     }, [router, t]),
@@ -105,6 +122,34 @@ export default function SeedRegistrationScreen({ embedded = false }: { embedded?
 
   const handleOpenScanner = () => {
     router.push('/scan-qr');
+  };
+
+  const verifyManualSerial = async (serial: string) => {
+    if (!serial.trim()) return;
+    setLoading(true);
+    try {
+      const result = await seedsAPI.validate(serial.trim());
+      if (result?.origin) {
+        markStepComplete(2);
+        setGenuineOrigin(result.origin);
+        setGenuineSerial(result.seed?.serialNumber || serial.trim());
+        setMode('scan');
+      }
+    } catch (e: unknown) {
+      if (isLikelyNetworkError(e)) {
+        await offlineStorage.queueSeedScan({
+          serialInput: serial.trim(),
+          gpsLat: location?.lat,
+          gpsLng: location?.lng,
+        });
+        setOfflineQueued(true);
+        setMode('scan');
+      } else {
+        Alert.alert(t('error'), apiErrorMessage(e, t('growerJourney.step2.validationFailed')));
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleTakePhoto = async () => {
@@ -208,7 +253,87 @@ export default function SeedRegistrationScreen({ embedded = false }: { embedded?
                 </View>
                 <ChevronRight size={18} color={enterpriseColors.gray600} strokeWidth={1.5} />
               </TouchableOpacity>
+
+              <EnterprisePanel>
+                <EnterpriseTextField
+                  label={t('seedScan.manualSerial')}
+                  placeholder="BV-26-NS2604-000123-7K4Q"
+                  value={manualSerial}
+                  onChangeText={setManualSerial}
+                  autoCapitalize="characters"
+                  size="farmer"
+                />
+                <EnterpriseButton
+                  label={t('seedScan.verifySerial')}
+                  onPress={() => verifyManualSerial(manualSerial)}
+                  loading={loading}
+                  fullWidth
+                  size="large"
+                />
+              </EnterprisePanel>
             </>
+          )}
+
+          {mode === 'scan' && (genuineOrigin || offlineQueued) && (
+            <EnterprisePanel>
+              {offlineQueued ? (
+                <>
+                  <Text style={styles.genuineTitle}>{t('seedScan.offlineSavedTitle')}</Text>
+                  <Text style={styles.genuineBody}>{t('seedScan.offlineSavedBody')}</Text>
+                </>
+              ) : genuineOrigin ? (
+                <>
+                  <Text style={styles.genuineBadge}>{t('seedScan.genuineTitle')}</Text>
+                  <Text style={styles.genuineProduct}>
+                    {genuineOrigin.product}
+                    {genuineOrigin.variety ? ` — ${genuineOrigin.variety}` : ''}
+                  </Text>
+                  <Text style={styles.genuineBody}>
+                    {t('seedScan.lotLine', {
+                      lot: genuineOrigin.lot,
+                      year: genuineOrigin.seedCropYear,
+                      producer: genuineOrigin.producer.name,
+                      city: genuineOrigin.producer.city || genuineOrigin.producer.country,
+                    })}
+                  </Text>
+                  {genuineOrigin.germinationPct != null ? (
+                    <Text style={styles.genuineMeta}>
+                      {t('seedScan.germination', { pct: genuineOrigin.germinationPct })}
+                    </Text>
+                  ) : null}
+                  {genuineSerial ? (
+                    <Text style={styles.genuineSerial}>{genuineSerial}</Text>
+                  ) : null}
+                </>
+              ) : null}
+                  <EnterpriseButton
+                    label={t('plantingEntry.openForm')}
+                    onPress={() => router.push({ pathname: '/(producer)/planting-entry', params: genuineSerial ? { serial: genuineSerial } : {} })}
+                    fullWidth
+                    size="large"
+                  />
+                  <EnterpriseButton variant="secondary" label={t('common.back')} onPress={() => router.back()} fullWidth size="large" />
+            </EnterprisePanel>
+          )}
+
+          {mode === 'scan' && !genuineOrigin && !offlineQueued && (
+            <EnterprisePanel>
+              <EnterpriseTextField
+                label={t('seedScan.manualSerial')}
+                placeholder="BV-26-NS2604-000123-7K4Q"
+                value={manualSerial}
+                onChangeText={setManualSerial}
+                autoCapitalize="characters"
+                size="farmer"
+              />
+              <EnterpriseButton
+                label={t('seedScan.verifySerial')}
+                onPress={() => verifyManualSerial(manualSerial)}
+                loading={loading}
+                fullWidth
+                size="large"
+              />
+            </EnterprisePanel>
           )}
 
           {mode === 'manual' && (
@@ -312,5 +437,40 @@ const styles = StyleSheet.create({
   embeddedRoot: {
     flex: 1,
     minHeight: 0,
+  },
+  genuineBadge: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: enterpriseColors.primary,
+    marginBottom: 8,
+  },
+  genuineTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: enterpriseColors.gray900,
+    marginBottom: 8,
+  },
+  genuineProduct: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: enterpriseColors.gray900,
+    marginBottom: 6,
+  },
+  genuineBody: {
+    fontSize: 15,
+    color: enterpriseColors.gray700,
+    marginBottom: 8,
+    lineHeight: 22,
+  },
+  genuineMeta: {
+    fontSize: 14,
+    color: enterpriseColors.gray600,
+    marginBottom: 4,
+  },
+  genuineSerial: {
+    fontSize: 12,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    color: enterpriseColors.gray600,
+    marginTop: 8,
   },
 });

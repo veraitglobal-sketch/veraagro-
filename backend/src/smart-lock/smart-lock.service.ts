@@ -2,11 +2,12 @@ import * as crypto from 'crypto';
 import { Injectable, BadRequestException, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GeometryUtil } from '../common/utils/geometry.util';
-import { SeedsService } from '../seeds/seeds.service';
+import { SeedProductionService } from '../seed-production/seed-production.service';
+import { extractSerialFromInput } from '../seed-production/seed-serial';
 
 /**
  * Smart-Lock Service
- * 
+ *
  * Core business logic: Input_Serial_Number is the primary key for any parcel activity.
  * Validates that scanned seed quantity matches GPS polygon area.
  * If mismatch, parcel status remains INVALID.
@@ -15,15 +16,22 @@ import { SeedsService } from '../seeds/seeds.service';
 export class SmartLockService {
   constructor(
     private prisma: PrismaService,
-    private seedsService: SeedsService,
+    private seedProduction: SeedProductionService,
   ) {}
 
-  private normalizeSerial(s: string): string {
-    return s.trim().replace(/\s+/g, '');
+  private async assertSeedValidForGrower(serialInput: string, userId: string): Promise<void> {
+    const check = await this.seedProduction.checkBagForPlanting(serialInput, userId);
+    if (!check.ok) {
+      const failure = check as import('../seed-production/seed-production.service').PlantingCheckFailure;
+      if (failure.code === 'NOT_A_BIO_VERA_CODE') throw new NotFoundException(failure.message);
+      if (failure.code === 'NOT_YOURS') throw new ForbiddenException(failure.message);
+      throw new BadRequestException(failure.message);
+    }
   }
 
   /**
    * Field diary (PLANTING + SEED barcode): link parcel.seedId or allow repeat scans for same batch.
+   * Bio Vera production bags: many bags per parcel via seeds.plantedParcelId; parcel.seedId = first bag only.
    */
   async ensureSeedLinkedToParcel(params: {
     inputSerialNumber: string;
@@ -33,8 +41,8 @@ export class SmartLockService {
     gpsLongitude: number;
     deviceId?: string;
   }) {
-    const serial = this.normalizeSerial(params.inputSerialNumber);
-    await this.seedsService.validateSeed(serial, params.userId);
+    const serial = extractSerialFromInput(params.inputSerialNumber);
+    await this.assertSeedValidForGrower(params.inputSerialNumber, params.userId);
 
     const parcel = await this.prisma.parcels.findFirst({
       where: {
@@ -49,6 +57,61 @@ export class SmartLockService {
     if (!parcel.approvedAt) {
       throw new ForbiddenException(
         'This parcel is not approved yet. Planting entries are available after administrator approval.',
+      );
+    }
+
+    const incoming = await this.prisma.seeds.findUnique({
+      where: { serialNumber: serial },
+      include: { productionRun: { include: { approvedProduct: true } } },
+    });
+
+    const alreadyOnParcel = await this.prisma.seeds.findFirst({
+      where: { serialNumber: serial, plantedParcelId: params.parcelId },
+    });
+    if (alreadyOnParcel) {
+      await this.recordSeedScan({
+        inputSerialNumber: serial,
+        seedId: alreadyOnParcel.id,
+        userId: params.userId,
+        gpsLatitude: params.gpsLatitude,
+        gpsLongitude: params.gpsLongitude,
+        deviceId: params.deviceId,
+        parcelId: params.parcelId,
+        isValid: true,
+      });
+      return {
+        alreadyLinked: true as const,
+        seed: alreadyOnParcel,
+        message: 'Seed already linked to this parcel',
+      };
+    }
+
+    if (incoming?.productionRunId) {
+      const others = await this.prisma.seeds.findMany({
+        where: {
+          plantedParcelId: params.parcelId,
+          productionRunId: { not: null },
+          serialNumber: { not: serial },
+        },
+        include: { productionRun: { include: { approvedProduct: true } } },
+      });
+      const newCrop = incoming.productionRun?.approvedProduct?.cropType?.trim();
+      for (const other of others) {
+        const otherCrop = other.productionRun?.approvedProduct?.cropType?.trim();
+        if (newCrop && otherCrop && newCrop !== otherCrop) {
+          throw new BadRequestException(
+            `This parcel already has ${otherCrop} seed planted. Use the same crop or contact Bio Vera for an override.`,
+          );
+        }
+      }
+
+      return this.validateAndLinkSeed(
+        serial,
+        params.userId,
+        params.gpsLatitude,
+        params.gpsLongitude,
+        params.parcelId,
+        params.deviceId,
       );
     }
 
@@ -95,6 +158,7 @@ export class SmartLockService {
     deviceId?: string;
     parcelId: string | null;
     isValid: boolean;
+    validationError?: string | null;
   }) {
     return this.prisma.seed_scans.create({
       data: {
@@ -109,8 +173,43 @@ export class SmartLockService {
         deviceTimestamp: new Date(),
         parcelId: data.parcelId,
         isValid: data.isValid,
+        validationError: data.validationError ?? null,
       },
     });
+  }
+
+  private async plantedBagsForParcel(parcelId: string) {
+    const bags = await this.prisma.seeds.findMany({
+      where: { plantedParcelId: parcelId, productionRunId: { not: null } },
+      include: {
+        productionRun: { select: { lotNumber: true, bagSizeLabel: true } },
+      },
+      orderBy: { plantedAt: 'asc' },
+    });
+
+    let totalKg = 0;
+    const lots = new Set<string>();
+    const rows = bags.map((b) => {
+      const kgMatch = b.productionRun?.bagSizeLabel?.match(/([\d.]+)\s*kg/i);
+      const kg = kgMatch ? parseFloat(kgMatch[1]) : b.quantity || 0;
+      totalKg += kg;
+      if (b.productionRun?.lotNumber) lots.add(b.productionRun.lotNumber);
+      return {
+        serialNumber: b.serialNumber,
+        status: b.status,
+        lotNumber: b.productionRun?.lotNumber ?? null,
+        bagSizeLabel: b.productionRun?.bagSizeLabel ?? null,
+        bagKg: kg,
+        plantedAt: b.plantedAt?.toISOString() ?? null,
+      };
+    });
+
+    return {
+      count: rows.length,
+      totalKg,
+      lots: [...lots],
+      bags: rows,
+    };
   }
 
   /**
@@ -125,39 +224,66 @@ export class SmartLockService {
     parcelId?: string,
     deviceId?: string,
   ) {
-    const serial = this.normalizeSerial(inputSerialNumber);
-    const seed = await this.prisma.seeds.findUnique({
-      where: { serialNumber: serial },
+    const check = await this.seedProduction.checkBagForPlanting(inputSerialNumber, userId, {
+      recordScan: !parcelId ? false : true,
+      gpsLatitude,
+      gpsLongitude,
+      deviceId,
+      parcelId: parcelId ?? null,
     });
 
+    if (!check.ok) {
+      const failure = check as import('../seed-production/seed-production.service').PlantingCheckFailure;
+      if (failure.code === 'NOT_A_BIO_VERA_CODE') {
+        throw new NotFoundException(failure.message);
+      }
+      if (failure.code === 'NOT_YOURS') {
+        throw new ForbiddenException(failure.message);
+      }
+      throw new BadRequestException(failure.message);
+    }
+
+    const seed = await this.prisma.seeds.findUnique({ where: { serialNumber: check.serial } });
     if (!seed) {
-      throw new NotFoundException(`Seed with serial number ${serial} not found`);
+      throw new NotFoundException('Seed not found');
     }
 
-    if (seed.status === 'USED' || seed.status === 'EXPIRED') {
-      throw new BadRequestException(`Seed ${serial} is already used or expired`);
-    }
-
-    if (seed.assignedToUserId && seed.assignedToUserId !== userId) {
-      throw new ForbiddenException('This seed batch is not assigned to your account');
-    }
-
-    if (parcelId) {
-      const parcel = await this.prisma.parcels.findUnique({
-        where: { id: parcelId },
-        include: { estates: true },
+    if (!parcelId) {
+      const seedScan = await this.recordSeedScan({
+        inputSerialNumber: check.serial,
+        seedId: seed.id,
+        userId,
+        gpsLatitude,
+        gpsLongitude,
+        deviceId,
+        parcelId: null,
+        isValid: true,
+        validationError: 'VALIDATION_ONLY',
       });
+      return {
+        seedScan,
+        seed,
+        origin: check.origin,
+        alreadyLinked: false as const,
+        validationOnly: true as const,
+        message: 'Seed validated — select a parcel to register planting',
+      };
+    }
 
-      if (!parcel) {
-        throw new NotFoundException(`Parcel ${parcelId} not found`);
-      }
+    const parcel = await this.prisma.parcels.findUnique({
+      where: { id: parcelId },
+      include: { estates: true },
+    });
 
-      // Check if parcel belongs to user
-      if (parcel.estates.ownerId !== userId) {
-        throw new BadRequestException('Parcel does not belong to this user');
-      }
+    if (!parcel) {
+      throw new NotFoundException(`Parcel ${parcelId} not found`);
+    }
 
-      // Validate area match (Smart-Lock core logic)
+    if (parcel.estates.ownerId !== userId) {
+      throw new BadRequestException('Parcel does not belong to this user');
+    }
+
+    if (seed.areaCoverage > 0 && !seed.productionRunId) {
       const validationResult = await this.validateAreaMatch(
         parcel.calculatedArea,
         seed.areaCoverage,
@@ -166,7 +292,6 @@ export class SmartLockService {
       );
 
       if (!validationResult.isValid) {
-        // Update parcel status to INVALID
         await this.prisma.parcels.update({
           where: { id: parcelId },
           data: {
@@ -174,46 +299,69 @@ export class SmartLockService {
             validationError: validationResult.error,
           },
         });
-
         throw new BadRequestException(validationResult.error);
       }
-
-      await this.prisma.parcels.update({
-        where: { id: parcelId },
-        data: {
-          inputSerialNumber: serial,
-          seedId: seed.id,
-          status: 'ACTIVE',
-          validationError: null,
-        },
-      });
-
-      await this.prisma.seeds.update({
-        where: { id: seed.id },
-        data: {
-          status: 'SCANNED',
-          assignedToUserId: seed.assignedToUserId ?? userId,
-          assignedAt: seed.assignedAt ?? new Date(),
-        },
-      });
     }
 
+    await this.prisma.parcels.update({
+      where: { id: parcelId },
+      data: {
+        inputSerialNumber: check.serial,
+        ...(parcel.seedId ? {} : { seedId: seed.id }),
+        status: 'ACTIVE',
+        validationError: null,
+      },
+    });
+
+    if (seed.productionRunId) {
+      const planted = await this.seedProduction.markBagPlanted({
+        serial: inputSerialNumber,
+        userId,
+        parcelId,
+        gpsLatitude,
+        gpsLongitude,
+        deviceId,
+      });
+      const updated = await this.prisma.seeds.findUnique({ where: { id: seed.id } });
+      const plantingId = 'plantingId' in planted ? planted.plantingId : null;
+      const plantedSummary = await this.plantedBagsForParcel(parcelId);
+      return {
+        seedScan: null,
+        seed: updated,
+        origin: check.origin,
+        plantingId,
+        plantedBags: plantedSummary,
+        alreadyLinked: false as const,
+        message: 'Genuine Bio Vera seed linked to parcel',
+      };
+    }
+
+    await this.prisma.seeds.update({
+      where: { id: seed.id },
+      data: {
+        status: 'SCANNED',
+        assignedToUserId: seed.assignedToUserId ?? userId,
+        assignedAt: seed.assignedAt ?? new Date(),
+      },
+    });
+
     const seedScan = await this.recordSeedScan({
-      inputSerialNumber: serial,
+      inputSerialNumber: check.serial,
       seedId: seed.id,
       userId,
       gpsLatitude,
       gpsLongitude,
       deviceId,
-      parcelId: parcelId ?? null,
-      isValid: Boolean(parcelId),
+      parcelId,
+      isValid: true,
     });
 
     return {
       seedScan,
       seed,
+      origin: check.origin,
       alreadyLinked: false as const,
-      message: parcelId ? 'Seed successfully linked to parcel' : 'Seed scanned, awaiting parcel assignment',
+      message: 'Seed successfully linked to parcel',
     };
   }
 
@@ -222,17 +370,15 @@ export class SmartLockService {
    * Core Smart-Lock validation logic
    */
   private async validateAreaMatch(
-    parcelArea: number, // in m²
-    seedCoverage: number, // in m²
+    parcelArea: number,
+    seedCoverage: number,
     parcelPolygon: any,
     scanLocation: { lat: number; lng: number },
   ): Promise<{ isValid: boolean; error?: string }> {
-    // Allow 5% tolerance for measurement errors
     const tolerance = 0.05;
     const minArea = seedCoverage * (1 - tolerance);
     const maxArea = seedCoverage * (1 + tolerance);
 
-    // Check if area matches
     if (parcelArea < minArea || parcelArea > maxArea) {
       return {
         isValid: false,
@@ -240,7 +386,6 @@ export class SmartLockService {
       };
     }
 
-    // Check if scan location is within parcel polygon
     const polygonPoints = Array.isArray(parcelPolygon)
       ? parcelPolygon
       : parcelPolygon.coordinates || [];
@@ -283,6 +428,18 @@ export class SmartLockService {
       throw new NotFoundException('Parcel not found');
     }
 
-    return parcel;
+    const plantedBags = await this.plantedBagsForParcel(parcelId);
+    return { ...parcel, plantedBags };
+  }
+
+  /** Admin read — no grower ownership check */
+  async getParcelPlantedBagsAdmin(parcelId: string) {
+    const parcel = await this.prisma.parcels.findUnique({
+      where: { id: parcelId },
+      select: { id: true, cropType: true, calculatedArea: true },
+    });
+    if (!parcel) throw new NotFoundException('Parcel not found');
+    const plantedBags = await this.plantedBagsForParcel(parcelId);
+    return { parcel, plantedBags };
   }
 }

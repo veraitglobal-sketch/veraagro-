@@ -69,6 +69,22 @@ interface VerificationData {
     vehicleNumber: string;
     travelTimeHours: number;
   } | null;
+  seedOrigin?: Array<{
+    product: string;
+    variety?: string | null;
+    lotNumber: string;
+    seedCropYear: number;
+    producer: { name: string; city?: string | null; country: string };
+    productionDate?: string | null;
+    germinationPct?: number | null;
+    purityPct?: number | null;
+    certificateUrls?: string[];
+    bagsPlanted: number;
+    plantedFrom?: string | null;
+    plantedTo?: string | null;
+    recalled?: boolean;
+    recallNotice?: string | null;
+  }>;
 }
 
 export default function VerifyPage() {
@@ -278,6 +294,60 @@ export default function VerifyPage() {
             </div>
           )}
         </motion.div>
+
+        {data.seedOrigin && data.seedOrigin.length > 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08 }}
+            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+          >
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              {t('passportPublic.batchPage.seedOriginEyebrow', { defaultValue: 'Seed origin' })}
+            </h3>
+            <div className="space-y-4">
+              {data.seedOrigin.map((run) => (
+                <div key={`${run.lotNumber}-${run.seedCropYear}`} className="rounded-xl border border-gray-200 p-4 text-sm">
+                  {run.recalled ? (
+                    <p className="mb-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-amber-900 text-xs">
+                      {run.recallNotice ?? t('passportPublic.batchPage.seedRecalled', { defaultValue: 'This seed lot was recalled by Bio Vera.' })}
+                    </p>
+                  ) : null}
+                  <p className="font-medium text-gray-900">
+                    {run.product}
+                    {run.variety ? ` — ${run.variety}` : ''}
+                  </p>
+                  <p className="text-gray-600 mt-1">
+                    Lot {run.lotNumber} · Seed year {run.seedCropYear}
+                  </p>
+                  <p className="text-gray-600">
+                    {run.producer.name}
+                    {run.producer.city ? `, ${run.producer.city}` : ''}, {run.producer.country}
+                  </p>
+                  {run.productionDate ? (
+                    <p className="text-gray-500 text-xs mt-2">
+                      {t('passportPublic.batchPage.productionDate', { defaultValue: 'Production date' })}: {run.productionDate}
+                      {run.germinationPct != null ? ` · Germination ${run.germinationPct}%` : ''}
+                      {run.purityPct != null ? ` · Purity ${run.purityPct}%` : ''}
+                    </p>
+                  ) : null}
+                  <p className="text-gray-600 mt-2">
+                    {t('passportPublic.batchPage.plantedSummary', {
+                      defaultValue: 'Planted: {{count}} bags{{range}}',
+                      count: run.bagsPlanted,
+                      range:
+                        run.plantedFrom && run.plantedTo && run.plantedFrom !== run.plantedTo
+                          ? `, ${run.plantedFrom} – ${run.plantedTo}`
+                          : run.plantedFrom
+                            ? `, ${run.plantedFrom}`
+                            : '',
+                    })}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        ) : null}
 
         {/* Live Timeline */}
         <motion.div

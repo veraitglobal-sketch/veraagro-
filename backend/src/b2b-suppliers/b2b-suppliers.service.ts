@@ -13,6 +13,8 @@ import {
   UserStatus,
   SupplierDirectOrderStatus,
   SupplierMaterialBarcodeStatus,
+  ApprovedProductCategory,
+  SeedStatus,
 } from '@prisma/client';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
@@ -25,7 +27,10 @@ import {
   UpdateCatalogItemDto,
   UpdateSupplierMaterialBarcodeDto,
 } from './dto/b2b-suppliers.dto';
+import { AdminLinkCatalogItemDto } from './dto/link-catalog-item.dto';
+import { SellSeedBagsDto } from './dto/seed-bags.dto';
 import { buildStreetAddressLine, geocodeAddressNominatim } from './address-geocoding';
+import { parseSeedSerial } from '../seed-production/seed-serial';
 
 @Injectable()
 export class B2bSuppliersService {
@@ -90,17 +95,109 @@ export class B2bSuppliersService {
   }
 
   /** Javna mapa: snabdevači sa odobrenom lokacijom i validnim koordinatama */
-  async getPublicMapPins() {
+  async getPublicMapPins(query?: { category?: string; bioVeraOnly?: string }) {
+    const bioVeraOnly = query?.bioVeraOnly === 'true' || query?.bioVeraOnly === '1';
+    const categoryRaw = query?.category?.trim().toUpperCase();
+    const category =
+      categoryRaw && Object.values(ApprovedProductCategory).includes(categoryRaw as ApprovedProductCategory)
+        ? (categoryRaw as ApprovedProductCategory)
+        : undefined;
+
     const profiles = await this.prisma.material_supplier_profiles.findMany({
       where: { mapApproved: true },
       include: { user: { select: { id: true, firstName: true, lastName: true, partnerCode: true, status: true } } },
     });
+    const supplierIds = profiles.map((p) => p.userId).filter((id) => {
+      const u = profiles.find((p) => p.userId === id)?.user;
+      return u?.status === 'ACTIVE';
+    });
+
+    const [stockBags, catalogItems] = await Promise.all([
+      supplierIds.length
+        ? this.prisma.seeds.findMany({
+            where: {
+              supplierUserId: { in: supplierIds },
+              status: 'IN_SUPPLIER_STOCK',
+              approvedProductId: { not: null },
+            },
+            include: {
+              approvedProduct: {
+                select: { id: true, name: true, category: true, isBioVeraBrand: true, status: true },
+              },
+            },
+          })
+        : [],
+      supplierIds.length
+        ? this.prisma.supplier_catalog_items.findMany({
+            where: {
+              supplierUserId: { in: supplierIds },
+              isActive: true,
+              approvedProductId: { not: null },
+              approvedProduct: {
+                status: 'ACTIVE',
+                ...(category ? { category } : {}),
+              },
+            },
+            include: {
+              approvedProduct: {
+                select: { id: true, name: true, category: true, isBioVeraBrand: true, unit: true, imageUrl: true },
+              },
+            },
+          })
+        : [],
+    ]);
+
+    const bioVeraSeedInStockBySupplier = new Map<
+      string,
+      Array<{ approvedProductId: string; name: string; bags: number }>
+    >();
+    for (const bag of stockBags) {
+      if (!bag.supplierUserId || !bag.approvedProduct || bag.approvedProduct.status !== 'ACTIVE') continue;
+      if (category && bag.approvedProduct.category !== category) continue;
+      const list = bioVeraSeedInStockBySupplier.get(bag.supplierUserId) ?? [];
+      const existing = list.find((x) => x.approvedProductId === bag.approvedProductId);
+      if (existing) existing.bags += 1;
+      else list.push({ approvedProductId: bag.approvedProductId!, name: bag.approvedProduct.name, bags: 1 });
+      bioVeraSeedInStockBySupplier.set(bag.supplierUserId, list);
+    }
+
+    const catalogBySupplier = new Map<string, typeof catalogItems>();
+    for (const item of catalogItems) {
+      const list = catalogBySupplier.get(item.supplierUserId) ?? [];
+      list.push(item);
+      catalogBySupplier.set(item.supplierUserId, list);
+    }
+
     return profiles
       .map((p) => {
+        if (p.user?.status !== 'ACTIVE') return null;
         const loc = p.location as { lat?: number; lng?: number; latitude?: number; longitude?: number };
         const lat = loc?.lat ?? loc?.latitude;
         const lng = loc?.lng ?? loc?.longitude;
         if (typeof lat !== 'number' || typeof lng !== 'number' || (lat === 0 && lng === 0)) return null;
+
+        const bioVeraSeedInStock = bioVeraSeedInStockBySupplier.get(p.userId) ?? [];
+        const publicCatalog = (catalogBySupplier.get(p.userId) ?? []).map((item) => ({
+          id: item.id,
+          name: item.approvedProduct!.name,
+          description: item.description,
+          unit: item.approvedProduct!.unit,
+          listPrice: item.listPrice,
+          sku: item.sku,
+          imageUrl: item.imageUrl ?? item.approvedProduct!.imageUrl,
+          approvedProductId: item.approvedProductId,
+          category: item.approvedProduct!.category,
+          isBioVeraBrand: item.approvedProduct!.isBioVeraBrand,
+        }));
+
+        if (bioVeraOnly) {
+          const hasSeedStock = bioVeraSeedInStock.some((x) => x.bags > 0);
+          const hasSeedCatalog = publicCatalog.some(
+            (c) => c.category === 'SEED' && (c.isBioVeraBrand || bioVeraSeedInStock.length > 0),
+          );
+          if (!hasSeedStock && !hasSeedCatalog) return null;
+        }
+
         return {
           id: p.userId,
           profileId: p.id,
@@ -114,6 +211,8 @@ export class B2bSuppliersService {
           kind: 'supplier' as const,
           description: p.description,
           partnerCode: p.user?.partnerCode,
+          bioVeraSeedInStock,
+          catalog: publicCatalog,
         };
       })
       .filter(Boolean);
@@ -127,19 +226,32 @@ export class B2bSuppliersService {
     if (!p?.user) throw new NotFoundException('Supplier not found');
     if (p.user.status !== 'ACTIVE') throw new NotFoundException('Supplier not found');
     if (!p.user.roles?.includes('MATERIAL_SUPPLIER' as any)) throw new NotFoundException('Supplier not found');
-    const catalog = await this.prisma.supplier_catalog_items.findMany({
-      where: { supplierUserId: userId, isActive: true },
+    const catalogRows = await this.prisma.supplier_catalog_items.findMany({
+      where: {
+        supplierUserId: userId,
+        isActive: true,
+        approvedProductId: { not: null },
+        approvedProduct: { status: 'ACTIVE' },
+      },
       orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        unit: true,
-        listPrice: true,
-        sku: true,
-        imageUrl: true,
+      include: {
+        approvedProduct: {
+          select: { id: true, name: true, unit: true, imageUrl: true, category: true, isBioVeraBrand: true },
+        },
       },
     });
+    const catalog = catalogRows.map((item) => ({
+      id: item.id,
+      name: item.approvedProduct?.name ?? item.name,
+      description: item.description,
+      unit: item.approvedProduct?.unit ?? item.unit,
+      listPrice: item.listPrice,
+      sku: item.sku,
+      imageUrl: item.imageUrl ?? item.approvedProduct?.imageUrl,
+      approvedProductId: item.approvedProductId,
+      category: item.approvedProduct?.category,
+      isBioVeraBrand: item.approvedProduct?.isBioVeraBrand,
+    }));
     return {
       id: p.userId,
       businessName: p.businessName,
@@ -762,6 +874,24 @@ export class B2bSuppliersService {
     return result.order;
   }
 
+  async listApprovedProductsForSupplier() {
+    return this.prisma.approved_products.findMany({
+      where: { status: 'ACTIVE' },
+      orderBy: [{ category: 'asc' }, { name: 'asc' }],
+      select: {
+        id: true,
+        category: true,
+        name: true,
+        variety: true,
+        unit: true,
+        packSize: true,
+        imageUrl: true,
+        isBioVeraBrand: true,
+        description: true,
+      },
+    });
+  }
+
   async listMyCatalog(supplierUserId: string) {
     this.assertSupplier(
       (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,
@@ -776,19 +906,35 @@ export class B2bSuppliersService {
     this.assertSupplier(
       (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,
     );
+    if (!dto.approvedProductId?.trim()) {
+      throw new BadRequestException('New catalogue items must be linked to an approved product');
+    }
+    const approved = await this.prisma.approved_products.findUnique({
+      where: { id: dto.approvedProductId.trim() },
+    });
+    if (!approved || approved.status !== 'ACTIVE') {
+      throw new BadRequestException('Approved product not found or not active');
+    }
     const count = await this.prisma.supplier_catalog_items.count({ where: { supplierUserId } });
     return this.prisma.supplier_catalog_items.create({
       data: {
         id: crypto.randomUUID(),
         supplierUserId,
-        name: dto.name.trim(),
-        description: dto.description?.trim() || null,
-        unit: (dto.unit || 'unit').trim() || 'unit',
+        approvedProductId: approved.id,
+        name: approved.name,
+        description: dto.description?.trim() || approved.description || null,
+        unit: approved.unit,
+        imageUrl: approved.imageUrl,
         listPrice:
           dto.listPrice != null && !Number.isNaN(Number(dto.listPrice)) ? Number(dto.listPrice) : null,
         sku: dto.sku?.trim() || null,
         sortOrder: count,
         updatedAt: new Date(),
+      },
+      include: {
+        approvedProduct: {
+          select: { id: true, name: true, unit: true, imageUrl: true, category: true, isBioVeraBrand: true },
+        },
       },
     });
   }
@@ -800,9 +946,9 @@ export class B2bSuppliersService {
     const row = await this.prisma.supplier_catalog_items.findFirst({ where: { id, supplierUserId } });
     if (!row) throw new NotFoundException('Catalog item not found');
     const data: Record<string, unknown> = { updatedAt: new Date() };
-    if (dto.name !== undefined) data.name = dto.name.trim();
+    if (dto.name !== undefined && !row.approvedProductId) data.name = dto.name.trim();
     if (dto.description !== undefined) data.description = dto.description?.trim() || null;
-    if (dto.unit !== undefined) data.unit = dto.unit.trim() || 'unit';
+    if (dto.unit !== undefined && !row.approvedProductId) data.unit = dto.unit.trim() || 'unit';
     if (dto.listPrice !== undefined) {
       data.listPrice =
         dto.listPrice != null && !Number.isNaN(Number(dto.listPrice)) ? Number(dto.listPrice) : null;
@@ -902,6 +1048,7 @@ export class B2bSuppliersService {
       allThreads,
       orderFarmerLinks,
       recentOrders,
+      catalogItems,
     ] = await Promise.all([
       this.prisma.material_supplier_profiles.findMany({
         include: {
@@ -953,10 +1100,23 @@ export class B2bSuppliersService {
           },
         },
       }),
+      this.prisma.supplier_catalog_items.findMany({
+        select: { id: true, supplierUserId: true, name: true, approvedProductId: true, isActive: true },
+      }),
     ]);
 
     const threadCountBy = new Map(threadCountRows.map((r) => [r.supplierUserId, r._count._all]));
     const orderCountBy = new Map(orderCountRows.map((r) => [r.supplierUserId, r._count._all]));
+
+    const catalogBySupplier = new Map<
+      string,
+      Array<{ id: string; name: string; approvedProductId: string | null; isActive: boolean }>
+    >();
+    for (const item of catalogItems) {
+      const list = catalogBySupplier.get(item.supplierUserId) ?? [];
+      list.push(item);
+      catalogBySupplier.set(item.supplierUserId, list);
+    }
 
     const supplierToFarmerIds = new Map<string, Set<string>>();
     const hasThread = new Map<string, Set<string>>();
@@ -1010,6 +1170,10 @@ export class B2bSuppliersService {
         .filter((x): x is NonNullable<typeof x> => x != null)
         .sort((a, b) => a.lastName.localeCompare(b.lastName) || a.firstName.localeCompare(b.firstName));
 
+      const supplierCatalog = catalogBySupplier.get(sid) ?? [];
+      const approvedCatalogCount = supplierCatalog.filter((c) => c.approvedProductId && c.isActive).length;
+      const unlinkedCatalogCount = supplierCatalog.filter((c) => !c.approvedProductId && c.isActive).length;
+
       return {
         userId: sid,
         businessName: p.businessName,
@@ -1023,7 +1187,10 @@ export class B2bSuppliersService {
           orderCount: orderCountBy.get(sid) ?? 0,
           /** Jedinstveni proizvođači povezani (poruke i/ili porudžbina) */
           linkedFarmerCount: fids.size,
+          approvedCatalogCount,
+          unlinkedCatalogCount,
         },
+        catalogItems: supplierCatalog,
         linkedFarmers,
       };
     });
@@ -1220,5 +1387,269 @@ export class B2bSuppliersService {
       });
     }
     throw new BadRequestException('Invalid status');
+  }
+
+  async receiveSeedBags(supplierUserId: string, serials: string[]) {
+    this.assertSupplier(
+      (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,
+    );
+    const results: { serial: string; ok: boolean; reason?: string }[] = [];
+
+    for (const raw of serials) {
+      const parsed = parseSeedSerial(raw);
+      if (!parsed.ok) {
+        results.push({ serial: raw, ok: false, reason: 'FORMAT' });
+        continue;
+      }
+      const bag = await this.prisma.seeds.findUnique({
+        where: { serialNumber: parsed.serial },
+        include: { productionRun: true },
+      });
+      if (!bag?.productionRun) {
+        results.push({ serial: parsed.serial, ok: false, reason: 'NOT_FOUND' });
+        continue;
+      }
+      if (bag.supplierUserId !== supplierUserId) {
+        results.push({ serial: parsed.serial, ok: false, reason: 'WRONG_SUPPLIER' });
+        continue;
+      }
+      if (bag.status !== 'AVAILABLE') {
+        results.push({ serial: parsed.serial, ok: false, reason: bag.status });
+        continue;
+      }
+
+      await this.prisma.$transaction(async (tx) => {
+        await tx.seeds.update({
+          where: { id: bag.id },
+          data: { status: 'IN_SUPPLIER_STOCK' },
+        });
+        await tx.seed_custody_events.create({
+          data: {
+            id: crypto.randomUUID(),
+            seedId: bag.id,
+            event: 'RECEIVED_BY_SUPPLIER',
+            actorId: supplierUserId,
+            supplierUserId,
+          },
+        });
+      });
+      results.push({ serial: parsed.serial, ok: true });
+    }
+
+    return { results };
+  }
+
+  async sellSeedBags(supplierUserId: string, dto: SellSeedBagsDto) {
+    this.assertSupplier(
+      (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,
+    );
+
+    let growerId = dto.growerId?.trim();
+    if (!growerId && dto.growerPartnerCode?.trim()) {
+      const g = await this.prisma.users.findFirst({
+        where: { partnerCode: dto.growerPartnerCode.trim().toUpperCase(), status: UserStatus.ACTIVE },
+      });
+      if (!g) throw new BadRequestException('Grower partner code not found');
+      growerId = g.id;
+    }
+    if (!growerId) throw new BadRequestException('Grower partner code or growerId is required');
+
+    const grower = await this.prisma.users.findFirst({
+      where: { id: growerId, status: UserStatus.ACTIVE },
+      select: { id: true, roles: true, partnerCode: true, firstName: true, lastName: true },
+    });
+    if (!grower) throw new BadRequestException('Grower not found or inactive');
+    if (!['FARMER', 'GROWER', 'PARTNER'].some((r) => (grower.roles as string[]).includes(r))) {
+      throw new BadRequestException('The selected user is not a grower account');
+    }
+
+    if (dto.directOrderId) {
+      const order = await this.prisma.supplier_direct_orders.findFirst({
+        where: { id: dto.directOrderId, supplierUserId, farmerId: grower.id },
+      });
+      if (!order) throw new BadRequestException('Direct order not found for this grower and store');
+    }
+
+    const results: { serial: string; ok: boolean; reason?: string }[] = [];
+    const soldBags: Array<{ serial: string; lot: string; productName: string }> = [];
+
+    for (const raw of dto.serials) {
+      const parsed = parseSeedSerial(raw);
+      if (!parsed.ok) {
+        results.push({ serial: raw, ok: false, reason: 'FORMAT' });
+        continue;
+      }
+      const bag = await this.prisma.seeds.findUnique({
+        where: { serialNumber: parsed.serial },
+        include: {
+          productionRun: { include: { approvedProduct: true } },
+        },
+      });
+      if (!bag?.productionRun) {
+        results.push({ serial: parsed.serial, ok: false, reason: 'NOT_FOUND' });
+        continue;
+      }
+      if (bag.supplierUserId !== supplierUserId) {
+        results.push({ serial: parsed.serial, ok: false, reason: 'WRONG_SUPPLIER' });
+        continue;
+      }
+      if (bag.status !== 'IN_SUPPLIER_STOCK') {
+        results.push({ serial: parsed.serial, ok: false, reason: bag.status });
+        continue;
+      }
+
+      await this.prisma.$transaction(async (tx) => {
+        await tx.seeds.update({
+          where: { id: bag.id },
+          data: {
+            status: 'SOLD',
+            assignedToUserId: grower.id,
+            soldToGrowerId: grower.id,
+            soldAt: new Date(),
+          },
+        });
+        await tx.seed_custody_events.create({
+          data: {
+            id: crypto.randomUUID(),
+            seedId: bag.id,
+            event: 'SOLD_TO_GROWER',
+            actorId: supplierUserId,
+            supplierUserId,
+            growerId: grower.id,
+          },
+        });
+      });
+      results.push({ serial: parsed.serial, ok: true });
+      soldBags.push({
+        serial: parsed.serial,
+        lot: bag.productionRun!.lotNumber,
+        productName: bag.productionRun!.approvedProduct.name,
+      });
+    }
+
+    const okCount = results.filter((r) => r.ok).length;
+    if (okCount > 0) {
+      const lotSample = soldBags[0]?.lot ?? '';
+      const productSample = soldBags[0]?.productName ?? 'Bio Vera seed';
+      await this.notify(
+        grower.id,
+        'Bio Vera seed received',
+        `You received ${okCount} bag${okCount === 1 ? '' : 's'} of ${productSample}${lotSample ? ` (lot ${lotSample})` : ''}. Scan each bag when planting.`,
+        '/grower/seeds',
+      );
+    }
+
+    return { growerId: grower.id, results };
+  }
+
+  async listMySeedBags(supplierUserId: string, status?: string) {
+    this.assertSupplier(
+      (await this.prisma.users.findUniqueOrThrow({ where: { id: supplierUserId } })).roles,
+    );
+    const allowed: SeedStatus[] = [
+      'AVAILABLE',
+      'IN_SUPPLIER_STOCK',
+      'SOLD',
+      'ASSIGNED',
+      'PLANTED',
+      'USED',
+      'RECALLED',
+      'VOIDED',
+    ];
+    const statusFilter =
+      status && allowed.includes(status as SeedStatus) ? (status as SeedStatus) : undefined;
+
+    const bags = await this.prisma.seeds.findMany({
+      where: {
+        supplierUserId,
+        ...(statusFilter ? { status: statusFilter } : {}),
+        productionRunId: { not: null },
+      },
+      include: {
+        approvedProduct: { select: { id: true, name: true, variety: true } },
+        productionRun: { select: { lotNumber: true, seedCropYear: true } },
+      },
+      orderBy: [{ productionRun: { lotNumber: 'asc' } }, { serialNumber: 'asc' }],
+    });
+
+    type Group = {
+      approvedProductId: string | null;
+      productName: string;
+      lotNumber: string;
+      seedCropYear: number | null;
+      bags: typeof bags;
+      count: number;
+    };
+    const groupMap = new Map<string, Group>();
+    for (const bag of bags) {
+      const key = `${bag.approvedProductId ?? 'none'}|${bag.productionRun?.lotNumber ?? ''}`;
+      const existing = groupMap.get(key);
+      if (existing) {
+        existing.bags.push(bag);
+        existing.count += 1;
+      } else {
+        groupMap.set(key, {
+          approvedProductId: bag.approvedProductId,
+          productName: bag.approvedProduct?.name ?? bag.name,
+          lotNumber: bag.productionRun?.lotNumber ?? '',
+          seedCropYear: bag.productionRun?.seedCropYear ?? null,
+          bags: [bag],
+          count: 1,
+        });
+      }
+    }
+
+    return {
+      bags: bags.map((b) => ({
+        id: b.id,
+        serialNumber: b.serialNumber,
+        status: b.status,
+        bagNumber: b.bagNumber,
+        approvedProductId: b.approvedProductId,
+        productName: b.approvedProduct?.name ?? b.name,
+        lotNumber: b.productionRun?.lotNumber,
+        seedCropYear: b.productionRun?.seedCropYear,
+      })),
+      grouped: [...groupMap.values()].map((g) => ({
+        approvedProductId: g.approvedProductId,
+        productName: g.productName,
+        lotNumber: g.lotNumber,
+        seedCropYear: g.seedCropYear,
+        count: g.count,
+      })),
+    };
+  }
+
+  async adminLinkCatalogItem(catalogItemId: string, dto: AdminLinkCatalogItemDto) {
+    const row = await this.prisma.supplier_catalog_items.findUnique({ where: { id: catalogItemId } });
+    if (!row) throw new NotFoundException('Catalog item not found');
+
+    if (dto.approvedProductId === null || dto.approvedProductId === '') {
+      return this.prisma.supplier_catalog_items.update({
+        where: { id: catalogItemId },
+        data: { approvedProductId: null, updatedAt: new Date() },
+      });
+    }
+
+    const approved = await this.prisma.approved_products.findUnique({
+      where: { id: dto.approvedProductId },
+    });
+    if (!approved) throw new BadRequestException('Approved product not found');
+
+    return this.prisma.supplier_catalog_items.update({
+      where: { id: catalogItemId },
+      data: {
+        approvedProductId: approved.id,
+        name: approved.name,
+        unit: approved.unit,
+        imageUrl: row.imageUrl ?? approved.imageUrl,
+        updatedAt: new Date(),
+      },
+      include: {
+        approvedProduct: {
+          select: { id: true, name: true, unit: true, category: true, isBioVeraBrand: true },
+        },
+      },
+    });
   }
 }

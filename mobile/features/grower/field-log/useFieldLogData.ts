@@ -7,7 +7,12 @@ import { pickFromCamera, pickFromGallery } from '../../../lib/camera-picker';
 import { getCurrentGrowerPosition, isForegroundLocationGranted } from '../../../lib/grower-permissions';
 import { offlineStorage } from '../../../lib/offline-storage';
 import { verifyGPSAgainstEstateOrParcels, materialValidator } from '../../../lib/integrity-guard';
-import { estatesAPI, Estate, parcelsAPI, Parcel, harvestAnnouncementsAPI } from '../../../lib/api';
+import { estatesAPI, Estate, parcelsAPI, Parcel, harvestAnnouncementsAPI, fieldEntriesAPI } from '../../../lib/api';
+import {
+  fieldEntryToHistoryItem,
+  mergeFieldLogHistory,
+  pendingPlantingToHistoryItem,
+} from '../../../lib/field-log-history';
 import { apiErrorMessage } from '../../../lib/api-error';
 import { isDeviceOnline } from '../../../lib/network-utils';
 import { syncService } from '../../../lib/sync-service';
@@ -437,22 +442,28 @@ export function useFieldLogData() {
 
   const reloadLocalHistory = useCallback(async () => {
     try {
-      setLocalHistory(await offlineStorage.getFieldLogHistory());
+      const local = await offlineStorage.getFieldLogHistory();
+      const pendingPlanting = await offlineStorage.getPendingPlantingEntries();
+      const farmName = currentEstate?.name;
+      const pendingItems = pendingPlanting
+        .filter((r) => r.status !== 'synced')
+        .map((r) => pendingPlantingToHistoryItem(r, farmName));
+      let apiItems: ReturnType<typeof fieldEntryToHistoryItem>[] = [];
+      if (currentEstate?.id && (await isDeviceOnline())) {
+        const rows = await fieldEntriesAPI.getAll(currentEstate.id);
+        apiItems = rows.map((e) => fieldEntryToHistoryItem(e as Parameters<typeof fieldEntryToHistoryItem>[0], farmName));
+      }
+      setLocalHistory(mergeFieldLogHistory(local, apiItems, pendingItems));
     } catch {
       setLocalHistory([]);
     }
     await refreshPendingFieldCount();
-  }, [refreshPendingFieldCount]);
+  }, [refreshPendingFieldCount, currentEstate?.id, currentEstate?.name]);
 
   useFocusEffect(
     useCallback(() => {
       const check = async () => {
-        try {
-          setLocalHistory(await offlineStorage.getFieldLogHistory());
-        } catch {
-          setLocalHistory([]);
-        }
-        await refreshPendingFieldCount();
+      await reloadLocalHistory();
         try {
           const barcode = await AsyncStorage.getItem('last_scanned_barcode');
           if (barcode) {
