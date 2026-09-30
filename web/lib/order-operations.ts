@@ -1,6 +1,7 @@
 export type OrderQueue = 'stock' | 'approval' | 'payment' | 'dispatch' | 'progress' | 'settlement' | 'closed';
 export type OperationsOrder = {
   id: string; orderNumber: string; status: string; createdAt: string; productName: string;
+  catalogProductId?: string | null;
   payments?: { status?: string } | null; deliveries?: { status?: string } | null;
   stockReservation?: { status: string; quantity: number; unit: string } | null;
   users?: { firstName?: string; lastName?: string; partnerCode?: string };
@@ -10,7 +11,13 @@ export function orderQueue(order: OperationsOrder): OrderQueue {
   if (!['CANCELLED', 'REFUNDED'].includes(order.status) && order.payments?.status === 'IN_ESCROW' &&
     ['CONFIRMED', 'COMPLETED', 'DELIVERED'].includes(order.deliveries?.status || '')) return 'settlement';
   if (['COMPLETED', 'CANCELLED', 'REFUNDED'].includes(order.status)) return 'closed';
-  if (['PENDING', 'APPROVED', 'PAID', 'CONFIRMED'].includes(order.status) && !['RESERVED', 'ISSUED'].includes(order.stockReservation?.status || '')) return 'stock';
+  if (
+    !order.catalogProductId &&
+    ['PENDING', 'APPROVED', 'PAID', 'CONFIRMED'].includes(order.status) &&
+    !['RESERVED', 'ISSUED'].includes(order.stockReservation?.status || '')
+  ) {
+    return 'stock';
+  }
   if (order.status === 'PENDING') return 'approval';
   if (order.status === 'APPROVED') return 'payment';
   if (['PAID', 'CONFIRMED'].includes(order.status) && !order.deliveries) return 'dispatch';
