@@ -725,8 +725,8 @@
   "loginPage": {
     "title": "Prijava",
     "subtitle": "Prijavite se na nalog Bio Vera",
-    "partnerCodeLabel": "Partnerski kod *",
-    "partnerCodePlaceholder": "Unesite partnerski kod",
+    "partnerCodeLabel": "E-pošta ili partnerski kod *",
+    "partnerCodePlaceholder": "vas@email.com ili BUYER-…",
     "passwordLabel": "Lozinka *",
     "passwordPlaceholder": "Unesite lozinku",
     "signIn": "Prijavi se",
@@ -734,7 +734,8 @@
     "backToHome": "← Nazad na početnu",
     "noAccount": "Nemate nalog?",
     "register": "Registracija",
-    "errorFailed": "Prijava nije uspela. Proverite podatke."
+    "errorFailed": "Prijava nije uspela. Proverite podatke.",
+    "pendingApproval": "Vaš nalog čeka odobrenje od strane Bio Vere."
   },
   "buyerRegister": {
     "title": "Registracija kupca",
@@ -778,7 +779,12 @@
     "errPasswordMismatch": "Lozinke se ne poklapaju",
     "errLocationNeedsAddress": "Uz lokaciju su obavezni adresa i grad",
     "errRegistrationFailed": "Registracija nije uspela",
-    "logoAlt": "Bio Vera"
+    "logoAlt": "Bio Vera",
+    "successGoLogin": "Idi na prijavu",
+    "successLoginHint": "Dobićete e-poruku kada nalog bude aktivan.",
+    "successPartnerCode": "Vaš partnerski kod: {{code}} — možete se prijaviti i e-poštom nakon odobrenja.",
+    "successPending": "Vaš nalog čeka odobrenje od strane Bio Vere. Poslaćemo vam e-poruku kada bude aktivan.",
+    "successTitle": "Hvala — registracija je primljena"
   },
   "authGuard": {
     "loading": "Učitavanje..."
@@ -1501,7 +1507,6 @@
       "outboxAria": "Terenski unosi u pregledaču koji čekaju sinhronizaciju",
       "outboxTitle": "Čeka sinhronizacija",
       "outboxBody_one": "{{count}} terenski unos u ovom pregledaču još nije na serveru.",
-      "outboxBody_few": "{{count}} terenska unosa u ovom pregledaču još nisu na serveru.",
       "outboxBody_other": "{{count}} terenskih unosa u ovom pregledaču još uvek nisu na serveru.",
       "outboxSyncNow": "Pošalji sad",
       "outboxSending": "Slanje…",
@@ -1728,7 +1733,9 @@
     "goEstates": "Gazdinstva i podešavanje",
     "goHarvestPlans": "Planovi berbe",
     "goHaccp": "HACCP / polje",
-    "goBatchesPlatform": "Lotovi (onlajn)"
+    "goBatchesPlatform": "Lotovi (onlajn)",
+    "seedProduction": "Proizvodnja semena",
+    "supply": "Pregled snabdevanja"
   },
   "adminPages": {
     "titles": {
@@ -1755,7 +1762,8 @@
       "products": "Katalog proizvoda",
       "harvestPlans": "Planovi berbe",
       "growerControl": "Kontrola proizvođača",
-      "haccp": "HACCP monitoring"
+      "haccp": "HACCP monitoring",
+      "supply": "Pregled snabdevanja"
     },
     "growerControl": {
       "title": "Kontrola proizvođača",
@@ -1872,7 +1880,9 @@
       "noRecentOrders": "Nema nedavnih porudžbina",
       "noRecentAlerts": "Nema nedavnih upozorenja",
       "estateFallback": "Gazdinstvo",
-      "parcelFallback": "Parcela"
+      "parcelFallback": "Parcela",
+      "buyersPendingApproval": "Kupci čekaju odobrenje",
+      "buyersPendingCount": "{{count}} na čekanju"
     },
     "veraInsights": {
       "loading": "Učitavanje uvida…",
@@ -2196,7 +2206,16 @@
         "COMPLETED": "Završeno",
         "CANCELLED": "Otkazano",
         "REFUNDED": "Refundirano"
-      }
+      },
+      "catalogFilter": "Porudžbine sa tržišta (katalog)",
+      "confirmReject": "Potvrdi odbijanje",
+      "errReject": "Odbijanje porudžbine nije uspelo",
+      "packLine": "{{count}} × {{label}}",
+      "rejectModalLead": "Porudžbina {{orderNumber}} biće otkazana, a zaliha vraćena. Kupac će videti vaš razlog.",
+      "rejectModalTitle": "Odbij porudžbinu",
+      "rejectOrder": "Odbij",
+      "rejectReasonLabel": "Razlog odbijanja",
+      "rejectReasonPlaceholder": "npr. Nema zalihe za ovaj rok isporuke"
     },
     "farmDetail": {
       "loadFailed": "Učitavanje detalja farme nije uspelo",
@@ -2297,6 +2316,118 @@
       "emptyHint": "Obrišite filtere da vidite sve statuse ili proverite kasnije kada se evidentiraju događaji.",
       "emptyCtaDashboard": "Admin kontrolna tabla",
       "emptyCtaResetFilters": "Resetuj filtere"
+    },
+    "products": {
+      "addPack": "Dodaj pakovanje",
+      "addProduct": "Dodaj proizvod",
+      "addStock": "Dodaj zalihu",
+      "addStockBtn": "Dodaj",
+      "addStockNoteOptional": "Napomena (opciono)",
+      "archive": "Arhiviraj",
+      "archiveAlready": "Već arhivirano",
+      "cancel": "Otkaži",
+      "categoryNone": "— Izaberi —",
+      "colActions": "Akcije",
+      "colAvailable": "Dostupno",
+      "colCategory": "Kategorija",
+      "colFarm": "Gazdinstvo",
+      "colName": "Naziv",
+      "colPacks": "Opcije pakovanja",
+      "colPlanned": "Planirano",
+      "colSold": "Prodato",
+      "colStatus": "Status",
+      "colUntil": "Dostupno do",
+      "edit": "Izmeni",
+      "editProduct": "Izmeni proizvod",
+      "empty": "Još nema proizvoda u katalogu. Kreirajte ga iz Snabdevanja ili dodajte ovde.",
+      "farmNone": "— Bez gazdinstva —",
+      "fieldAvailableFrom": "Dostupno od",
+      "fieldAvailableUntil": "Dostupno do",
+      "fieldCategory": "Kategorija",
+      "fieldDescription": "Opis",
+      "fieldFarm": "Gazdinstvo snabdevača",
+      "fieldName": "Naziv proizvoda",
+      "fieldPlannedKg": "Planirana količina (kg)",
+      "heading": "Katalog proizvoda",
+      "histBalance": "Saldo",
+      "histDate": "Datum",
+      "histKg": "Kg",
+      "histOrder": "Porudžbina",
+      "histReason": "Razlog / lot",
+      "histType": "Tip",
+      "newProduct": "Novi proizvod",
+      "noStockHistory": "Još nema kretanja zaliha.",
+      "packLabel": "Oznaka (npr. 5 kg)",
+      "packMaxPacks": "Maks. {{count}} pakovanja",
+      "packOptions": "Opcije pakovanja",
+      "packPrice": "Cena (€)",
+      "packSize": "Veličina (kg)",
+      "publish": "Objavi",
+      "publishAgain": "Objavi ponovo",
+      "publishAlready": "Već objavljeno",
+      "publishArchived": "Arhivirani proizvodi se ne mogu objaviti",
+      "publishNeedsPacks": "Dodajte bar jednu aktivnu opciju pakovanja",
+      "publishNeedsStock": "Dodajte zalihu pre objavljivanja",
+      "publishNeedsUntil": "Postavite datum dostupnosti u budućnosti",
+      "quantityKg": "Količina (kg)",
+      "removeReason": "Razlog (obavezno)",
+      "removeReasonRequired": "Razlog je obavezan pri uklanjanju zalihe.",
+      "removeStock": "Ukloni zalihu",
+      "removeStockBtn": "Ukloni",
+      "save": "Sačuvaj",
+      "sourceLotOptional": "ID izvornog lota (opciono)",
+      "stockHistory": "Istorija kretanja",
+      "stockOnOffer": "U ponudi",
+      "stockPanel": "Zaliha",
+      "stockPlanned": "Planirano",
+      "stockSold": "Prodato",
+      "subtitle": "Kreirajte proizvode za tržište, postavite pakovanje i cene, dodajte zalihu i objavite kupcima."
+    },
+    "supply": {
+      "bioVeraSeedBadge": "Bio Vera seme: {{count}} vreć(a) · {{lots}}",
+      "bioVeraSeedDetail": "{{count}} vreć(a) zasijano · lot(ovi): {{lots}}",
+      "bioVeraSeedTitle": "Bio Vera seme na ovoj parceli",
+      "closePanel": "Zatvori panel detalja",
+      "colCrop": "Kultura",
+      "colDates": "Datumi",
+      "colExpected": "Očekivano",
+      "colFarm": "Gazdinstvo",
+      "colGrower": "Proizvođač",
+      "colHarvested": "Ubrano",
+      "colStatus": "Status",
+      "createProduct": "Kreiraj proizvod u katalogu",
+      "derivedStatus": {
+        "HARVESTED": "Ubrano",
+        "IN_CATALOGUE": "U katalogu",
+        "LOT_CREATED": "Lot kreiran",
+        "PLANNED": "Planirano"
+      },
+      "empty": "Još nema zasada ni planova berbe. Proizvođači ih unose u mobilnoj aplikaciji.",
+      "filters": {
+        "allCrops": "Sve kulture",
+        "allStatuses": "Svi statusi",
+        "search": "Pretraži proizvođača, gazdinstvo, kulturu…"
+      },
+      "harvest": "Berba",
+      "heading": "Pregled snabdevanja proizvođača",
+      "inProducts": "U proizvodima",
+      "latestPhoto": "Poslednja fotografija rasta",
+      "linkGrowerControl": "Otvori u kontroli proizvođača",
+      "linkHarvestPlans": "Otvori plan berbe",
+      "lots": "Lotovi / serije",
+      "noLots": "Još nema evidentiranih lotova.",
+      "noPhoto": "Još nema fotografija rasta",
+      "planted": "Zasijano",
+      "refresh": "Osveži",
+      "stats": {
+        "expected": "Ukupno očekivano (kg)",
+        "harvested": "Ukupno ubrano (kg)",
+        "inProducts": "U kataloškim proizvodima (kg)",
+        "unallocated": "Nedodeljeno (kg)"
+      },
+      "subtitle": "Svaki zasad i plan berbe iz mobilne aplikacije — očekivani kilogrami, ubrani lotovi i šta je već u katalogu proizvoda.",
+      "unallocated": "Nedodeljeno",
+      "viewProduct": "Pogledaj kataloški proizvod"
     }
   },
   "fleetPartnerPages": {
@@ -2352,7 +2483,8 @@
     "deliveries": "Isporuke",
     "analytics": "Analitika",
     "companyProfile": "Profil kompanije",
-    "veraStandard": "Bio Vera standard"
+    "veraStandard": "Bio Vera standard",
+    "marketplace": "Tržište"
   },
   "logisticsPartnerNav": {
     "dashboard": "Kontrolna tabla",
@@ -2374,7 +2506,8 @@
     "suppliers": "Vera partneri",
     "invoices": "Fakture",
     "analytics": "Analitika i izveštaji",
-    "veraStandard": "Bio Vera standard"
+    "veraStandard": "Bio Vera standard",
+    "marketplace": "Tržište"
   },
   "buyerPortalOrders": {
     "transportStatusHint": "Kad operativa poveže porudžbinu za gazdinstvo i transportnu misiju, status ovde sledi korake prevoza (preuzimanje na farmi → u tranzitu); konačno uručenje još može zavisiti od prijema kod distributera ili prodavnice.",
@@ -2403,7 +2536,19 @@
     "emptyHintShop": "Poručite preko Vera Trade ili otvorite prodavnicu proizvoda.",
     "emptyCtaTrade": "Otvori Vera Trade",
     "emptyCtaShop": "Prodavnica",
-    "emptyCtaDashboard": "Kontrolna tabla"
+    "emptyCtaDashboard": "Kontrolna tabla",
+    "catalogTimeline": {
+      "accepted": "Prihvaćeno",
+      "delivered": "Isporučeno",
+      "inTransit": "U transportu",
+      "paid": "Plaćeno",
+      "preparing": "U pripremi",
+      "receiptConfirmed": "Prijem potvrđen",
+      "rejected": "Odbijeno",
+      "submitted": "Poslato"
+    },
+    "catalogTimelineTitle": "Napredak porudžbine",
+    "rejectionReason": "Odbijeno: {{reason}}"
   },
   "buyerPortalHistory": {
     "emptyTitle": "Nema istorije porudžbina",
@@ -5339,7 +5484,11 @@
     "cancelConfirm": "Da li želite da otkažete ovu neplaćenu porudžbinu i oslobodite rezervisanu robu? Ako ste već uplatili novac, nemojte otkazivati ovde — javite se operativi.",
     "keep": "Zadrži porudžbinu",
     "error": "Promena nije sačuvana",
-    "retry": "Osvežite podatke i pokušajte ponovo."
+    "retry": "Osvežite podatke i pokušajte ponovo.",
+    "catalogPending": "Rezervacija zalihe sa tržišta na čekanju",
+    "catalogReserved": "Rezervisano sa tržišne zalihe: {{kg}} {{unit}}",
+    "catalogReservedForYou": "Rezervisano za vas{{detail}}",
+    "viewStockHistory": "Pogledaj istoriju zaliha"
   },
   "checkoutRecovery": {
     "recovered": "Pronađena je porudžbina iz prethodnog pokušaja. Nije napravljena kopija. Proverite njenu originalnu količinu, adresu i status u porudžbinama; eventualni ostatak je sačuvan u korpi.",
@@ -5357,7 +5506,7 @@
     "unpaidHeld": "Rezervisano na neplaćenim porudžbinama",
     "hint": "Prvo obradite najstarije zahteve. Starost je vreme od kreiranja porudžbine; roba se ne oslobađa automatski. Količine su odvojene po jedinici mere.",
     "queues": {
-      "settlement": "Obra\u010dun",
+      "settlement": "Obračun",
       "open": "Otvorene",
       "stock": "Dodela zalihe",
       "approval": "Za odobrenje",
@@ -5405,5 +5554,347 @@
     "manualCode": "Kod (ako skeniranje ne uspe)",
     "handoverStartedHint": "Vozač je kod vas. Proverite robu, dodajte fotografije i potpišite prijem.",
     "completeReceipt": "Završi prijem (fotografije + potpis)"
+  },
+  "buyerPortalDashboard": {
+    "browseMarketplace": "Pregledaj tržište",
+    "onOfferCount": "{{count}} proizvod(a) dostupno na tržištu",
+    "onOfferNow": "Trenutno u ponudi"
+  },
+  "buyerPortalMarketplace": {
+    "allCategories": "Sve kategorije",
+    "availableKg": "{{kg}} kg dostupno",
+    "availableUntil": "Dostupno do {{date}}",
+    "category": {
+      "FRUIT": "Voće",
+      "GRAIN": "Žitarice",
+      "OTHER": "Ostalo",
+      "VEGETABLE": "Povrće"
+    },
+    "checkout": {
+      "cancel": "Otkaži",
+      "confirm": "Potvrdi porudžbinu",
+      "failed": "Porudžbina nije poslata. Pokušajte ponovo ili kontaktirajte podršku.",
+      "fillRequired": "Popunite ulicu, grad i poštanski broj.",
+      "submitting": "Slanje porudžbine…"
+    },
+    "cityPlaceholder": "Grad",
+    "countryPlaceholder": "Država",
+    "decreasePacks": "Smanji broj pakovanja",
+    "deliveryAddress": "Adresa isporuke",
+    "empty": "Trenutno nema ponude. Proverite uskoro ponovo.",
+    "farmFallback": "Bio Vera partnersko gazdinstvo",
+    "fromPrice": "Od €{{price}} / {{label}}",
+    "increasePacks": "Povećaj broj pakovanja",
+    "lineTotal": "Ukupno za porudžbinu",
+    "loading": "Učitavanje tržišta…",
+    "maxPacks": "Maks. {{count}} pakovanja",
+    "notesPlaceholder": "Napomene za isporuku (opciono)",
+    "packChip": "{{label}} · €{{price}}",
+    "packCount": "Broj pakovanja",
+    "packCountInput": "Broj pakovanja",
+    "postalPlaceholder": "Poštanski broj",
+    "searchPlaceholder": "Pretraži po proizvodu, gazdinstvu ili kategoriji…",
+    "selectPack": "Izaberi veličinu pakovanja",
+    "streetPlaceholder": "Ulica i broj",
+    "subtitle": "Pregledajte sertifikovanu robu u ponudi — poručujte po veličini pakovanja sa aktuelnom dostupnošću.",
+    "title": "Tržište"
+  },
+  "seedProducer": {
+    "header": {
+      "badge": "Portal proizvođača semena",
+      "logOut": "Odjava"
+    },
+    "nav": {
+      "profile": "Profil",
+      "runs": "Moje serije"
+    },
+    "profile": {
+      "city": "Grad",
+      "contact": "Kontakt e-pošta",
+      "contactBioVera": "Za ažuriranje licence ili kontakt podataka, obratite se Bio Vera podršci.",
+      "country": "Država",
+      "licence": "Licenca",
+      "subtitle": "Podaci o vašoj fabrici u evidenciji Bio Vere.",
+      "title": "Profil"
+    },
+    "run": {
+      "back": "Nazad na serije",
+      "bagsProduced": "Proizvedeno vreća",
+      "certificates": "Sertifikati (PDF/JPG)",
+      "confirmCta": "Potvrdi proizvodnju",
+      "confirmTitle": "Potvrdi proizvodnju",
+      "downloadCsv": "Preuzmi CSV",
+      "downloadRoll": "Preuzmi etikete (PDF rolna)",
+      "downloadSheet": "Preuzmi etikete (PDF list nalepnica)",
+      "germination": "Klijavost %",
+      "labelsTitle": "Preuzimanje etiketa",
+      "printGuide": "List: A4 sa 3×8 nalepnica (70×37 mm). Rolna: 100×60 mm. Štampajte tačno ove kodove — jedinstvena etiketa po vreći, bez duplikata.",
+      "productionDate": "Datum proizvodnje",
+      "purity": "Čistoća %",
+      "subtitle": "Godina semena {{year}} · {{status}}",
+      "waitingBody": "Proizvodnja je potvrđena. Bio Vera će pregledati i pustiti lot u lanac snabdevanja.",
+      "waitingTitle": "Čeka se Bio Vera"
+    },
+    "runs": {
+      "bags": "Vreće (proizvedeno / planirano)",
+      "empty": "Bio Vera će kreirati proizvodnu seriju i izdati etikete za vas.",
+      "labels": "Etikete",
+      "labelsReady": "Etikete spremne",
+      "lot": "Lot",
+      "product": "Proizvod",
+      "status": "Status",
+      "subtitle": "Lotovi dodeljeni vašoj fabrici od strane Bio Vere.",
+      "title": "Moje proizvodne serije",
+      "year": "Godina semena"
+    }
+  },
+  "seedProduction": {
+    "approvedProducts": {
+      "cancel": "Otkaži",
+      "category": "Kategorija",
+      "categoryFertilizer": "Đubrivo",
+      "categoryOther": "Ostalo",
+      "categoryPackaging": "Pakovanje",
+      "categoryPlantProtection": "Zaštita bilja",
+      "categorySeed": "Seme",
+      "cropType": "Vrsta kulture",
+      "description": "Opis",
+      "edit": "Izmeni proizvod",
+      "empty": "Još nema odobrenih proizvoda. Dodajte proizvod tipa SEME da biste pokrenuli proizvodnu seriju.",
+      "firstSteps": "Prvi koraci posle setve",
+      "harvestWindow": "Očekivani prozor berbe",
+      "instructionsPdfUrl": "URL PDF uputstva",
+      "irrigation": "Navodnjavanje",
+      "isBioVeraBrand": "Bio Vera brend",
+      "manufacturer": "Proizvođač",
+      "name": "Naziv",
+      "new": "Dodaj proizvod",
+      "packSize": "Veličina pakovanja",
+      "retire": "Povuci iz upotrebe",
+      "retireConfirm": "Povući ovaj proizvod? Ne može se koristiti za nove proizvodne serije.",
+      "safety": "Bezbednosne napomene",
+      "save": "Sačuvaj proizvod",
+      "seedRate": "Norma semena po ha",
+      "soilTemperature": "Zemljište i temperatura",
+      "sowingTime": "Vreme setve / sadnje",
+      "spacingDepth": "Rastojanje i dubina",
+      "status": "Status",
+      "storage": "Skladištenje (otvorena vreća)",
+      "subtitle": "Preporučeni Bio Vera ulazni proizvodi za generisanje etiketa.",
+      "tabDetails": "Detalji",
+      "tabInstructions": "Uputstva",
+      "title": "Odobreni proizvodi",
+      "unit": "Jedinica",
+      "variety": "Sorta",
+      "videoUrl": "URL videa"
+    },
+    "bagStatus": {
+      "ASSIGNED": "Dodeljeno",
+      "AVAILABLE": "Dostupno",
+      "LABELED": "Etiketirano",
+      "PLANTED": "Zasijano",
+      "RECALLED": "Povučeno",
+      "SOLD": "Prodato",
+      "USED": "Iskorišćeno",
+      "VOIDED": "Poništeno"
+    },
+    "common": {
+      "actions": "Akcije",
+      "close": "Zatvori",
+      "loading": "Učitavanje…",
+      "refresh": "Osveži",
+      "save": "Sačuvaj"
+    },
+    "custodyEvent": {
+      "ASSIGNED_TO_GROWER": "Dodeljeno proizvođaču",
+      "LABEL_ISSUED": "Etiketa izdata",
+      "PLANTED": "Zasijano",
+      "PRODUCED": "Proizvedeno",
+      "RECALLED": "Povučeno",
+      "RECEIVED_BY_SUPPLIER": "Primljeno od dobavljača",
+      "RELEASED": "Pušteno u promet",
+      "SHIPPED_TO_SUPPLIER": "Poslato dobavljaču",
+      "SOLD_TO_GROWER": "Prodato proizvođaču",
+      "VOIDED": "Poništeno"
+    },
+    "lookup": {
+      "event": "Događaj",
+      "notFound": "Vreća nije pronađena.",
+      "note": "Napomena",
+      "openRun": "Otvori proizvodnu seriju",
+      "placeholder": "Serijski broj ili QR URL",
+      "productInfo": "Proizvod i lot",
+      "search": "Pretraži",
+      "subtitle": "Skenirajte ili unesite serijski broj i pritisnite Enter za punu vremensku liniju vlasništva.",
+      "timeline": "Vremenska linija vlasništva",
+      "title": "Pretraga vreće",
+      "when": "Kada"
+    },
+    "nav": {
+      "approvedProducts": "Odobreni proizvodi",
+      "dashboard": "Kontrolna tabla",
+      "lookup": "Pretraga vreće",
+      "producers": "Proizvođači semena"
+    },
+    "newRunModal": {
+      "bagSizeHint": "npr. 5 kg",
+      "bagSizeLabel": "Oznaka veličine vreće",
+      "bagsPlanned": "Planirano vreća",
+      "cancel": "Otkaži",
+      "create": "Kreiraj seriju",
+      "expiresAt": "Najbolje do (opciono)",
+      "lotHint": "3–12 velikih slova i cifara, npr. NS2604",
+      "lotNumber": "Broj lota",
+      "originCountry": "Zemlja porekla",
+      "originRegion": "Region porekla",
+      "producer": "Fabrika / proizvođač",
+      "product": "Odobren proizvod semena",
+      "seedCropYear": "Godina useva semena",
+      "title": "Nova proizvodna serija"
+    },
+    "producers": {
+      "address": "Adresa",
+      "cancel": "Otkaži",
+      "city": "Grad",
+      "contactEmail": "Kontakt e-pošta",
+      "contactName": "Ime kontakt osobe",
+      "country": "Država",
+      "edit": "Izmeni proizvođača",
+      "empty": "Još nema proizvođača. Dodajte fabriku pre kreiranja proizvodne serije.",
+      "invite": "Pozovi korisnika portala",
+      "inviteEmail": "E-pošta",
+      "inviteFirstName": "Ime",
+      "inviteLastName": "Prezime",
+      "inviteSend": "Pošalji poziv",
+      "inviteTitle": "Pozovi korisnika fabričkog portala",
+      "isActive": "Aktivan",
+      "licenseNumber": "Broj licence",
+      "linkedUser": "Povezan korisnik portala",
+      "name": "Naziv",
+      "new": "Dodaj proizvođača",
+      "save": "Sačuvaj proizvođača",
+      "subtitle": "Partnerske fabrike koje štampaju Bio Vera etikete.",
+      "title": "Proizvođači semena",
+      "unlink": "Ukloni vezu sa korisnikom"
+    },
+    "reports": {
+      "exportCsv": "Izvezi registar vreća (CSV)",
+      "funnelTitle": "Levak po proizvodu i godini",
+      "inStock": "Na zalihi",
+      "plantedParcelsTitle": "Parcele zasijane Bio Vera semenom",
+      "received": "Primljeno",
+      "shipped": "Poslato",
+      "sold": "Prodato",
+      "suppliersTitle": "Zaliha dobavljača",
+      "title": "Izveštavanje",
+      "tooltip": {
+        "assignedAdmin": "Vreće direktno dodeljene proizvođaču od strane Bio Vera administratora.",
+        "atProducer": "Vreće još u fabrici (DOSTUPNO, još nisu poslate dobavljaču).",
+        "labeled": "Svi izdati Bio Vera kodovi (svaki serijski broj vreće u okviru filtera).",
+        "planted": "Vreće evidentirane kao zasijane ili delimično iskorišćene na parceli.",
+        "produced": "Zbir stvarno potvrđenih vreća u fabrici (bagsProduced po seriji).",
+        "recalled": "Vreće označene kao povučene iz ovog lota.",
+        "shipped": "Vreće ikada poslate dobavljaču (kumulativno — uključuje već prodato ili zasijano).",
+        "sold": "Vreće prodate proizvođačima preko dobavljača (status PRODATO)."
+      },
+      "viewParcel": "Pogledaj parcelu",
+      "yearFilter": "Godina semena"
+    },
+    "runDetail": {
+      "affectedParcels": "Pogođene parcele",
+      "affectedParcelsBags": "{{count}} vreć(a) zasijano",
+      "assignBags": "Dodeli vreće proizvođaču",
+      "assignModal": {
+        "growerPartnerCode": "Partnerski kod proizvođača",
+        "growerSearch": "Proizvođač (ime ili partnerski kod)",
+        "growerSearchPlaceholder": "Kucajte za pretragu proizvođača…",
+        "preview": "Pregled",
+        "serials": "Serijski brojevi",
+        "serialsHint": "Nalepite serijske brojeve odvojene zarezom, razmakom ili novim redom. USB skeneri rade — skenirajte i pritisnite Enter.",
+        "submit": "Dodeli vreće",
+        "title": "Dodeli vreće proizvođaču",
+        "validCount": "{{count}} ispravnih"
+      },
+      "back": "Nazad na kontrolnu tablu",
+      "bagNo": "Vreća br.",
+      "bagsTable": "Vreće",
+      "confirmModal": {
+        "bagsProduced": "Stvarno proizvedeno vreća",
+        "certificateFilesSelected": "{{count}} datoteka izabrano",
+        "certificateUpload": "Otpremi sertifikate (PDF/JPG)",
+        "certificateUrls": "URL-ovi sertifikata (po jedan u redu)",
+        "certificateUrlsHint": "Opciono — nalepite URL-ove ako su sertifikati hostovani drugde",
+        "germinationPct": "Klijavost %",
+        "productionDate": "Datum proizvodnje",
+        "purityPct": "Čistoća %",
+        "submit": "Potvrdi proizvodnju",
+        "title": "Potvrdi proizvodnju"
+      },
+      "confirmProduction": "Potvrdi proizvodnju",
+      "downloadCsv": "Preuzmi CSV",
+      "downloadPdfRoll": "Preuzmi PDF (rolna)",
+      "downloadPdfSheet": "Preuzmi PDF (list nalepnica)",
+      "errAction": "Akcija nije uspela. Proverite status serije i pokušajte ponovo.",
+      "errLoad": "Proizvodna serija nije učitana.",
+      "holder": "Držalac",
+      "issueLabels": "Izdaj etikete",
+      "issueLabelsConfirm": "Ovo kreira {{count}} jedinstvenih Bio Vera kodova. Fabrika mora odštampati tačno ove etikete.",
+      "lastEvent": "Poslednji događaj",
+      "noBags": "Još nema vreća — prvo izdajte etikete.",
+      "parcel": "Parcela zasijana",
+      "recall": "Povuci lot",
+      "recallModal": {
+        "growers": "Proizvođači sa vrećama",
+        "impact": "{{count}} vreć(a) biće povučeno",
+        "parcels": "Parcele već zasijane iz ovog lota",
+        "reason": "Razlog povlačenja",
+        "reasonRequired": "Razlog je obavezan",
+        "submit": "Potvrdi povlačenje",
+        "title": "Povuci lot",
+        "warning": "Ovo će označiti sve nezasijane vreće kao povučene i obavestiti pogođene proizvođače."
+      },
+      "release": "Pusti za dodelu",
+      "releaseConfirm": "Pustiti ovaj lot da se vreće mogu dodeliti proizvođačima?",
+      "serial": "Serijski broj",
+      "stepper": {
+        "labelsIssued": "Etikete izdate",
+        "planned": "Planirano",
+        "produced": "Proizvedeno",
+        "recalled": "Povučeno",
+        "released": "Pušteno"
+      },
+      "summary": "Pregled serije"
+    },
+    "runStatus": {
+      "LABELS_ISSUED": "Etikete izdate",
+      "PLANNED": "Planirano",
+      "PRODUCED": "Proizvedeno",
+      "RECALLED": "Povučeno",
+      "RELEASED": "Pušteno"
+    },
+    "runs": {
+      "bagsPlanned": "Planirano vreća",
+      "bagsProduced": "Proizvedeno vreća",
+      "created": "Kreirano",
+      "empty": "Još nema proizvodnih serija. Kreirajte jednu da biste izdali Bio Vera kodove etiketa za fabrički lot.",
+      "lot": "Lot",
+      "newRun": "Nova proizvodna serija",
+      "producer": "Proizvođač",
+      "product": "Proizvod",
+      "seedYear": "Godina semena",
+      "status": "Status",
+      "title": "Proizvodne serije",
+      "view": "Pogledaj seriju"
+    },
+    "stats": {
+      "assigned": "Dodeljeno proizvođačima",
+      "available": "Dostupno",
+      "labeled": "Etiketirane vreće",
+      "planted": "Zasijano",
+      "recalled": "Povučeno",
+      "voided": "Poništeno"
+    },
+    "subtitle": "Bio Vera kodovi etiketa, fabrički lotovi i praćenje vreća od proizvodnje do setve.",
+    "title": "Proizvodnja semena"
   }
 }

@@ -228,7 +228,7 @@
       "noResults": "Nema rezultata",
       "noProducts": "Trenutno nema dostupnih proizvoda",
       "tryDifferentSearch": "Pokušaj drugi pojam za pretragu",
-      "comingSoon": "Proizvodi će uskoro biti dostupni. Proveri ponovo kasnije!",
+      "comingSoon": "Trenutno nema proizvoda u ponudi. Proverite ponovo kasnije.",
       "clearSearch": "Obriši pretragu"
     },
     "header": {
@@ -237,7 +237,6 @@
     },
     "products": {
       "count_one": "{{count}} proizvod",
-      "count_few": "{{count}} proizvoda",
       "count_other": "{{count}} proizvoda"
     },
     "errors": {
@@ -861,7 +860,6 @@
         "syncBody": "Zapisi sa farme čekaju slanje. Dodirni da pošalješ sada.",
         "syncCta": "Sinhronizuj podatke",
         "notificationsTitle_one": "{{count}} novo obaveštenje",
-        "notificationsTitle_few": "{{count}} nova obaveštenja",
         "notificationsTitle_other": "{{count}} novih obaveštenja",
         "notificationsBody": "Poruke od operativa ili status transporta.",
         "notificationsCta": "Obaveštenja",
@@ -878,7 +876,6 @@
       "syncStrip": {
         "title": "Čeka slanje",
         "pendingLine_one": "{{count}} stavka čeka slanje.",
-        "pendingLine_few": "{{count}} stavke čekaju slanje.",
         "pendingLine_other": "{{count}} stavki čeka slanje.",
         "errorLine": "Poslednja greška",
         "syncNow": "Pošalji sad",
@@ -1238,7 +1235,6 @@
       "empty": "Nema gazdinstava",
       "addFirst": "Dodaj prvo gazdinstvo",
       "parcelBadge_one": "{{count}} parcela",
-      "parcelBadge_few": "{{count}} parcele",
       "parcelBadge_other": "{{count}} parcela",
       "listCertDaysRemaining": "{{count}} dana do sertifikacije"
     },
@@ -1919,7 +1915,6 @@
       "barcode": "Barkod",
       "lastSync": "Poslednja sinhro",
       "materialCount_one": "{{count}} materijal",
-      "materialCount_few": "{{count}} materijala",
       "materialCount_other": "{{count}} materijala",
       "addButton": "Dodaj materijal",
       "addForm": {
@@ -2088,11 +2083,9 @@
     "sync": {
       "syncing": "Sinhronizacija podataka…",
       "savedOnDevice_one": "Na uređaju: {{count}} stavka",
-      "savedOnDevice_few": "Na uređaju: {{count}} stavke",
       "savedOnDevice_other": "Na uređaju: {{count}} stavki",
       "allSent": "Sve poslato",
       "itemsNotSent_one": "Nije poslata {{count}} stavka.",
-      "itemsNotSent_few": "Nije poslato {{count}} stavke.",
       "itemsNotSent_other": "Nije poslato {{count}} stavki.",
       "itemsNotSentHint": "Često: GPS na serveru nije unutar njive/parcele — ispravi mapu ili unesi na parceli; detalj greške kod svakog unosa u Dnevniku.",
       "fieldEntryNeedsParcelPlan": "Unos je sačuvan bez parcele i plana useva — ne može na server. Obriši ga u dnevniku („Obriši sa uređaja” / „Obriši samo stare unose”) i napravi nov unos sa parcelom i planom.",
@@ -2125,9 +2118,6 @@
       "farmerAddPlanting": "Dodaj zasad",
       "farmerCropKindPlanting": "Zasad",
       "farmerCropKindHarvest": "Plan berbe",
-      "farmerParcel": "Parcela",
-      "farmerPlan": "Usev / plan",
-      "farmerWhat": "Šta si radio?",
       "farmerTapPhoto": "Slikaj",
       "farmerTapGps": "Gde si (GPS)",
       "farmerSave": "Sačuvaj",
@@ -2328,7 +2318,11 @@
       "addToCart": "Dodaj u korpu",
       "viewHistory": "Pogledaj istoriju",
       "noProducts": "Trenutno nema dostupnih proizvoda",
-      "loading": "Učitavanje proizvoda..."
+      "loading": "Učitavanje proizvoda...",
+      "availableKg": "{{kg}} kg dostupno",
+      "availableUntil": "Dostupno do {{date}}",
+      "farmStock": "Zaliha gazdinstva",
+      "marketplacePacks": "Tržište · pakovanja"
     },
     "cartReview": {
       "backToShop": "Vrati se na ponudu",
@@ -2392,7 +2386,8 @@
         "DELIVERED": "Isporučeno",
         "COMPLETED": "Završeno",
         "CANCELLED": "Otkazano",
-        "REFUNDED": "Refundirano"
+        "REFUNDED": "Refundirano",
+        "REJECTED": "Odbijeno"
       },
       "timelinePlaced": "Porudžbina poslata",
       "timelineConfirmed": "Potvrđeno i u pripremi",
@@ -2404,7 +2399,8 @@
         "bank": "Banka:",
         "iban": "IBAN:",
         "swift": "SWIFT:"
-      }
+      },
+      "rejectionReason": "Razlog: {{reason}}"
     },
     "veraStandard": {
       "title": "Bio Vera standard",
@@ -2494,7 +2490,8 @@
       "detailsHeading": "Detalji",
       "daysInConversion": "Dani u konverziji",
       "perUnitShort": "po {{unit}}",
-      "reserveCta": "Rezerviši"
+      "reserveCta": "Rezerviši",
+      "remainingPacks": "Možete dodati do {{packs}} pakovanja ({{kg}} kg)"
     },
     "passport": {
       "dash": "—",
@@ -2535,6 +2532,12 @@
       "tempSummary": "Min {{min}}°C · Max {{max}}°C · Prosek {{avg}}°C",
       "tempReadingsCount": "{{count}} očitavanja temperature",
       "sectionProtocol360": "Protokol 360"
+    },
+    "marketplace": {
+      "availableUntil": "Dostupno do {{date}}",
+      "kgAvailable": "{{kg}} kg dostupno",
+      "lineTotal": "{{count}} × {{label}} = {{kg}} kg · {{total}}",
+      "packaging": "Pakovanje"
     }
   },
   "supplier": {
@@ -2720,7 +2723,8 @@
     "button": "Prijavi se",
     "registerBuyer": "Registruj se kao kupac",
     "backToMarketplace": "Nazad na marketplejs",
-    "noRoleForApp": "Ovaj nalog nije podešen za ovaj ekran. Koristite partnersku ili kupčevu prijavu, ili kontaktirajte podršku."
+    "noRoleForApp": "Ovaj nalog nije podešen za ovaj ekran. Koristite partnersku ili kupčevu prijavu, ili kontaktirajte podršku.",
+    "pendingApproval": "Vaš nalog čeka odobrenje od strane Bio Vere."
   },
   "map": {
     "title": "Gde kupiti",
@@ -2955,7 +2959,10 @@
     "successTitle": "Uspešno",
     "successHub": "Registracija uspešna! Lokacija će se pojaviti na mapi posle odobrenja admina.",
     "successNoHub": "Registracija uspešna! Adresu možeš dodati u profilu.",
-    "registrationFailed": "Registracija nije uspela"
+    "registrationFailed": "Registracija nije uspela",
+    "successLoginHint": "Dobićete e-poruku kada nalog bude aktivan.",
+    "successPartnerCode": "Vaš partnerski kod: {{code}} — možete se prijaviti i e-poštom nakon odobrenja.",
+    "successPending": "Vaš nalog čeka odobrenje od strane Bio Vere. Poslaćemo vam e-poruku kada bude aktivan."
   },
   "reservationModal": {
     "recovered": "Otvorena je porudžbina iz prethodnog pokušaja. Proveri njenu količinu, adresu i status.",
@@ -3095,7 +3102,10 @@
     "cancelConfirm": "Da li želite da otkažete ovu neplaćenu porudžbinu i oslobodite rezervisanu robu? Ako ste već uplatili novac, nemojte otkazivati ovde — javite se operativi.",
     "keep": "Zadrži porudžbinu",
     "error": "Promena nije sačuvana",
-    "retry": "Osvežite podatke i pokušajte ponovo."
+    "retry": "Osvežite podatke i pokušajte ponovo.",
+    "catalogPending": "Rezervacija zalihe sa tržišta na čekanju",
+    "catalogReserved": "Rezervisano sa tržišne zalihe: {{kg}} {{unit}}",
+    "catalogReservedForYou": "Rezervisano za vas{{detail}}"
   },
   "checkoutRecovery": {
     "recovered": "Pronađena je porudžbina iz prethodnog pokušaja. Nije napravljena kopija. Proverite njenu originalnu količinu, adresu i status u porudžbinama; eventualni ostatak je sačuvan u korpi.",
@@ -3158,5 +3168,66 @@
     "show": "Prikaži kod za prijem",
     "loading": "Učitavanje…",
     "manualCode": "Kod (ako skeniranje ne uspe)"
+  },
+  "grower": {
+    "seedOrigin": {
+      "germination": "Klijavost {{pct}}%",
+      "lotLine": "Lot {{lot}} · Godina semena {{year}}",
+      "planted": "Zasijano: {{count}} vreć(a){{range}}",
+      "purity": "Čistoća {{pct}}%",
+      "recalled": "Ovaj lot semena je povukla Bio Vera.",
+      "title": "Poreklo semena"
+    }
+  },
+  "plantingEntry": {
+    "addBagFirst": "Skenirajte ili dodajte bar jednu ispravnu vreću.",
+    "addManual": "Dodaj vreću",
+    "addPhoto": "Dodaj fotografiju",
+    "areaHa": "Površina setve (ha)",
+    "bagsTitle": "Skenirane vreće",
+    "date": "Datum",
+    "fixBagsFirst": "Uklonite ili ispravite neispravne vreće pre čuvanja.",
+    "gettingLocation": "Učitavanje lokacije…",
+    "gpsRequired": "GPS lokacija je obavezna.",
+    "lotLine": "Lot {{lot}} · {{year}} · {{producer}}",
+    "manualSerial": "Unesi serijski broj ručno (oštećena etiketa)",
+    "notes": "Napomene",
+    "offlineSaved": "Sačuvano na ovom uređaju — sinhronizuje se kada budete onlajn.",
+    "offlineScanHint": "Povežite se da proverite vreću, ili sačuvajte oflajn iz poljskog dnevnika.",
+    "openFieldDiary": "Otvori poljski dnevnik",
+    "openForm": "Evidentiraj setvu",
+    "optionalPlan": "Opciono",
+    "parcel": "Parcela",
+    "parcelRequired": "Izaberite parcelu pre čuvanja.",
+    "plantingPlan": "Plan setve",
+    "quantityKg": "Iskorišćena količina (kg)",
+    "removeBag": "Ukloni vreću",
+    "removeRejectedBags": "Uklonite odbijene vreće sa × pre čuvanja.",
+    "removeRejectedInline": "Uklonite odbijene vreće sa × da nastavite.",
+    "save": "Sačuvaj unos setve",
+    "saveFailed": "Unos setve nije sačuvan",
+    "scanAnother": "Skeniraj još jednu vreću",
+    "selectParcel": "Izaberi parcelu",
+    "subtitle": "Evidentirajte seme koje ste zasijali na ovoj parceli",
+    "summary": "Zasijano {{count}} vreć(a) ({{kg}} kg) proizvoda {{product}}{{variety}}, lot {{lot}}, na {{farm}}{{area}}",
+    "title": "Unos setve",
+    "willSync": "Automatski će se sinhronizovati kada budete ponovo onlajn."
+  },
+  "seedProducerMobile": {
+    "body": "Proizvodne serije i preuzimanje etiketa upravljaju se u Bio Vera web portalu. Otvorite link ispod u pregledaču na računaru ili tabletu.",
+    "openWeb": "Otvori web portal",
+    "title": "Portal proizvođača semena"
+  },
+  "seedScan": {
+    "genuineTitle": "Originalno Bio Vera seme",
+    "germination": "Klijavost {{pct}}%",
+    "lotLine": "Lot {{lot}} · Godina semena {{year}} · {{producer}}, {{city}}",
+    "manualSerial": "Štampani serijski broj na vreći",
+    "notGenuine": "Ovo nije Bio Vera kod semena.",
+    "offlineSavedBody": "Skeniranje je sačuvano na ovom uređaju i proveriće se kada se veza vrati.",
+    "offlineSavedTitle": "Sačuvano — proveriće se kada budete onlajn",
+    "plantedBagsSummary": "{{count}} vreć(a) · {{kg}} kg · lotovi: {{lots}}",
+    "plantedBagsTitle": "Bio Vera seme na ovoj parceli",
+    "verifySerial": "Proveri serijski broj"
   }
 }
