@@ -37,6 +37,8 @@ import { DeliveriesService } from '../src/deliveries/deliveries.service';
 import { WaybillsService } from '../src/waybills/waybills.service';
 import { InventoryController } from '../src/inventory/inventory.controller';
 import { InventoryService } from '../src/inventory/inventory.service';
+import { CatalogController } from '../src/catalog/catalog.controller';
+import { CatalogService } from '../src/catalog/catalog.service';
 import { AuthController } from '../src/auth/auth.controller';
 import { AuthService } from '../src/auth/auth.service';
 import { LocalStrategy } from '../src/auth/strategies/local.strategy';
@@ -77,8 +79,8 @@ describe('Orders, payments and delivery — real PostgreSQL + HTTP', () => {
     const values = { JWT_SECRET: 'isolated-integration-test-secret', PLATFORM_WALLET_USER_ID: 'admin' };
     const module = await Test.createTestingModule({
       imports: [PassportModule],
-      controllers: [WalletsController, ReturnsController, MissionsController, DigitalHandoverController, OrdersController, PaymentsController, DeliveriesController, InventoryController, AuthController, NotificationsController],
-      providers: [ReturnDispositionService, RefundReconciliationService, ReturnsService, DigitalHandoverService, MissionsService, AuditTrailService,
+      controllers: [WalletsController, ReturnsController, MissionsController, DigitalHandoverController, OrdersController, PaymentsController, DeliveriesController, InventoryController, CatalogController, AuthController, NotificationsController],
+      providers: [ReturnDispositionService, RefundReconciliationService, ReturnsService, DigitalHandoverService, MissionsService, AuditTrailService, CatalogService,
         { provide: FreshnessService, useValue: {} },
         { provide: MaterialControlService, useValue: {} },
         { provide: BlockchainService, useValue: { isEnabled: () => false } },
@@ -1474,6 +1476,134 @@ describe('Orders, payments and delivery — real PostgreSQL + HTTP', () => {
     const retry = (await post('/orders').send(body).expect(201)).body;
     expect(retry.id).toBe(created.id);
     expect((await prisma.inventory.findUnique({ where: { id: 'stock' } })).quantity).toBe(90);
+  });
+
+  describe('catalogue marketplace orders', () => {
+    let productId: string;
+    let pack5kgId: string;
+
+    beforeEach(async () => {
+      await prisma.$executeRawUnsafe('TRUNCATE TABLE catalog_stock_movements, catalog_pack_options, catalog_products, orders CASCADE');
+      const until = new Date(Date.now() + 30 * 86400000).toISOString();
+      const created = (await post('/catalog/admin/products', 'admin').send({
+        name: 'Raspberry',
+        category: 'FRUIT',
+        plannedQuantityKg: 1000,
+        estateId: 'farm',
+        availableUntil: until,
+      }).expect(201)).body;
+      productId = created.id;
+      const pack = (await post(`/catalog/admin/products/${productId}/pack-options`, 'admin').send({
+        label: '5 kg',
+        packSizeKg: 5,
+        pricePerPack: 19,
+      }).expect(201)).body;
+      pack5kgId = pack.id;
+      await post(`/catalog/admin/products/${productId}/stock`, 'admin').send({
+        type: 'ADMIN_ADD',
+        quantityKg: 60,
+      }).expect(201);
+      await post(`/catalog/admin/products/${productId}/publish`, 'admin').expect(201);
+    });
+
+    it('creates a pack order with ORDER_RESERVE and lowers available kg', async () => {
+      const catalogue = (await request(app.getHttpServer()).get('/catalog/products').expect(200)).body;
+      expect(catalogue[0].availableKg).toBe(60);
+      const body = {
+        clientRequestId: randomUUID(),
+        productId,
+        productName: 'Raspberry',
+        quantity: 60,
+        unit: 'kg',
+        unitPrice: 3.8,
+        packOptionId: pack5kgId,
+        packCount: 12,
+        deliveryAddress: address,
+      };
+      const order = (await post('/orders').send(body).expect(201)).body;
+      expect(order).toMatchObject({ totalAmount: 228, quantity: 60, packCount: 12, packLabel: '5 kg' });
+      const reserve = await prisma.catalog_stock_movements.findFirst({ where: { orderId: order.id, type: 'ORDER_RESERVE' } });
+      expect(reserve?.quantityKg).toBe(-60);
+      const available = await prisma.catalog_stock_movements.aggregate({
+        where: { productId },
+        _sum: { quantityKg: true },
+      });
+      expect(available._sum.quantityKg).toBe(0);
+      expect((await request(app.getHttpServer()).get('/catalog/products').expect(200)).body).toHaveLength(0);
+    });
+
+    it('rejects overselling catalogue stock', async () => {
+      await post('/orders').send({
+        clientRequestId: randomUUID(),
+        productId,
+        productName: 'Raspberry',
+        quantity: 60,
+        unit: 'kg',
+        unitPrice: 3.8,
+        packOptionId: pack5kgId,
+        packCount: 12,
+        deliveryAddress: address,
+      }).expect(201);
+      const conflict = await post('/orders').send({
+        clientRequestId: randomUUID(),
+        productId,
+        productName: 'Raspberry',
+        quantity: 5,
+        unit: 'kg',
+        unitPrice: 3.8,
+        packOptionId: pack5kgId,
+        packCount: 1,
+        deliveryAddress: address,
+      }).expect(400);
+      expect(String(conflict.body.message)).toMatch(/Only .* kg left/);
+    });
+
+    it('releases stock on admin reject and buyer cancel', async () => {
+      const order1 = (await post('/orders').send({
+        clientRequestId: randomUUID(),
+        productId,
+        productName: 'Raspberry',
+        quantity: 10,
+        unit: 'kg',
+        unitPrice: 3.8,
+        packOptionId: pack5kgId,
+        packCount: 2,
+        deliveryAddress: address,
+      }).expect(201)).body;
+      const order2 = (await post('/orders').send({
+        clientRequestId: randomUUID(),
+        productId,
+        productName: 'Raspberry',
+        quantity: 5,
+        unit: 'kg',
+        unitPrice: 3.8,
+        packOptionId: pack5kgId,
+        packCount: 1,
+        deliveryAddress: address,
+      }).expect(201)).body;
+      await post(`/orders/admin/${order2.id}/reject`, 'admin').send({ reason: 'Out of season' }).expect(201);
+      await post(`/orders/${order1.id}/cancel`).expect(201);
+      const available = await prisma.catalog_stock_movements.aggregate({ _sum: { quantityKg: true }, where: { productId } });
+      expect(available._sum.quantityKg).toBe(60);
+      await post(`/orders/admin/${order2.id}/reject`, 'admin').send({ reason: 'Again' }).expect(201);
+    });
+
+    it('approves and confirms bank payment for catalogue order without hub reservation', async () => {
+      const order = (await post('/orders').send({
+        clientRequestId: randomUUID(),
+        productId,
+        productName: 'Raspberry',
+        quantity: 5,
+        unit: 'kg',
+        unitPrice: 3.8,
+        packOptionId: pack5kgId,
+        packCount: 1,
+        deliveryAddress: address,
+      }).expect(201)).body;
+      await post(`/orders/admin/${order.id}/approve`, 'admin').expect(201);
+      const paid = await post(`/orders/admin/${order.id}/confirm-bank-payment`, 'admin').send({ transactionId: 'bank-1' }).expect(201);
+      expect(paid.body.status).toBe('PAID');
+    });
   });
 
 });

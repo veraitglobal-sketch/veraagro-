@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { ShoppingCart, Sprout, Package, Apple, Carrot, Wheat, ChevronRight, Bell } from 'lucide-react-native';
-import { inventoryAPI, Product, notificationsAPI } from '../../../lib/api';
+import { inventoryAPI, catalogAPI, Product, notificationsAPI } from '../../../lib/api';
 import ProductCard from '../../../components/ProductCard';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import ErrorMessage from '../../../components/ErrorMessage';
@@ -53,8 +53,27 @@ export default function ShopScreen() {
     try {
       setLoading(true);
       setError(null);
-      const data = await inventoryAPI.getAvailableProducts();
-      setProducts(data);
+      const [catalog, inventory] = await Promise.all([
+        catalogAPI.listProducts().catch(() => []),
+        inventoryAPI.getAvailableProducts().catch(() => []),
+      ]);
+      const catalogAsProducts: Product[] = catalog.map((c) => ({
+        id: c.id,
+        productName: c.productName,
+        quantity: c.availableKg,
+        unit: c.unit,
+        availableKg: c.availableKg,
+        availableUntil: c.availableUntil,
+        catalogProduct: true,
+        packOptions: c.packOptions,
+        price: c.packOptions[0]?.pricePerKg,
+        estate: c.estate ?? { id: 'unknown', name: 'Farm' },
+      }));
+      const catalogNames = new Set(catalogAsProducts.map((p) => p.productName.trim().toLowerCase()));
+      const inventoryFiltered = inventory.filter(
+        (p) => !catalogNames.has(p.productName.trim().toLowerCase()),
+      );
+      setProducts([...catalogAsProducts, ...inventoryFiltered]);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '';
       setError(message || t('marketplace.errors.loadFailed'));

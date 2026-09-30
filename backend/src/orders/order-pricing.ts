@@ -1,14 +1,107 @@
 import { BadRequestException, ConflictException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { OrderStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { sumAvailableKg } from '../catalog/catalog-stock';
+import { computeMaxPacks } from '../catalog/catalog.util';
 import { CreateOrderDto } from './dto/create-order.dto';
+
+const EXCLUDED_ORDER_STATUSES: OrderStatus[] = ['CANCELLED', 'REFUNDED'];
 
 export function currentMarketPriceWhere(now = new Date()): Prisma.market_pricesWhereInput {
   return { isActive: true, effectiveFrom: { lte: now }, OR: [{ effectiveTo: null }, { effectiveTo: { gt: now } }] };
 }
 
+export type CatalogPackPriceResult = {
+  unitPrice: number;
+  totalAmount: number;
+  estateId?: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  unit: string;
+  catalogProductId: string;
+  packOptionId: string;
+  packLabel: string;
+  packSizeKg: number;
+  packCount: number;
+  isCatalog: true;
+};
+
+/** Planned-supply catalogue order with fixed pack pricing. */
+export async function resolveCatalogPackPrice(
+  prisma: PrismaService | Prisma.TransactionClient,
+  data: CreateOrderDto,
+): Promise<CatalogPackPriceResult> {
+  if (!data.packOptionId || !data.packCount) {
+    throw new BadRequestException('packOptionId and packCount are required for catalogue orders');
+  }
+  const optionRows = await prisma.$queryRaw<Array<{ option_id: string }>>`
+    SELECT o.id AS option_id
+    FROM catalog_pack_options o
+    INNER JOIN catalog_products p ON p.id = o."productId"
+    WHERE o.id = ${data.packOptionId}
+    FOR UPDATE OF p
+  `;
+  if (!optionRows.length) throw new BadRequestException('Pack option not found');
+
+  const option = await prisma.catalog_pack_options.findUnique({
+    where: { id: data.packOptionId },
+    include: { product: true },
+  });
+  if (!option || !option.isActive) throw new BadRequestException('Pack option is not available');
+  const product = option.product;
+  if (product.status !== 'PUBLISHED') throw new BadRequestException('Product is no longer available');
+  const now = new Date();
+  if (product.availableFrom && product.availableFrom > now) {
+    throw new BadRequestException('Product is not yet available');
+  }
+  if (product.availableUntil && product.availableUntil < now) {
+    throw new BadRequestException('Product is no longer available');
+  }
+
+  const availableKg = await sumAvailableKg(prisma, product.id);
+  const kg = new Prisma.Decimal(option.packSizeKg).mul(data.packCount).toNumber();
+  if (kg > availableKg + 1e-9) {
+    const maxPacks = computeMaxPacks(availableKg, option.packSizeKg);
+    throw new BadRequestException(
+      `Only ${availableKg} kg left — max ${maxPacks} packs of ${option.label}`,
+    );
+  }
+
+  const unitPrice = new Prisma.Decimal(option.pricePerPack).div(option.packSizeKg).toDecimalPlaces(4).toNumber();
+  const totalAmount = new Prisma.Decimal(option.pricePerPack).mul(data.packCount).toDecimalPlaces(2).toNumber();
+  if (data.unitPrice !== unitPrice) {
+    throw new ConflictException('Product price has changed. Refresh the catalogue before ordering.');
+  }
+  if (data.productName !== product.name || data.unit !== 'kg') {
+    throw new BadRequestException('Product name or unit does not match the catalogue');
+  }
+  if (Math.abs(data.quantity - kg) > 1e-6) {
+    throw new BadRequestException('Quantity does not match pack count');
+  }
+
+  return {
+    unitPrice,
+    totalAmount,
+    estateId: product.estateId ?? undefined,
+    productId: product.id,
+    productName: product.name,
+    quantity: kg,
+    unit: 'kg',
+    catalogProductId: product.id,
+    packOptionId: option.id,
+    packLabel: option.label,
+    packSizeKg: option.packSizeKg,
+    packCount: data.packCount,
+    isCatalog: true,
+  };
+}
+
 /** Resolve the same inventory / batch / market identifiers exposed by the catalogue. */
 export async function resolveOrderPrice(prisma: PrismaService | Prisma.TransactionClient, data: CreateOrderDto) {
+  if (data.packOptionId) {
+    return resolveCatalogPackPrice(prisma, data);
+  }
   const now = new Date();
   let productId = data.productId;
   if (!productId) {

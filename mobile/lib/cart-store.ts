@@ -6,6 +6,10 @@ export interface CartItem {
   quantity: number;
   lineKind: CartLineKind;
   checkoutKey?: string;
+  packOptionId?: string;
+  packLabel?: string;
+  packSizeKg?: number;
+  pricePerPack?: number;
 }
 
 interface CartStorage {
@@ -70,8 +74,8 @@ export function createCartStore(storage: CartStorage, onError: (error: unknown) 
     publish(apply(snapshot.items));
     persist();
   };
-  const matches = (item: CartItem, id: string, kind: CartLineKind) =>
-    item.product.id === id && item.lineKind === kind;
+  const matches = (item: CartItem, id: string, kind: CartLineKind, packOptionId?: string) =>
+    item.product.id === id && item.lineKind === kind && (item.packOptionId ?? '') === (packOptionId ?? '');
 
   return {
     getSnapshot: () => snapshot,
@@ -94,46 +98,62 @@ export function createCartStore(storage: CartStorage, onError: (error: unknown) 
       update(() => refreshed);
       return pricesChanged;
     },
-    addToCart: (product: Product, quantity: number, options?: { lineKind?: CartLineKind }) => {
+    addToCart: (product: Product, quantity: number, options?: {
+      lineKind?: CartLineKind;
+      packOptionId?: string;
+      packLabel?: string;
+      packSizeKg?: number;
+      pricePerPack?: number;
+    }) => {
       if (!Number.isFinite(quantity) || quantity <= 0) return;
       const kind = options?.lineKind ?? 'purchase';
-      update((items) => items.some((item) => matches(item, product.id, kind))
-        ? items.map((item) => matches(item, product.id, kind) ? { ...item, product, quantity: item.quantity + quantity } : item)
-        : [...items, { product, quantity, lineKind: kind }]);
+      const packOptionId = options?.packOptionId;
+      update((items) => items.some((item) => matches(item, product.id, kind, packOptionId))
+        ? items.map((item) => matches(item, product.id, kind, packOptionId)
+          ? { ...item, product, quantity: item.quantity + quantity } : item)
+        : [...items, {
+          product,
+          quantity,
+          lineKind: kind,
+          packOptionId,
+          packLabel: options?.packLabel,
+          packSizeKg: options?.packSizeKg,
+          pricePerPack: options?.pricePerPack,
+        }]);
     },
-    removeFromCart: (id: string, kind: CartLineKind) => {
-      update((items) => items.filter((item) => !matches(item, id, kind)));
+    removeFromCart: (id: string, kind: CartLineKind, packOptionId?: string) => {
+      update((items) => items.filter((item) => !matches(item, id, kind, packOptionId)));
     },
-    updateQuantity: (id: string, quantity: number, kind: CartLineKind) => {
+    updateQuantity: (id: string, quantity: number, kind: CartLineKind, packOptionId?: string) => {
       if (!Number.isFinite(quantity)) return;
       update((items) => quantity <= 0
-        ? items.filter((item) => !matches(item, id, kind))
-        : items.map((item) => matches(item, id, kind) ? { ...item, quantity } : item));
+        ? items.filter((item) => !matches(item, id, kind, packOptionId))
+        : items.map((item) => matches(item, id, kind, packOptionId) ? { ...item, quantity } : item));
     },
-    changeQuantity: (id: string, delta: number, kind: CartLineKind) => {
+    changeQuantity: (id: string, delta: number, kind: CartLineKind, packOptionId?: string) => {
       if (!Number.isFinite(delta)) return;
-      update((items) => items.map((item) => matches(item, id, kind)
+      update((items) => items.map((item) => matches(item, id, kind, packOptionId)
         ? { ...item, quantity: item.quantity + delta } : item).filter((item) => item.quantity > 0));
     },
     prepareCheckout: async (line: CartItem, newKey: () => string): Promise<CartItem & { checkoutKey: string }> => {
       await initialize();
-      const current = snapshot.items.find(item => matches(item, line.product.id, line.lineKind));
+      const current = snapshot.items.find(item => matches(item, line.product.id, line.lineKind, line.packOptionId));
       if (!current) throw new Error('Cart changed. Refresh before checkout.');
       const checkoutKey = current.checkoutKey || newKey();
-      update(items => items.map(item => matches(item, line.product.id, line.lineKind) ? { ...item, checkoutKey } : item));
+      update(items => items.map(item => matches(item, line.product.id, line.lineKind, line.packOptionId) ? { ...item, checkoutKey } : item));
       await writes;
       if (persistenceError) throw persistenceError; // Never POST a key that was not saved to disk.
       return { ...line, checkoutKey };
     },
     completeCheckout: async (line: CartItem) => {
       // A second screen/retry cannot consume the same cart attempt twice.
-      update(items => items.map(item => matches(item, line.product.id, line.lineKind) && !!line.checkoutKey && item.checkoutKey === line.checkoutKey
+      update(items => items.map(item => matches(item, line.product.id, line.lineKind, line.packOptionId) && !!line.checkoutKey && item.checkoutKey === line.checkoutKey
         ? { ...item, quantity: Math.max(0, item.quantity - line.quantity), checkoutKey: undefined } : item).filter(item => item.quantity > 0));
       await writes;
       if (persistenceError) throw persistenceError;
     },
     consumeItem: (line: CartItem) => {
-      update((items) => items.map((item) => matches(item, line.product.id, line.lineKind)
+      update((items) => items.map((item) => matches(item, line.product.id, line.lineKind, line.packOptionId)
         ? { ...item, quantity: item.quantity - line.quantity } : item).filter((item) => item.quantity > 0));
     },
     clearCart: () => update(() => []),

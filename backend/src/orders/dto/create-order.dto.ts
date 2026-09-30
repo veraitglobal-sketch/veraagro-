@@ -1,5 +1,5 @@
 import { Transform, Type } from 'class-transformer';
-import { IsDefined, IsNumber, IsObject, IsOptional, IsPositive, IsString, IsUUID, Matches, MaxLength, ValidateNested } from 'class-validator';
+import { IsDefined, IsInt, IsNumber, IsObject, IsOptional, IsPositive, IsString, IsUUID, Matches, MaxLength, Min, ValidateNested } from 'class-validator';
 
 export class OrderDeliveryAddressDto {
   @IsString() @Matches(/\S/) @MaxLength(300)
@@ -33,4 +33,13 @@ export class CreateOrderDto {
   deliveryAddress: OrderDeliveryAddressDto;
   @IsOptional() @IsString() @MaxLength(3000)
   deliveryNotes?: string;
+
+  @IsOptional() @IsUUID('4')
+  packOptionId?: string;
+
+  @IsOptional()
+  @Transform(({ obj, key }) => obj[key])
+  @IsInt()
+  @Min(1)
+  packCount?: number;
 }

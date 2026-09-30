@@ -10,6 +10,7 @@ import { useAppLocaleTag } from '../../lib/date-locale';
 import { Plus, Minus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react-native';
 import EmptyState from '../../components/EmptyState';
 import { useCartCatalogue } from '../../hooks/useCartCatalogue';
+import { cartLineTotalEur } from '../../lib/cart-catalogue';
 
 /**
  * Shopping Cart Screen
@@ -82,8 +83,16 @@ export default function CartScreen() {
               <Text style={{ color: theme.colors.error }}>{t('buyer.cartReview.loadFailed')}</Text>
             </TouchableOpacity>
           ) : null}
-          {items.map((item) => (
-            <View key={`${item.product.id}-${item.lineKind}`}>
+          {items.map((item) => {
+            const catalogPack = item.packOptionId
+              ? catalogue.ctx.catalogProducts
+                  .find((p) => p.id === item.product.id)
+                  ?.packOptions.find((o) => o.id === item.packOptionId)
+              : undefined;
+            const lineTotal = cartLineTotalEur(item);
+            const lineKey = `${item.product.id}-${item.lineKind}-${item.packOptionId ?? ''}`;
+            return (
+            <View key={lineKey}>
               <View style={{
                 flexDirection: 'row',
                 flexWrap: 'wrap',
@@ -115,17 +124,25 @@ export default function CartScreen() {
                     color: theme.colors.text.secondary,
                     letterSpacing: 0.2,
                   }}>
-                    {item.product.price != null && item.product.price > 0
-                      ? t('buyer.cart.linePrice', {
-                          price: item.product.price.toLocaleString(priceLocale, {
-                            style: 'currency',
-                            currency: 'EUR',
-                          }),
-                          unit: item.product.unit ?? '',
+                    {item.packOptionId && item.packLabel && item.pricePerPack
+                      ? t('buyer.cart.packLine', {
+                          defaultValue: '{{count}} × {{label}} · {{packPrice}} = {{total}}',
+                          count: item.quantity,
+                          label: item.packLabel,
+                          packPrice: item.pricePerPack.toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' }),
+                          total: (lineTotal ?? 0).toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' }),
                         })
-                      : t('buyer.cart.priceOnRequestWithUnit', {
-                          unit: item.product.unit ?? '—',
-                        })}
+                      : item.product.price != null && item.product.price > 0
+                        ? t('buyer.cart.linePrice', {
+                            price: item.product.price.toLocaleString(priceLocale, {
+                              style: 'currency',
+                              currency: 'EUR',
+                            }),
+                            unit: item.product.unit ?? '',
+                          })
+                        : t('buyer.cart.priceOnRequestWithUnit', {
+                            unit: item.product.unit ?? '—',
+                          })}
                   </Text>
                   {!catalogue.loading && !catalogue.failed && catalogue.issueFor(item) ? (
                     <Text style={{ color: theme.colors.error, marginTop: theme.spacing.xs }}>
@@ -138,7 +155,7 @@ export default function CartScreen() {
                 {/* Quantity Controls */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md }}>
                   <TouchableOpacity
-                    onPress={() => changeQuantity(item.product.id, -1, item.lineKind)}
+                    onPress={() => changeQuantity(item.product.id, -1, item.lineKind, item.packOptionId)}
                     style={{ padding: theme.spacing.xs }}
                     accessibilityRole="button"
                     accessibilityLabel={t('buyer.cart.decreaseQty')}
@@ -156,10 +173,16 @@ export default function CartScreen() {
                     {item.quantity}
                   </Text>
                   <TouchableOpacity
-                    disabled={!item.checkoutKey && (catalogue.loading || catalogue.failed || !!catalogue.issueFor(item) || items.filter(line => line.product.id === item.product.id && !line.checkoutKey).reduce((sum, line) => sum + line.quantity, 0) >= Number(item.product.quantity))}
+                    disabled={!item.checkoutKey && (catalogue.loading || catalogue.failed || !!catalogue.issueFor(item) || (() => {
+                      const used = items.filter(line => line.product.id === item.product.id && line.packOptionId === item.packOptionId && !line.checkoutKey).reduce((sum, line) => sum + line.quantity, 0);
+                      const max = catalogPack?.maxPacks ?? Number(item.product.quantity);
+                      return used >= max;
+                    })())}
                     onPress={() => {
-                      const remaining = Number(item.product.quantity) - items.filter(line => line.product.id === item.product.id && !line.checkoutKey).reduce((sum, line) => sum + line.quantity, 0);
-                      if (item.checkoutKey || remaining > 0) changeQuantity(item.product.id, item.checkoutKey ? 1 : Math.min(1, remaining), item.lineKind);
+                      const used = items.filter(line => line.product.id === item.product.id && line.packOptionId === item.packOptionId && !line.checkoutKey).reduce((sum, line) => sum + line.quantity, 0);
+                      const max = catalogPack?.maxPacks ?? Number(item.product.quantity);
+                      const remaining = max - used;
+                      if (item.checkoutKey || remaining > 0) changeQuantity(item.product.id, item.checkoutKey ? 1 : Math.min(1, remaining), item.lineKind, item.packOptionId);
                     }}
                     style={{ padding: theme.spacing.xs }}
                     accessibilityRole="button"
@@ -171,7 +194,7 @@ export default function CartScreen() {
 
                 {/* Remove Button */}
                 <TouchableOpacity
-                  onPress={() => removeFromCart(item.product.id, item.lineKind)}
+                  onPress={() => removeFromCart(item.product.id, item.lineKind, item.packOptionId)}
                   style={{ marginLeft: 'auto', padding: theme.spacing.xs }}
                   accessibilityRole="button"
                   accessibilityLabel={t('buyer.cart.removeItem')}
@@ -180,7 +203,7 @@ export default function CartScreen() {
                 </TouchableOpacity>
               </View>
             </View>
-          ))}
+          );})}
         </View>
       </ScrollView>
 
@@ -211,7 +234,7 @@ export default function CartScreen() {
             color: theme.colors.text.primary,
             letterSpacing: 0.5,
           }}>
-            {items.some(item => !item.product.price || item.product.price <= 0)
+            {items.some(item => cartLineTotalEur(item) == null)
               ? t('buyer.cartReview.totalIncomplete')
               : getTotalPrice().toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' })}
           </Text>

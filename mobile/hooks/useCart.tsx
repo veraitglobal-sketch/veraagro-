@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useSyncExternalStore, type ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createCartStore } from '../lib/cart-store';
+import { cartLineTotalEur } from '../lib/cart-catalogue';
 
 export type { CartItem, CartLineKind } from '../lib/cart-store';
 
@@ -20,7 +21,11 @@ export function useCart() {
     ...store,
     items,
     loading,
-    getTotalPrice: () => items.reduce((total, item) => total + (item.product.price ?? 0) * item.quantity, 0),
+    getTotalPrice: () =>
+      items.reduce((total, item) => {
+        const line = cartLineTotalEur(item);
+        return total + (line ?? 0);
+      }, 0),
     getTotalItems: () => items.reduce((total, item) => total + item.quantity, 0),
   };
 }

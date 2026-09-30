@@ -15,6 +15,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { RejectOrderDto } from './dto/reject-order.dto';
 
 @Controller('orders')
 @UseGuards(JwtAuthGuard)
@@ -49,6 +50,17 @@ export class OrdersController {
   @Roles('SUPER_ADMIN', 'ADMIN')
   async approveOrder(@Param('id') id: string) {
     return this.ordersService.approveOrderByAdmin(id);
+  }
+
+  @Post('admin/:id/reject')
+  @UseGuards(RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  async rejectOrder(
+    @Param('id') id: string,
+    @Body() body: RejectOrderDto,
+    @Request() req: { user: { id: string } },
+  ) {
+    return this.ordersService.rejectOrderByAdmin(id, body.reason, req.user.id);
   }
 
   /** Bookkeeping: wire received on BioVera account → IN_ESCROW + order PAID (then logistics can assign delivery) */

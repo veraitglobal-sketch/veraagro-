@@ -1,10 +1,25 @@
+export interface CatalogPackOption {
+  id: string;
+  label: string;
+  packSizeKg: number;
+  pricePerPack: number;
+  pricePerKg: number;
+  maxPacks: number;
+}
+
 export interface Product {
   id: string;
-  batchId: string;
+  batchId?: string;
   productName: string;
   quantity: number;
   unit: string;
-  harvestDate: string;
+  harvestDate?: string;
+  catalogProduct?: boolean;
+  availableKg?: number;
+  availableUntil?: string | null;
+  packOptions?: CatalogPackOption[];
+  selectedPackOptionId?: string;
+  pricePerPack?: number;
   estate: {
     id: string;
     name: string;
@@ -99,6 +114,7 @@ export interface RetailLocation {
   /** B2B material supplier (seeds, inputs) — same as `id` for API calls */
   supplierUserId?: string;
   description?: string;
+  bioVeraSeedInStock?: Array<{ approvedProductId: string; name: string; bags: number }>;
 }
 
 
@@ -159,6 +175,14 @@ export interface Order {
   status: string;
   deliveryAddress: any;
   deliveryNotes?: string;
+  packLabel?: string | null;
+  packSizeKg?: number | null;
+  packCount?: number | null;
+  rejectionReason?: string | null;
+  catalogProduct?: { id: string; name: string } | null;
+  catalogProductId?: string | null;
+  catalogReserved?: boolean;
+  catalogReservedKg?: number | null;
   createdAt: string;
   updatedAt: string;
 }

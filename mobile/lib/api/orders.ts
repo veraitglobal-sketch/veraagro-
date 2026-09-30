@@ -14,6 +14,8 @@ export const ordersAPI = {
     unitPrice: number;
     deliveryAddress: unknown;
     deliveryNotes?: string;
+    packOptionId?: string;
+    packCount?: number;
   }): Promise<Order> => {
     try { return (await api.post('/orders', data)).data; }
     catch (error) {

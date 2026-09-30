@@ -80,9 +80,14 @@ export const retailLocationsAPI = {
 
 /** B2B material suppliers (seeds, inputs) – public map + grower contact / orders */
 export const b2bSuppliersAPI = {
-  getPublicMap: async (): Promise<RetailLocation[]> => {
+  getPublicMap: async (params?: { category?: string; bioVeraOnly?: boolean }): Promise<RetailLocation[]> => {
     try {
-      const response = await api.get('/b2b-suppliers/public/map');
+      const response = await api.get('/b2b-suppliers/public/map', {
+        params: {
+          ...(params?.category ? { category: params.category } : {}),
+          ...(params?.bioVeraOnly ? { bioVeraOnly: 'true' } : {}),
+        },
+      });
       const list = (response.data || []) as Array<Record<string, unknown>>;
       return list.map((p) => ({
         id: String(p.id),
@@ -96,6 +101,9 @@ export const b2bSuppliersAPI = {
         kind: 'supplier' as const,
         supplierUserId: String(p.id),
         description: p.description as string | undefined,
+        bioVeraSeedInStock: Array.isArray(p.bioVeraSeedInStock)
+          ? (p.bioVeraSeedInStock as Array<{ approvedProductId: string; name: string; bags: number }>)
+          : undefined,
       }));
     } catch {
       return [];
@@ -162,6 +170,16 @@ export const b2bSuppliersAPI = {
     const response = await api.patch(`/b2b-suppliers/orders/${encodeURIComponent(orderId)}/status`, data);
     return response.data;
   },
+  getApprovedProducts: async () => {
+    const response = await api.get('/b2b-suppliers/my/approved-products');
+    return (response.data || []) as Array<{
+      id: string;
+      name: string;
+      variety: string | null;
+      unit: string;
+      category: string;
+    }>;
+  },
   getMyCatalog: async () => {
     const response = await api.get('/b2b-suppliers/my/catalog');
     return (response.data || []) as Array<{
@@ -175,10 +193,24 @@ export const b2bSuppliersAPI = {
       isActive?: boolean;
     }>;
   },
+  getMySeedBags: async (status?: string) => {
+    const response = await api.get('/b2b-suppliers/me/seed-bags', { params: status ? { status } : {} });
+    return response.data as {
+      bags: Array<{ serialNumber: string; status: string; productName: string; lotNumber: string | null }>;
+      grouped: Array<{ productName: string; lotNumber: string; count: number }>;
+    };
+  },
+  receiveSeedBags: async (serials: string[]) => {
+    const response = await api.post('/b2b-suppliers/me/seed-bags/receive', { serials });
+    return response.data as { results: Array<{ serial: string; ok: boolean; reason?: string }> };
+  },
+  sellSeedBags: async (body: { growerPartnerCode?: string; growerId?: string; serials: string[] }) => {
+    const response = await api.post('/b2b-suppliers/me/seed-bags/sell', body);
+    return response.data as { growerId: string; results: Array<{ serial: string; ok: boolean; reason?: string }> };
+  },
   createCatalogItem: async (data: {
-    name: string;
+    approvedProductId: string;
     description?: string;
-    unit?: string;
     listPrice?: number;
     sku?: string;
   }) => {

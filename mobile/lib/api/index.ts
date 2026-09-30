@@ -8,5 +8,6 @@ export * from './batches';
 export * from './orders';
 export * from './grower';
 export * from './buyer';
+export * from './catalog';
 export * from './notifications';
 export * from './other';

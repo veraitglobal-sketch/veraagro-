@@ -1,6 +1,7 @@
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { randomUUID } from 'crypto';
+import { hasCatalogReserve } from '../catalog/catalog-stock';
 
 export const stockSummarySelect = { id: true, inventoryId: true, status: true, quantity: true, unit: true, reservedAt: true, issuedAt: true, releasedAt: true } as const;
 const stockTime = (old: Date) => new Date(Math.max(Date.now(), old.getTime() + 1));
@@ -45,6 +46,10 @@ export async function reserveOrderStock(tx: Prisma.TransactionClient, orderId: s
 
 /** Caller holds the order lock. Does not debit free quantity a second time. */
 export async function requireOrderStock(tx: Prisma.TransactionClient, orderId: string) {
+  const order = await tx.orders.findUnique({ where: { id: orderId }, select: { catalogProductId: true } });
+  if (order?.catalogProductId && (await hasCatalogReserve(tx, orderId))) {
+    return null;
+  }
   const reservation = await tx.order_stock_reservations.findUnique({ where: { orderId }, include: { inventory: true, order: { select: { fulfillingEstateId: true } } } });
   if (!reservation || reservation.status === 'RELEASED') throw new BadRequestException('Operations must reserve specific stock before approval, payment or dispatch');
   if (reservation.inventory.estateId !== reservation.order.fulfillingEstateId) throw new ConflictException('Fulfilling farm differs from reserved stock');
@@ -55,6 +60,7 @@ export async function requireOrderStock(tx: Prisma.TransactionClient, orderId: s
 }
 export async function issueOrderStock(tx: Prisma.TransactionClient, orderId: string, actor: string) {
   const reservation = await requireOrderStock(tx, orderId);
+  if (!reservation) return null;
   if (reservation.status === 'ISSUED') return reservation;
   // Serializes with physical recounts and other writes to this stock.
   await tx.$queryRaw`SELECT id FROM inventory WHERE id = ${reservation.inventoryId} FOR UPDATE`;

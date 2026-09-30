@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useCallback, useRef } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { ArrowLeft, MapPin, Plus, Minus, ShoppingCart } from 'lucide-react-native';
-import { inventoryAPI, Product } from '../../lib/api';
+import { inventoryAPI, catalogAPI, Product, CatalogPackOption } from '../../lib/api';
 import { theme } from '../../lib/theme';
 import { useBioVeraScreenPadding } from '../../lib/screen-insets';
 import { useAppLocaleTag } from '../../lib/date-locale';
@@ -26,15 +26,25 @@ export default function ProductDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [selectedPack, setSelectedPack] = useState<CatalogPackOption | null>(null);
   const [error, setError] = useState<string | null>(null);
   const loadGeneration = useRef(0);
   const adding = useRef(false);
   const isReservationMode = mode === 'reserve';
   const localeTag = useAppLocaleTag();
-  const inCart = items.filter((item) => item.product.id === id).reduce((sum, item) => sum + item.quantity, 0);
-  const maxQuantity = Math.max(0, Number(product?.quantity) - inCart) || 0;
+  const isCatalog = product?.catalogProduct === true;
+  const packId = selectedPack?.id;
+  const inCart = items
+    .filter((item) => item.product.id === id && (item.packOptionId ?? '') === (packId ?? ''))
+    .reduce((sum, item) => sum + item.quantity, 0);
+  const maxQuantity = isCatalog && selectedPack
+    ? Math.max(0, selectedPack.maxPacks - inCart)
+    : Math.max(0, Number(product?.quantity) - inCart) || 0;
+  const lineTotal = isCatalog && selectedPack
+    ? selectedPack.pricePerPack * quantity
+    : (product?.price ?? 0) * quantity;
   const canAdd = !cartLoading && !error && !!product && Number.isFinite(maxQuantity) &&
-    quantity > 0 && quantity <= maxQuantity;
+    quantity > 0 && quantity <= maxQuantity && (!isCatalog || !!selectedPack);
 
   const loadProduct = useCallback(async (opts?: { background?: boolean }) => {
     const generation = ++loadGeneration.current;
@@ -47,10 +57,33 @@ export default function ProductDetailScreen() {
     if (!background) setLoading(true);
     setError(null);
     try {
+      try {
+        const catalog = await catalogAPI.getProduct(id);
+        if (generation !== loadGeneration.current) return;
+        const mapped: Product = {
+          id: catalog.id,
+          productName: catalog.productName,
+          quantity: catalog.availableKg,
+          unit: catalog.unit,
+          catalogProduct: true,
+          availableKg: catalog.availableKg,
+          availableUntil: catalog.availableUntil,
+          packOptions: catalog.packOptions,
+          price: catalog.packOptions[0]?.pricePerKg,
+          estate: catalog.estate ?? { id: 'unknown', name: 'Farm' },
+        };
+        setProduct(mapped);
+        setSelectedPack(catalog.packOptions[0] ?? null);
+        setQuantity(1);
+        return;
+      } catch {
+        // Not a catalogue product — fall back to inventory list.
+      }
       const products = await inventoryAPI.getAvailableProducts();
       if (generation !== loadGeneration.current) return;
       const found = products.find((pRow) => pRow.id === id);
       setProduct(found || null);
+      setSelectedPack(null);
       setQuantity((current) => Math.min(current, Math.max(0, Number(found?.quantity) || 0)));
     } catch {
       if (generation === loadGeneration.current) setError(t('buyer.dashboard.loadFailed'));
@@ -81,6 +114,14 @@ export default function ProductDetailScreen() {
       adding.current = true;
       addToCart(product, quantity, {
         lineKind: isReservationMode ? 'reservation' : 'purchase',
+        ...(isCatalog && selectedPack
+          ? {
+              packOptionId: selectedPack.id,
+              packLabel: selectedPack.label,
+              packSizeKg: selectedPack.packSizeKg,
+              pricePerPack: selectedPack.pricePerPack,
+            }
+          : {}),
       });
       router.push('/(buyer)/cart');
     }
@@ -337,6 +378,53 @@ export default function ProductDetailScreen() {
             </View>
           </View>
 
+          {isCatalog && product.packOptions && product.packOptions.length > 0 ? (
+            <View style={{ marginBottom: theme.spacing.xl }}>
+              <Text style={{ fontSize: 14, fontWeight: '500', letterSpacing: 2, color: theme.colors.text.secondary, marginBottom: theme.spacing.md, textTransform: 'uppercase' }}>
+                {t('buyer.marketplace.packaging')}
+              </Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
+                {product.packOptions.map((pack) => {
+                  const active = selectedPack?.id === pack.id;
+                  return (
+                    <TouchableOpacity
+                      key={pack.id}
+                      onPress={() => { setSelectedPack(pack); setQuantity(1); }}
+                      style={{
+                        paddingVertical: 10,
+                        paddingHorizontal: 14,
+                        borderRadius: theme.borderRadius.md,
+                        borderWidth: 1,
+                        borderColor: active ? theme.colors.primary : 'rgba(0,0,0,0.12)',
+                        backgroundColor: active ? theme.colors.primary + '12' : theme.colors.background,
+                      }}
+                    >
+                      <Text style={{ fontSize: 13, color: theme.colors.text.primary }}>{pack.label}</Text>
+                      <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }}>
+                        {pack.pricePerPack.toLocaleString(localeTag, { style: 'currency', currency: 'EUR' })}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+              {product.availableUntil ? (
+                <Text style={{ marginTop: theme.spacing.sm, fontSize: 12, color: theme.colors.text.secondary }}>
+                  {t('buyer.marketplace.availableUntil', { date: new Date(product.availableUntil).toLocaleDateString(localeTag) })}
+                </Text>
+              ) : null}
+              {selectedPack ? (
+                <Text style={{ marginTop: theme.spacing.sm, fontSize: 13, color: theme.colors.text.primary }}>
+                  {t('buyer.marketplace.lineTotal', {
+                    count: quantity,
+                    label: selectedPack.label,
+                    kg: quantity * selectedPack.packSizeKg,
+                    total: lineTotal.toLocaleString(localeTag, { style: 'currency', currency: 'EUR' }),
+                  })}
+                </Text>
+              ) : null}
+            </View>
+          ) : null}
+
           {/* Quantity Selector */}
           <View
             style={{
@@ -391,7 +479,14 @@ export default function ProductDetailScreen() {
               </TouchableOpacity>
             </View>
             <Text style={{ color: theme.colors.text.secondary, marginTop: theme.spacing.sm }}>
-              {t('buyer.productDetail.remainingToAdd', { quantity: maxQuantity, unit: product.unit })}
+              {isCatalog && selectedPack
+                ? t('buyer.productDetail.remainingPacks', {
+                    packs: maxQuantity,
+                    kg: (maxQuantity * selectedPack.packSizeKg).toLocaleString(localeTag, {
+                      maximumFractionDigits: 1,
+                    }),
+                  })
+                : t('buyer.productDetail.remainingToAdd', { quantity: maxQuantity, unit: product.unit })}
             </Text>
           </View>
         </View>

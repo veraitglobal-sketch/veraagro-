@@ -1,3 +1,4 @@
+import { reserveCatalogStock, releaseCatalogStock } from '../catalog/catalog-stock';
 import { reserveOrderStock, releaseOrderStock, requireOrderStock, stockSummarySelect } from './order-stock';
 import {
   Injectable,
@@ -17,6 +18,7 @@ import { ensureVeraPlatformEstateId, isSystemEstateId } from './order-fulfillmen
 import { InvoicesService } from '../invoices/invoices.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { resolveOrderPrice } from './order-pricing';
+import { enrichOrdersWithCatalogReserve } from './order-catalog-enrich';
 
 @Injectable()
 export class OrdersService {
@@ -134,6 +136,7 @@ export class OrdersService {
     const requestHash = data.clientRequestId ? crypto.createHash('sha256').update(JSON.stringify({
       productId: data.productId ?? null, estateId: data.estateId ?? null, productName: data.productName,
       quantity: data.quantity, unit: data.unit, unitPrice: data.unitPrice,
+      packOptionId: data.packOptionId ?? null, packCount: data.packCount ?? null,
       deliveryAddress: { street: data.deliveryAddress.street, city: data.deliveryAddress.city,
         postalCode: data.deliveryAddress.postalCode ?? null, country: data.deliveryAddress.country },
       deliveryNotes: data.deliveryNotes ?? null,
@@ -151,18 +154,32 @@ export class OrdersService {
         }
       }
       const priced = await resolveOrderPrice(tx, data);
+      const isCatalog = 'isCatalog' in priced && priced.isCatalog === true;
       const orderId = crypto.randomUUID();
       await tx.orders.create({ data: { id: orderId,
         orderNumber: `BIOVERA-${Date.now()}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,
-        buyerId, clientRequestId: data.clientRequestId, requestHash, estateId: platformEstateId, fulfillingEstateId: priced.estateId || null,
-        sourceCatalogId: priced.productId, productName: data.productName, quantity: data.quantity, unit: data.unit,
+        buyerId, clientRequestId: data.clientRequestId, requestHash, estateId: platformEstateId,
+        fulfillingEstateId: priced.estateId || null,
+        sourceCatalogId: priced.productId,
+        catalogProductId: isCatalog ? priced.catalogProductId : null,
+        packOptionId: isCatalog ? priced.packOptionId : null,
+        packLabel: isCatalog ? priced.packLabel : null,
+        packSizeKg: isCatalog ? priced.packSizeKg : null,
+        packCount: isCatalog ? priced.packCount : null,
+        productName: isCatalog ? priced.productName : data.productName,
+        quantity: isCatalog ? priced.quantity : data.quantity,
+        unit: isCatalog ? priced.unit : data.unit,
         unitPrice: priced.unitPrice, totalAmount: priced.totalAmount, deliveryAddress: { ...data.deliveryAddress },
         deliveryNotes: data.deliveryNotes, status: 'PENDING', updatedAt: new Date(),
-        order_items: { create: { id: crypto.randomUUID(), productName: data.productName, quantity: data.quantity,
-          unitPrice: priced.unitPrice, batchId: priced.batchId } },
+        order_items: { create: { id: crypto.randomUUID(), productName: isCatalog ? priced.productName : data.productName,
+          quantity: isCatalog ? priced.quantity : data.quantity,
+          unitPrice: priced.unitPrice, batchId: !isCatalog && 'batchId' in priced ? priced.batchId : undefined } },
       } });
-      // Link item.inventoryId only under the stock lock; early FK key-share locks can deadlock concurrent checkouts.
-      if (priced.inventoryId) await reserveOrderStock(tx, orderId, priced.inventoryId, buyerId);
+      if (isCatalog) {
+        await reserveCatalogStock(tx, priced.catalogProductId, orderId, priced.quantity, buyerId);
+      } else if ('inventoryId' in priced && priced.inventoryId) {
+        await reserveOrderStock(tx, orderId, priced.inventoryId, buyerId);
+      }
       return { order: await tx.orders.findUniqueOrThrow({ where: { id: orderId }, include: { stockReservation: { select: stockSummarySelect } } }), replay: false };
     });
     const { order } = result;
@@ -202,14 +219,19 @@ export class OrdersService {
         this.logger.error(`sendNewOrderAdminNotification failed: ${e}`),
       );
 
+    const catalogPack =
+      order.packCount && order.packLabel
+        ? `${order.packCount} × ${order.packLabel} ${order.productName} (${order.quantity} kg) — €${totalAmount.toFixed(2)}`
+        : null;
     void this.notificationsService
       .notifyAdminsForNewOrder({
         orderNumber: order.orderNumber,
-        productName: data.productName,
+        productName: catalogPack ?? data.productName,
         totalAmount,
         buyerLabel,
         estateLabel: estateName,
         isPreOrder: false,
+        isCatalogOrder: !!order.catalogProductId,
       })
       .catch((e) =>
         this.logger.error(`notifyAdminsForNewOrder failed: ${e}`),
@@ -238,12 +260,23 @@ export class OrdersService {
   }
 
   async stockOptions(orderId: string) {
-    const order = await this.prisma.orders.findUnique({ where: { id: orderId }, include: { stockReservation: { select: stockSummarySelect }, order_items: true } });
+    const order = await this.prisma.orders.findUnique({
+      where: { id: orderId },
+      include: {
+        stockReservation: { select: stockSummarySelect },
+        order_items: true,
+        catalogProduct: { select: { estateId: true } },
+      },
+    });
     if (!order) throw new NotFoundException('Order not found');
     const batchId = order.order_items.find(i => i.batchId)?.batchId;
+    const estateFilter =
+      order.fulfillingEstateId ??
+      order.catalogProduct?.estateId ??
+      undefined;
     const candidates = !order.stockReservation && ['PENDING', 'APPROVED', 'PAID', 'CONFIRMED'].includes(order.status)
       ? await this.prisma.inventory.findMany({ where: { productName: order.productName, unit: order.unit,
-          ...(order.fulfillingEstateId ? { estateId: order.fulfillingEstateId } : {}), ...(batchId ? { batches: { some: { id: batchId } } } : {}),
+          ...(estateFilter ? { estateId: estateFilter } : {}), ...(batchId ? { batches: { some: { id: batchId } } } : {}),
           status: 'AVAILABLE', quantity: { gte: order.quantity }, OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] }, take: 200,
           select: { id: true, quantity: true, unit: true, expiresAt: true, estates: { select: { name: true } }, hubs: { select: { name: true, city: true } } } }) : [];
     return { orderId, reservation: order.stockReservation, quantity: order.quantity, unit: order.unit, candidates };
@@ -267,13 +300,14 @@ export class OrdersService {
     });
   }
 
-  private async cancelTx(tx: import('@prisma/client').Prisma.TransactionClient, orderId: string, actor: string) {
+  private async cancelTx(tx: import('@prisma/client').Prisma.TransactionClient, orderId: string, actor: string, reason?: string) {
     const order = await tx.orders.findUnique({ where: { id: orderId }, include: { payments: true, deliveries: true } });
     if (!order) throw new NotFoundException('Order not found');
     if (order.status === 'CANCELLED') return order;
     if (!['PENDING', 'APPROVED'].includes(order.status) || order.payments || order.deliveries) throw new BadRequestException('Only unpaid, undispatched orders can be cancelled here. Paid orders require finance review.');
     await releaseOrderStock(tx, orderId, actor);
-    return tx.orders.update({ where: { id: orderId }, data: { status: 'CANCELLED', updatedAt: new Date() } });
+    await releaseCatalogStock(tx, orderId, actor, reason);
+    return tx.orders.update({ where: { id: orderId }, data: { status: 'CANCELLED', updatedAt: new Date(), rejectionReason: reason?.trim() || order.rejectionReason } });
   }
   async cancelByBuyer(orderId: string, buyerId: string) {
     return this.prisma.$transaction(async tx => {
@@ -291,10 +325,11 @@ export class OrdersService {
   }
 
   async findAllByBuyer(buyerId: string) {
-    return this.prisma.orders.findMany({
+    const rows = await this.prisma.orders.findMany({
       where: { buyerId },
       include: {
         stockReservation: { select: stockSummarySelect },
+        catalogProduct: { select: { id: true, name: true } },
         estates: true,
         fulfilling_estate: true,
         payments: true,
@@ -320,6 +355,7 @@ export class OrdersService {
       },
       orderBy: { createdAt: 'desc' },
     });
+    return enrichOrdersWithCatalogReserve(this.prisma, rows);
   }
 
   /**
@@ -341,6 +377,10 @@ export class OrdersService {
         createdAt: true,
         updatedAt: true,
         deliveryAddress: true,
+        packLabel: true,
+        packSizeKg: true,
+        packCount: true,
+        catalogProduct: { select: { id: true, name: true } },
         fulfilling_estate: { select: { id: true, name: true } },
         deliveries: { select: { id: true, status: true, deliveryNumber: true } },
       },
@@ -371,10 +411,11 @@ export class OrdersService {
       where.estateId = filters.estateId;
     }
 
-    return this.prisma.orders.findMany({
+    const rows = await this.prisma.orders.findMany({
       where,
       include: {
         stockReservation: { select: stockSummarySelect },
+        catalogProduct: { select: { id: true, name: true } },
         users: {
           select: {
             id: true,
@@ -420,6 +461,7 @@ export class OrdersService {
       },
       orderBy: { createdAt: 'desc' },
     });
+    return enrichOrdersWithCatalogReserve(this.prisma, rows);
   }
 
   /**
@@ -500,7 +542,7 @@ export class OrdersService {
    * Admin: accept a placed order (PENDING → APPROVED). Buyer can pay only after this.
    */
   async approveOrderByAdmin(orderId: string) {
-    return this.prisma.$transaction(async tx => {
+    const updated = await this.prisma.$transaction(async tx => {
       await tx.$queryRaw`SELECT id FROM orders WHERE id = ${orderId} FOR UPDATE`;
       const order = await tx.orders.findUnique({ where: { id: orderId } });
       if (!order) throw new NotFoundException('Order not found');
@@ -509,6 +551,44 @@ export class OrdersService {
       await requireOrderStock(tx, orderId);
       return tx.orders.update({ where: { id: orderId }, data: { status: 'APPROVED', updatedAt: new Date() } });
     });
+    void this.notificationsService
+      .create({
+        userId: updated.buyerId,
+        type: 'ACTION_REQUIRED',
+        title: 'Order accepted',
+        message: `${updated.orderNumber} was accepted. Pay by bank transfer using the payment instructions in your order.`,
+        actionUrl: `/buyer-portal/orders`,
+      })
+      .catch((e) => this.logger.error(`buyer accept notification failed: ${e}`));
+    return updated;
+  }
+
+  async rejectOrderByAdmin(orderId: string, reason: string, actorId: string) {
+    const updated = await this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM orders WHERE id = ${orderId} FOR UPDATE`;
+      const order = await tx.orders.findUnique({ where: { id: orderId }, include: { payments: true, deliveries: true } });
+      if (!order) throw new NotFoundException('Order not found');
+      if (order.status === 'CANCELLED') return order;
+      if (!['PENDING', 'APPROVED'].includes(order.status) || order.payments || order.deliveries) {
+        throw new BadRequestException('Only unpaid, undispatched orders can be rejected');
+      }
+      await releaseOrderStock(tx, orderId, actorId);
+      await releaseCatalogStock(tx, orderId, actorId, reason);
+      return tx.orders.update({
+        where: { id: orderId },
+        data: { status: 'CANCELLED', rejectionReason: reason.trim(), updatedAt: new Date() },
+      });
+    });
+    void this.notificationsService
+      .create({
+        userId: updated.buyerId,
+        type: 'ALERT',
+        title: 'Order rejected',
+        message: `${updated.orderNumber} was rejected: ${reason.trim()}`,
+        actionUrl: `/buyer-portal/orders`,
+      })
+      .catch((e) => this.logger.error(`buyer reject notification failed: ${e}`));
+    return updated;
   }
 
   /**
@@ -540,6 +620,7 @@ export class OrdersService {
       where: { id: orderId },
       include: {
         stockReservation: { select: stockSummarySelect },
+        catalogProduct: { select: { id: true, name: true } },
         estates: true,
         fulfilling_estate: true,
         parcels: true,
@@ -572,7 +653,8 @@ export class OrdersService {
 
     const shipmentTracking = await this.buildBuyerShipmentTracking(order.id, order.createdAt);
 
-    return { ...order, shipmentTracking };
+    const [enriched] = await enrichOrdersWithCatalogReserve(this.prisma, [order]);
+    return { ...enriched, shipmentTracking };
   }
 
   async initiatePayment(_orderId: string, _buyerId: string, _paymentData: {

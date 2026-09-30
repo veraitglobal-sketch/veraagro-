@@ -6,7 +6,7 @@ import { theme } from '../lib/theme';
 import { useAppLocaleTag } from '../lib/date-locale';
 import Card from './ui/Card';
 import Button from './ui/Button';
-import { CheckCircle, MapPin, Star, Calendar } from 'lucide-react-native';
+import { CheckCircle, MapPin, Star, Calendar, Package } from 'lucide-react-native';
 import { productEmoji } from '../lib/product-emoji';
 
 interface ProductCardProps {
@@ -19,6 +19,11 @@ export default function ProductCard({ product, onPress, showActions = true }: Pr
   const { t } = useTranslation();
   const router = useRouter();
   const priceLocale = useAppLocaleTag();
+  const isCatalog = product.catalogProduct === true;
+  const availableKg = product.availableKg ?? product.quantity;
+  const sourceLabel = isCatalog
+    ? t('buyer.shop.marketplacePacks')
+    : t('buyer.shop.farmStock');
   const handlePress = () => {
     if (onPress) {
       onPress();
@@ -56,6 +61,29 @@ export default function ProductCard({ product, onPress, showActions = true }: Pr
           >
             {product.productName}
           </Text>
+          <Text style={{ fontSize: 12, color: theme.colors.primary, marginBottom: theme.spacing.xs }}>
+            {sourceLabel}
+          </Text>
+          {availableKg != null && (
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.xs, gap: 4 }}>
+              <Package size={12} color={theme.colors.text.secondary} strokeWidth={2} />
+              <Text style={{ ...theme.typography.caption, color: theme.colors.text.secondary }}>
+                {t('buyer.shop.availableKg', {
+                  kg: Number(availableKg).toLocaleString(priceLocale, { maximumFractionDigits: 1 }),
+                })}
+              </Text>
+            </View>
+          )}
+          {product.availableUntil ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm, gap: 4 }}>
+              <Calendar size={12} color={theme.colors.text.secondary} strokeWidth={2} />
+              <Text style={{ ...theme.typography.caption, color: theme.colors.text.secondary }}>
+                {t('buyer.shop.availableUntil', {
+                  date: new Date(product.availableUntil).toLocaleDateString(priceLocale),
+                })}
+              </Text>
+            </View>
+          ) : null}
 
           {/* Location */}
           {product.estate?.location && (
