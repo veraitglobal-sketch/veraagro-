@@ -1,21 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { authAPI } from '@/lib/api';
 import Footer from '@/components/Footer';
-import { useLocalizedHref } from '@/hooks/useLocalizedHref';
-
 export default function BuyerRegisterPage() {
   const { t } = useTranslation();
-  const loc = useLocalizedHref();
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [registeredPartnerCode, setRegisteredPartnerCode] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -107,7 +103,7 @@ export default function BuyerRegisterPage() {
     try {
       setLoading(true);
 
-      await authAPI.registerBuyer({
+      const result = await authAPI.registerBuyer({
         email: formData.email,
         phone: formData.phone || undefined,
         firstName: formData.firstName,
@@ -120,11 +116,12 @@ export default function BuyerRegisterPage() {
         city: formData.city || undefined,
       });
 
+      setRegisteredPartnerCode(
+        result && typeof result === 'object' && 'user' in result
+          ? (result as { user?: { partnerCode?: string } }).user?.partnerCode ?? null
+          : null,
+      );
       setSuccess(true);
-
-      setTimeout(() => {
-        router.push(loc('/login/buyer'));
-      }, 2000);
     } catch (err: unknown) {
       console.error('Registration error:', err);
       const raw =
@@ -162,9 +159,22 @@ export default function BuyerRegisterPage() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="rounded-lg border border-[#2D5A27]/30 bg-[#2D5A27]/10 px-4 py-3 text-center text-sm text-[#2D5A27]"
+                className="rounded-lg border border-[#2D5A27]/30 bg-[#2D5A27]/10 px-6 py-8 text-center space-y-4"
               >
-                {t('buyerRegister.success')}
+                <h2 className="text-xl font-light text-[#2D5A27]">{t('buyerRegister.successTitle')}</h2>
+                <p className="text-sm text-gray-700">{t('buyerRegister.successPending')}</p>
+                {registeredPartnerCode ? (
+                  <p className="text-sm text-gray-600">
+                    {t('buyerRegister.successPartnerCode', { code: registeredPartnerCode })}
+                  </p>
+                ) : null}
+                <p className="text-sm text-gray-600">{t('buyerRegister.successLoginHint')}</p>
+                <Link
+                  href="/login/buyer"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#2D5A27] px-6 py-3 text-sm font-medium text-white hover:bg-[#23471f]"
+                >
+                  {t('buyerRegister.successGoLogin')}
+                </Link>
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -378,7 +388,7 @@ export default function BuyerRegisterPage() {
             <div className="mt-6 border-t border-gray-200 pt-6 text-center">
               <p className="text-sm text-gray-600">
                 {t('buyerRegister.footerPrompt')}{' '}
-                <Link href={loc('/login/buyer')} className="font-medium text-[#2D5A27] hover:text-[#23471f]">
+                <Link href="/login/buyer" className="font-medium text-[#2D5A27] hover:text-[#23471f]">
                   {t('buyerRegister.footerSignIn')}
                 </Link>
               </p>

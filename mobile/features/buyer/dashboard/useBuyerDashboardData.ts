@@ -82,7 +82,7 @@ export function useBuyerDashboardData() {
     const generation = ++availabilityGeneration.current;
     setBatchAvailabilities({});
     const availabilities: Record<string, BatchAvailability> = {};
-    const ids = [...new Set(source.map((product) => product.batchId).filter(Boolean))];
+    const ids = [...new Set(source.map((product) => product.batchId).filter((id): id is string => Boolean(id)))];
     for (let offset = 0; offset < ids.length; offset += 4) {
       if (generation !== availabilityGeneration.current) return;
       await Promise.all(ids.slice(offset, offset + 4).map(async (id) => {

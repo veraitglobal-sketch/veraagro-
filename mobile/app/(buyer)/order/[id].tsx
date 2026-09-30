@@ -22,10 +22,12 @@ import {
   isTimelineStepCompleted,
   isTimelineStepCurrent,
   tBuyerOrderStatus,
+  getEffectiveBuyerOrderStatus,
 } from '../../../lib/buyer-order-status';
 import { getExpoPublicPaymentConfig, hasExpoPaymentConfig } from '../../../lib/biovera-payment-public';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 import { buyerOrderNextStep, buyerOrderPermissions } from '../../../lib/buyer-order-next-step';
+import { formatCatalogOrderLine } from '../../../lib/buyer-order-pack';
 import { axiosResponseStatus } from '../../../lib/api-error';
 import ErrorMessage from '../../../components/ErrorMessage';
 
@@ -189,8 +191,9 @@ function OrderTrackingContent({ id }: { id: string }) {
     );
   }
 
+  const effectiveStatus = getEffectiveBuyerOrderStatus(order);
   const timelineInvalid =
-    order.status === 'CANCELLED' || order.status === 'REFUNDED';
+    effectiveStatus === 'REJECTED' || effectiveStatus === 'CANCELLED' || effectiveStatus === 'REFUNDED';
   const steps = getOrderTimelineSteps(t);
   const next = buyerOrderNextStep(order);
   const permissions = buyerOrderPermissions(order);
@@ -248,7 +251,7 @@ function OrderTrackingContent({ id }: { id: string }) {
                   color: theme.colors.text.primary,
                   letterSpacing: 0.3,
                 }}>
-                  {tBuyerOrderStatus(t, order.status)}
+                  {tBuyerOrderStatus(t, order.status, order)}
                 </Text>
               </View>
             </View>
@@ -308,11 +311,13 @@ function OrderTrackingContent({ id }: { id: string }) {
               color: theme.colors.text.secondary,
               letterSpacing: 0.2,
             }}>
-              {order.quantity} {order.unit}
-              {order.unitPrice != null
-                ? ` × ${Number(order.unitPrice).toLocaleString(priceLocale, { style: 'currency', currency: 'EUR' })}`
-                : ''}
+              {formatCatalogOrderLine(order, priceLocale)}
             </Text>
+            {effectiveStatus === 'REJECTED' && order.rejectionReason ? (
+              <Text style={{ fontSize: 13, color: theme.colors.error, marginTop: theme.spacing.sm }}>
+                {t('buyer.orders.rejectionReason', { reason: order.rejectionReason })}
+              </Text>
+            ) : null}
             <View style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
@@ -339,7 +344,16 @@ function OrderTrackingContent({ id }: { id: string }) {
           </View>
 
           <View style={{ marginBottom: theme.spacing.lg }}>
-            <Text>{t(`orderStock.states.${order.stockReservation?.status || 'UNALLOCATED'}`)}{order.stockReservation ? ` · ${order.stockReservation.quantity} ${order.stockReservation.unit}` : ''}</Text>
+            <Text>
+              {order.catalogProductId
+                ? t('orderStock.catalogReservedForYou', {
+                    defaultValue: 'Reserved for you{{detail}}',
+                    detail: order.catalogReservedKg
+                      ? ` · ${order.catalogReservedKg} ${order.unit ?? 'kg'}`
+                      : '',
+                  })
+                : `${t(`orderStock.states.${order.stockReservation?.status || 'UNALLOCATED'}`)}${order.stockReservation ? ` · ${order.stockReservation.quantity} ${order.stockReservation.unit}` : ''}`}
+            </Text>
             {permissions.canCancel && <TouchableOpacity accessibilityRole="button" disabled={!fresh} onPress={cancelOrder} style={{ paddingVertical: 14, opacity: fresh ? 1 : 0.5 }}>
               <Text style={{ color: theme.colors.primary }}>{t('orderStock.cancel')}</Text>
             </TouchableOpacity>}

@@ -5,6 +5,7 @@ import * as crypto from 'crypto';
 import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { UserRole, UserStatus, HubStatus } from '@prisma/client';
 import { RegisterBuyerDto } from './dto/register-buyer.dto';
 import { RegisterGrowerDto } from './dto/register-grower.dto';
@@ -16,6 +17,7 @@ export class AuthService {
     private jwtService: JwtService,
     private prisma: PrismaService,
     private emailService: EmailService,
+    private notificationsService: NotificationsService,
   ) {}
 
   async validateUser(identifier: string, password: string): Promise<any> {
@@ -32,6 +34,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
 
+    if (user.status === UserStatus.PENDING_VERIFICATION) {
+      throw new UnauthorizedException({
+        message: 'Your account is waiting for approval by Bio Vera.',
+        code: 'ACCOUNT_PENDING_APPROVAL',
+      });
+    }
     if (user.status !== 'ACTIVE') {
       throw new UnauthorizedException('Account is not active');
     }
@@ -98,6 +106,34 @@ export class AuthService {
     // Hash password
     const passwordHash = await bcrypt.hash(data.password, 10);
 
+    const buyerCompanyProfile =
+      data.address && data.city
+        ? {
+            company: {
+              legalEntity: data.businessName?.trim() || `${data.firstName} ${data.lastName}`.trim(),
+              taxId: '',
+              headquarters: [data.address, data.city].filter(Boolean).join(', '),
+              generalDirector: `${data.firstName} ${data.lastName}`.trim(),
+              financeManager: '',
+            },
+            deliveryLocations: [
+              {
+                id: crypto.randomUUID(),
+                alias: 'Primary',
+                address: data.address,
+                city: data.city,
+                postalCode: '',
+                country: 'Germany',
+                latitude: data.location?.latitude ?? 0,
+                longitude: data.location?.longitude ?? 0,
+                responsiblePerson: `${data.firstName} ${data.lastName}`.trim(),
+                responsiblePhone: data.phone?.trim() || '',
+              },
+            ],
+            authorizedPersonnel: [],
+          }
+        : undefined;
+
     // Create user transaction
     const result = await this.prisma.$transaction(async (tx) => {
       // Create buyer user
@@ -113,6 +149,7 @@ export class AuthService {
           passwordHash,
           roles: [UserRole.BUYER],
           status: UserStatus.PENDING_VERIFICATION, // Requires admin approval
+          buyerCompanyProfile: buyerCompanyProfile as any,
           updatedAt: new Date(),
         } as any,
       });
@@ -139,32 +176,20 @@ export class AuthService {
       return { user, hub };
     });
 
-    // Generate JWT token
-    const payload = {
-      sub: result.user.id,
-      partnerCode: result.user.partnerCode,
-      roles: result.user.roles,
-    };
+    const buyerLabel = [data.businessName, `${data.firstName} ${data.lastName}`.trim()]
+      .filter(Boolean)
+      .join(' — ');
+    void this.notificationsService
+      .notifyAdminsForNewBuyerRegistration({
+        buyerLabel,
+        email: data.email,
+      })
+      .catch(() => undefined);
 
     return {
-      access_token: this.jwtService.sign(payload),
-      user: {
-        id: result.user.id,
-        partnerCode: result.user.partnerCode,
-        roles: result.user.roles,
-        firstName: result.user.firstName,
-        lastName: result.user.lastName,
-      },
-      hub: result.hub ? {
-        id: result.hub.id,
-        name: result.hub.name,
-        address: result.hub.address,
-        city: result.hub.city,
-        location: result.hub.location,
-      } : null,
-      message: result.hub 
-        ? 'Buyer registered successfully. Hub location created and will appear on the map after admin approval.'
-        : 'Buyer registered successfully. Add location in profile to appear on map.',
+      status: 'PENDING_APPROVAL',
+      message: 'Thanks — your account is waiting for approval by Bio Vera. We will e-mail you when it is active.',
+      requiresAdminApproval: true,
     };
   }
 

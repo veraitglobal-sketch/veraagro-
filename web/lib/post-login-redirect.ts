@@ -9,6 +9,7 @@ export function getPathAfterWebLogin(
   }
   const r = user?.roles || [];
   if (r.includes('SUPER_ADMIN') || r.includes('ADMIN')) return '/admin';
+  if (r.includes('SEED_PRODUCER')) return '/seed-producer';
   if (r.includes('MATERIAL_SUPPLIER')) return '/supplier/dashboard';
   if (r.includes('LOGISTICS_PARTNER')) return '/logistics-partner/dashboard';
   if (r.includes('GROWER') || r.includes('FARMER')) return '/grower';

@@ -54,9 +54,25 @@ export default function OrdersScreen() {
         <Text style={{ fontSize: 16, color: theme.colors.text.primary }}>{order.productName}</Text>
         <Text style={{ color: theme.colors.text.secondary }}>{order.orderNumber} · {new Date(order.createdAt).toLocaleDateString(locale)}</Text>
         <Text>{order.quantity} {order.unit} · {order.totalAmount.toLocaleString(locale, { style: 'currency', currency: 'EUR' })}</Text>
-        <Text style={{ color: theme.colors.primary }}>{tBuyerOrderStatus(t, order.status)}</Text>
+        <Text style={{ color: theme.colors.primary }}>{tBuyerOrderStatus(t, order.status, order)}</Text>
       </TouchableOpacity>
-      {order.stockReservation && <Text style={{ color: theme.colors.text.secondary }}>{t(`orderStock.states.${order.stockReservation.status}`)} · {order.stockReservation.quantity} {order.stockReservation.unit}</Text>}
+      {order.catalogProductId ? (
+        <Text style={{ color: order.catalogReserved ? theme.colors.primary : theme.colors.text.secondary }}>
+          {order.catalogReserved
+            ? t('orderStock.catalogReservedForYou', {
+                defaultValue: 'Reserved for you{{detail}}',
+                detail: order.catalogReservedKg ? ` · ${order.catalogReservedKg} ${order.unit ?? 'kg'}` : '',
+              })
+            : t('orderStock.catalogPending', { defaultValue: 'Marketplace stock reservation pending' })}
+        </Text>
+      ) : (
+        order.stockReservation && (
+          <Text style={{ color: theme.colors.text.secondary }}>
+            {t(`orderStock.states.${order.stockReservation.status}`)} · {order.stockReservation.quantity}{' '}
+            {order.stockReservation.unit}
+          </Text>
+        )
+      )}
       <Text>{t(`buyerOrderActions.hints.${next.kind}`)}</Text>
       {next.deadline && <Text style={{ color: theme.colors.text.secondary }}>{t('deliveryFlow.reportDeadline', { at: new Date(next.deadline).toLocaleString(locale) })}</Text>}
       <EnterpriseButton variant={next.needsAction ? 'primary' : 'secondary'} label={t(`buyerOrderActions.buttons.${next.kind}`)}

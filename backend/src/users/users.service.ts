@@ -2,10 +2,13 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { EmailService } from '../email/email.service';
 import { Prisma, UserRole, UserStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
@@ -45,7 +48,13 @@ const AUTH_LOGIN_SELECT: Prisma.usersSelect = {
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(UsersService.name);
+
+  constructor(
+    private prisma: PrismaService,
+    private notificationsService: NotificationsService,
+    private emailService: EmailService,
+  ) {}
 
   async findByPartnerCode(partnerCode: string) {
     return this.prisma.users.findUnique({
@@ -293,7 +302,7 @@ export class UsersService {
   ) {
     const existing = await this.prisma.users.findUnique({
       where: { id },
-      select: { roles: true },
+      select: { roles: true, status: true, email: true, firstName: true },
     });
     if (!existing) {
       throw new NotFoundException('User not found');
@@ -383,7 +392,7 @@ export class UsersService {
       }
     }
 
-    return this.prisma.users.update({
+    const updated = await this.prisma.users.update({
       where: { id },
       data: updateData,
       include: {
@@ -393,6 +402,30 @@ export class UsersService {
         commercial_agent_profile: true,
       },
     });
+
+    const becameActiveBuyer =
+      existing.status === UserStatus.PENDING_VERIFICATION &&
+      data.status === UserStatus.ACTIVE &&
+      existing.roles.includes(UserRole.BUYER);
+    if (becameActiveBuyer) {
+      void this.notificationsService
+        .notifyBuyerAccountApproved({
+          buyerId: id,
+          firstName: updated.firstName,
+          email: updated.email,
+        })
+        .catch((e) => this.logger.warn(`notifyBuyerAccountApproved: ${e instanceof Error ? e.message : e}`));
+      if (updated.email) {
+        void this.emailService
+          .sendBuyerAccountApprovedEmail({
+            email: updated.email,
+            firstName: updated.firstName,
+          })
+          .catch((e) => this.logger.warn(`sendBuyerAccountApprovedEmail: ${e instanceof Error ? e.message : e}`));
+      }
+    }
+
+    return updated;
   }
 
   /** Logged-in user changes password (any role with JWT). */

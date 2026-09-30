@@ -71,6 +71,11 @@ export default function LoginScreen() {
         Alert.alert(t('error'), partnerMode ? t('partnerLogin.notProducerAccess') : t('login.noRoleForApp'));
       }
     } catch (error: unknown) {
+      const code = error && typeof error === 'object' && 'code' in error ? (error as { code?: string }).code : undefined;
+      if (code === 'ACCOUNT_PENDING_APPROVAL') {
+        Alert.alert(t('error'), t('login.pendingApproval'));
+        return;
+      }
       const msg = error instanceof Error ? error.message : t('login.failed');
       Alert.alert(t('error'), msg || t('login.failed'));
     } finally {

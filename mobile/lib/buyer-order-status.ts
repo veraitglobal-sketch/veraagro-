@@ -10,18 +10,30 @@ const STATUS_KEYS: Record<string, string> = {
   DELIVERED: 'buyer.orders.statuses.DELIVERED',
   COMPLETED: 'buyer.orders.statuses.COMPLETED',
   CANCELLED: 'buyer.orders.statuses.CANCELLED',
+  REJECTED: 'buyer.orders.statuses.REJECTED',
   REFUNDED: 'buyer.orders.statuses.REFUNDED',
 };
+
+export function getEffectiveBuyerOrderStatus(order: {
+  status?: string | null;
+  rejectionReason?: string | null;
+} | null | undefined): string {
+  if (!order?.status) return 'PENDING';
+  if (order.status === 'CANCELLED' && order.rejectionReason?.trim()) return 'REJECTED';
+  return order.status;
+}
 
 export function tBuyerOrderStatus(
   t: TFunction,
   status: string | undefined | null,
+  order?: { rejectionReason?: string | null } | null,
 ): string {
-  if (!status) {
+  const effective = order ? getEffectiveBuyerOrderStatus({ status, rejectionReason: order.rejectionReason }) : status;
+  if (!effective) {
     return t('buyer.orders.statuses.UNKNOWN', 'Update pending');
   }
-  const key = STATUS_KEYS[status] ?? 'buyer.orders.statuses.UNKNOWN';
-  return t(key, { defaultValue: status.replace(/_/g, ' ') });
+  const key = STATUS_KEYS[effective] ?? 'buyer.orders.statuses.UNKNOWN';
+  return t(key, { defaultValue: effective.replace(/_/g, ' ') });
 }
 
 /** 4 steps: placed → confirmed & preparing → on the way → delivered */

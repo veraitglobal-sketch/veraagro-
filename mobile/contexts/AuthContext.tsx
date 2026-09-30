@@ -150,6 +150,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           'Login endpoint not found (404). Set EXPO_PUBLIC_API_URL to your backend URL (e.g. https://api.biovera.app), not the website.',
         );
       }
+      const data = (err as { response?: { data?: { code?: string; message?: string | string[] } } })?.response?.data;
+      if (data?.code === 'ACCOUNT_PENDING_APPROVAL') {
+        const pending = new Error('ACCOUNT_PENDING_APPROVAL') as Error & { code: string };
+        pending.code = 'ACCOUNT_PENDING_APPROVAL';
+        throw pending;
+      }
       const fromApi = axiosLikeMessage(err);
       throw new Error(fromApi || `Login failed (${res.status})`);
     },

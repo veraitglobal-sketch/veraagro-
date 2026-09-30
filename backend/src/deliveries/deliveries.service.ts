@@ -696,15 +696,37 @@ export class DeliveriesService {
     const [missions, orders, pendingDocuments] = await Promise.all([
       this.prisma.missions.findMany({ where: { logisticsPartnerId: { not: null }, delivery: null,
         status: { in: ['ASSIGNED', 'ACCEPTED', 'IN_PROGRESS', 'READY_FOR_LOADING', 'PICKED_UP', 'IN_TRANSIT'] } }, take: 200, orderBy: { createdAt: 'desc' },
-        select: { id: true, missionNumber: true, growerId: true, orderId: true, status: true, pickupAddress: true,
-          batches: { select: { batchId: true, productName: true } } } }),
+        select: { id: true, missionNumber: true, growerId: true, orderId: true, status: true, pickupAddress: true, batchId: true,
+          batches: { select: { batchId: true, productName: true, estateId: true } } } }),
       this.prisma.orders.findMany({ where: { status: { in: ['PAID', 'CONFIRMED', 'PICKED_UP', 'IN_TRANSIT'] }, payments: { status: 'IN_ESCROW' } },
         take: 200, orderBy: { createdAt: 'desc' }, select: { id: true, orderNumber: true, productName: true, quantity: true, unit: true,
-          estates: { select: { ownerId: true, name: true } }, fulfilling_estate: { select: { ownerId: true, name: true } } } }),
+          catalogProductId: true, fulfillingEstateId: true,
+          estates: { select: { ownerId: true, name: true } }, fulfilling_estate: { select: { id: true, ownerId: true, name: true } } } }),
       this.prisma.deliveries.findMany({ where: { missionId: { not: null }, OR: [{ waybills: null }, { invoices: null }] },
         take: 200, orderBy: { createdAt: 'desc' }, select: { id: true, missionId: true, orderId: true, deliveryNumber: true } }),
     ]);
-    return { missions, orders, pendingDocuments };
+    const batchIds = missions.map((m) => m.batchId).filter((id): id is string => !!id);
+    const qualityRows = batchIds.length
+      ? await this.prisma.quality_entries.findMany({
+          where: { batchId: { in: batchIds } },
+          select: { batchId: true, status: true },
+        })
+      : [];
+    const qualityByBatch = new Map(qualityRows.map((q) => [q.batchId, q.status]));
+    const enrichedMissions = missions.map((m) => {
+      const qStatus = m.batchId ? qualityByBatch.get(m.batchId) : undefined;
+      const qualityOk = !!qStatus && ['COMPLETED', 'VERIFIED'].includes(qStatus);
+      return {
+        ...m,
+        lotBatchId: m.batches?.batchId ?? m.batchId ?? null,
+        lotProductName: m.batches?.productName ?? null,
+        lotEstateId: m.batches?.estateId ?? null,
+        qualityStatus: qStatus ?? null,
+        qualityOk,
+        linkable: qualityOk && !!m.batchId,
+      };
+    });
+    return { missions: enrichedMissions, orders, pendingDocuments };
   }
 
   async getDeliveryReviewEvidence(kind: string, id: string) {

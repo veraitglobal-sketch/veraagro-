@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BuyerOrderStock } from '@/components/orders/BuyerOrderStock';
+import { BuyerOrderStock, orderStockIsReady } from '@/components/orders/BuyerOrderStock';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { ordersAPI, deliveriesAPI, invoicesAPI } from '@/lib/api';
@@ -11,8 +11,14 @@ import {
   getBuyerOrderStatusLabel,
   getBuyerOrderStatusDescription,
   getBuyerStatusBadgeClass,
+  getEffectiveBuyerOrderStatus,
   ALL_ORDER_STATUS_FILTERS,
+  isCatalogOrder,
+  formatPackLine,
+  CATALOG_ORDER_TIMELINE,
+  getCatalogTimelineStepIndex,
 } from '@/lib/buyer-order-status';
+import { getBuyerOrderFarmLabel } from '@/lib/buyer-order-farm-label';
 import Link from 'next/link';
 import { ShoppingCart, Package, MapPin, Calendar, Search, Filter, Eye, Truck, X, CheckCircle, Clock, AlertCircle, FileText } from 'lucide-react';
 import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
@@ -281,16 +287,16 @@ export default function OrdersPage() {
                         </h3>
                       </div>
                       <p className="text-sm text-gray-500 font-light">
-                        {order.estates?.name || 'Estate name not available'}
+                        {getBuyerOrderFarmLabel(order)}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-3 py-1 text-xs font-light border flex items-center gap-1 rounded ${getBuyerStatusBadgeClass(order.status)}`}
-                        title={getBuyerOrderStatusDescription(order.status)}
+                        className={`px-3 py-1 text-xs font-light border flex items-center gap-1 rounded ${getBuyerStatusBadgeClass(getEffectiveBuyerOrderStatus(order))}`}
+                        title={getBuyerOrderStatusDescription(order.status, order)}
                       >
                         {getStatusIcon(order.status)}
-                        {getBuyerOrderStatusLabel(order.status)}
+                        {getBuyerOrderStatusLabel(order.status, order)}
                       </span>
                       <button
                         onClick={() => loadOrderDetails(order.id)}
@@ -333,6 +339,11 @@ export default function OrdersPage() {
                         <span className="ml-2 font-light text-gray-900">
                           {order.productName}
                         </span>
+                        {formatPackLine(order) && (
+                          <span className="block ml-6 text-xs text-gray-500 font-light mt-0.5">
+                            {formatPackLine(order)}
+                          </span>
+                        )}
                         <BuyerOrderStock order={order} reload={loadOrders} />
                       </div>
                     </div>
@@ -360,6 +371,12 @@ export default function OrdersPage() {
                               [order.deliveryAddress.postalCode, order.deliveryAddress.city].filter(Boolean).join(' '),
                               order.deliveryAddress.country].filter(Boolean).join(', ')}
                       </span>
+                    </div>
+                  )}
+
+                  {getEffectiveBuyerOrderStatus(order) === 'REJECTED' && order.rejectionReason && (
+                    <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800 font-light">
+                      {t('buyerPortalOrders.rejectionReason', { reason: order.rejectionReason })}
                     </div>
                   )}
 
@@ -418,7 +435,7 @@ export default function OrdersPage() {
                         Order {selectedOrder.orderNumber || `#${selectedOrder.id.slice(0, 8)}`}
                       </h2>
                       <p className="text-sm text-gray-600 font-light">
-                        Supplier: {selectedOrder.estates?.name || 'N/A'}
+                        Supplier: {getBuyerOrderFarmLabel(selectedOrder, 'N/A')}
                       </p>
                     </div>
                     <button
@@ -433,11 +450,11 @@ export default function OrdersPage() {
                   <div className="mb-6 border-b border-gray-200/50 pb-6">
                     <h3 className="text-sm font-light text-gray-500 mb-2">Status</h3>
                     <div
-                      className={`inline-flex items-center gap-2 px-3 py-2 rounded border text-sm font-light mb-4 ${getBuyerStatusBadgeClass(selectedOrder.status)}`}
+                      className={`inline-flex items-center gap-2 px-3 py-2 rounded border text-sm font-light mb-4 ${getBuyerStatusBadgeClass(getEffectiveBuyerOrderStatus(selectedOrder))}`}
                     >
                       {getStatusIcon(selectedOrder.status)}
                       <span className="font-medium">
-                        {getBuyerOrderStatusLabel(selectedOrder.status)}
+                        {getBuyerOrderStatusLabel(selectedOrder.status, selectedOrder)}
                       </span>
                     </div>
                     <p
@@ -445,12 +462,55 @@ export default function OrdersPage() {
                         selectedOrder.status === 'APPROVED' ? 'mb-3' : 'mb-2'
                       }`}
                     >
-                      {getBuyerOrderStatusDescription(selectedOrder.status)}
+                      {getBuyerOrderStatusDescription(selectedOrder.status, selectedOrder)}
                     </p>
-                    <p className="text-xs text-gray-500 font-light leading-relaxed mb-6">
-                      {t('buyerPortalOrders.transportStatusHint')}
-                    </p>
-                    {selectedOrder.status === 'APPROVED' && selectedOrder.stockReservation?.status === 'RESERVED' && (
+                    {getEffectiveBuyerOrderStatus(selectedOrder) === 'REJECTED' && selectedOrder.rejectionReason && (
+                      <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800 font-light">
+                        {t('buyerPortalOrders.rejectionReason', { reason: selectedOrder.rejectionReason })}
+                      </div>
+                    )}
+                    {isCatalogOrder(selectedOrder) ? (
+                      <div className="mb-6 rounded-lg border border-gray-200/90 bg-gray-50/70 p-4">
+                        <h3 className="text-sm font-medium text-gray-900 mb-3">
+                          {t('buyerPortalOrders.catalogTimelineTitle')}
+                        </h3>
+                        <ol className="space-y-2">
+                          {CATALOG_ORDER_TIMELINE.map((step, idx) => {
+                            const currentIdx = getCatalogTimelineStepIndex(selectedOrder.status);
+                            const done = currentIdx >= idx;
+                            const active = currentIdx === idx;
+                            return (
+                              <li key={step.labelKey} className="flex items-center gap-3 text-sm">
+                                <span
+                                  className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
+                                    done ? 'bg-[#2D5A27]' : 'bg-gray-300'
+                                  } ${active ? 'ring-2 ring-[#2D5A27]/30' : ''}`}
+                                  aria-hidden
+                                />
+                                <span
+                                  className={`font-light ${
+                                    done ? 'text-gray-900' : 'text-gray-400'
+                                  } ${active ? 'font-medium' : ''}`}
+                                >
+                                  {t(step.labelKey)}
+                                </span>
+                              </li>
+                            );
+                          })}
+                          {selectedOrder.status === 'CANCELLED' && (
+                            <li className="flex items-center gap-3 text-sm text-red-700 font-light">
+                              <span className="w-2.5 h-2.5 rounded-full bg-red-500 flex-shrink-0" aria-hidden />
+                              {t('buyerPortalOrders.catalogTimeline.rejected')}
+                            </li>
+                          )}
+                        </ol>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-500 font-light leading-relaxed mb-6">
+                        {t('buyerPortalOrders.transportStatusHint')}
+                      </p>
+                    )}
+                    {selectedOrder.status === 'APPROVED' && orderStockIsReady(selectedOrder) && (
                       <PaymentInstructionsPanel
                         orderNumber={selectedOrder.orderNumber}
                         totalAmount={Number(selectedOrder.totalAmount)}
@@ -592,8 +652,12 @@ export default function OrdersPage() {
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span className="text-gray-600 font-light">Product:</span>
-                          <span className="font-light text-gray-900">
+                          <span className="font-light text-gray-900 text-right">
                             {selectedOrder.productName}
+                            {formatPackLine(selectedOrder) && (
+                              <span className="block text-xs text-gray-500">{formatPackLine(selectedOrder)}</span>
+                            )}
+                            <BuyerOrderStock order={selectedOrder} reload={loadOrders} />
                           </span>
                         </div>
                         <div className="flex justify-between">

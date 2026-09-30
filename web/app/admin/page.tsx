@@ -29,6 +29,7 @@ interface Statistics {
     total: number;
     farmers: number;
     buyers: number;
+    pendingApproval?: number;
   };
   orders: {
     total: number;
@@ -211,6 +212,26 @@ export default function AdminDashboard() {
                   </p>
                 </div>
                 <AlertTriangle className="w-8 h-8 text-red-600" />
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.32 }}
+              className="bg-white rounded-lg shadow p-4 border border-gray-200"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">{t('adminPages.dashboard.buyersPendingApproval')}</p>
+                  <p className="text-xl sm:text-2xl font-semibold text-gray-900 mt-0.5">
+                    {statistics?.users.pendingApproval ?? 0}
+                  </p>
+                  <Link href="/admin/users?status=PENDING_VERIFICATION" className="text-xs text-[#2D5A27] mt-1 inline-block hover:underline">
+                    {t('adminPages.dashboard.buyersPendingCount', { count: statistics?.users.pendingApproval ?? 0 })}
+                  </Link>
+                </div>
+                <Users className="w-8 h-8 text-amber-600" />
               </div>
             </motion.div>
 

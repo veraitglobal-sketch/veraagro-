@@ -1,6 +1,6 @@
 'use client';
 
-import { ShoppingCart, FileText, Building2, Truck, BarChart3, ShieldCheck } from 'lucide-react';
+import { ShoppingCart, FileText, Building2, Truck, BarChart3, ShieldCheck, Store } from 'lucide-react';
 import { ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
@@ -13,6 +13,7 @@ const DashboardIcon = () => (
 
 export function buildBuyerPortalNavItems(t: TFunction): { href: string; label: string; icon: ReactNode }[] {
   return [
+    { href: '/buyer-portal/marketplace', label: t('buyerPortalNav.marketplace'), icon: <Store className="w-5 h-5" /> },
     { href: '/buyer-portal/dashboard', label: t('buyerPortalNav.dashboard'), icon: <DashboardIcon /> },
     { href: '/buyer-portal/orders', label: t('buyerPortalNav.orders'), icon: <ShoppingCart className="w-5 h-5" /> },
     { href: '/buyer-portal/vera-standard', label: t('buyerPortalNav.veraStandard'), icon: <ShieldCheck className="w-5 h-5" /> },

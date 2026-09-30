@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
-import { buyersAPI, ordersAPI, deliveriesAPI, invoicesAPI } from '@/lib/api';
+import { buyersAPI, ordersAPI, deliveriesAPI, invoicesAPI, catalogAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
 import { getBuyerInvoiceDisplayStatus } from '@/lib/invoice-payment-status';
 import {
@@ -17,8 +17,8 @@ import {
   ArrowDown,
   Plus,
   RefreshCw,
-  Bell,
   AlertCircle,
+  Store,
   Activity,
   FileText,
   Download,
@@ -61,6 +61,7 @@ export default function BuyerDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [catalogProductCount, setCatalogProductCount] = useState(0);
 
   useEffect(() => {
     loadData();
@@ -70,12 +71,14 @@ export default function BuyerDashboardPage() {
     try {
       setLoading(true);
       setError(null);
-      const [stats, orders, deliveries, invoices] = await Promise.all([
+      const [stats, orders, deliveries, invoices, catalogProducts] = await Promise.all([
         buyersAPI.getStatistics(),
         ordersAPI.getAll(),
         deliveriesAPI.getBuyerDeliveries().catch(() => []),
         invoicesAPI.getAll().catch(() => []),
+        catalogAPI.listPublicProducts().catch(() => []),
       ]);
+      setCatalogProductCount(Array.isArray(catalogProducts) ? catalogProducts.length : 0);
       setStatistics(stats);
       setRecentOrders(orders.slice(0, 5));
       const activeDeliveries = Array.isArray(deliveries)
@@ -207,6 +210,25 @@ export default function BuyerDashboardPage() {
                 )}
               </ul>
             </div>
+          )}
+
+          {/* On offer now — Marketplace */}
+          {catalogProductCount > 0 && (
+            <Link
+              href="/buyer-portal/marketplace"
+              className="flex items-center gap-4 p-5 rounded-xl border border-[#2D5A27]/30 bg-[#2D5A27]/10 hover:bg-[#2D5A27]/15 hover:border-[#2D5A27]/50 transition-colors"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-[#2D5A27]/15 flex-shrink-0">
+                <Store className="h-7 w-7 text-[#2D5A27]" strokeWidth={1.5} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-gray-900">{t('buyerPortalDashboard.onOfferNow')}</p>
+                <p className="text-sm text-gray-600 font-light">
+                  {t('buyerPortalDashboard.onOfferCount', { count: catalogProductCount })}
+                </p>
+              </div>
+              <span className="text-sm font-light text-[#2D5A27]">{t('buyerPortalDashboard.browseMarketplace')} →</span>
+            </Link>
           )}
 
           {/* Quick actions: Pre-order, Direct orders, Invoices, Deliveries, Analytics */}

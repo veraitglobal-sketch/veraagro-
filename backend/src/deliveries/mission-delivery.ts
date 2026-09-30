@@ -39,6 +39,22 @@ export async function linkMissionDelivery(db: PrismaService, actor: string, miss
     if (!estate || estate.ownerId !== mission.growerId || (mission.batches && mission.batches.estateId !== estate.id)) {
       throw new BadRequestException('Mission and order must belong to the same fulfilling farm');
     }
+    if (order.catalogProductId) {
+      if (!mission.batchId) {
+        throw new BadRequestException(
+          'This mission has no lot. The grower must create a lot and complete the quality entry before catalogue orders can be loaded.',
+        );
+      }
+      const qualityEntry = await tx.quality_entries.findUnique({ where: { batchId: mission.batchId } });
+      if (!qualityEntry || !['COMPLETED', 'VERIFIED'].includes(qualityEntry.status)) {
+        throw new BadRequestException(
+          'Quality entry must be completed before loading. Ask the grower to finish the lot quality check and request transport.',
+        );
+      }
+    }
+    if (order.catalogProductId && order.fulfillingEstateId && mission.batches?.estateId !== order.fulfillingEstateId) {
+      throw new BadRequestException('Mission lot must come from the same farm that fulfils this marketplace order');
+    }
     if (order.order_items.some((item) => item.batchId && item.batchId !== mission.batchId)) {
       throw new BadRequestException('Order contains a different lot; this link supports one mission and lot per delivery');
     }
@@ -47,6 +63,25 @@ export async function linkMissionDelivery(db: PrismaService, actor: string, miss
     }
     await requireOrderStock(tx, orderId);
     if (status !== 'ASSIGNED') await issueOrderStock(tx, orderId, actor);
+    if (mission.batchId) {
+      for (const item of order.order_items) {
+        if (!item.batchId) {
+          await tx.order_items.update({ where: { id: item.id }, data: { batchId: mission.batchId } });
+        }
+      }
+      if (order.order_items.length === 0) {
+        await tx.order_items.create({
+          data: {
+            id: randomUUID(),
+            orderId,
+            batchId: mission.batchId,
+            productName: order.productName,
+            quantity: order.quantity,
+            unitPrice: order.unitPrice,
+          },
+        });
+      }
+    }
     const now = new Date();
     const id = randomUUID();
     const delivery = existing

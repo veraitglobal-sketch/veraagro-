@@ -27,6 +27,7 @@ export class AdminService {
       transportAwaitingApproval,
       recentGrowthPhotos,
       activePlantings,
+      buyersPendingApproval,
     ] = await Promise.all([
       this.prisma.users.count(),
       this.prisma.users.count({
@@ -87,6 +88,9 @@ export class AdminService {
       this.prisma.harvest_announcements.count({
         where: { announcementType: 'PLANTING', status: { notIn: ['CANCELLED', 'REJECTED'] } },
       }),
+      this.prisma.users.count({
+        where: { roles: { has: 'BUYER' }, status: 'PENDING_VERIFICATION' },
+      }),
     ]);
 
     return {
@@ -94,6 +98,7 @@ export class AdminService {
         total: totalUsers,
         farmers: totalFarmers,
         buyers: totalBuyers,
+        pendingApproval: buyersPendingApproval,
       },
       orders: {
         total: totalOrders,

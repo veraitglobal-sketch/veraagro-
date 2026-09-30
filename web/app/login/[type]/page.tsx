@@ -31,11 +31,22 @@ function LoginTypePageInner() {
       const u = await login(partnerCode, password);
       router.push(getPathAfterWebLogin(u, returnTo));
     } catch (err: unknown) {
-      const msg =
+      const data =
         err && typeof err === 'object' && 'response' in err
-          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+          ? (err as { response?: { data?: { message?: string | string[]; code?: string } } }).response?.data
           : undefined;
-      setError(msg || t('loginPage.errorFailed'));
+      const rawMsg = data?.message;
+      const msg =
+        typeof rawMsg === 'string'
+          ? rawMsg
+          : Array.isArray(rawMsg)
+            ? rawMsg.filter(Boolean).join(' ')
+            : undefined;
+      if (data?.code === 'ACCOUNT_PENDING_APPROVAL') {
+        setError(t('loginPage.pendingApproval'));
+      } else {
+        setError(msg || t('loginPage.errorFailed'));
+      }
     } finally {
       setLoading(false);
     }

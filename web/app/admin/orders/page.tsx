@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { orderQueue, canCancelUnpaid, matchesOrderSearch, heldOrderStock, type OrderQueue } from '@/lib/order-operations';
 import { OrderPaymentSettlement } from '@/components/orders/OrderPaymentSettlement';
 import { OrderStockAllocation } from '@/components/orders/OrderStockAllocation';
+import { CatalogOrderStock, orderStockIsReady } from '@/components/orders/CatalogOrderStock';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import api, { ordersAPI, estatesAPI, missionsAPI } from '@/lib/api';
@@ -20,11 +21,12 @@ export default function OrdersManagementPage() {
   const adminNavItems = useAdminNavItems();
   const [orders, setOrders] = useState<any[]>([]);
   const [queue, setQueue] = useState<OrderQueue | 'open' | 'all'>('open');
+  const [catalogOnly, setCatalogOnly] = useState(false);
   const [search, setSearch] = useState('');
   const [oldestFirst, setOldestFirst] = useState(true);
   const [loadedAt, setLoadedAt] = useState<Date | null>(null);
   const cancelLock = useRef(false);
-  const visibleOrders = orders.filter(order => (queue === 'all' || queue === 'open' && orderQueue(order) !== 'closed' || orderQueue(order) === queue) && matchesOrderSearch(order, search))
+  const visibleOrders = orders.filter(order => (queue === 'all' || queue === 'open' && orderQueue(order) !== 'closed' || orderQueue(order) === queue) && matchesOrderSearch(order, search) && (!catalogOnly || !!order.catalogProductId))
     .sort((a, b) => (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) * (oldestFirst ? 1 : -1));
   const openOrders = orders.filter(order => orderQueue(order) !== 'closed');
   const held = heldOrderStock(orders, false), unpaidHeld = heldOrderStock(orders, true);
@@ -62,6 +64,9 @@ export default function OrdersManagementPage() {
   const [missionChannel, setMissionChannel] = useState<'' | 'INDUSTRIAL' | 'RETAIL' | 'MIXED'>('');
   const [missionTargetKg, setMissionTargetKg] = useState('');
   const [missionSaving, setMissionSaving] = useState(false);
+  const [rejectModal, setRejectModal] = useState<{ orderId: string; orderNumber: string } | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
+  const [rejectSaving, setRejectSaving] = useState(false);
 
   useEffect(() => {
     loadOrders();
@@ -101,6 +106,31 @@ export default function OrdersManagementPage() {
       setError(apiErrorOrT(err, t, 'adminPages.orderManagement.errUpdateStatus'));
     } finally {
       cancelLock.current = false;
+      setSavingId(null);
+    }
+  };
+
+  const canApproveOrder = (order: {
+    status: string;
+    catalogProductId?: string | null;
+    catalogReserved?: boolean;
+    stockReservation?: { status?: string } | null;
+  }) => order.status === 'PENDING' && orderStockIsReady(order);
+
+  const rejectOrder = async () => {
+    if (!rejectModal || !rejectReason.trim()) return;
+    setRejectSaving(true);
+    setError(null);
+    try {
+      setSavingId(rejectModal.orderId);
+      const updated = await ordersAPI.rejectOrderAdmin(rejectModal.orderId, rejectReason.trim());
+      setOrders((prev) => prev.map((o) => (o.id === rejectModal.orderId ? { ...o, ...updated } : o)));
+      setRejectModal(null);
+      setRejectReason('');
+    } catch (err: unknown) {
+      setError(apiErrorOrT(err, t, 'adminPages.orderManagement.errReject'));
+    } finally {
+      setRejectSaving(false);
       setSavingId(null);
     }
   };
@@ -215,6 +245,14 @@ export default function OrdersManagementPage() {
               {queueOptions.map(value => <button key={value} type="button" aria-pressed={queue === value} onClick={() => setQueue(value)} className={`rounded-full border px-3 py-2 text-sm ${queue === value ? 'bg-[#2D5A27] text-white' : 'bg-white text-gray-700'}`}>
                 {t(`orderOperations.queues.${value}`)} · {value === 'all' ? orders.length : value === 'open' ? openOrders.length : orders.filter(order => orderQueue(order) === value).length}
               </button>)}
+              <button
+                type="button"
+                aria-pressed={catalogOnly}
+                onClick={() => setCatalogOnly((v) => !v)}
+                className={`rounded-full border px-3 py-2 text-sm ${catalogOnly ? 'bg-[#2D5A27] text-white' : 'bg-white text-gray-700'}`}
+              >
+                {t('adminPages.orderManagement.catalogFilter')} · {orders.filter((o) => !!o.catalogProductId).length}
+              </button>
             </div>
             <div className="flex flex-wrap items-end gap-3">
               <label className="flex-1 text-sm min-w-52">{t('orderOperations.search')}<input type="search" value={search} onChange={e => setSearch(e.target.value)} className="mt-1 block w-full rounded border p-2" /></label>
@@ -270,7 +308,23 @@ export default function OrdersManagementPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {order.productName}
-                        <OrderStockAllocation orderId={order.id} status={order.status} reservation={order.stockReservation} reload={loadOrders} />
+                        {order.packCount && order.packLabel && (
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {t('adminPages.orderManagement.packLine', {
+                              count: order.packCount,
+                              label: order.packLabel,
+                            })}
+                          </p>
+                        )}
+                        {order.catalogProductId ? (
+                          <CatalogOrderStock
+                            catalogProductId={order.catalogProductId}
+                            catalogReservedKg={order.catalogReservedKg}
+                            unit={order.unit}
+                          />
+                        ) : (
+                          <OrderStockAllocation orderId={order.id} status={order.status} reservation={order.stockReservation} reload={loadOrders} />
+                        )}
                         {['PICKED_UP', 'IN_TRANSIT'].includes(order.status) && !order.deliveries && order.payments?.status === 'IN_ESCROW' && (
                           <div className="mt-2 max-w-[16rem] whitespace-normal rounded border border-amber-200 bg-amber-50 p-2 text-xs text-amber-900">
                             <p>{t('orderOperations.stuckNoDelivery')}</p>
@@ -355,10 +409,32 @@ export default function OrdersManagementPage() {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {order.status === 'PENDING' ? (
+                        {order.status === 'PENDING' && order.catalogProductId ? (
+                          <div className="flex flex-col gap-2">
+                            <button
+                              type="button"
+                              disabled={savingId === order.id || !canApproveOrder(order)}
+                              onClick={() => void approveOrder(order.id)}
+                              className="text-xs font-medium rounded-md px-3 py-1.5 bg-[#2D5A27] text-white hover:bg-[#234a20] disabled:opacity-50"
+                            >
+                              {t('adminPages.orderManagement.acceptOrder')}
+                            </button>
+                            <button
+                              type="button"
+                              disabled={savingId === order.id}
+                              onClick={() => {
+                                setRejectReason('');
+                                setRejectModal({ orderId: order.id, orderNumber: order.orderNumber });
+                              }}
+                              className="text-xs font-medium rounded-md px-3 py-1.5 border border-red-200 text-red-700 hover:bg-red-50 disabled:opacity-50"
+                            >
+                              {t('adminPages.orderManagement.rejectOrder')}
+                            </button>
+                          </div>
+                        ) : order.status === 'PENDING' ? (
                           <button
                             type="button"
-                            disabled={savingId === order.id || order.stockReservation?.status !== 'RESERVED'}
+                            disabled={savingId === order.id || !canApproveOrder(order)}
                             onClick={() => void approveOrder(order.id)}
                             className="text-xs font-medium rounded-md px-3 py-1.5 bg-[#2D5A27] text-white hover:bg-[#234a20] disabled:opacity-50"
                           >
@@ -367,7 +443,7 @@ export default function OrdersManagementPage() {
                         ) : order.status === 'APPROVED' && !order.payments ? (
                           <button
                             type="button"
-                            disabled={savingId === order.id || order.stockReservation?.status !== 'RESERVED'}
+                            disabled={savingId === order.id || !orderStockIsReady(order)}
                             onClick={() => {
                               setBankTxId('');
                               setBankModal({ orderId: order.id, orderNumber: order.orderNumber });
@@ -385,7 +461,7 @@ export default function OrdersManagementPage() {
                         )}
                         {orderQueue(order) === 'settlement' && <OrderPaymentSettlement orderId={order.id} orderNumber={order.orderNumber} onReleased={loadOrders} onError={setError} />}
                         {order.payments?.status === 'RELEASED' && <p className="mt-2 text-xs text-[#2D5A27]">{t('paymentSettlement.released')}</p>}
-                        {orderQueue(order) === 'stock' && ['PENDING', 'APPROVED'].includes(order.status) && <p className="text-xs mt-2 text-amber-700 whitespace-normal">{t('orderOperations.steps.stock')}</p>}
+                        {orderQueue(order) === 'stock' && !order.catalogProductId && ['PENDING', 'APPROVED'].includes(order.status) && <p className="text-xs mt-2 text-amber-700 whitespace-normal">{t('orderOperations.steps.stock')}</p>}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 text-xs font-medium rounded ${
@@ -497,6 +573,57 @@ export default function OrdersManagementPage() {
                   className="px-4 py-2 text-sm rounded-md bg-[#2D5A27] text-white hover:bg-[#234a20] disabled:opacity-50"
                 >
                   {missionSaving ? t('adminPages.orderManagement.creating') : t('adminPages.orderManagement.createMission')}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {rejectModal && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="reject-modal-title"
+          >
+            <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 space-y-4">
+              <h2 id="reject-modal-title" className="text-lg font-medium text-gray-900">
+                {t('adminPages.orderManagement.rejectModalTitle')}
+              </h2>
+              <p className="text-sm text-gray-600">
+                {t('adminPages.orderManagement.rejectModalLead', { orderNumber: rejectModal.orderNumber })}
+              </p>
+              <div>
+                <label htmlFor="reject-reason" className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('adminPages.orderManagement.rejectReasonLabel')}
+                </label>
+                <textarea
+                  id="reject-reason"
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                  rows={4}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                  placeholder={t('adminPages.orderManagement.rejectReasonPlaceholder')}
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRejectModal(null);
+                    setRejectReason('');
+                  }}
+                  className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  {t('adminPages.orderManagement.cancel')}
+                </button>
+                <button
+                  type="button"
+                  disabled={rejectSaving || !rejectReason.trim()}
+                  onClick={() => void rejectOrder()}
+                  className="px-4 py-2 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                >
+                  {rejectSaving ? t('adminPages.orderManagement.saving') : t('adminPages.orderManagement.confirmReject')}
                 </button>
               </div>
             </div>

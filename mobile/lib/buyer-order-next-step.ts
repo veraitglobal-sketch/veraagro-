@@ -1,10 +1,15 @@
 import type { Order } from './api/types';
 import { buyerDeliveryActions } from './buyer-delivery-state';
 
+function orderStockReady(order: Order): boolean {
+  if (order.catalogProductId) return !!order.catalogReserved;
+  return order.stockReservation?.status === 'RESERVED';
+}
+
 export function buyerOrderPermissions(order: Order) {
   const unpaid = !order.payments && !order.deliveries;
   return {
-    canPay: unpaid && order.status === 'APPROVED' && order.stockReservation?.status === 'RESERVED',
+    canPay: unpaid && order.status === 'APPROVED' && orderStockReady(order),
     canCancel: unpaid && ['PENDING', 'APPROVED'].includes(order.status),
   };
 }
@@ -27,7 +32,9 @@ export function buyerOrderNextStep(order: Order, now = Date.now()) {
     if (order.payments || ['PAID', 'CONFIRMED'].includes(order.status)) return { ...base, kind: 'preparing' };
   }
   if (buyerOrderPermissions(order).canPay) return { ...base, kind: 'payment', needsAction: true };
-  if (['PENDING', 'APPROVED'].includes(order.status)) return { ...base, kind: order.stockReservation?.status === 'RESERVED' ? 'approval' : 'allocation' };
+  if (['PENDING', 'APPROVED'].includes(order.status)) {
+    return { ...base, kind: orderStockReady(order) ? 'approval' : 'allocation' };
+  }
   return { ...base, kind: 'details' };
 }
 

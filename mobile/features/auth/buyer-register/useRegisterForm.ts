@@ -88,11 +88,17 @@ export function useRegisterForm() {
         city: city || undefined,
       });
 
-      Alert.alert(
-        t('buyerRegisterScreen.successTitle'),
-        response.data.hub ? t('buyerRegisterScreen.successHub') : t('buyerRegisterScreen.successNoHub'),
-        [{ text: t('common.ok'), onPress: () => router.replace('/buyer-login') }],
-      );
+      const pending =
+        response.data?.status === 'PENDING_APPROVAL' || response.data?.requiresAdminApproval;
+      const partnerCode = response.data?.user?.partnerCode;
+      const lines = [
+        pending ? t('buyerRegisterScreen.successPending') : t('buyerRegisterScreen.successTitle'),
+        partnerCode ? t('buyerRegisterScreen.successPartnerCode', { code: partnerCode }) : null,
+        t('buyerRegisterScreen.successLoginHint'),
+      ].filter(Boolean);
+      Alert.alert(t('buyerRegisterScreen.successTitle'), lines.join('\n\n'), [
+        { text: t('common.ok'), onPress: () => router.replace('/buyer-login') },
+      ]);
     } catch (error: unknown) {
       console.error('Registration error:', error);
       Alert.alert(t('common.error'), apiErrorMessage(error, t('buyerRegisterScreen.registrationFailed')));

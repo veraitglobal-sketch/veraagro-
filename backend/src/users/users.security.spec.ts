@@ -14,7 +14,11 @@ describe('Administrator account management', () => {
 
   beforeEach(() => {
     findUnique.mockReset();
-    service = new UsersService({ users: { findUnique } } as any);
+    service = new UsersService(
+      { users: { findUnique, update: jest.fn() } } as any,
+      { notifyBuyerAccountApproved: jest.fn() } as any,
+      { sendBuyerAccountApprovedEmail: jest.fn() } as any,
+    );
     create = jest.spyOn(service, 'create').mockResolvedValue({ id: 'new-user' } as any);
     update = jest.spyOn(service, 'update').mockResolvedValue({ id: 'target' } as any);
     controller = new UsersController(service, {} as any);

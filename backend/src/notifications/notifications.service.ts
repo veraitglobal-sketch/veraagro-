@@ -57,6 +57,49 @@ export class NotificationsService {
   /**
    * In-app alert for all SUPER_ADMIN / ADMIN users (admin panel bell feed).
    */
+  async notifyAdminsForNewBuyerRegistration(data: {
+    buyerLabel: string;
+    email: string;
+  }): Promise<void> {
+    const title = 'New buyer registration';
+    const message = `${data.buyerLabel} (${data.email}) — approve in Users`;
+
+    const admins = await this.prisma.users.findMany({
+      where: {
+        OR: [{ roles: { has: 'SUPER_ADMIN' } }, { roles: { has: 'ADMIN' } }],
+      },
+      select: { id: true },
+    });
+
+    for (const a of admins) {
+      try {
+        await this.create({
+          userId: a.id,
+          type: 'ACTION_REQUIRED',
+          title,
+          message,
+          actionUrl: '/admin/users?status=PENDING_VERIFICATION',
+        });
+      } catch (e) {
+        this.logger.warn(`notifyAdminsForNewBuyerRegistration: failed for user ${a.id}`, e);
+      }
+    }
+  }
+
+  async notifyBuyerAccountApproved(data: {
+    buyerId: string;
+    firstName: string;
+    email?: string | null;
+  }): Promise<void> {
+    await this.create({
+      userId: data.buyerId,
+      type: 'SYSTEM',
+      title: 'Buyer account active',
+      message: 'Your Bio Vera buyer account is active — you can now order from the Marketplace.',
+      actionUrl: '/buyer-portal/marketplace',
+    });
+  }
+
   async notifyAdminsForNewOrder(data: {
     orderNumber: string;
     productName: string;
@@ -64,11 +107,18 @@ export class NotificationsService {
     buyerLabel: string;
     estateLabel: string;
     isPreOrder?: boolean;
+    isCatalogOrder?: boolean;
   }): Promise<void> {
-    const title = data.isPreOrder ? 'New pre-order' : 'New order';
+    const title = data.isPreOrder
+      ? 'New pre-order'
+      : data.isCatalogOrder
+        ? 'New marketplace order'
+        : 'New order';
     const amt =
       data.totalAmount != null ? `€${data.totalAmount.toFixed(2)}` : '—';
-    const message = `${data.orderNumber} — ${data.productName} — ${data.buyerLabel} · ${amt} · ${data.estateLabel}`;
+    const message = data.isCatalogOrder
+      ? `${data.orderNumber}: ${data.productName}`
+      : `${data.orderNumber} — ${data.productName} — ${data.buyerLabel} · ${amt} · ${data.estateLabel}`;
 
     const admins = await this.prisma.users.findMany({
       where: {

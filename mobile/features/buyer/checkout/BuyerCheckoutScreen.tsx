@@ -2,12 +2,12 @@ import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from 'reac
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { randomUUID } from 'expo-crypto';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCart } from '../../../hooks/useCart';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { bioVeraScrollProps, TAB_SCROLL_PADDING_BOTTOM } from '../../../lib/scroll-view-props';
-import { ordersAPI } from '../../../lib/api';
+import { ordersAPI, buyerCompanyAPI } from '../../../lib/api';
 import { useAppLocaleTag, a11yIconButton } from '../../../lib/date-locale';
 import { FormKeyboardWrap } from '../../../components/FormKeyboardWrap';
 import { FormHelperText } from '../../../components/FormHelperText';
@@ -15,6 +15,7 @@ import { farmerFormUi } from '../../../lib/farmer-form-ui';
 import { ArrowLeft } from 'lucide-react-native';
 import { submitCartOrders } from '../../../lib/checkout-orders';
 import { useCartCatalogue } from '../../../hooks/useCartCatalogue';
+import { formatCartLineLabel } from '../../../lib/cart-catalogue';
 
 const fieldInputStyle = {
   fontSize: 16,
@@ -46,8 +47,30 @@ export default function CheckoutScreen() {
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
-  const [country, setCountry] = useState('Germany');
+  const [country, setCountry] = useState('');
   const [notes, setNotes] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const profile = await buyerCompanyAPI.get();
+        const loc = profile?.deliveryLocations?.[0] as
+          | { address?: string; city?: string; postalCode?: string; country?: string }
+          | undefined;
+        if (!loc || cancelled) return;
+        if (loc.address) setStreet(loc.address);
+        if (loc.city) setCity(loc.city);
+        if (loc.postalCode) setPostalCode(loc.postalCode);
+        if (loc.country) setCountry(loc.country);
+      } catch {
+        /* keep empty defaults */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleSubmit = async () => {
     if (submitting.current || cartLoading || catalogue.blocked) return;
@@ -73,14 +96,23 @@ export default function CheckoutScreen() {
       for (const line of items) prepared.push(await prepareCheckout(line, randomUUID));
       const result = await submitCartOrders(prepared, async (line) => {
         const p = line.product;
+        const isCatalog = p.catalogProduct && line.packOptionId && line.packSizeKg && line.pricePerPack;
+        const packCount = isCatalog ? line.quantity : undefined;
+        const quantityKg = isCatalog
+          ? line.quantity * (line.packSizeKg ?? 1)
+          : line.quantity;
+        const unitPrice = isCatalog
+          ? (line.pricePerPack! / line.packSizeKg!)
+          : (p.price ?? 0);
         const order = await ordersAPI.create({
           clientRequestId: line.checkoutKey!,
           productId: p.id,
           ...(p.estate?.id ? { estateId: p.estate.id } : {}),
           productName: p.productName,
-          quantity: line.quantity,
-          unit: typeof p.unit === 'string' && p.unit.trim() ? p.unit : 'kg',
-          unitPrice: p.price ?? 0,
+          quantity: quantityKg,
+          unit: 'kg',
+          unitPrice,
+          ...(isCatalog ? { packOptionId: line.packOptionId, packCount } : {}),
           deliveryAddress,
           deliveryNotes: [
             line.lineKind === 'reservation' ? t('buyer.checkout.reservationDeliveryNote') : null,
@@ -328,33 +360,36 @@ export default function CheckoutScreen() {
             }}>
               {t('buyer.checkout.summary')}
             </Text>
-            {items.map((item) => (
-              <View key={`${item.product.id}-${item.lineKind}`} style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginBottom: theme.spacing.xs,
-              }}>
-                <Text style={{
-                  flex: 1,
-                  marginRight: theme.spacing.md,
-                  fontSize: 13,
-                  fontWeight: '400',
-                  color: theme.colors.text.primary,
+            {items.map((item) => {
+              const lineLabel = formatCartLineLabel(item, priceLocale);
+              const splitAt = lineLabel.lastIndexOf(' — ');
+              const text = splitAt >= 0 ? lineLabel.slice(0, splitAt) : lineLabel;
+              const price = splitAt >= 0 ? lineLabel.slice(splitAt + 3) : null;
+              return (
+                <View key={`${item.product.id}-${item.lineKind}`} style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginBottom: theme.spacing.xs,
                 }}>
-                  {item.product.productName} × {item.quantity} {item.product.unit}
-                </Text>
-                <Text style={{
-                  fontSize: 13,
-                  fontWeight: '400',
-                  color: theme.colors.text.primary,
-                }}>
-                  {item.product.price && item.product.price > 0 ? (item.product.price * item.quantity).toLocaleString(priceLocale, {
-                    style: 'currency',
-                    currency: 'EUR',
-                  }) : t('buyer.cart.priceOnRequest')}
-                </Text>
-              </View>
-            ))}
+                  <Text style={{
+                    flex: 1,
+                    marginRight: theme.spacing.md,
+                    fontSize: 13,
+                    fontWeight: '400',
+                    color: theme.colors.text.primary,
+                  }}>
+                    {text}
+                  </Text>
+                  <Text style={{
+                    fontSize: 13,
+                    fontWeight: '400',
+                    color: theme.colors.text.primary,
+                  }}>
+                    {price ?? t('buyer.cart.priceOnRequest')}
+                  </Text>
+                </View>
+              );
+            })}
             <View style={{
               flexDirection: 'row',
               justifyContent: 'space-between',

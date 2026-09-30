@@ -47,5 +47,8 @@ export function getPostLoginPath(roles: string[], options?: { partnerEntry?: Par
   if (roles.includes('LOGISTICS_PARTNER')) {
     return '/(logistics)/(tabs)';
   }
+  if (roles.includes('SEED_PRODUCER')) {
+    return '/(producer)/seed-producer-web';
+  }
   return null;
 }

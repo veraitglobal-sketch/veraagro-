@@ -41,24 +41,44 @@ const BUYER: Record<string, { label: string; description: string }> = {
     label: 'Cancelled',
     description: 'This order was cancelled.',
   },
+  REJECTED: {
+    label: 'Rejected',
+    description: 'This order was rejected by Bio Vera.',
+  },
   REFUNDED: {
     label: 'Refunded',
     description: 'This order was refunded.',
   },
 };
 
-export function getBuyerOrderStatusLabel(status: string | undefined | null): string {
-  if (!status) return 'Unknown';
-  return BUYER[status]?.label ?? status.replace(/_/g, ' ');
+export function getEffectiveBuyerOrderStatus(
+  order: { status?: string | null; rejectionReason?: string | null } | null | undefined,
+): string {
+  if (!order?.status) return 'PENDING';
+  if (order.status === 'CANCELLED' && order.rejectionReason?.trim()) return 'REJECTED';
+  return order.status;
+}
+
+export function getBuyerOrderStatusLabel(
+  status: string | undefined | null,
+  order?: { rejectionReason?: string | null } | null,
+): string {
+  const effective = order ? getEffectiveBuyerOrderStatus({ status, rejectionReason: order.rejectionReason }) : status;
+  if (!effective) return 'Unknown';
+  return BUYER[effective]?.label ?? effective.replace(/_/g, ' ');
 }
 
 export function getBuyerOrderStatusDescription(
   status: string | undefined | null,
+  order?: { rejectionReason?: string | null } | null,
 ): string {
-  if (!status) return '';
-  return (
-    BUYER[status]?.description ?? 'Status is being updated. Check back for details.'
-  );
+  const effective = order ? getEffectiveBuyerOrderStatus({ status, rejectionReason: order.rejectionReason }) : status;
+  if (!effective) return '';
+  const base = BUYER[effective]?.description ?? 'Status is being updated. Check back for details.';
+  if (effective === 'REJECTED' && order?.rejectionReason?.trim()) {
+    return `${base} Reason: ${order.rejectionReason.trim()}`;
+  }
+  return base;
 }
 
 /** Styling: border and text (Tailwind classes) */
@@ -77,12 +97,43 @@ export function getBuyerStatusBadgeClass(status: string | undefined | null): str
       return 'border-sky-200/80 text-sky-800 bg-sky-50/80';
     case 'PENDING':
       return 'border-gray-200/50 text-gray-600/80 bg-gray-50/80';
+    case 'REJECTED':
     case 'CANCELLED':
     case 'REFUNDED':
       return 'border-red-200/50 text-red-700 bg-red-50/60';
     default:
       return 'border-gray-200/50 text-gray-600/80 bg-gray-50/80';
   }
+}
+
+/** Plain-word timeline for catalogue (marketplace) orders */
+export const CATALOG_ORDER_TIMELINE = [
+  { statuses: ['PENDING'], labelKey: 'buyerPortalOrders.catalogTimeline.submitted' },
+  { statuses: ['APPROVED'], labelKey: 'buyerPortalOrders.catalogTimeline.accepted' },
+  { statuses: ['PAID'], labelKey: 'buyerPortalOrders.catalogTimeline.paid' },
+  { statuses: ['CONFIRMED'], labelKey: 'buyerPortalOrders.catalogTimeline.preparing' },
+  { statuses: ['PICKED_UP', 'IN_TRANSIT'], labelKey: 'buyerPortalOrders.catalogTimeline.inTransit' },
+  { statuses: ['DELIVERED'], labelKey: 'buyerPortalOrders.catalogTimeline.delivered' },
+  { statuses: ['COMPLETED'], labelKey: 'buyerPortalOrders.catalogTimeline.receiptConfirmed' },
+] as const;
+
+export function isCatalogOrder(order: { catalogProductId?: string | null } | null | undefined): boolean {
+  return !!order?.catalogProductId;
+}
+
+export function getCatalogTimelineStepIndex(status: string | undefined | null): number {
+  if (!status) return 0;
+  if (status === 'CANCELLED' || status === 'REFUNDED') return -1;
+  const idx = CATALOG_ORDER_TIMELINE.findIndex((step) => step.statuses.includes(status as never));
+  return idx >= 0 ? idx : 0;
+}
+
+export function formatPackLine(order: {
+  packCount?: number | null;
+  packLabel?: string | null;
+}): string | null {
+  if (!order.packCount || !order.packLabel) return null;
+  return `${order.packCount} × ${order.packLabel}`;
 }
 
 export const ALL_ORDER_STATUS_FILTERS = [
@@ -95,5 +146,6 @@ export const ALL_ORDER_STATUS_FILTERS = [
   { value: 'DELIVERED', label: 'Delivered' },
   { value: 'COMPLETED', label: 'Completed' },
   { value: 'CANCELLED', label: 'Cancelled' },
+  { value: 'REJECTED', label: 'Rejected' },
   { value: 'REFUNDED', label: 'Refunded' },
 ] as const;
