@@ -1,9 +1,9 @@
 {
-  "pageDescription": "Twelve-card season guide · pull down to refresh parcel approval.",
-  "glanceTitle": "Your parcels at a glance",
-  "glanceApproved": "At least one parcel is approved — you can proceed with work and batches as rules allow.",
-  "glancePending": "{{count}} parcel(s) still waiting for administrator approval. Some actions stay locked until a parcel is approved.",
-  "glanceNoParcel": "No parcel yet. Under My parcels, add a parcel and crop block.",
-  "linkMyFields": "My parcels",
-  "introRibbon": "{{count}} steps · short chain below, then cards — same order as the web guide."
+  "pageDescription": "Ръководство за сезона от дванадесет карти · дръпнете надолу, за да опресните одобрението на парцелите.",
+  "glanceTitle": "Вашите парцели с един поглед",
+  "glanceApproved": "Поне един парцел е одобрен — можете да продължите с работа и партиди, доколкото правилата позволяват.",
+  "glancePending": "{{count}} парцел(а) все още чакат одобрение от администратора. Някои действия остават заключени, докато парцел не бъде одобрен.",
+  "glanceNoParcel": "Все още няма парцел. В Моите парцели добавете парцел и блок с култури.",
+  "linkMyFields": "Моите парцели",
+  "introRibbon": "{{count}} стъпки · кратка верига по-долу, след това карти — същият ред като уеб ръководството."
 }

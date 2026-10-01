@@ -10,22 +10,12 @@
   "whoApply": {
     "title": "Cine ar trebui să aplice",
     "intro": "Companii consacrate din sectorul agricol — distribuitori, magazine agricole sau operatori cu infrastructură de depozitare și rețea existentă în regiune. Căutăm parteneri care pot oferi suport la fața locului și distribuție conform standardelor Bio Vera.",
-    "bullets": [
-      "Vindeți produsele noastre (semințe, intrări) cultivatorilor",
-      "Vindeți ambalajele noastre producătorilor",
-      "Ideal este să lucrezi deja în agricultură",
-      "Prezența largă în țara dumneavoastră reprezintă un avantaj"
-    ]
+    "bullets": []
   },
   "yourRole": {
     "title": "Rolul tău",
     "intro": "Partener operațional regional în rețeaua Bio Vera. Gestionați distribuția inputurilor certificate, oferiți suport pe teren producătorilor și mențineți standardele de calitate la nivel local. Coordonare cu echipa centrală prin Vera Admin Panel.",
-    "bullets": [
-      "Consiliere la fața locului și instruire a utilizatorilor",
-      "Achiziționați ambalaje pentru utilizatorii noștri (de exemplu, cutii pentru ambalare)",
-      "Primul punct de contact pentru fermierii din regiunea dumneavoastră",
-      "Verificarea fizică a mărfurilor primite"
-    ]
+    "bullets": []
   },
   "benefits": {
     "title": "Ce primești",
@@ -50,10 +40,6 @@
       {
         "title": "Acoperire națională preferată",
         "description": "Preferăm furnizori cu prezență națională puternică. Extindeți-vă acoperirea și reprezentați Bio Vera în întreaga țară."
-      },
-      {
-        "title": "Acces exclusiv pe piață",
-        "description": "Acces la rețeaua Bio Vera de producători certificați și cumpărători europeni prin infrastructură integrată vertical."
       }
     ]
   },
@@ -61,56 +47,16 @@
     "title": "Cum funcționează",
     "subtitle": "Înțelegerea lanțului de aprovizionare Bio Vera",
     "supplyChainTitle": "Procesul lanțului de aprovizionare",
-    "steps": [
-      {
-        "title": "Aprovizionare de la parteneri aprobați",
-        "body": "Furnizorii achiziționează bunuri de la partenerii noștri aprobați din țară. De asemenea, au nevoie de ambalaje (de exemplu, cutii pentru ambalare) pentru utilizatorii noștri. Semințele, îngrășămintele și ambalajele respectă specificațiile Bio Vera."
-      },
-      {
-        "title": "Structura de prețuri agreată",
-        "body": "Toate produsele sunt vândute la prețuri prestabilite. Acest lucru asigură stabilitatea prețurilor pentru cultivatori și venituri previzibile pentru furnizori. Fără fluctuații de preț sau negocieri per tranzacție."
-      },
-      {
-        "title": "Distribuție către cultivatori",
-        "body": "Furnizorii distribuie produse cultivatorilor certificați Bio Vera din regiunea lor. Fiecare tranzacție este urmărită prin coduri QR, asigurând trasabilitatea completă de la furnizor la câmp."
-      },
-      {
-        "title": "Urmărire digitală și conformitate",
-        "body": "Toate mișcările de inventar sunt înregistrate în Tabloul de bord Vera Admin. Furnizorii mențin vizibilitatea în timp real a nivelurilor stocurilor, iar sistemul alertează automat când stocul scade sub pragul de 20%."
-      }
-    ],
+    "steps": [],
     "forSuppliersPanelTitle": "Pentru Furnizori",
     "forSuppliersPanelIntro": "În calitate de furnizor, cumpărați de la partenerii noștri aprobați și vindeți cultivatorilor la prețul convenit. Mențineți inventarul local, achiziționați ambalaje (de exemplu, cutii) pentru utilizatorii noștri și oferiți sprijin regional fermierilor.",
-    "forSuppliersPanelBullets": [
-      "Cumpărare de la parteneri aprobați",
-      "Mențineți facilitățile de depozitare în siguranță",
-      "Achiziționați ambalaje (de exemplu, cutii pentru ambalare) pentru utilizatorii noștri",
-      "Distribuiți producătorilor la prețuri fixe",
-      "Urmăriți toate tranzacțiile prin coduri QR"
-    ]
+    "forSuppliersPanelBullets": []
   },
   "requirements": {
     "title": "Cerințe de program",
     "subtitle": "Ce așteptăm de la furnizorii noștri",
     "supplierHeading": "Pentru Furnizori",
-    "cards": [
-      {
-        "title": "Stocarea resurselor Vera",
-        "description": "Obligația de a oferi spațiu uscat și sigur de depozitare pentru semințe Vera, îngrășăminte și materiale de ambalare."
-      },
-      {
-        "title": "Emiterea codului QR",
-        "description": "Furnizorul nu poate emite mărfuri fără a scana codul QR din aplicația fermierului. Acesta este singurul mod de a urmări consumul la hectar."
-      },
-      {
-        "title": "Suport local",
-        "description": "Furnizorul este primul punct de contact pentru fermierii din regiunea lor. Ei efectuează verificarea fizică a bunurilor primite și oferă consiliere și instruire la fața locului."
-      },
-      {
-        "title": "Raportarea inventarului",
-        "description": "Sistemul trebuie să notifice automat sediul central din Hamburg atunci când stocul scade sub 20%."
-      }
-    ],
+    "cards": [],
     "commonLabel": "Obligație comună:",
     "commonBody": "Toți partenerii trebuie să folosească Tabloul de bord Vera Admin pentru a înregistra fiecare intrare și ieșire de bunuri. Fără „hârțoage” – totul trebuie să fie în sistemul digital."
   },
@@ -118,34 +64,13 @@
     "title": "Vera Logistics Advantage",
     "subtitle": "Sistem logistic de returnare inteligent",
     "noEmptyTitle": "Fără călătorii de întoarcere goale",
-    "steps": [
-      {
-        "title": "Ridicare și livrare",
-        "body": "Șoferul ridică produsele de la cultivatori și le livrează la adresa cumpărătorului."
-      },
-      {
-        "title": "Ridicare retur",
-        "body": "La întoarcere, șoferul preia semințele și îngrășămintele noastre Vera de la partenerii noștri."
-      },
-      {
-        "title": "Distributie catre Furnizori",
-        "body": "Șoferul livrează semințele și îngrășămintele Vera direct furnizorilor noștri pe ruta de întoarcere, eliminând kilometrii goali."
-      }
-    ],
+    "steps": [],
     "supplierColumnTitle": "Pentru Furnizori",
     "supplierColumnIntro": "Primiți livrări regulate de semințe și îngrășăminte Vera direct de la partenerii noștri, livrate de rețeaua noastră logistică în călătoriile de întoarcere.",
-    "supplierColumnBullets": [
-      "Nu este nevoie să aranjați transport separat pentru mărfurile care sosesc",
-      "Costuri de logistică reduse prin sistem integrat",
-      "Program de livrare regulat, previzibil"
-    ],
+    "supplierColumnBullets": [],
     "systemColumnTitle": "Beneficiile sistemului",
     "systemColumnIntro": "Sistemul nostru de logistică inteligentă asigură eficiență maximă eliminând călătoriile goale dus-întors și optimizând fiecare kilometru de transport.",
-    "systemColumnBullets": [
-      "Zero kilometri goali la călătoriile dus-întors",
-      "Costuri reduse cu combustibilul și impactul asupra mediului",
-      "Timp de livrare mai rapid prin rute optimizate"
-    ]
+    "systemColumnBullets": []
   },
   "application": {
     "title": "Aplicație furnizor",
@@ -165,8 +90,8 @@
     "vatPlaceholder": "Introduceți codul de TVA",
     "contactPersonLabel": "Persoana de contact *",
     "contactPlaceholder": "Numele complet",
-    "emailLabel": "Email *",
-    "emailPlaceholder": "email@example.com",
+    "emailLabel": "E-mail *",
+    "emailPlaceholder": "e-mail@example.com",
     "phoneLabel": "Telefon *",
     "phonePlaceholder": "+1234567890",
     "productTypeLabel": "Tip produs *",

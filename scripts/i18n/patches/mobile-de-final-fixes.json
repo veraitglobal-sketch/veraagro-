@@ -1,0 +1,32 @@
+{
+  "producer": {
+    "hubs": {
+      "field": {
+        "workflow": {
+          "veraBagTitle": "Vera-Sack"
+        }
+      }
+    },
+    "tabs": {
+      "wallet": "Geldkonto"
+    },
+    "liveInfo": {
+      "title": "Aktuell"
+    },
+    "veraBag": {
+      "title": "Digitaler Vera-Sack"
+    },
+    "insights": {
+      "veraScore": "Vera-Score: {{score}}"
+    },
+    "estates": {
+      "enableDrawingBtn": "Starten"
+    }
+  },
+  "handover": {
+    "manualSubmit": "Starten"
+  },
+  "veraBag": {
+    "bagTitle": "Digitaler Vera-Sack"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "batchPage": {
+    "preCoolingTitle": "Pre-răcire pornită",
+    "harvestWeather": "Date meteo",
+    "materialsEyebrow": "Materiale și scanări cod de bare",
+    "colMaterialTime": "Înregistrat (server)",
+    "activityGrowthLog": "Jurnal de creștere",
+    "truckLoadTempDetail": "În camion: {{temp}} °C · {{mission}}",
+    "coldChainEyebrow": "Lanț frigorific și prospețime",
+    "tempMin": "Min.:",
+    "tempMax": "Max.:",
+    "tempAvg": "Med.:",
+    "withinRangeYes": "Între 2–8 °C (toate punctele înregistrate)",
+    "withinRangeNo": "Verificați jurnalul de temperatură",
+    "readingsCount": "{{count}} măsurători",
+    "tempLogTitle": "Jurnal temperatură ({{count}} măsurători)",
+    "colPhase": "Fază",
+    "colHumidity": "UR %",
+    "moreReadings": "+ {{count}} măsurători suplimentare",
+    "freshnessEyebrow": "Prospețime",
+    "freshRemaining": "Durată de valabilitate rămasă:",
+    "freshUseBy": "Consumați până la:",
+    "freshOk": "În termen de valabilitate"
+  }
+}

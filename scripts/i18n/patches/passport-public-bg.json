@@ -1,0 +1,25 @@
+{
+  "batchPage": {
+    "preCoolingTitle": "Предварително охлаждане стартирано",
+    "harvestWeather": "Метеорологични данни",
+    "materialsEyebrow": "Материали и сканирания на баркод",
+    "colMaterialTime": "Записано (сървър)",
+    "activityGrowthLog": "Дневник на растежа",
+    "truckLoadTempDetail": "В камиона: {{temp}} °C · {{mission}}",
+    "coldChainEyebrow": "Студена верига и свежест",
+    "tempMin": "Мин.:",
+    "tempMax": "Макс.:",
+    "tempAvg": "Средно:",
+    "withinRangeYes": "В диапазона 2–8 °C (всички записани точки)",
+    "withinRangeNo": "Прегледайте дневника на температурата",
+    "readingsCount": "{{count}} измервания",
+    "tempLogTitle": "Дневник на температурата ({{count}} измервания)",
+    "colPhase": "Фаза",
+    "colHumidity": "ВЛ %",
+    "moreReadings": "+ още {{count}} измервания",
+    "freshnessEyebrow": "Свежест",
+    "freshRemaining": "Оставащ срок на годност:",
+    "freshUseBy": "Консумирайте до:",
+    "freshOk": "В срок на годност"
+  }
+}

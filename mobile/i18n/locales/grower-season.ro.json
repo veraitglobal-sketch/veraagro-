@@ -1,9 +1,9 @@
 {
-  "pageDescription": "Twelve-card season guide · pull down to refresh parcel approval.",
-  "glanceTitle": "Your parcels at a glance",
-  "glanceApproved": "At least one parcel is approved — you can proceed with work and batches as rules allow.",
-  "glancePending": "{{count}} parcel(s) still waiting for administrator approval. Some actions stay locked until a parcel is approved.",
-  "glanceNoParcel": "No parcel yet. Under My parcels, add a parcel and crop block.",
-  "linkMyFields": "My parcels",
-  "introRibbon": "{{count}} steps · short chain below, then cards — same order as the web guide."
+  "pageDescription": "Ghid sezonier în douăsprezece carduri · trageți în jos pentru a actualiza aprobarea parcelelor.",
+  "glanceTitle": "Parcelele dvs. dintr-o privire",
+  "glanceApproved": "Cel puțin o parcelă este aprobată — puteți continua cu lucrările și loturile conform regulilor.",
+  "glancePending": "{{count}} parcelă(e) așteaptă încă aprobarea administratorului. Unele acțiuni rămân blocate până când o parcelă este aprobată.",
+  "glanceNoParcel": "Nicio parcelă încă. În Parcelele mele, adăugați o parcelă și un bloc de cultură.",
+  "linkMyFields": "Parcelele mele",
+  "introRibbon": "{{count}} pași · lanț scurt mai jos, apoi carduri — aceeași ordine ca ghidul web."
 }

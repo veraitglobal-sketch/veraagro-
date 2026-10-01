@@ -38,6 +38,10 @@
       {
         "title": "EU-Marktzugang",
         "description": "Zugang zum Bio-Vera-Netzwerk zertifizierter Erzeuger und europäischer Abnehmer über vertikal integrierte Infrastruktur."
+      },
+      {
+        "title": "Exclusive Market Access",
+        "description": "Access to Bio Vera's network of certified growers and European buyers through vertically integrated infrastructure."
       }
     ]
   },
@@ -96,7 +100,7 @@
     "productTypePlaceholder": "Produkttyp wählen",
     "certificationsLabel": "Zertifizierungen *",
     "certificationsHint": "Mindestens eine Zertifizierung wählen",
-    "websiteLabel": "Website (optional)",
+    "websiteLabel": "Webseite (optional)",
     "websitePlaceholder": "https://www.beispiel.de",
     "descriptionLabel": "Unternehmensbeschreibung (optional)",
     "descriptionPlaceholder": "Kurze Beschreibung von Unternehmen und Produkten …",

@@ -1,180 +1,180 @@
 {
   "chainShort": [
     {
-      "kicker": "On farm",
-      "text": "parcels approved → sowing / season notes (mostly mobile) → harvest plan near pick."
+      "kicker": "Поле и съответствие на място",
+      "text": "одобрени парцели → сеитба и сезонна работа (мобилен) → план за прибиране на реколтата, когато е близо до бране."
     },
     {
-      "kicker": "Lot",
-      "text": "batch → pack to PACKED / QUALITY_VERIFIED → quality entry → compliance photos + label roll."
+      "kicker": "Партида и документи",
+      "text": "създаване/актуализиране на партида → опаковане в PACKED / QUALITY_VERIFIED → въвеждане на качество → снимки за съответствие + ролка с етикети."
     },
     {
-      "kicker": "Off farm",
-      "text": "request transport → dispatcher assigns driver → pickup & handover → cold chain → hub or buyer · missions track the run · buyer allocations are done in ops, not auto in the app."
+      "kicker": "Излезте от фермата",
+      "text": "Заявка за транспорт (на опашка за изпращане) → операциите назначават шофьор → приемане / взимане → товарене, предаване (доказателство за камион) → хладилна верига до център / купувач → Списъкът с мисии следва изпълнението; поръчките на дребно се съпоставят в операции (не се разделят автоматично в приложението)."
     }
   ],
   "intro": {
-    "sidebarBlurb": "Go 1→12 in order. The left menu is the same journey; here each card is one beat you can scan quickly.",
+    "sidebarBlurb": "Прочетете стъпки 1–12 по ред. Лявото меню следва работния процес на полето: табло за управление, ръководство, парцели, насаждения, материали, партиди, дневник за въвеждане, сканиране, качество, доставчици, след това транспорт. Някои теми са разделени на карти (напр. одобрение срещу работа на терен).",
     "myFieldsCta": {
-      "title": "My fields",
-      "line": "Draw blocks and crops when you start.",
-      "linkLabel": "Open My fields",
-      "webHref": "/grower/fields"
+      "title": "Моите полета",
+      "line": "Отворете, когато сте готови да картографирате блокове и посеви.",
+      "linkLabel": "Отворете Моите полета",
+      "webHref": "/производител/ниви"
     }
   },
-  "fullChainTitle": "Chain in three lines",
-  "fieldsMapKicker": "Fields & map",
-  "navJumpLabel": "Jump to step",
-  "stepNumber": "Step {{n}}",
-  "stepSrOnly": "Step {{n}}. ",
+  "fullChainTitle": "Пълна верига (къса)",
+  "fieldsMapKicker": "Полета и карта",
+  "navJumpLabel": "Прескочи на стъпка",
+  "stepNumber": "Стъпка {{n}}",
+  "stepSrOnly": "Стъпка {{n}}.",
   "steps": [
     {
-      "title": "Dashboard",
+      "title": "Табло за управление",
       "paragraphs": [
-        "Alerts, active lots, messages, suggested next step — glance every few visits."
+        "Започнете тук за предупреждения (съобщения, активни партиди, транспорт), име на ферма и следващото препоръчано действие. Използвайте го на всеки няколко дни, не само веднъж."
       ],
       "links": [
         {
-          "label": "Open Dashboard",
-          "href": "/grower"
+          "label": "Отворете таблото за управление",
+          "href": "/производител"
         }
       ]
     },
     {
-      "title": "This checklist",
+      "title": "Стъпки (тази страница)",
       "paragraphs": [
-        "Twelve cards on one page · same order as the sidebar (app: bottom tabs mirror the flow)."
+        "Тази решетка има 12 номерирани карти; уеб страничната лента следва същия работен процес като менюто (тук разделяме няколко теми за яснота). В приложението използвайте Начало за полета, материали, транспорт и останалото."
       ],
       "links": []
     },
     {
-      "title": "My fields (parcels)",
+      "title": "Моите ниви — имоти и парцели (блокове)",
       "paragraphs": [
-        "Estate + parcels · m² · crop · batches / diary / treatments on a block stay limited until admin approves the parcel."
+        "Създайте своето поле (имение) и парцели (блокове за култури). Начертайте или коригирайте площта, така че системата да може да изчисли повърхността в m². Задайте култура/сорт там, където формулярът позволява. Администраторът трябва да одобри колет, преди партидите, дневниците и спрейовете да бъдат напълно отключени в този блок."
       ],
       "links": [
         {
-          "label": "My fields",
-          "href": "/grower/fields"
+          "label": "Моите полета",
+          "href": "/производител/ниви"
         }
       ]
     },
     {
-      "title": "Approval",
+      "title": "Одобрение",
       "paragraphs": [
-        "Wait for approved · locked screens are normal · ping ops via messages if stalled."
+        "Изчакайте, докато колетите се покажат като одобрени. Дотогава някои действия ще останат заключени – това е нормално. Ако отнеме много време, използвайте контакти / съобщения за операции."
       ],
       "links": []
     },
     {
-      "title": "Materials & suppliers",
+      "title": "Доставка — материали и доставчици",
       "paragraphs": [
-        "Catalog (crates, rolls, foil, serials) · directory + B2B orders · mark received · app: Materials + Partner orders / web: Suppliers & orders."
+        "Материали = каталог в приложението: каси, ролки с етикети, филми, баланси и серийни номера (напр. ролки с етикети) за съответствие. Доставчици и поръчки = указател, B2B поръчка до партньор, съобщения и получени във фермата, когато стоките пристигнат. На мобилно устройство използвайте Материали и Партньорски поръчки; в мрежата, доставчици и поръчки."
       ],
       "links": [
         {
-          "label": "Materials",
-          "href": "/grower/materials"
+          "label": "Материали",
+          "href": "/производител/материали"
         },
         {
-          "label": "Suppliers & orders",
-          "href": "/grower/where-to-buy"
+          "label": "Доставчици и поръчки",
+          "href": "/производител/къде-да-купувам"
         }
       ]
     },
     {
-      "title": "Field work",
+      "title": "Полева работа — сеитба, дневник, обработки",
       "paragraphs": [
-        "Daily: mobile entry log, journals, compliant sprays/treatments (GPS when required). Before harvest submit a kg/window harvest plan — for planning, not a retail checkout. Borders on web, captures in the field."
+        "От сеитбата нататък използвайте мобилното приложение за ежедневна работа: регистрационен дневник, дневник на растежа, съвместими пръскания/третирания (с GPS, където е необходимо). Това е слоят за проследяване, преди да формирате търговска партида."
       ],
       "links": [
         {
-          "label": "My fields",
-          "href": "/grower/fields"
+          "label": "Моите полета",
+          "href": "/производител/ниви"
         }
       ]
     },
     {
-      "title": "Harvest → batch",
+      "title": "Жътва и формиране на партида (партида)",
       "paragraphs": [
-        "When ready: declare harvest · create batch linked to parcel · use mobile flows for qty / window."
+        "Когато реколтата е готова, докладвайте реколтата и формирайте партида/партида за този парцел. Това свързва количеството и времето с блока, който сте картографирали по-рано. Използвайте мобилния поток за жътва, когато обявите прозорец или кг."
       ],
       "links": [
         {
-          "label": "My fields",
-          "href": "/grower/fields"
+          "label": "Моите полета (начална партида)",
+          "href": "/производител/ниви"
         },
         {
-          "label": "My batches",
-          "href": "/grower/batches"
+          "label": "Моите партиди",
+          "href": "/производител/партиди"
         }
       ]
     },
     {
-      "title": "Packing & status",
+      "title": "Състояние на опаковката и партидата",
       "paragraphs": [
-        "Work the lot until PACKED or QUALITY_VERIFIED · transport waits until packing + compliance (next step)."
+        "Изпълнете стъпките за опаковане/проследяване за партидата в Моите партиди, докато статусът стане ОПАКОВАНО или QUALITY_VERIFIED (използвайте потока за мобилно опаковане, когато е необходимо). Транспортът е блокиран, докато партидата достигне едно от тези състояния и съответствието е завършено (следваща стъпка)."
       ],
       "links": [
         {
-          "label": "My batches",
-          "href": "/grower/batches"
+          "label": "Моите партиди",
+          "href": "/производител/партиди"
         }
       ]
     },
     {
-      "title": "Quality & compliance pics",
+      "title": "Качествени снимки за влизане и съответствие",
       "paragraphs": [
-        "(1) Quality entry · (2) Compliance photos + label roll · transport form validates both."
+        "Направете това по ред за всяка партида: (1) Въвеждане на качеството — проверки за партида и единици. (2) Снимки за съответствие + ID на ролката с етикет (три снимки + ролка със стикери във файл). Формулярът за транспортиране проверява съответствието; ако нещо липсва, първо го поправете тук."
       ],
       "links": [
         {
-          "label": "Quality entry",
-          "href": "/grower/quality-entry"
+          "label": "Качествен вход",
+          "href": "/производител/качество-вписване"
         },
         {
-          "label": "Compliance photos",
-          "href": "/grower/compliance-photos"
+          "label": "Снимки за съответствие",
+          "href": "/Производител/съответствие-снимки"
         }
       ]
     },
     {
-      "title": "Request transport",
+      "title": "Поискайте транспорт",
       "paragraphs": [
-        "Only after packed / verified + compliance · pickup GPS/address + destination · queued until dispatcher assigns driver."
+        "Само когато партидата е ОПАКОВАНА или QUALITY_VERIFIED и съответствието е пълно, отворете Заявка за транспорт. Имате нужда от GPS/адрес за получаване и пълно връщане (купувач, център или док). Заявката е поставена на опашка: операциите на BioVera присвояват драйвер за студена верига, когато е готов (ИЗЧАКВА дотогава)."
       ],
-      "footnote": "Who ships which kg to which buyer is set in ops — not inferred from forecasts in-app.",
+      "footnote": "Поръчките на дребно/едро от купувачи се съпоставят в операциите (кой какви кг доставя). Приложението не разделя автоматично прогнозата за реколтата в поръчка на купувач — съгласувате количеството и датите с вашия координатор, след което отразявате реалния товар в партиди и транспорт.",
       "links": [
         {
-          "label": "Request transport",
-          "href": "/grower/missions/create"
+          "label": "Поискайте транспорт",
+          "href": "/Производител/Мисияs/create"
         }
       ]
     },
     {
-      "title": "Missions",
+      "title": "Проследяване на мисии (ферма → пазар)",
       "paragraphs": [
-        "Handover · cold chain · hub/buyer milestones · app: missions list · web: /grower/portal."
+        "Следвайте мисията от вашата ферма: логистиката може да завърши предаване на товарене (температура на камиона + снимки) след вашата стъпка за качество, след което работата се придвижва към вземане и транзит по студена верига до център или купувач. Виждате статус, докато етапите в стила на доставка не бъдат завършени. В приложението използвайте списъка с мисии; в мрежата програмата за проследяване на мисии е /grower/portal."
       ],
       "links": [
         {
-          "label": "Mission tracker",
-          "href": "/grower/portal"
+          "label": "Проследяване на мисии",
+          "href": "/производител/портал"
         }
       ]
     },
     {
-      "title": "Profile",
+      "title": "Профил и акаунт",
       "paragraphs": [
-        "Partner code, country, notifications · wallet & certs live under Profile on mobile."
+        "Партньорски код, държава на производство, известия — отворете Моят профил. На мобилен телефон, портфейл, сертификати и други на живо в раздела Профил и менютата."
       ],
       "links": [
         {
-          "label": "My profile",
-          "href": "/grower/profile"
+          "label": "Моят профил",
+          "href": "/производител/профил"
         }
       ]
     }
   ],
-  "seasonMetaChip": "12 steps · sidebar order"
+  "seasonMetaChip": "12 стъпки · същия ред като менюто"
 }

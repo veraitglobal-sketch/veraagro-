@@ -1,0 +1,25 @@
+{
+  "batchPage": {
+    "preCoolingTitle": "Pre-enfriamiento iniciado",
+    "harvestWeather": "Datos meteorológicos",
+    "materialsEyebrow": "Materiales y escaneos de código de barras",
+    "colMaterialTime": "Registrado (servidor)",
+    "activityGrowthLog": "Registro de crecimiento",
+    "truckLoadTempDetail": "Dentro del camión: {{temp}} °C · {{mission}}",
+    "coldChainEyebrow": "Cadena de frío y frescura",
+    "tempMin": "Mín.:",
+    "tempMax": "Máx.:",
+    "tempAvg": "Media:",
+    "withinRangeYes": "Entre 2–8 °C (todos los puntos registrados)",
+    "withinRangeNo": "Revisar registro de temperatura",
+    "readingsCount": "{{count}} lecturas",
+    "tempLogTitle": "Registro de temperatura ({{count}} lecturas)",
+    "colPhase": "Fase",
+    "colHumidity": "HR %",
+    "moreReadings": "+ {{count}} lecturas más",
+    "freshnessEyebrow": "Frescura",
+    "freshRemaining": "Vida útil restante:",
+    "freshUseBy": "Consumir antes de:",
+    "freshOk": "Dentro de la vida útil"
+  }
+}

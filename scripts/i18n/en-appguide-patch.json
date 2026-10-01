@@ -1,0 +1,184 @@
+{
+  "grower": {
+    "appGuide": {
+      "steps": {
+        "welcome": {
+          "detailBlocks": [
+            {
+              "heading": "What this screen is",
+              "body": "The opening screen of the Bio Vera mobile app. It shows the brand and two main options: sign in for existing users and the path to register a new grower in the programme."
+            },
+            {
+              "heading": "“Log in” button",
+              "body": "Use this if the team has already opened your account and you received access details. It leads to the email or username and password screen."
+            },
+            {
+              "heading": "“Become a Vera grower”",
+              "body": "For new partners entering the programme for the first time. Opens the registration form. Registration usually follows guidance from the operations team — do not submit details without agreement."
+            },
+            {
+              "heading": "Why it matters",
+              "body": "All work in the app starts here: field entries, input orders, lots, and sync with the web portal. Without signing in, no data is linked to your farm."
+            }
+          ]
+        },
+        "register": {
+          "detailBlocks": [
+            {
+              "heading": "What this screen is",
+              "body": "Form to create a grower (farmer) account. The details you enter identify your farm in Bio Vera and support later verification by the team."
+            },
+            {
+              "heading": "Form fields",
+              "body": "First and last name — contact person on the farm.\nEmail — for sign-in and notifications; must be valid.\nHectares — approximate total cultivated area; an estimate is enough.\nPassword — minimum 6 characters; keep it private and do not share with other farms."
+            },
+            {
+              "heading": "“Create account” button",
+              "body": "Sends the application to the server. If everything is correct, you receive confirmation; full app access often comes only after Bio Vera approves the account."
+            },
+            {
+              "heading": "“Already have an account? Sign in”",
+              "body": "If you already registered, go back to sign in instead of registering again — duplicate accounts slow down the team’s work."
+            }
+          ]
+        },
+        "login": {
+          "detailBlocks": [
+            {
+              "heading": "What this screen is",
+              "body": "Standard sign-in for existing users. You start here every day — without signing in you cannot enter field data or see orders and lots."
+            },
+            {
+              "heading": "What to enter",
+              "body": "Email or username — what you were given when the account was activated.\nPassword — the one you set at registration or that the team sent you."
+            },
+            {
+              "heading": "Security",
+              "body": "The account is tied to one farm and one responsibility in the chain. Do not share the password with unauthorised workers; for field help follow team instructions, not a shared account."
+            },
+            {
+              "heading": "If sign-in fails",
+              "body": "Check the network, email, and password. If it still fails, contact operations — the account may not be approved yet or the password may have been reset."
+            }
+          ]
+        },
+        "home": {
+          "detailBlocks": [
+            {
+              "heading": "What this screen is",
+              "body": "Main dashboard after sign-in. Here you see what the system expects from you this season, whether data is waiting to upload, and shortcuts to important parts of the app."
+            },
+            {
+              "heading": "“What’s next” / next step",
+              "body": "Card that leads to the current task in the programme (e.g. register a parcel, field entry, packing). Follow it in order — skipping steps can block later phases (lot, transport)."
+            },
+            {
+              "heading": "Sync (offline)",
+              "body": "If you worked offline, here you see how many entries are waiting to send. When the network is back, run sync and wait for confirmation — only then do entries enter the official production trail."
+            },
+            {
+              "heading": "Shortcuts and notifications",
+              "body": "From here you open the wallet, instructions, team notifications, and other tabs (Field, Lots, Suppliers). Home is the hub — you do not need to do everything here, but check it once a day."
+            }
+          ]
+        },
+        "field": {
+          "detailBlocks": [
+            {
+              "heading": "What the Field tab is",
+              "body": "Central place for everything on the farm before harvest: estates, parcels, plantings, growth journal, and field log (sowing, fertilising, crop protection). Most compliance evidence is created here."
+            },
+            {
+              "heading": "My fields / estates",
+              "body": "Register the farm as a whole and see estates linked to your account. Without a registered estate and parcel, later GPS entries may be rejected."
+            },
+            {
+              "heading": "Parcels and zones",
+              "body": "Draw or confirm parcel boundaries on the map (polygon). Enable drawing, choose Tap points or Finger, at least three points. While drawing keep the map still — use the location button to centre, not pull-to-refresh. GPS checks apply on field entries. “Pending approval” means operations have not confirmed the boundary yet."
+            },
+            {
+              "heading": "My plantings",
+              "body": "For each parcel define crop, season, and harvest plan. Plantings link field entries to a specific crop — important for seed-to-goods traceability."
+            },
+            {
+              "heading": "Growth journal and field log",
+              "body": "Growth journal: periodic photos of crop development.\nField log: each significant action (sowing, fertilising, spraying) with photo, GPS coordinate and, where required, barcode scan from input packaging. Inputs must be on the whitelist — the system blocks unapproved products."
+            }
+          ]
+        },
+        "lots": {
+          "detailBlocks": [
+            {
+              "heading": "What the Lots tab is",
+              "body": "After harvest you move from “field” to “goods”: each batch (lot) gets an identity in the system — status, quality, packaging, and link to transport."
+            },
+            {
+              "heading": "Lot list and statuses",
+              "body": "See all batches and where they are in the process: preparing, packed, at hub, in transit, delivered. Status colour or label helps avoid sending the same goods twice."
+            },
+            {
+              "heading": "Quality and packaging compliance",
+              "body": "Enter or attach quality and packaging photos per Bio Vera programme rules. Non-compliant packaging can reduce bonus or block dispatch."
+            },
+            {
+              "heading": "Transport",
+              "body": "When the lot is ready and documented, submit a transport request. Driver and hub see the lot in their part of the app — you do not finish until goods are collected and scanned at the next stage."
+            }
+          ]
+        },
+        "suppliers": {
+          "detailBlocks": [
+            {
+              "heading": "What this part of the app is",
+              "body": "Order approved inputs (seed, packaging, batch ID) from Vera partners on the map. An in-app order links to later field entries and traceability."
+            },
+            {
+              "heading": "Suppliers map",
+              "body": "Shows partners nearby. Choose a supplier, view the offer, and start an order. Use programme products only — off-list products risk entry blocks."
+            },
+            {
+              "heading": "Orders tab",
+              "body": "Track each order: ordered, preparing, dispatched, received at farm. When goods arrive, confirm receipt in the app — that closes the loop for audit."
+            },
+            {
+              "heading": "Messages tab",
+              "body": "Chat with the supplier about deadlines, delivery, or product codes. Messages are separate from the order list — you do not open an order through chat."
+            }
+          ]
+        },
+        "profile": {
+          "detailBlocks": [
+            {
+              "heading": "What the profile screen is",
+              "body": "Personal and business details for your account: farm name, contact, partner code, language, and notifications. Sign out here on devices you no longer use."
+            },
+            {
+              "heading": "Farm details",
+              "body": "Check that farm name, address, and partner code are correct — errors complicate payouts and team communication. Contact operations for changes if a field is not editable."
+            },
+            {
+              "heading": "Notifications and security",
+              "body": "Enable notifications for orders, parcel approvals, and messages. Always sign out on shared phones or tablets on the farm."
+            }
+          ]
+        },
+        "wallet": {
+          "detailBlocks": [
+            {
+              "heading": "What the wallet is",
+              "body": "Financial overview of your production in Bio Vera: amounts in escrow (awaiting payout conditions), available balance, and history by lot or order."
+            },
+            {
+              "heading": "Escrow and available",
+              "body": "Escrow: amount reserved until conditions are met (e.g. delivery confirmation, quality).\nAvailable: amount you can expect in payout per programme rules. Phone figures should match the web dashboard — if not, sync and contact the team."
+            },
+            {
+              "heading": "When to check",
+              "body": "After closing a lot, buyer receipt, and at month end. The wallet is not a substitute for contract — written Bio Vera rules still apply for agreements and claims."
+            }
+          ]
+        }
+      }
+    }
+  }
+}

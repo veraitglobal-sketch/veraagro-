@@ -10,22 +10,12 @@
   "whoApply": {
     "title": "¿Quién debería aplicar?",
     "intro": "Empresas consolidadas del sector agrícola — distribuidores, tiendas agrícolas u operadores con infraestructura de almacén y red existente en la región. Buscamos socios que puedan ofrecer soporte en campo y distribución conforme a los estándares Bio Vera.",
-    "bullets": [
-      "Vendes nuestros productos (semillas, insumos) a los productores.",
-      "Vendes nuestros envases a los productores.",
-      "Lo ideal es que ya trabajes en la agricultura.",
-      "Amplia presencia en su país es una ventaja"
-    ]
+    "bullets": []
   },
   "yourRole": {
     "title": "Tu papel",
     "intro": "Socio operativo regional en la red Bio Vera. Gestiona la distribución de insumos certificados, brinda soporte en campo a los productores y mantiene los estándares de calidad a nivel local. Coordinación con el equipo central a través del Vera Admin Panel.",
-    "bullets": [
-      "Asesoramiento y formación in situ de usuarios.",
-      "Adquirir embalajes para nuestros usuarios (por ejemplo, cajas para embalaje)",
-      "Primer punto de contacto para los agricultores de su región",
-      "Verificación física de la mercancía recibida."
-    ]
+    "bullets": []
   },
   "benefits": {
     "title": "lo que obtienes",
@@ -50,10 +40,6 @@
       {
         "title": "Cobertura nacional preferida",
         "description": "Preferimos proveedores con fuerte presencia nacional. Amplíe su alcance y represente a Bio Vera en todo su país."
-      },
-      {
-        "title": "Acceso exclusivo al mercado",
-        "description": "Acceso a la red Bio Vera de productores certificados y compradores europeos mediante infraestructura integrada verticalmente."
       }
     ]
   },
@@ -61,56 +47,16 @@
     "title": "Cómo funciona",
     "subtitle": "Comprender la cadena de suministro de Bio Vera",
     "supplyChainTitle": "Proceso de la cadena de suministro",
-    "steps": [
-      {
-        "title": "Abastecimiento de socios aprobados",
-        "body": "Los proveedores adquieren productos de nuestros socios aprobados dentro del país. También obtienen embalajes (por ejemplo, cajas para embalaje) para nuestros usuarios. Semillas, fertilizantes y envases cumplen con las especificaciones de Bio Vera."
-      },
-      {
-        "title": "Estructura de precios acordada",
-        "body": "Todos los productos se venden a precios previamente acordados. Esto garantiza la estabilidad de precios para los productores e ingresos predecibles para los proveedores. Sin fluctuaciones de precios ni negociaciones por transacción."
-      },
-      {
-        "title": "Distribución a los productores",
-        "body": "Los proveedores distribuyen productos a productores certificados por Bio Vera en su región. Cada transacción se rastrea a través de códigos QR, lo que garantiza una trazabilidad completa desde el proveedor hasta el campo."
-      },
-      {
-        "title": "Seguimiento y cumplimiento digitales",
-        "body": "Todos los movimientos de inventario se registran en el Panel de administración de Vera. Los proveedores mantienen visibilidad en tiempo real de los niveles de existencias y el sistema alerta automáticamente cuando el inventario cae por debajo del umbral del 20%."
-      }
-    ],
+    "steps": [],
     "forSuppliersPanelTitle": "Para proveedores",
     "forSuppliersPanelIntro": "Como proveedor, usted compra a nuestros socios aprobados y vende a los productores al precio acordado. Usted mantiene el inventario local, adquiere embalajes (por ejemplo, cajas) para nuestros usuarios y brinda apoyo regional a los agricultores.",
-    "forSuppliersPanelBullets": [
-      "Compra de socios aprobados",
-      "Mantener instalaciones de almacenamiento seguras",
-      "Adquirir embalajes (por ejemplo, cajas para embalaje) para nuestros usuarios",
-      "Distribuir a los productores a precios fijos.",
-      "Realice un seguimiento de todas las transacciones mediante códigos QR"
-    ]
+    "forSuppliersPanelBullets": []
   },
   "requirements": {
     "title": "Requisitos del programa",
     "subtitle": "Qué esperamos de nuestros proveedores",
     "supplierHeading": "Para proveedores",
-    "cards": [
-      {
-        "title": "Almacenamiento de recursos de Vera",
-        "description": "Obligación de proporcionar un espacio de almacenamiento seco y seguro para semillas, fertilizantes y materiales de embalaje de Vera."
-      },
-      {
-        "title": "Emisión de Código QR",
-        "description": "El proveedor no puede emitir bienes sin escanear el código QR desde la aplicación del agricultor. Ésta es la única manera de realizar un seguimiento del consumo por hectárea."
-      },
-      {
-        "title": "Soporte local",
-        "description": "El proveedor es el primer punto de contacto para los agricultores de su región. Realizan la verificación física de los bienes recibidos y brindan asesoramiento y capacitación in situ."
-      },
-      {
-        "title": "Informes de inventario",
-        "description": "El sistema debe notificar automáticamente a la sede central en Hamburgo cuando el inventario cae por debajo del 20%."
-      }
-    ],
+    "cards": [],
     "commonLabel": "Obligación común:",
     "commonBody": "Todos los socios deben utilizar el Panel de administración de Vera para registrar cada entrada y salida de mercancías. Sin \"papeleo\": todo debe estar en el sistema digital."
   },
@@ -118,34 +64,13 @@
     "title": "Ventaja logística de Vera",
     "subtitle": "Sistema de logística de devolución inteligente",
     "noEmptyTitle": "No hay viajes de regreso vacíos",
-    "steps": [
-      {
-        "title": "Recogida y entrega",
-        "body": "El conductor recoge los productos de los productores y los entrega en la dirección del comprador."
-      },
-      {
-        "title": "Recogida de devolución",
-        "body": "En el viaje de regreso, el conductor recoge nuestras semillas de Vera y fertilizantes de nuestros socios."
-      },
-      {
-        "title": "Distribución a Proveedores",
-        "body": "El conductor entrega semillas y fertilizantes de Vera directamente a nuestros proveedores en la ruta de regreso, eliminando kilómetros en vacío."
-      }
-    ],
+    "steps": [],
     "supplierColumnTitle": "Para proveedores",
     "supplierColumnIntro": "Reciba entregas periódicas de semillas y fertilizantes de Vera directamente de nuestros socios, entregadas por nuestra red logística en viajes de regreso.",
-    "supplierColumnBullets": [
-      "No es necesario organizar el transporte por separado para las mercancías entrantes.",
-      "Costos logísticos reducidos a través del sistema integrado.",
-      "Calendario de entrega regular y predecible"
-    ],
+    "supplierColumnBullets": [],
     "systemColumnTitle": "Beneficios del sistema",
     "systemColumnIntro": "Nuestro sistema de logística inteligente garantiza la máxima eficiencia al eliminar los viajes de regreso vacíos y optimizar cada kilómetro de transporte.",
-    "systemColumnBullets": [
-      "Cero kilómetros en vacío en los viajes de vuelta",
-      "Reducción de costes de combustible e impacto medioambiental.",
-      "Tiempos de entrega más rápidos a través de rutas optimizadas"
-    ]
+    "systemColumnBullets": []
   },
   "application": {
     "title": "Solicitud de proveedor",

@@ -987,20 +987,20 @@
           "b2": "Registration is for new partners as directed by the team.",
           "detailBlocks": [
             {
-              "heading": "Šta je ovaj ekran",
-              "body": "Početni ekran Bio Vera mobilne aplikacije. Prikazuje brend i dve glavne opcije: ulaz za postojeće korisnike i put ka registraciji novog proizvođača u programu."
+              "heading": "What this screen is",
+              "body": "The opening screen of the Bio Vera mobile app. It shows the brand and two main options: sign in for existing users and the path to register a new grower in the programme."
             },
             {
-              "heading": "Dugme „Prijava” (Log in)",
-              "body": "Koristite ako vam je tim već otvorio nalog i dobili ste pristupne podatke. Vodi na ekran za unos e-pošte ili korisničkog imena i lozinke."
+              "heading": "“Log in” button",
+              "body": "Use this if the team has already opened your account and you received access details. It leads to the email or username and password screen."
             },
             {
-              "heading": "„Postani Vera proizvođač” (Become a Vera grower)",
-              "body": "Za nove partnere koji prvi put ulaze u program. Otvara formu za registraciju. Registracija obično ide uz uputstvo operativnog tima — ne šaljite podatke nasumično bez dogovora."
+              "heading": "“Become a Vera grower”",
+              "body": "For new partners entering the programme for the first time. Opens the registration form. Registration usually follows guidance from the operations team — do not submit details without agreement."
             },
             {
-              "heading": "Zašto je važno",
-              "body": "Sa ovog ekrana kreće ceo rad u aplikaciji: terenski unosi, porudžbine inputa, lotovi i sinhronizacija sa web portalom. Bez prijave nijedan podatak se ne vezuje za vašu farmu."
+              "heading": "Why it matters",
+              "body": "All work in the app starts here: field entries, input orders, lots, and sync with the web portal. Without signing in, no data is linked to your farm."
             }
           ]
         },
@@ -1011,20 +1011,20 @@
           "b2": "After registration you may wait for approval before full access.",
           "detailBlocks": [
             {
-              "heading": "Šta je ovaj ekran",
-              "body": "Forma za kreiranje naloga proizvođača (farmer account). Podaci koje unesete koriste se za identifikaciju farme u sistemu Bio Vera i kasniju verifikaciju od strane tima."
+              "heading": "What this screen is",
+              "body": "Form to create a grower (farmer) account. The details you enter identify your farm in Bio Vera and support later verification by the team."
             },
             {
-              "heading": "Polja na formi",
-              "body": "Ime i prezime — kontakt osoba na farmi.\nE-pošta — za prijavu i obaveštenja; mora biti ispravna.\nHectares (hektari) — približna ukupna površina pod kulturom; dovoljna procena, ne mora biti tačna do decimale.\nLozinka — minimum 6 karaktera; čuvajte je privatno, ne delite sa drugim farmama."
+              "heading": "Form fields",
+              "body": "First and last name — contact person on the farm.\nEmail — for sign-in and notifications; must be valid.\nHectares — approximate total cultivated area; an estimate is enough.\nPassword — minimum 6 characters; keep it private and do not share with other farms."
             },
             {
-              "heading": "Dugme „Create account”",
-              "body": "Šalje prijavu na server. Ako je sve ispravno, dobijate potvrdu; pun pristup aplikaciji često stiže tek posle odobrenja naloga od strane Bio Vera tima."
+              "heading": "“Create account” button",
+              "body": "Sends the application to the server. If everything is correct, you receive confirmation; full app access often comes only after Bio Vera approves the account."
             },
             {
-              "heading": "„Already have an account? Sign in”",
-              "body": "Ako ste se već registrovali, vratite se na prijavu umesto ponovne registracije — dupli nalozi otežavaju rad tima."
+              "heading": "“Already have an account? Sign in”",
+              "body": "If you already registered, go back to sign in instead of registering again — duplicate accounts slow down the team’s work."
             }
           ]
         },
@@ -1035,20 +1035,20 @@
           "b2": "Do not share your password — the account is tied to your farm.",
           "detailBlocks": [
             {
-              "heading": "Šta je ovaj ekran",
-              "body": "Standardna prijava za postojeće korisnike. Svaki dan počinjete ovde — bez prijave ne možete unositi podatke sa njive niti videti porudžbine i lotove."
+              "heading": "What this screen is",
+              "body": "Standard sign-in for existing users. You start here every day — without signing in you cannot enter field data or see orders and lots."
             },
             {
-              "heading": "Šta unosite",
-              "body": "E-pošta ili korisničko ime — ono što vam je dodeljeno pri aktivaciji naloga.\nLozinka — ista koju ste postavili pri registraciji ili koju vam je tim poslao."
+              "heading": "What to enter",
+              "body": "Email or username — what you were given when the account was activated.\nPassword — the one you set at registration or that the team sent you."
             },
             {
-              "heading": "Bezbednost",
-              "body": "Nalog je vezan za jednu farmu i jednu odgovornost u lancu. Ne delite lozinku sa radnicima koji nisu ovlašćeni; za pomoć na terenu koristite uputstva tima, ne zajednički nalog."
+              "heading": "Security",
+              "body": "The account is tied to one farm and one responsibility in the chain. Do not share the password with unauthorised workers; for field help follow team instructions, not a shared account."
             },
             {
-              "heading": "Ako prijava ne uspe",
-              "body": "Proverite mrežu, tačnost e-pošte i lozinke. Ako i dalje ne radi, obratite se operativnom timu — možda nalog još nije odobren ili je lozinka resetovana."
+              "heading": "If sign-in fails",
+              "body": "Check the network, email, and password. If it still fails, contact operations — the account may not be approved yet or the password may have been reset."
             }
           ]
         },
@@ -1060,20 +1060,20 @@
           "b3": "Shortcuts to wallet, instructions, and alerts.",
           "detailBlocks": [
             {
-              "heading": "Šta je ovaj ekran",
-              "body": "Glavna kontrolna tabla posle prijave. Ovde vidite šta sistem od vas očekuje u sezoni, da li imate podataka koji čekaju slanje na server i brze prečice ka važnim delovima aplikacije."
+              "heading": "What this screen is",
+              "body": "Main dashboard after sign-in. Here you see what the system expects from you this season, whether data is waiting to upload, and shortcuts to important parts of the app."
             },
             {
-              "heading": "„Šta dalje” / sledeći korak",
-              "body": "Kartica koja vodi na aktuelni zadatak u programu (npr. registracija parcele, terenski unos, pakovanje). Pratite je redom — preskakanje koraka može blokirati kasnije faze (lot, transport)."
+              "heading": "“What’s next” / next step",
+              "body": "Card that leads to the current task in the programme (e.g. register a parcel, field entry, packing). Follow it in order — skipping steps can block later phases (lot, transport)."
             },
             {
-              "heading": "Sinhronizacija (offline)",
-              "body": "Ako ste radili bez interneta, ovde vidite koliko unosa čeka slanje. Kada se pojavi mreža, pokrenite sinhronizaciju i sačekajte potvrdu — tek tada podaci ulaze u zvanični trag proizvodnje."
+              "heading": "Sync (offline)",
+              "body": "If you worked offline, here you see how many entries are waiting to send. When the network is back, run sync and wait for confirmation — only then do entries enter the official production trail."
             },
             {
-              "heading": "Prečice i obaveštenja",
-              "body": "Odavde ulazite u novčanik, uputstva, obaveštenja tima i druge tabove (Polje, Lotovi, Snabdevači). Početna je „centar” — ne morate sve raditi odavde, ali je dobro proveriti je jednom dnevno."
+              "heading": "Shortcuts and notifications",
+              "body": "From here you open the wallet, instructions, team notifications, and other tabs (Field, Lots, Suppliers). Home is the hub — you do not need to do everything here, but check it once a day."
             }
           ]
         },
@@ -1088,24 +1088,24 @@
           "b6": "Materials — check inputs against the whitelist.",
           "detailBlocks": [
             {
-              "heading": "Šta je tab „Polje”",
-              "body": "Centralno mesto za sve što se dešava na njivi pre berbe: imanja, parcele, zasade, dnevnik rasta i terenski dnevnik (setva, đubrenje, zaštita). Većina compliance dokaza nastaje ovde."
+              "heading": "What the Field tab is",
+              "body": "Central place for everything on the farm before harvest: estates, parcels, plantings, growth journal, and field log (sowing, fertilising, crop protection). Most compliance evidence is created here."
             },
             {
-              "heading": "Moja polja / imanja",
-              "body": "Registrujete farmu kao celinu i vidite listu imanja povezanih sa vašim nalogom. Bez registrovanog imanja i parcele kasniji GPS unosi mogu biti odbijeni."
+              "heading": "My fields / estates",
+              "body": "Register the farm as a whole and see estates linked to your account. Without a registered estate and parcel, later GPS entries may be rejected."
             },
             {
               "heading": "Parcels and zones",
-              "body": "Draw or confirm parcel boundaries on the map (polygon). Enable drawing, choose Tap points or Finger, at least three points. While drawing the map should stay still — use the location button to center, not pull-to-refresh on the page. GPS checks apply on field entries. “Pending approval” means operations have not confirmed the boundary yet."
+              "body": "Draw or confirm parcel boundaries on the map (polygon). Enable drawing, choose Tap points or Finger, at least three points. While drawing keep the map still — use the location button to centre, not pull-to-refresh. GPS checks apply on field entries. “Pending approval” means operations have not confirmed the boundary yet."
             },
             {
-              "heading": "Moji zasadi",
-              "body": "Za svaku parcelu definišete kulturu, sezonu i plan berbe. Zasadi povezuju terenske unose sa konkretnim usevom — važno za trag od semena do robe."
+              "heading": "My plantings",
+              "body": "For each parcel define crop, season, and harvest plan. Plantings link field entries to a specific crop — important for seed-to-goods traceability."
             },
             {
-              "heading": "Dnevnik rasta i terenski dnevnik",
-              "body": "Dnevnik rasta: periodične fotografije razvoja useva.\nTerenski dnevnik: svaka značajna radnja (setva, đubrenje, prskanje) sa fotografijom, GPS koordinatom i, gde važi, skeniranjem barkoda sa ambalaže inputa. Input mora biti na beloj listi — sistem blokira neodobrene proizvode."
+              "heading": "Growth journal and field log",
+              "body": "Growth journal: periodic photos of crop development.\nField log: each significant action (sowing, fertilising, spraying) with photo, GPS coordinate and, where required, barcode scan from input packaging. Inputs must be on the whitelist — the system blocks unapproved products."
             }
           ]
         },
@@ -1117,20 +1117,20 @@
           "b3": "Request transport when goods are ready.",
           "detailBlocks": [
             {
-              "heading": "Šta je tab „Lotovi”",
-              "body": "Posle berbe prelazite sa „polja” na „robu”: svaka partija (lot) dobija identitet u sistemu — status, kvalitet, ambalaža i veza sa transportom."
+              "heading": "What the Lots tab is",
+              "body": "After harvest you move from “field” to “goods”: each batch (lot) gets an identity in the system — status, quality, packaging, and link to transport."
             },
             {
-              "heading": "Lista lotova i statusi",
-              "body": "Vidite sve partije i gde su u procesu: u pripremi, spakovano, u hub-u, u transportu, isporučeno. Boja ili oznaka statusa pomaže da ne pošaljete istu robu dva puta."
+              "heading": "Lot list and statuses",
+              "body": "See all batches and where they are in the process: preparing, packed, at hub, in transit, delivered. Status colour or label helps avoid sending the same goods twice."
             },
             {
-              "heading": "Kvalitet i usklađenost ambalaže",
-              "body": "Unosite ili priložite fotografije kvaliteta i pakovanja prema programu Bio Vera. Neusklađena ambalaža može smanjiti bonus ili blokirati otpremu."
+              "heading": "Quality and packaging compliance",
+              "body": "Enter or attach quality and packaging photos per Bio Vera programme rules. Non-compliant packaging can reduce bonus or block dispatch."
             },
             {
               "heading": "Transport",
-              "body": "Kad je lot spreman i dokumentovan, podnesete zahtev za prevoz. Vozač i hub vide lot u svom delu aplikacije — vi ne završavate proces dok se roba ne preuzme i ne skenira na sledećoj stanici."
+              "body": "When the lot is ready and documented, submit a transport request. Driver and hub see the lot in their part of the app — you do not finish until goods are collected and scanned at the next stage."
             }
           ]
         },
@@ -1142,20 +1142,20 @@
           "b3": "Messages tab — chat with supplier (separate from the order list).",
           "detailBlocks": [
             {
-              "heading": "Šta je ovaj deo aplikacije",
-              "body": "Ovde naručujete odobrene inpute (semena, ambalaža, batch ID) od Vera partnera na mapi. Porudžbina u aplikaciji povezuje se sa kasnijim terenskim unosom i tragom."
+              "heading": "What this part of the app is",
+              "body": "Order approved inputs (seed, packaging, batch ID) from Vera partners on the map. An in-app order links to later field entries and traceability."
             },
             {
-              "heading": "Mapa snabdevača",
-              "body": "Prikaz partnera u blizini. Izaberite snabdevača, pogledajte ponudu i pokrenite porudžbinu. Koristite samo proizvode iz programa — van liste rizikujete blokadu unosa."
+              "heading": "Suppliers map",
+              "body": "Shows partners nearby. Choose a supplier, view the offer, and start an order. Use programme products only — off-list products risk entry blocks."
             },
             {
-              "heading": "Tab „Porudžbine”",
-              "body": "Pratite status svake porudžbine: naručeno, u pripremi, poslato, primljeno na farmi. Kada robu primite, potvrdite prijem u aplikaciji — to zatvara krug za audit."
+              "heading": "Orders tab",
+              "body": "Track each order: ordered, preparing, dispatched, received at farm. When goods arrive, confirm receipt in the app — that closes the loop for audit."
             },
             {
-              "heading": "Tab „Poruke”",
-              "body": "Chat sa snabdevačem za pitanja o rokovima, dostavi ili šiframa proizvoda. Poruke su odvojene od liste porudžbina — porudžbinu ne otvarate preko chata."
+              "heading": "Messages tab",
+              "body": "Chat with the supplier about deadlines, delivery, or product codes. Messages are separate from the order list — you do not open an order through chat."
             }
           ]
         },
@@ -1166,16 +1166,16 @@
           "b2": "Notifications and sign out.",
           "detailBlocks": [
             {
-              "heading": "Šta je ekran profila",
-              "body": "Lični i poslovni podaci vašeg naloga: ime farme, kontakt, partnerski kod, jezik i obaveštenja. Odavde se odjavljujete sa uređaja koji ne koristite više."
+              "heading": "What the profile screen is",
+              "body": "Personal and business details for your account: farm name, contact, partner code, language, and notifications. Sign out here on devices you no longer use."
             },
             {
-              "heading": "Podaci farme",
-              "body": "Proverite da su naziv farme, adresa i partnerski kod tačni — greške otežavaju isplate i komunikaciju sa timom. Za izmene kontaktirajte operativni tim ako polje nije editabilno."
+              "heading": "Farm details",
+              "body": "Check that farm name, address, and partner code are correct — errors complicate payouts and team communication. Contact operations for changes if a field is not editable."
             },
             {
-              "heading": "Obaveštenja i bezbednost",
-              "body": "Uključite obaveštenja za porudžbine, odobrenja parcela i poruke. Uvek se odjavite na zajedničkim telefonima/tabletima na farmi."
+              "heading": "Notifications and security",
+              "body": "Enable notifications for orders, parcel approvals, and messages. Always sign out on shared phones or tablets on the farm."
             }
           ]
         },
@@ -1186,16 +1186,16 @@
           "b2": "Aligned with the grower dashboard on the web.",
           "detailBlocks": [
             {
-              "heading": "Šta je novčanik",
-              "body": "Finansijski pregled vezan za vašu proizvodnju u programu Bio Vera: šta je u escrow-u (čeka uslove isplate), šta je dostupno i istorija po lotovima ili porudžbinama."
+              "heading": "What the wallet is",
+              "body": "Financial overview of your production in Bio Vera: amounts in escrow (awaiting payout conditions), available balance, and history by lot or order."
             },
             {
-              "heading": "Escrow i dostupno",
-              "body": "Escrow: iznos koji je rezervisan dok se ne ispune uslovi (npr. potvrda isporuke, kvalitet).\nDostupno: iznos koji možete očekivati u isplati prema pravilima programa. Iznosi na telefonu treba da se poklapaju sa web kontrolnom tablom — ako ne, sinhronizujte i kontaktirajte tim."
+              "heading": "Escrow and available",
+              "body": "Escrow: amount reserved until conditions are met (e.g. delivery confirmation, quality).\nAvailable: amount you can expect in payout per programme rules. Phone figures should match the web dashboard — if not, sync and contact the team."
             },
             {
-              "heading": "Kada proveravati",
-              "body": "Posle zatvaranja lota, prijema robe od kupca i na kraju meseca. Novčanik nije zamena za ugovor — za sporazume i reklamacije i dalje važe pisana pravila Bio Vere."
+              "heading": "When to check",
+              "body": "After closing a lot, buyer receipt, and at month end. The wallet is not a substitute for contract — written Bio Vera rules still apply for agreements and claims."
             }
           ]
         }
@@ -2037,8 +2037,14 @@
     }
   },
   "seedProducer": {
-    "header": { "badge": "Seed producer portal", "logOut": "Log out" },
-    "nav": { "runs": "My runs", "profile": "Profile" },
+    "header": {
+      "badge": "Seed producer portal",
+      "logOut": "Log out"
+    },
+    "nav": {
+      "runs": "My runs",
+      "profile": "Profile"
+    },
     "runs": {
       "title": "My production runs",
       "subtitle": "Lots assigned to your factory by Bio Vera.",
@@ -4695,7 +4701,7 @@
     "vehicleCountPlaceholder": "e.g. 5 vans, 2 trucks",
     "vehicleCountHint": "Specify number of vans and trucks separately",
     "regionsLabel": "Regions covered *",
-    "regionsPlaceholder": "List the regions, cities, or routes you cover (e.g. Belgrade, Novi Sad, Niš)",
+    "regionsPlaceholder": "List the regions, cities, or routes you cover (e.g. Belgrade, Novi Sad, Nis)",
     "licenseLabel": "Transport license (PDF) *",
     "uploadFile": "Upload a file",
     "orDrag": "or drag and drop",
@@ -5648,7 +5654,7 @@
     "founderPhotoHint": "Use a sharp print‑friendly photo; original width about 2400px or larger works well for retina screens and exported PDF.",
     "founderParagraphs": [
       "Bio Vera is founded by Jovica Mihajlovic, a Serbian national based in Hamburg, Germany, where he has been living and working for the past five years.",
-      "He holds a Bachelor’s degree in Communications and Public Relations from the University of Niš, which shaped his understanding of communication, market positioning, and user-oriented thinking.",
+      "He holds a Bachelor’s degree in Communications and Public Relations from the University of Nis, which shaped his understanding of communication, market positioning, and user-oriented thinking.",
       "Over the past years he has been building the Vera brand within IT consulting, deepening experience delivering digital operational systems—not generic marketing sites—for complex industries.",
       "With Bio Vera, he applies that craftsmanship to agrifood: transparent, scalable operating infrastructure purpose-built for food chains Bio Vera sells through.",
       "His long-term focus is pragmatic systems that tighten trust across supply chains—with room for the Vera product family to grow into adjacent sectors over time."

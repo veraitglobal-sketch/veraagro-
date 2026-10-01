@@ -1,0 +1,26 @@
+{
+  "batchPage": {
+    "preCoolingTitle": "Pré-refroidissement démarré",
+    "harvestWeather": "Données météo",
+    "materialsEyebrow": "Matériaux et scans de codes-barres",
+    "colMaterialTime": "Enregistré (serveur)",
+    "colEntryType": "Type d'entrée",
+    "colBarcodeType": "Type de code-barres",
+    "activityGrowthLog": "Journal de croissance",
+    "truckLoadTempDetail": "Dans le camion : {{temp}} °C · {{mission}}",
+    "coldChainEyebrow": "Chaîne du froid et fraîcheur",
+    "tempMin": "Min. :",
+    "tempMax": "Max. :",
+    "tempAvg": "Moy. :",
+    "withinRangeYes": "Entre 2–8 °C (tous les points enregistrés)",
+    "withinRangeNo": "Vérifier le journal de température",
+    "readingsCount": "{{count}} relevés",
+    "tempLogTitle": "Journal de température ({{count}} relevés)",
+    "colHumidity": "HR %",
+    "moreReadings": "+ {{count}} relevés supplémentaires",
+    "freshnessEyebrow": "Fraîcheur",
+    "freshRemaining": "Durée de conservation restante :",
+    "freshUseBy": "À consommer avant :",
+    "freshOk": "Dans la durée de conservation"
+  }
+}

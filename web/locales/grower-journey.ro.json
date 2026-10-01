@@ -85,9 +85,7 @@
     {
       "title": "Munca pe teren — semănat, jurnal, tratamente",
       "paragraphs": [
-        "De la semănat, utilizați aplicația mobilă pentru munca de zi cu zi: jurnal de intrare, jurnal de creștere, spray-uri/tratamente conforme (cu GPS acolo unde este necesar). Acesta este stratul de trasabilitate înainte de a forma un lot comercial.",
-        "Când recolta se apropie de recoltare, înregistrați un plan de recoltare în aplicație (kg așteptați, fereastră de încărcare opțională), astfel încât operațiunile și logistica să poată planifica - aceasta nu este același lucru cu o comandă cu amănuntul; alimentează planificarea și misiunile.",
-        "Pe web, granițele și blocurile trăiesc sub Câmpurile mele; folosiți telefonul din rând pentru intrări."
+        "De la semănat, utilizați aplicația mobilă pentru munca de zi cu zi: jurnal de intrare, jurnal de creștere, spray-uri/tratamente conforme (cu GPS acolo unde este necesar). Acesta este stratul de trasabilitate înainte de a forma un lot comercial."
       ],
       "links": [
         {
@@ -132,11 +130,11 @@
       "links": [
         {
           "label": "Intrare de calitate",
-          "href": "/grower/quality-entry"
+          "href": "/Producător/calitate-entry"
         },
         {
           "label": "Fotografii de conformitate",
-          "href": "/grower/compliance-photos"
+          "href": "/Producător/conformitate-fotografii"
         }
       ]
     },
@@ -149,7 +147,7 @@
       "links": [
         {
           "label": "Solicita transport",
-          "href": "/grower/missions/create"
+          "href": "/Producător/Misiunes/create"
         }
       ]
     },
@@ -173,7 +171,7 @@
       "links": [
         {
           "label": "Profilul meu",
-          "href": "/grower/profile"
+          "href": "/Producător/profile"
         }
       ]
     }

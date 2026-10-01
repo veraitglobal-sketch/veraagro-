@@ -1,0 +1,10 @@
+{
+  "batchPage": {
+    "status": "Stanje:",
+    "period": "Rok:",
+    "qualityStatus": "Stanje",
+    "colMaterialStatus": "Stanje",
+    "tempMin": "Min:",
+    "tempMax": "Maks:"
+  }
+}

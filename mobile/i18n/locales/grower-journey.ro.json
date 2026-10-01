@@ -1,180 +1,180 @@
 {
   "chainShort": [
     {
-      "kicker": "On farm",
-      "text": "parcels approved → sowing / season notes (mostly mobile) → harvest plan near pick."
+      "kicker": "Câmp și conformitate pe teren",
+      "text": "parcele aprobate → semănat și muncă de sezon (mobil) → plan de recoltare când este aproape de cules."
     },
     {
-      "kicker": "Lot",
-      "text": "batch → pack to PACKED / QUALITY_VERIFIED → quality entry → compliance photos + label roll."
+      "kicker": "Lot și documente",
+      "text": "creați/actualizați lot → împachetați la PACKED / QUALITY_VERIFIED → intrare de calitate → fotografii de conformitate + rolă de etichete."
     },
     {
-      "kicker": "Off farm",
-      "text": "request transport → dispatcher assigns driver → pickup & handover → cold chain → hub or buyer · missions track the run · buyer allocations are done in ops, not auto in the app."
+      "kicker": "Ieși din fermă",
+      "text": "Solicitați transport (în coadă pentru expediere) → operațiuni atribuie șofer → accept / ridicare → predare încărcare (dovada camioanelor) → lanț de frig către hub / cumpărător → Lista misiunilor urmează cursului; comenzile de vânzare cu amănuntul sunt potrivite în operațiuni (nu sunt împărțite automat în aplicație)."
     }
   ],
   "intro": {
-    "sidebarBlurb": "Go 1→12 in order. The left menu is the same journey; here each card is one beat you can scan quickly.",
+    "sidebarBlurb": "Citiți pașii 1–12 în ordine. Meniul din stânga urmărește fluxul de lucru pe teren: tablou de bord, ghid, parcele, plantări, materiale, loturi, jurnal de intrare, scanare, calitate, furnizori, apoi transport. Unele subiecte sunt împărțite pe carduri (de exemplu, aprobare vs. lucru pe teren).",
     "myFieldsCta": {
-      "title": "My fields",
-      "line": "Draw blocks and crops when you start.",
-      "linkLabel": "Open My fields",
-      "webHref": "/grower/fields"
+      "title": "Câmpurile mele",
+      "line": "Deschideți când sunteți gata să mapați blocuri și culturi.",
+      "linkLabel": "Deschide Câmpurile mele",
+      "webHref": "/cultivator/câmpuri"
     }
   },
-  "fullChainTitle": "Chain in three lines",
-  "fieldsMapKicker": "Fields & map",
-  "navJumpLabel": "Jump to step",
-  "stepNumber": "Step {{n}}",
-  "stepSrOnly": "Step {{n}}. ",
+  "fullChainTitle": "Lanț complet (scurt)",
+  "fieldsMapKicker": "Câmpuri și hartă",
+  "navJumpLabel": "Sari la pas",
+  "stepNumber": "Pasul {{n}}",
+  "stepSrOnly": "Pasul {{n}}.",
   "steps": [
     {
-      "title": "Dashboard",
+      "title": "Bord",
       "paragraphs": [
-        "Alerts, active lots, messages, suggested next step — glance every few visits."
+        "Începeți aici pentru alerte (mesaje, loturi active, transport), numele fermei și următoarea acțiune recomandată. Folosește-l la câteva zile, nu o singură dată."
       ],
       "links": [
         {
-          "label": "Open Dashboard",
-          "href": "/grower"
+          "label": "Deschideți tabloul de bord",
+          "href": "/cultivator"
         }
       ]
     },
     {
-      "title": "This checklist",
+      "title": "Pași (această pagină)",
       "paragraphs": [
-        "Twelve cards on one page · same order as the sidebar (app: bottom tabs mirror the flow)."
+        "Această grilă are 12 cărți numerotate; bara laterală web urmează același flux de lucru ca și meniul (am împărțit câteva subiecte aici pentru claritate). În aplicație, utilizați Acasă pentru câmpuri, materiale, transport și restul."
       ],
       "links": []
     },
     {
-      "title": "My fields (parcels)",
+      "title": "Câmpurile mele — moșii și parcele (blocuri)",
       "paragraphs": [
-        "Estate + parcels · m² · crop · batches / diary / treatments on a block stay limited until admin approves the parcel."
+        "Creați-vă câmpul (moșia) și parcelele (blocuri de cultură). Desenați sau ajustați zona astfel încât sistemul să poată calcula suprafața în m². Setați crop/varietate acolo unde formularul permite. Un administrator trebuie să aprobe un pachet înainte ca loturile, agendele și spray-urile să fie complet deblocate pe acel bloc."
       ],
       "links": [
         {
-          "label": "My fields",
-          "href": "/grower/fields"
+          "label": "Câmpurile mele",
+          "href": "/cultivator/câmpuri"
         }
       ]
     },
     {
-      "title": "Approval",
+      "title": "Aprobare",
       "paragraphs": [
-        "Wait for approved · locked screens are normal · ping ops via messages if stalled."
+        "Așteptați până când coletele sunt aprobate. Până atunci, unele acțiuni vor rămâne blocate - este normal. Dacă durează mult, utilizați Contact / mesaje către operațiuni."
       ],
       "links": []
     },
     {
-      "title": "Materials & suppliers",
+      "title": "Aprovizionare - materiale și furnizori",
       "paragraphs": [
-        "Catalog (crates, rolls, foil, serials) · directory + B2B orders · mark received · app: Materials + Partner orders / web: Suppliers & orders."
+        "Materiale = catalog în aplicație: lăzi, role de etichete, folie, balanțe și numere de serie (de exemplu, role de etichete) pentru conformitate. Furnizori și comenzi = director, comandă B2B către un partener, mesaje și Primite la fermă când sosesc mărfurile. Pe mobil, utilizați materiale și comenzi ale partenerilor; pe web, Furnizori și comenzi."
       ],
       "links": [
         {
-          "label": "Materials",
-          "href": "/grower/materials"
+          "label": "Materiale",
+          "href": "/crescător/materiale"
         },
         {
-          "label": "Suppliers & orders",
-          "href": "/grower/where-to-buy"
+          "label": "Furnizori și comenzi",
+          "href": "/crescător/de unde să cumpere"
         }
       ]
     },
     {
-      "title": "Field work",
+      "title": "Munca pe teren — semănat, jurnal, tratamente",
       "paragraphs": [
-        "Daily: mobile entry log, journals, compliant sprays/treatments (GPS when required). Before harvest submit a kg/window harvest plan — for planning, not a retail checkout. Borders on web, captures in the field."
+        "De la semănat, utilizați aplicația mobilă pentru munca de zi cu zi: jurnal de intrare, jurnal de creștere, spray-uri/tratamente conforme (cu GPS acolo unde este necesar). Acesta este stratul de trasabilitate înainte de a forma un lot comercial."
       ],
       "links": [
         {
-          "label": "My fields",
-          "href": "/grower/fields"
+          "label": "Câmpurile mele",
+          "href": "/cultivator/câmpuri"
         }
       ]
     },
     {
-      "title": "Harvest → batch",
+      "title": "Recoltați și formați mult (lot)",
       "paragraphs": [
-        "When ready: declare harvest · create batch linked to parcel · use mobile flows for qty / window."
+        "Când recolta este gata, raportați recolta și formați un lot / lot pentru acel parcel. Asta leagă cantitatea și timpul de blocul pe care l-ați mapat mai devreme. Utilizați fluxul de recoltare mobil atunci când anunțați o fereastră sau kg."
       ],
       "links": [
         {
-          "label": "My fields",
-          "href": "/grower/fields"
+          "label": "Câmpurile mele (începe lotul)",
+          "href": "/cultivator/câmpuri"
         },
         {
-          "label": "My batches",
-          "href": "/grower/batches"
+          "label": "Loturile mele",
+          "href": "/crescător/loturi"
         }
       ]
     },
     {
-      "title": "Packing & status",
+      "title": "Starea ambalajului și a lotului",
       "paragraphs": [
-        "Work the lot until PACKED or QUALITY_VERIFIED · transport waits until packing + compliance (next step)."
+        "Finalizați pașii de ambalare/urmărire a lotului din loturile mele până când starea este AMBALAT sau CALITATE_VERIFICAT (utilizați fluxul de ambalare mobil atunci când este necesar). Transportul este blocat până când lotul ajunge într-una dintre aceste stări și conformitatea este completă (pasul următor)."
       ],
       "links": [
         {
-          "label": "My batches",
-          "href": "/grower/batches"
+          "label": "Loturile mele",
+          "href": "/crescător/loturi"
         }
       ]
     },
     {
-      "title": "Quality & compliance pics",
+      "title": "Fotografii de calitate și de conformitate",
       "paragraphs": [
-        "(1) Quality entry · (2) Compliance photos + label roll · transport form validates both."
+        "Faceți acestea în ordine pentru fiecare lot: (1) Înregistrarea calității — verificări și unități pe lot. (2) Fotografii de conformitate + ID-ul rolului de etichetă (trei fotografii + rolă de autocolante pe dosar). Formularul de transport verifica conformitatea; dacă lipsește ceva, remediați mai întâi aici."
       ],
       "links": [
         {
-          "label": "Quality entry",
-          "href": "/grower/quality-entry"
+          "label": "Intrare de calitate",
+          "href": "/Producător/calitate-entry"
         },
         {
-          "label": "Compliance photos",
-          "href": "/grower/compliance-photos"
+          "label": "Fotografii de conformitate",
+          "href": "/Producător/conformitate-fotografii"
         }
       ]
     },
     {
-      "title": "Request transport",
+      "title": "Solicita transport",
       "paragraphs": [
-        "Only after packed / verified + compliance · pickup GPS/address + destination · queued until dispatcher assigns driver."
+        "Numai când lotul este AMBALAT sau QUALITY_VERIFIED și conformitatea este completă, deschideți Solicitați transport. Aveți nevoie de GPS/adresă de preluare și de o livrare completă (cumpărător, hub sau andocare). Solicitarea este pusă în coadă: operațiunile BioVera atribuie un driver de lanț de rece atunci când este gata (în așteptare până atunci)."
       ],
-      "footnote": "Who ships which kg to which buyer is set in ops — not inferred from forecasts in-app.",
+      "footnote": "Comenzile cu amănuntul / cu ridicata de la cumpărători sunt egalate în operațiuni (cine furnizează ce kg). Aplicația nu împarte automat o prognoză de recoltă într-o comandă de cumpărător - aliniați cantitatea și datele cu coordonatorul dvs., apoi reflectați încărcătura reală în loturi și transport.",
       "links": [
         {
-          "label": "Request transport",
-          "href": "/grower/missions/create"
+          "label": "Solicita transport",
+          "href": "/Producător/Misiunes/create"
         }
       ]
     },
     {
-      "title": "Missions",
+      "title": "Monitorizare misiuni (ferme → piață)",
       "paragraphs": [
-        "Handover · cold chain · hub/buyer milestones · app: missions list · web: /grower/portal."
+        "Urmăriți misiunea de la ferma dvs.: logistica poate finaliza o predare a încărcăturii (temperatura camionului + fotografii) după pasul dvs. de calitate, apoi cursa se îndreaptă spre preluare și tranzit în lanț de frig către hub sau cumpărător. Veți vedea starea până la finalizarea etapelor de livrare. În aplicație, utilizați lista de misiuni; pe web, Mission tracker este /grower/portal."
       ],
       "links": [
         {
-          "label": "Mission tracker",
-          "href": "/grower/portal"
+          "label": "Urmăritor de misiune",
+          "href": "/crescător/portal"
         }
       ]
     },
     {
-      "title": "Profile",
+      "title": "Profil și cont",
       "paragraphs": [
-        "Partner code, country, notifications · wallet & certs live under Profile on mobile."
+        "Cod partener, țara de producție, notificări — deschide Profilul meu. Pe mobil, portofel, certificate și multe altele live sub fila Profil și meniuri."
       ],
       "links": [
         {
-          "label": "My profile",
-          "href": "/grower/profile"
+          "label": "Profilul meu",
+          "href": "/Producător/profile"
         }
       ]
     }
   ],
-  "seasonMetaChip": "12 steps · sidebar order"
+  "seasonMetaChip": "12 pași · aceeași ordine ca meniul"
 }

@@ -1,0 +1,13 @@
+{
+  "shop": {
+    "categories": {
+      "grains": "Céréales"
+    },
+    "checkout": {
+      "total": "Total"
+    }
+  },
+  "orders": {
+    "total": "Total :"
+  }
+}

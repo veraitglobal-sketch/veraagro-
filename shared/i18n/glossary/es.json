@@ -15,18 +15,18 @@
       "UNKNOWN": "Actualización pendiente"
     },
     "buyerDescription": {
-      "PENDING": "We have received your order. Vera will confirm before payment.",
+      "PENDING": "Hemos recibido su pedido. Vera lo confirmará antes del pago.",
       "APPROVED": "Bio Vera has accepted your order. Use the bank transfer instructions below, then we will mark payment when it arrives.",
-      "PAID": "Payment has been received. The supplier will confirm the order shortly.",
-      "CONFIRMED": "Your order is confirmed and is being prepared for shipment.",
-      "PICKED_UP": "The goods have been collected from the supplier.",
-      "IN_TRANSIT": "Your order is on the way to the delivery address.",
-      "DELIVERED": "The order has been delivered. Thank you for your purchase.",
-      "COMPLETED": "This order is complete and closed.",
-      "CANCELLED": "This order was cancelled.",
+      "PAID": "Se ha recibido el pago. El proveedor confirmará el pedido en breve.",
+      "CONFIRMED": "Su pedido está confirmado y se está preparando para el envío.",
+      "PICKED_UP": "La mercancía ha sido recogida del proveedor.",
+      "IN_TRANSIT": "Su pedido está en camino a la dirección de entrega.",
+      "DELIVERED": "El pedido ha sido entregado. Gracias por su compra.",
+      "COMPLETED": "Este pedido está completo y cerrado.",
+      "CANCELLED": "Este pedido fue cancelado.",
       "REJECTED": "This order was rejected by Bio Vera.",
-      "REFUNDED": "This order was refunded.",
-      "UNKNOWN": "Status is being updated. Check back for details."
+      "REFUNDED": "Este pedido fue reembolsado.",
+      "UNKNOWN": "El estado se está actualizando. Vuelva a consultar para más detalles."
     },
     "admin": {
       "PENDING": "Pendiente",
@@ -45,144 +45,144 @@
   },
   "deliveryStatus": {
     "buyer": {
-      "PENDING": "Pending",
-      "ASSIGNED": "Assigned to carrier",
-      "PICKED_UP": "Picked up by carrier",
-      "IN_TRANSIT": "In transit",
-      "DELIVERED": "Delivered — awaiting receipt",
-      "CONFIRMED": "Receipt confirmed",
-      "COMPLETED": "Completed",
-      "CANCELLED": "Cancelled"
+      "PENDING": "Pendiente",
+      "ASSIGNED": "Asignado al transportista",
+      "PICKED_UP": "Recogido por el transportista",
+      "IN_TRANSIT": "En tránsito",
+      "DELIVERED": "Entregado — recepción pendiente",
+      "CONFIRMED": "Recepción confirmada",
+      "COMPLETED": "Completado",
+      "CANCELLED": "Cancelado"
     },
     "admin": {
-      "PENDING": "Pending",
-      "ASSIGNED": "Assigned",
-      "PICKED_UP": "Picked up",
-      "IN_TRANSIT": "In transit",
-      "DELIVERED": "Delivered",
-      "CONFIRMED": "Confirmed",
-      "COMPLETED": "Completed",
-      "CANCELLED": "Cancelled"
+      "PENDING": "Pendiente",
+      "ASSIGNED": "Asignado",
+      "PICKED_UP": "Recogido",
+      "IN_TRANSIT": "En tránsito",
+      "DELIVERED": "Entregado",
+      "CONFIRMED": "Confirmado",
+      "COMPLETED": "Completado",
+      "CANCELLED": "Cancelado"
     },
     "logistics": {
-      "PENDING": "Pending",
-      "ASSIGNED": "Assigned",
-      "PICKED_UP": "Picked up",
-      "IN_TRANSIT": "In transit",
-      "DELIVERED": "Delivered",
-      "CONFIRMED": "Confirmed",
-      "COMPLETED": "Completed",
-      "CANCELLED": "Cancelled"
+      "PENDING": "Pendiente",
+      "ASSIGNED": "Asignado",
+      "PICKED_UP": "Recogido",
+      "IN_TRANSIT": "En tránsito",
+      "DELIVERED": "Entregado",
+      "CONFIRMED": "Confirmado",
+      "COMPLETED": "Completado",
+      "CANCELLED": "Cancelado"
     }
   },
   "missionStatus": {
     "admin": {
-      "AWAITING_APPROVAL": "Awaiting approval (admin)",
-      "PENDING": "Pending",
-      "ASSIGNED": "Assigned",
-      "ACCEPTED": "Accepted",
-      "IN_PROGRESS": "In progress",
-      "READY_FOR_LOADING": "Ready for loading",
-      "PICKED_UP": "Picked up",
-      "IN_TRANSIT": "In transit",
-      "COMPLETED": "Completed",
-      "CANCELLED": "Cancelled"
+      "AWAITING_APPROVAL": "Pendiente de aprobación (admin)",
+      "PENDING": "Pendiente",
+      "ASSIGNED": "Asignada",
+      "ACCEPTED": "Aceptada",
+      "IN_PROGRESS": "En curso",
+      "READY_FOR_LOADING": "Lista para la carga",
+      "PICKED_UP": "Recogida",
+      "IN_TRANSIT": "En tránsito",
+      "COMPLETED": "Completada",
+      "CANCELLED": "Cancelada"
     },
     "logistics": {
-      "AWAITING_APPROVAL": "Awaiting approval",
-      "PENDING": "Open",
-      "ASSIGNED": "Assigned",
-      "ACCEPTED": "Accepted",
-      "IN_PROGRESS": "In progress",
-      "READY_FOR_LOADING": "Ready for loading",
-      "PICKED_UP": "Picked up",
-      "IN_TRANSIT": "In transit",
-      "COMPLETED": "Completed",
-      "CANCELLED": "Cancelled"
+      "AWAITING_APPROVAL": "Pendiente de aprobación",
+      "PENDING": "Abierta",
+      "ASSIGNED": "Asignada",
+      "ACCEPTED": "Aceptada",
+      "IN_PROGRESS": "En curso",
+      "READY_FOR_LOADING": "Lista para la carga",
+      "PICKED_UP": "Recogida",
+      "IN_TRANSIT": "En tránsito",
+      "COMPLETED": "Completada",
+      "CANCELLED": "Cancelada"
     }
   },
   "handoverStatus": {
-    "PENDING": "Pending",
-    "APPROVED": "Approved",
-    "REJECTED": "Rejected",
-    "BLOCKED": "Blocked"
+    "PENDING": "Pendiente",
+    "APPROVED": "Aprobado",
+    "REJECTED": "Rechazado",
+    "BLOCKED": "Bloqueado"
   },
   "seedBagStatus": {
-    "AVAILABLE": "Available",
-    "ASSIGNED": "Assigned",
-    "SCANNED": "Scanned",
-    "USED": "Used",
-    "EXPIRED": "Expired",
-    "LABELED": "Labeled",
-    "VOIDED": "Voided",
-    "IN_SUPPLIER_STOCK": "In supplier stock",
-    "SOLD": "Sold",
-    "PLANTED": "Planted",
-    "PARTIALLY_USED": "Partially used",
-    "RECALLED": "Recalled"
+    "AVAILABLE": "Disponible",
+    "ASSIGNED": "Asignado",
+    "SCANNED": "Escaneado",
+    "USED": "Utilizado",
+    "EXPIRED": "Caducado",
+    "LABELED": "Etiquetado",
+    "VOIDED": "Anulado",
+    "IN_SUPPLIER_STOCK": "En stock del proveedor",
+    "SOLD": "Vendido",
+    "PLANTED": "Sembrado",
+    "PARTIALLY_USED": "Parcialmente utilizado",
+    "RECALLED": "Retirado"
   },
   "seedRunStatus": {
-    "PLANNED": "Planned",
-    "LABELS_ISSUED": "Labels issued",
-    "PRODUCED": "Produced",
-    "RELEASED": "Released",
-    "RECALLED": "Recalled"
+    "PLANNED": "Planificado",
+    "LABELS_ISSUED": "Etiquetas emitidas",
+    "PRODUCED": "Producido",
+    "RELEASED": "Liberado",
+    "RECALLED": "Retirado"
   },
   "catalogProductStatus": {
-    "DRAFT": "Draft",
-    "PUBLISHED": "Published",
-    "ARCHIVED": "Archived"
+    "DRAFT": "Borrador",
+    "PUBLISHED": "Publicado",
+    "ARCHIVED": "Archivado"
   },
   "stockMovementType": {
-    "ADMIN_ADD": "Admin add",
-    "ADMIN_REMOVE": "Admin remove",
-    "ORDER_RESERVE": "Order reserve",
-    "ORDER_RELEASE": "Order release"
+    "ADMIN_ADD": "Alta administrativa",
+    "ADMIN_REMOVE": "Baja administrativa",
+    "ORDER_RESERVE": "Reserva de pedido",
+    "ORDER_RELEASE": "Liberación de reserva"
   },
   "units": {
     "kg": "kg",
     "g": "g",
-    "pack": "pack",
-    "bag": "bag",
-    "crate": "crate",
-    "pallet": "pallet"
+    "pack": "paquete",
+    "bag": "saco",
+    "crate": "caja",
+    "pallet": "palé"
   },
   "roles": {
-    "BUYER": "Buyer",
-    "GROWER": "Grower",
-    "FARMER": "Farmer",
-    "LOGISTICS_PARTNER": "Logistics partner",
-    "MATERIAL_SUPPLIER": "Supplier",
-    "SEED_PRODUCER": "Seed producer",
+    "BUYER": "Comprador",
+    "GROWER": "Productor",
+    "FARMER": "Agricultor",
+    "LOGISTICS_PARTNER": "Socio logístico",
+    "MATERIAL_SUPPLIER": "Proveedor",
+    "SEED_PRODUCER": "Productor de semillas",
     "ADMIN": "Admin",
     "SUPER_ADMIN": "Admin",
-    "DRIVER": "Driver",
-    "COORDINATOR": "Coordinator",
-    "COMMERCIAL_AGENT": "Commercial agent",
-    "PARTNER": "Partner"
+    "DRIVER": "Conductor",
+    "COORDINATOR": "Coordinador",
+    "COMMERCIAL_AGENT": "Agente comercial",
+    "PARTNER": "Socio"
   },
   "fieldEntryType": {
-    "SETVA": "Planting",
-    "PRSKANJE": "Spraying",
-    "BERBA": "Harvest",
-    "OBRADA": "Tillage",
-    "DJUBRENJE": "Fertilizing",
-    "OTHER": "Other"
+    "SETVA": "Siembra",
+    "PRSKANJE": "Pulverización",
+    "BERBA": "Cosecha",
+    "OBRADA": "Labranza",
+    "DJUBRENJE": "Fertilización",
+    "OTHER": "Otro"
   },
   "qualityGrade": {
-    "FRESH": "Fresh / OK",
-    "DAMAGED": "Damaged"
+    "FRESH": "Fresco / OK",
+    "DAMAGED": "Dañado"
   },
   "marketChannel": {
-    "MARKETPLACE": "Marketplace",
-    "DIRECT": "Direct",
-    "RESERVATION": "Reservation"
+    "MARKETPLACE": "Mercado",
+    "DIRECT": "Directo",
+    "RESERVATION": "Reserva"
   },
   "nouns": {
     "estate": "Finca",
     "parcel": "Parcela",
     "lot": "Lote",
-    "batch": "Lote",
+    "batch": "Lote de producción",
     "planting": "Siembra",
     "harvestPlan": "Plan de cosecha",
     "mission": "Misión",

@@ -45,7 +45,7 @@
   ],
   "pdfSections": [
     {
-      "title": "BioVera Fresh",
+      "title": "BioVera Fresh — Konzept",
       "body": "Modernes Konzept für den Verkauf frischer Produkte.\n\nDirekt. Frisch. Kontrolliert.\n\nBioVera Fresh ist ein zeitgemäßes Obst- und Gemüse-Einzelhandelsmodell mit direkter Erzeugeranbindung, kontrollierter Qualität und maximaler Produktverwertung."
     },
     {
@@ -122,8 +122,8 @@
       "id": "freshProspect",
       "title": "BioVera Fresh Prospekt",
       "description": "Vollständiger Text: Einführung, Markt, Lösung, Filialkonzept, Ablauf, Warenführung, Ertrag, Betrieb, Vorteile, Investition, Marktbezug, Wachstum, Partnerprofil und Kontakt.",
-      "type": "PDF",
-      "size": "~180 KB"
+      "type": "PDF-Dokument",
+      "size": "ca. 180 KB"
     }
   ],
   "resourceDownload": "Herunterladen",

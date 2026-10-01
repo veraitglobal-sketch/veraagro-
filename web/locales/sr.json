@@ -4011,6 +4011,10 @@
         "desc": "Sredstva kupca osigurana kod Bio Vere do primopredaje i provere kvaliteta."
       },
       {
+        "title": "Ugovori i usklađenost",
+        "desc": "Porudžbine i predporudžbine su dokumentovane. Standardi kvaliteta i pakovanja se primenjuju i proveravaju pre otpreme."
+      },
+      {
         "title": "Kontrola kvaliteta",
         "desc": "Terenske i laboratorijske provere, validacija barkoda i GPS-a. Neusaglašene serije se blokiraju pre otpreme."
       },
@@ -4098,7 +4102,20 @@
     "technicalStandardsTitle": "Tehnički standardi",
     "tableColCategory": "Kategorija",
     "tableColStandard": "Standard",
-    "certTableRows": [],
+    "certTableRows": [
+      {
+        "category": "Sertifikacija",
+        "standard": "GlobalG.A.P. IFA v6 (grupna sertifikacija)"
+      },
+      {
+        "category": "Sledljivost",
+        "standard": "Digitalni pasoš serije (Batch_ID) + QR"
+      },
+      {
+        "category": "Bezbednost hrane",
+        "standard": "HACCP principi, hladni lanac, odobreni inputi"
+      }
+    ],
     "paymentGuaranteedBold": "",
     "paymentGuaranteedRest": "",
     "applyCertCta": "Prijavite se",

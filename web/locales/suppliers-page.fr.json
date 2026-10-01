@@ -10,22 +10,12 @@
   "whoApply": {
     "title": "Qui devrait postuler",
     "intro": "Entreprises établies du secteur agricole — distributeurs, magasins agricoles ou opérateurs disposant d'une infrastructure d'entrepôt et d'un réseau existant dans la région. Nous recherchons des partenaires capables d'assurer un accompagnement sur le terrain et une distribution conforme aux standards Bio Vera.",
-    "bullets": [
-      "Vous vendez nos produits (semences, intrants) aux producteurs",
-      "Vous vendez nos emballages aux producteurs",
-      "Idéalement vous travaillez déjà dans l’agriculture",
-      "Une large présence dans votre pays est un avantage"
-    ]
+    "bullets": []
   },
   "yourRole": {
     "title": "Votre rôle",
     "intro": "Partenaire opérationnel régional au sein du réseau Bio Vera. Vous gérez la distribution d'intrants certifiés, apportez un accompagnement terrain aux producteurs et maintenez les standards qualité au niveau local. Coordination avec l'équipe centrale via le Vera Admin Panel.",
-    "bullets": [
-      "Conseil et formation sur site des utilisateurs",
-      "Procurer des emballages à nos utilisateurs (par exemple des boîtes d'emballage)",
-      "Premier interlocuteur des agriculteurs de votre région",
-      "Vérification physique des marchandises reçues"
-    ]
+    "bullets": []
   },
   "benefits": {
     "title": "Ce que vous obtenez",
@@ -50,10 +40,6 @@
       {
         "title": "Couverture nationale préférée",
         "description": "Nous privilégions les fournisseurs ayant une forte présence nationale. Élargissez votre portée et représentez Bio Vera dans tout votre pays."
-      },
-      {
-        "title": "Accès exclusif au marché",
-        "description": "Accès au réseau Bio Vera de producteurs certifiés et d'acheteurs européens via une infrastructure verticalement intégrée."
       }
     ]
   },
@@ -61,56 +47,16 @@
     "title": "Comment ça marche",
     "subtitle": "Comprendre la chaîne d'approvisionnement de Bio Vera",
     "supplyChainTitle": "Processus de la chaîne d'approvisionnement",
-    "steps": [
-      {
-        "title": "Approvisionnement auprès de partenaires agréés",
-        "body": "Les fournisseurs achètent des marchandises auprès de nos partenaires agréés dans le pays. Ils fournissent également des emballages (par exemple des boîtes d'emballage) pour nos utilisateurs. Les semences, les engrais et les emballages répondent aux spécifications Bio Vera."
-      },
-      {
-        "title": "Structure tarifaire convenue",
-        "body": "Tous les produits sont vendus à des prix convenus à l'avance. Cela garantit la stabilité des prix pour les producteurs et des revenus prévisibles pour les fournisseurs. Aucune fluctuation de prix ni négociation par transaction."
-      },
-      {
-        "title": "Distribution aux producteurs",
-        "body": "Les fournisseurs distribuent les produits aux producteurs certifiés Bio Vera de leur région. Chaque transaction est suivie via des codes QR, garantissant une traçabilité complète du fournisseur au terrain."
-      },
-      {
-        "title": "Suivi numérique et conformité",
-        "body": "Tous les mouvements de stock sont enregistrés dans le tableau de bord d'administration Vera. Les fournisseurs maintiennent une visibilité en temps réel sur les niveaux de stock et le système alerte automatiquement lorsque le stock tombe en dessous du seuil de 20 %."
-      }
-    ],
+    "steps": [],
     "forSuppliersPanelTitle": "Pour les fournisseurs",
     "forSuppliersPanelIntro": "En tant que fournisseur, vous achetez auprès de nos partenaires agréés et vendez aux producteurs au prix convenu. Vous maintenez un inventaire local, achetez des emballages (par exemple des boîtes) pour nos utilisateurs et fournissez un soutien régional aux agriculteurs.",
-    "forSuppliersPanelBullets": [
-      "Achat auprès de partenaires agréés",
-      "Maintenir des installations de stockage sécurisées",
-      "Procurer des emballages (par exemple des boîtes d'emballage) pour nos utilisateurs",
-      "Distribuer aux producteurs à prix fixe",
-      "Suivez toutes les transactions via des codes QR"
-    ]
+    "forSuppliersPanelBullets": []
   },
   "requirements": {
     "title": "Exigences du programme",
     "subtitle": "Ce que nous attendons de nos fournisseurs",
     "supplierHeading": "Pour les fournisseurs",
-    "cards": [
-      {
-        "title": "Stockage des ressources Vera",
-        "description": "Obligation de fournir un espace de stockage sec et sécurisé pour les graines, les engrais et les matériaux d'emballage Vera."
-      },
-      {
-        "title": "Émission de codes QR",
-        "description": "Le fournisseur ne peut pas délivrer de marchandises sans scanner le code QR depuis l'application de l'agriculteur. C'est le seul moyen de suivre la consommation par hectare."
-      },
-      {
-        "title": "Assistance locale",
-        "description": "Le fournisseur est le premier point de contact des agriculteurs de leur région. Ils effectuent une vérification physique des marchandises reçues et fournissent des conseils et des formations sur place."
-      },
-      {
-        "title": "Rapports d'inventaire",
-        "description": "Le système doit automatiquement informer le siège social à Hambourg lorsque le stock tombe en dessous de 20 %."
-      }
-    ],
+    "cards": [],
     "commonLabel": "Obligation commune :",
     "commonBody": "Tous les partenaires doivent utiliser le tableau de bord Vera Admin pour enregistrer chaque entrée et sortie de marchandises. Pas de « paperasse » – tout doit être dans le système numérique."
   },
@@ -118,34 +64,13 @@
     "title": "Avantage Vera Logistique",
     "subtitle": "Système logistique de retour intelligent",
     "noEmptyTitle": "Pas de voyages aller-retour à vide",
-    "steps": [
-      {
-        "title": "Ramassage et livraison",
-        "body": "Le chauffeur récupère les produits chez les producteurs et les livre à l'adresse de l'acheteur."
-      },
-      {
-        "title": "Ramassage de retour",
-        "body": "Au retour, le chauffeur récupère nos semences et engrais Vera chez nos partenaires."
-      },
-      {
-        "title": "Distribution aux fournisseurs",
-        "body": "Le chauffeur livre les semences et les engrais Vera directement à nos fournisseurs sur le chemin du retour, éliminant ainsi les kilomètres à vide."
-      }
-    ],
+    "steps": [],
     "supplierColumnTitle": "Pour les fournisseurs",
     "supplierColumnIntro": "Bénéficiez de livraisons régulières de semences et d'engrais Vera directement de nos partenaires, acheminées par notre réseau logistique sur les allers-retours.",
-    "supplierColumnBullets": [
-      "Pas besoin d'organiser un transport séparé pour les marchandises entrantes",
-      "Coûts logistiques réduits grâce à un système intégré",
-      "Calendrier de livraison régulier et prévisible"
-    ],
+    "supplierColumnBullets": [],
     "systemColumnTitle": "Avantages du système",
     "systemColumnIntro": "Notre système logistique intelligent garantit une efficacité maximale en éliminant les allers-retours à vide et en optimisant chaque kilomètre de transport.",
-    "systemColumnBullets": [
-      "Zéro kilomètre à vide au retour",
-      "Réduction des coûts de carburant et de l’impact environnemental",
-      "Des délais de livraison plus rapides grâce à des itinéraires optimisés"
-    ]
+    "systemColumnBullets": []
   },
   "application": {
     "title": "Demande de fournisseur",

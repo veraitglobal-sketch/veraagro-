@@ -8,7 +8,7 @@
     "categories": {
       "fruits": "Fruits",
       "vegetables": "Légumes",
-      "grains": "Grains"
+      "grains": "Céréales"
     },
     "producerBadge": "PRODUCTEUR VERA",
     "unknownRegion": "Région inconnue",
@@ -49,7 +49,7 @@
     "title": "Mes commandes",
     "orderPrefix": "Commande #",
     "productFallback": "Produit",
-    "total": "Total:",
+    "total": "Total :",
     "paymentLabel": "Paiement:",
     "paymentRefLead": "utiliser la référence de la commande",
     "paymentRefTrail": "sur votre virement bancaire. Les détails complets de l'IBAN se trouvent dans le",

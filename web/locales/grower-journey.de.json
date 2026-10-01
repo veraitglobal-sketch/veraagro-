@@ -1,182 +1,180 @@
 {
   "chainShort": [
     {
-      "kicker": "Field & Compliance vor Ort",
-      "text": "Parzellen genehmigt → Aussaat & Saisonarbeit (mobil) → Ernteplan kurz vor der Ernte."
+      "kicker": "Auf dem Betrieb",
+      "text": "Parzellen freigegeben → Aussaat / Saisonnotizen (überwiegend mobil) → Ernteplan kurz vor der Ernte."
     },
     {
-      "kicker": "Los und Papierkram",
-      "text": "Stapel erstellen/aktualisieren → Verpackt / QUALITÄTSVERIFIZIERT → Qualitätseintrag → Compliance-Fotos + Etikettenrolle."
+      "kicker": "Los",
+      "text": "Charge → verpacken bis VERPACKT / QUALITÄT_VERIFIZIERT → Qualitätseintrag → Konformitätsfotos + Etikettenrolle."
     },
     {
-      "kicker": "Verlassen Sie die Farm",
-      "text": "Transport anfordern (für den Versand in der Warteschlange) → Betrieb weist einen Fahrer zu → Annahme/Abholung → Ladeübergabe (LKW-sicher) → Kühlkette zum Hub/Käufer → Missionsliste folgt dem Lauf; Einzelhandelsaufträge werden in Vorgängen abgeglichen (keine automatische Aufteilung in der App)."
+      "kicker": "Vom Betrieb weg",
+      "text": "Transport anfordern → Disponent weist Fahrer zu → Abholung & Übergabe → Kühlkette → Hub oder Käufer · Missionen verfolgen den Lauf · Käuferzuordnungen erfolgen in der Operations, nicht automatisch in der App."
     }
   ],
   "intro": {
-    "sidebarBlurb": "Lesen Sie die Schritte 1–12 der Reihe nach. Das linke Menü folgt dem Arbeitsablauf vor Ort: Dashboard, Leitfaden, Pakete, Pflanzungen, Materialien, Chargen, Eingangsprotokoll, Scan, Qualität, Lieferanten, dann Transport. Einige Themen sind auf mehrere Karten aufgeteilt (z. B. Genehmigung vs. Feldarbeit).",
+    "sidebarBlurb": "Gehen Sie der Reihe nach 1→12 durch. Das linke Menü folgt derselben Journey; jede Karte ist ein Schritt, den Sie schnell erfassen können.",
     "myFieldsCta": {
-      "title": "Meine Felder",
-      "line": "Öffnen Sie es, wenn Sie bereit sind, Blöcke und Ernten zuzuordnen.",
-      "linkLabel": "Öffnen Sie Meine Felder",
-      "webHref": "/Bauer/Felder"
+      "title": "Meine Parzellen",
+      "line": "Blöcke und Kulturen zeichnen, wenn Sie starten.",
+      "linkLabel": "Meine Parzellen öffnen",
+      "webHref": "/Erzeuger/Parzellen"
     }
   },
-  "fullChainTitle": "Volle Kette (kurz)",
-  "fieldsMapKicker": "Felder und Karte",
+  "fullChainTitle": "Kette in drei Zeilen",
+  "fieldsMapKicker": "Parzellen & Karte",
   "navJumpLabel": "Zum Schritt springen",
   "stepNumber": "Schritt {{n}}",
-  "stepSrOnly": "Schritt {{n}}.",
+  "stepSrOnly": "Schritt {{n}}. ",
   "steps": [
     {
-      "title": "Armaturenbrett",
+      "title": "Übersicht",
       "paragraphs": [
-        "Beginnen Sie hier mit Warnungen (Meldungen, aktive Chargen, Transport), Farmnamen und der nächsten empfohlenen Aktion. Benutzen Sie es alle paar Tage, nicht nur einmal."
+        "Meldungen, aktive Lose, Nachrichten, empfohlener nächster Schritt — alle paar Besuche kurz prüfen."
       ],
       "links": [
         {
-          "label": "Öffnen Sie das Dashboard",
+          "label": "Dashboard öffnen",
           "href": "/Erzeuger"
         }
       ]
     },
     {
-      "title": "Schritte (diese Seite)",
+      "title": "Diese Checkliste",
       "paragraphs": [
-        "Dieses Raster besteht aus 12 nummerierten Karten; Die Web-Seitenleiste folgt demselben Arbeitsablauf wie das Menü (aus Gründen der Übersichtlichkeit haben wir hier einige Themen aufgeteilt). Verwenden Sie in der App „Home“ für Felder, Materialien, Transport und den Rest."
+        "Zwölf Karten auf einer Seite · dieselbe Reihenfolge wie in der Seitenleiste (App: untere Tabs spiegeln den Ablauf)."
       ],
       "links": []
     },
     {
-      "title": "Meine Felder – Grundstücke & Parzellen (Blöcke)",
+      "title": "Meine Parzellen",
       "paragraphs": [
-        "Erstellen Sie Ihr Feld (Grundstück) und Ihre Parzellen (Ernteblöcke). Zeichnen Sie die Fläche ein oder passen Sie sie an, damit das System die Fläche in m² berechnen kann. Legen Sie die Ernte/Sorte dort fest, wo es das Formular zulässt. Ein Administrator muss ein Paket genehmigen, bevor Chargen, Tagebücher und Sprays für diesen Block vollständig freigeschaltet werden."
+        "Betrieb + Parzellen · m² · Kultur · Chargen / Tagebuch / Behandlungen auf einem Block bleiben eingeschränkt, bis ein Administrator die Parzelle freigibt."
       ],
       "links": [
         {
-          "label": "Meine Felder",
-          "href": "/Bauer/Felder"
+          "label": "Meine Parzellen",
+          "href": "/Erzeuger/Parzellen"
         }
       ]
     },
     {
-      "title": "Genehmigung",
+      "title": "Freigabe",
       "paragraphs": [
-        "Warten Sie, bis die Pakete als genehmigt angezeigt werden. Bis dahin bleiben einige Aktionen gesperrt – das ist normal. Wenn es lange dauert, verwenden Sie Kontakt/Nachrichten an den Betrieb."
+        "Auf freigegeben warten · gesperrte Bildschirme sind normal · bei Verzögerung Ops über Nachrichten kontaktieren."
       ],
       "links": []
     },
     {
-      "title": "Versorgung – Materialien und Lieferanten",
+      "title": "Materialien & Lieferanten",
       "paragraphs": [
-        "Materialien = In-App-Katalog: Kisten, Etikettenrollen, Folie, Waagen und Seriennummern (z. B. Etikettenrollen) zur Einhaltung der Vorschriften. Lieferanten und Bestellungen = Verzeichnis, B2B-Bestellung an einen Partner, Nachrichten und Eingang auf dem Bauernhof, wenn Waren eintreffen. Verwenden Sie auf Mobilgeräten Materialien und Partnerbestellungen. im Internet, Lieferanten & Bestellungen."
+        "Katalog (Kisten, Rollen, Folie, Seriennummern) · Verzeichnis + B2B-Bestellungen · Wareneingang markieren · App: Materialien + Partnerbestellungen / Web: Lieferanten & Bestellungen."
       ],
       "links": [
         {
           "label": "Materialien",
-          "href": "/Züchter/Materialien"
+          "href": "/Erzeuger/materials"
         },
         {
           "label": "Lieferanten & Bestellungen",
-          "href": "/Züchter/Wo kaufen"
+          "href": "/Erzeuger/where-to-buy"
         }
       ]
     },
     {
-      "title": "Feldarbeit – Aussaat, Tagebuch, Behandlungen",
+      "title": "Feldarbeit",
       "paragraphs": [
-        "Nutzen Sie ab der Aussaat die mobile App für die tägliche Arbeit: Eintragsprotokoll, Wachstumstagebuch, konforme Spritzungen/Behandlungen (bei Bedarf mit GPS). Das ist die Rückverfolgbarkeitsschicht, bevor Sie ein kommerzielles Los bilden.",
-        "Wenn die Ernte kurz vor der Ernte steht, geben Sie in der App einen Ernteplan ein (erwartete kg, optionales Ladefenster), damit Betrieb und Logistik planen können – das ist nicht dasselbe wie eine Einzelhandelsbestellung; es speist Planung und Missionen.",
-        "Im Web leben Grenzen und Blöcke unter meinen Feldern; Benutzen Sie für Eingaben das Telefon in der Zeile."
+        "Täglich: mobiles Eingabeprotokoll, Tagebücher, konforme Spritzungen/Behandlungen (GPS wenn erforderlich). Vor der Ernte Ernteplan mit kg/Fenster einreichen — für Planung, nicht für Einzelhandels-Checkout. Grenzen im Web, Erfassung vor Ort."
       ],
       "links": [
         {
-          "label": "Meine Felder",
-          "href": "/Bauer/Felder"
+          "label": "Meine Parzellen",
+          "href": "/Erzeuger/Parzellen"
         }
       ]
     },
     {
-      "title": "Menge ernten und formen (Charge)",
+      "title": "Ernte → Charge",
       "paragraphs": [
-        "Wenn die Ernte fertig ist, melden Sie die Ernte und bilden Sie eine Charge/Los für diese Parzelle. Dadurch werden Menge und Zeitpunkt an den Block gebunden, den Sie zuvor zugeordnet haben. Nutzen Sie den mobilen Erntefluss, wenn Sie ein Fenster oder kg ankündigen."
+        "Wenn bereit: Ernte melden · Charge mit Parzelle verknüpfen · mobile Abläufe für Menge / Fenster nutzen."
       ],
       "links": [
         {
-          "label": "Meine Felder (Batch starten)",
-          "href": "/Bauer/Felder"
+          "label": "Meine Parzellen",
+          "href": "/Erzeuger/Parzellen"
         },
         {
           "label": "Meine Chargen",
-          "href": "/grower/batches"
+          "href": "/Erzeuger/Chargen"
         }
       ]
     },
     {
-      "title": "Verpackungs- und Chargenstatus",
+      "title": "Verpackung & Status",
       "paragraphs": [
-        "Führen Sie die Verpackungs-/Verfolgungsschritte für die Charge in „Meine Chargen“ aus, bis der Status „VERPACKT“ oder „QUALITÄT_VERIFIZIERT“ lautet (verwenden Sie bei Bedarf den mobilen Verpackungsablauf). Der Transport wird blockiert, bis das Los einen dieser Zustände erreicht und die Einhaltung abgeschlossen ist (nächster Schritt)."
+        "Los bearbeiten bis VERPACKT oder QUALITÄT_VERIFIZIERT · Transport wartet auf Verpackung + Konformität (nächster Schritt)."
       ],
       "links": [
         {
           "label": "Meine Chargen",
-          "href": "/grower/batches"
+          "href": "/Erzeuger/Chargen"
         }
       ]
     },
     {
-      "title": "Hochwertige Eintritts- und Compliance-Fotos",
+      "title": "Qualität & Konformitätsfotos",
       "paragraphs": [
-        "Führen Sie diese der Reihe nach für jedes Los aus: (1) Qualitätseingabe – Prüfungen und Einheiten pro Los. (2) Konformitätsfotos + Etikettenrollen-ID (drei Fotos + Aufkleberrolle in den Akten). Das Transportformular prüft die Einhaltung; Wenn etwas fehlt, beheben Sie es zuerst hier."
+        "(1) Qualitätseintrag · (2) Konformitätsfotos + Etikettenrolle · Transportformular prüft beides."
       ],
       "links": [
         {
           "label": "Qualitätseintrag",
-          "href": "/grower/quality-entry"
+          "href": "/Erzeuger/Qualität-entry"
         },
         {
-          "label": "Compliance-Fotos",
-          "href": "/grower/compliance-photos"
+          "label": "Konformitätsfotos",
+          "href": "/Erzeuger/Konformität-Fotos"
         }
       ]
     },
     {
       "title": "Transport anfordern",
       "paragraphs": [
-        "Öffnen Sie „Transport anfordern“ erst, wenn der Stapel VERPACKT oder QUALITÄTSVERIFIZIERT ist und die Konformität vollständig ist. Sie benötigen Abhol-GPS/Adresse und eine vollständige Rückgabe (Käufer, Hub oder Dock). Die Anfrage wird in die Warteschlange gestellt: Der BioVera-Betrieb weist einen Kühlkettentreiber zu, wenn er bereit ist (bis dahin AUSSTEHEND)."
+        "Erst nach verpackt / verifiziert + Konformität · Abhol-GPS/Adresse + Ziel · in Warteschlange bis Disponent Fahrer zuweist."
       ],
-      "footnote": "Einzelhandels-/Großhandelsbestellungen von Käufern werden in Vorgängen abgeglichen (wer liefert welche kg). Die App teilt eine Ernteprognose nicht automatisch in eine Käuferbestellung auf – Sie stimmen Menge und Termine mit Ihrem Koordinator ab und geben dann die tatsächliche Ladung in Chargen und Transport wieder.",
+      "footnote": "Wer welche kg an welchen Käufer liefert, wird in Ops festgelegt — nicht aus Prognosen in der App abgeleitet.",
       "links": [
         {
           "label": "Transport anfordern",
-          "href": "/grower/missions/create"
+          "href": "/Erzeuger/Missionen/create"
         }
       ]
     },
     {
-      "title": "Missions-Tracker (Bauernhof → Markt)",
+      "title": "Missionen",
       "paragraphs": [
-        "Verfolgen Sie die Mission von Ihrem Bauernhof aus: Nach Ihrem Qualitätsschritt führt die Logistik möglicherweise eine Ladeübergabe (Lkw-Temperatur + Fotos) durch, dann geht es weiter in Richtung Abholung und Kühlkettentransport zum Hub oder Käufer. Sie sehen den Status, bis die Meilensteine ​​im Lieferstil abgeschlossen sind. Verwenden Sie in der App die Missionsliste. Im Web ist der Mission-Tracker /grower/portal."
+        "Übergabe · Kühlkette · Hub/Käufer-Meilensteine · App: Missionsliste · Web: /grower/portal."
       ],
       "links": [
         {
           "label": "Missions-Tracker",
-          "href": "/grower/portal"
+          "href": "/Erzeuger/portal"
         }
       ]
     },
     {
-      "title": "Profil & Konto",
+      "title": "Profil",
       "paragraphs": [
-        "Partnercode, Produktionsland, Benachrichtigungen – öffnen Sie „Mein Profil“. Auf Mobilgeräten, Wallets, Zertifikaten und mehr live auf der Registerkarte „Profil“ und in den Menüs."
+        "Partnercode, Land, Benachrichtigungen · Wallet & Zertifikate unter Profil in der App."
       ],
       "links": [
         {
           "label": "Mein Profil",
-          "href": "/züchter/profil"
+          "href": "/Erzeuger/profile"
         }
       ]
     }
   ],
-  "seasonMetaChip": "12 Schritte · gleiche Reihenfolge wie im Menü"
+  "seasonMetaChip": "12 Schritte · Reihenfolge der Seitenleiste"
 }

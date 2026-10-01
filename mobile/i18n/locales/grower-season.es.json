@@ -1,9 +1,9 @@
 {
-  "pageDescription": "Twelve-card season guide · pull down to refresh parcel approval.",
-  "glanceTitle": "Your parcels at a glance",
-  "glanceApproved": "At least one parcel is approved — you can proceed with work and batches as rules allow.",
-  "glancePending": "{{count}} parcel(s) still waiting for administrator approval. Some actions stay locked until a parcel is approved.",
-  "glanceNoParcel": "No parcel yet. Under My parcels, add a parcel and crop block.",
-  "linkMyFields": "My parcels",
-  "introRibbon": "{{count}} steps · short chain below, then cards — same order as the web guide."
+  "pageDescription": "Guía de temporada de doce tarjetas · desliza hacia abajo para actualizar la aprobación de parcelas.",
+  "glanceTitle": "Tus parcelas de un vistazo",
+  "glanceApproved": "Al menos una parcela está aprobada — puedes continuar con el trabajo y los lotes según lo permitan las reglas.",
+  "glancePending": "{{count}} parcela(s) aún esperan la aprobación del administrador. Algunas acciones permanecen bloqueadas hasta que se apruebe una parcela.",
+  "glanceNoParcel": "Aún no hay parcela. En Mis parcelas, agrega una parcela y un bloque de cultivo.",
+  "linkMyFields": "Mis parcelas",
+  "introRibbon": "{{count}} pasos · cadena corta abajo, luego tarjetas — mismo orden que la guía web."
 }

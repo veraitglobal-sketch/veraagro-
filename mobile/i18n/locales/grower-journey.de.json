@@ -1,180 +1,180 @@
 {
   "chainShort": [
     {
-      "kicker": "On farm",
-      "text": "parcels approved → sowing / season notes (mostly mobile) → harvest plan near pick."
+      "kicker": "Auf dem Betrieb",
+      "text": "Parzellen freigegeben → Aussaat / Saisonnotizen (überwiegend mobil) → Ernteplan kurz vor der Ernte."
     },
     {
-      "kicker": "Lot",
-      "text": "batch → pack to PACKED / QUALITY_VERIFIED → quality entry → compliance photos + label roll."
+      "kicker": "Los",
+      "text": "Charge → verpacken bis VERPACKT / QUALITÄT_VERIFIZIERT → Qualitätseintrag → Konformitätsfotos + Etikettenrolle."
     },
     {
-      "kicker": "Off farm",
-      "text": "request transport → dispatcher assigns driver → pickup & handover → cold chain → hub or buyer · missions track the run · buyer allocations are done in ops, not auto in the app."
+      "kicker": "Vom Betrieb weg",
+      "text": "Transport anfordern → Disponent weist Fahrer zu → Abholung & Übergabe → Kühlkette → Hub oder Käufer · Missionen verfolgen den Lauf · Käuferzuordnungen erfolgen in der Operations, nicht automatisch in der App."
     }
   ],
   "intro": {
-    "sidebarBlurb": "Go 1→12 in order. The left menu is the same journey; here each card is one beat you can scan quickly.",
+    "sidebarBlurb": "Gehen Sie der Reihe nach 1→12 durch. Das linke Menü folgt derselben Journey; jede Karte ist ein Schritt, den Sie schnell erfassen können.",
     "myFieldsCta": {
-      "title": "My fields",
-      "line": "Draw blocks and crops when you start.",
-      "linkLabel": "Open My fields",
-      "webHref": "/grower/fields"
+      "title": "Meine Parzellen",
+      "line": "Blöcke und Kulturen zeichnen, wenn Sie starten.",
+      "linkLabel": "Meine Parzellen öffnen",
+      "webHref": "/grower/Parzellen"
     }
   },
-  "fullChainTitle": "Chain in three lines",
-  "fieldsMapKicker": "Fields & map",
-  "navJumpLabel": "Jump to step",
-  "stepNumber": "Step {{n}}",
-  "stepSrOnly": "Step {{n}}. ",
+  "fullChainTitle": "Kette in drei Zeilen",
+  "fieldsMapKicker": "Parzellen & Karte",
+  "navJumpLabel": "Zum Schritt springen",
+  "stepNumber": "Schritt {{n}}",
+  "stepSrOnly": "Schritt {{n}}. ",
   "steps": [
     {
-      "title": "Dashboard",
+      "title": "Übersicht",
       "paragraphs": [
-        "Alerts, active lots, messages, suggested next step — glance every few visits."
+        "Meldungen, aktive Lose, Nachrichten, empfohlener nächster Schritt — alle paar Besuche kurz prüfen."
       ],
       "links": [
         {
-          "label": "Open Dashboard",
-          "href": "/grower"
+          "label": "Dashboard öffnen",
+          "href": "/Erzeuger"
         }
       ]
     },
     {
-      "title": "This checklist",
+      "title": "Diese Checkliste",
       "paragraphs": [
-        "Twelve cards on one page · same order as the sidebar (app: bottom tabs mirror the flow)."
+        "Zwölf Karten auf einer Seite · dieselbe Reihenfolge wie in der Seitenleiste (App: untere Tabs spiegeln den Ablauf)."
       ],
       "links": []
     },
     {
-      "title": "My fields (parcels)",
+      "title": "Meine Parzellen",
       "paragraphs": [
-        "Estate + parcels · m² · crop · batches / diary / treatments on a block stay limited until admin approves the parcel."
+        "Betrieb + Parzellen · m² · Kultur · Chargen / Tagebuch / Behandlungen auf einem Block bleiben eingeschränkt, bis ein Administrator die Parzelle freigibt."
       ],
       "links": [
         {
-          "label": "My fields",
-          "href": "/grower/fields"
+          "label": "Meine Parzellen",
+          "href": "/Erzeuger/Parzellen"
         }
       ]
     },
     {
-      "title": "Approval",
+      "title": "Freigabe",
       "paragraphs": [
-        "Wait for approved · locked screens are normal · ping ops via messages if stalled."
+        "Auf freigegeben warten · gesperrte Bildschirme sind normal · bei Verzögerung Ops über Nachrichten kontaktieren."
       ],
       "links": []
     },
     {
-      "title": "Materials & suppliers",
+      "title": "Materialien & Lieferanten",
       "paragraphs": [
-        "Catalog (crates, rolls, foil, serials) · directory + B2B orders · mark received · app: Materials + Partner orders / web: Suppliers & orders."
+        "Katalog (Kisten, Rollen, Folie, Seriennummern) · Verzeichnis + B2B-Bestellungen · Wareneingang markieren · App: Materialien + Partnerbestellungen / Web: Lieferanten & Bestellungen."
       ],
       "links": [
         {
-          "label": "Materials",
-          "href": "/grower/materials"
+          "label": "Materialien",
+          "href": "/Erzeuger/materials"
         },
         {
-          "label": "Suppliers & orders",
-          "href": "/grower/where-to-buy"
+          "label": "Lieferanten & Bestellungen",
+          "href": "/Erzeuger/where-to-buy"
         }
       ]
     },
     {
-      "title": "Field work",
+      "title": "Feldarbeit",
       "paragraphs": [
-        "Daily: mobile entry log, journals, compliant sprays/treatments (GPS when required). Before harvest submit a kg/window harvest plan — for planning, not a retail checkout. Borders on web, captures in the field."
+        "Täglich: mobiles Eingabeprotokoll, Tagebücher, konforme Spritzungen/Behandlungen (GPS wenn erforderlich). Vor der Ernte Ernteplan mit kg/Fenster einreichen — für Planung, nicht für Einzelhandels-Checkout. Grenzen im Web, Erfassung vor Ort."
       ],
       "links": [
         {
-          "label": "My fields",
-          "href": "/grower/fields"
+          "label": "Meine Parzellen",
+          "href": "/Erzeuger/Parzellen"
         }
       ]
     },
     {
-      "title": "Harvest → batch",
+      "title": "Ernte → Charge",
       "paragraphs": [
-        "When ready: declare harvest · create batch linked to parcel · use mobile flows for qty / window."
+        "Wenn bereit: Ernte melden · Charge mit Parzelle verknüpfen · mobile Abläufe für Menge / Fenster nutzen."
       ],
       "links": [
         {
-          "label": "My fields",
-          "href": "/grower/fields"
+          "label": "Meine Parzellen",
+          "href": "/Erzeuger/Parzellen"
         },
         {
-          "label": "My batches",
-          "href": "/grower/batches"
+          "label": "Meine Chargen",
+          "href": "/Erzeuger/Chargen"
         }
       ]
     },
     {
-      "title": "Packing & status",
+      "title": "Verpackung & Status",
       "paragraphs": [
-        "Work the lot until PACKED or QUALITY_VERIFIED · transport waits until packing + compliance (next step)."
+        "Los bearbeiten bis VERPACKT oder QUALITÄT_VERIFIZIERT · Transport wartet auf Verpackung + Konformität (nächster Schritt)."
       ],
       "links": [
         {
-          "label": "My batches",
-          "href": "/grower/batches"
+          "label": "Meine Chargen",
+          "href": "/Erzeuger/Chargen"
         }
       ]
     },
     {
-      "title": "Quality & compliance pics",
+      "title": "Qualität & Konformitätsfotos",
       "paragraphs": [
-        "(1) Quality entry · (2) Compliance photos + label roll · transport form validates both."
+        "(1) Qualitätseintrag · (2) Konformitätsfotos + Etikettenrolle · Transportformular prüft beides."
       ],
       "links": [
         {
-          "label": "Quality entry",
-          "href": "/grower/quality-entry"
+          "label": "Qualitätseintrag",
+          "href": "/Erzeuger/Qualität-entry"
         },
         {
-          "label": "Compliance photos",
-          "href": "/grower/compliance-photos"
+          "label": "Konformitätsfotos",
+          "href": "/Erzeuger/Konformität-Fotos"
         }
       ]
     },
     {
-      "title": "Request transport",
+      "title": "Transport anfordern",
       "paragraphs": [
-        "Only after packed / verified + compliance · pickup GPS/address + destination · queued until dispatcher assigns driver."
+        "Erst nach verpackt / verifiziert + Konformität · Abhol-GPS/Adresse + Ziel · in Warteschlange bis Disponent Fahrer zuweist."
       ],
-      "footnote": "Who ships which kg to which buyer is set in ops — not inferred from forecasts in-app.",
+      "footnote": "Wer welche kg an welchen Käufer liefert, wird in Ops festgelegt — nicht aus Prognosen in der App abgeleitet.",
       "links": [
         {
-          "label": "Request transport",
-          "href": "/grower/missions/create"
+          "label": "Transport anfordern",
+          "href": "/Erzeuger/Missionen/create"
         }
       ]
     },
     {
-      "title": "Missions",
+      "title": "Missionen",
       "paragraphs": [
-        "Handover · cold chain · hub/buyer milestones · app: missions list · web: /grower/portal."
+        "Übergabe · Kühlkette · Hub/Käufer-Meilensteine · App: Missionsliste · Web: /grower/portal."
       ],
       "links": [
         {
-          "label": "Mission tracker",
-          "href": "/grower/portal"
+          "label": "Missions-Tracker",
+          "href": "/Erzeuger/portal"
         }
       ]
     },
     {
-      "title": "Profile",
+      "title": "Profil",
       "paragraphs": [
-        "Partner code, country, notifications · wallet & certs live under Profile on mobile."
+        "Partnercode, Land, Benachrichtigungen · Wallet & Zertifikate unter Profil in der App."
       ],
       "links": [
         {
-          "label": "My profile",
-          "href": "/grower/profile"
+          "label": "Mein Profil",
+          "href": "/Erzeuger/profile"
         }
       ]
     }
   ],
-  "seasonMetaChip": "12 steps · sidebar order"
+  "seasonMetaChip": "12 Schritte · Reihenfolge der Seitenleiste"
 }
