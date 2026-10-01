@@ -192,6 +192,7 @@ export function useProfileData() {
     showLocationModal,
     setShowLocationModal,
     openLocationModal,
+    editingLocationId,
     showStaffModal,
     setShowStaffModal,
     companyData,

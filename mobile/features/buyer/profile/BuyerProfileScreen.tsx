@@ -144,6 +144,7 @@ export default function BuyerProfileScreen() {
               newLocation={data.newLocation}
               setNewLocation={data.setNewLocation}
               onAdd={data.handleAddLocation}
+              editingLocationId={data.editingLocationId}
             />
           ) : null}
 

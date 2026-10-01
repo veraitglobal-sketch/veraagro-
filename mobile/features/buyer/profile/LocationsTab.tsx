@@ -14,6 +14,7 @@ type Props = {
   newLocation: Partial<DeliveryLocation>;
   setNewLocation: (loc: Partial<DeliveryLocation>) => void;
   onAdd: () => void;
+  editingLocationId: string | null;
 };
 
 export function LocationsTab({
@@ -26,6 +27,7 @@ export function LocationsTab({
   newLocation,
   setNewLocation,
   onAdd,
+  editingLocationId,
 }: Props) {
   const { t } = useTranslation();
 
@@ -135,7 +137,11 @@ export function LocationsTab({
                 marginBottom: theme.spacing.lg,
               }}
             >
-              <Text style={modalTitle}>{t('buyer.profile.modalTitleAddLocation')}</Text>
+              <Text style={modalTitle}>
+                {editingLocationId
+                  ? t('buyer.profile.modalTitleEditLocation')
+                  : t('buyer.profile.modalTitleAddLocation')}
+              </Text>
               <TouchableOpacity onPress={onCloseModal} accessibilityRole="button" accessibilityLabel={t('common.close')}>
                 <X size={20} color={theme.colors.text.secondary} strokeWidth={1.5} />
               </TouchableOpacity>
@@ -169,6 +175,12 @@ export function LocationsTab({
                 />
               </View>
               <TextInput
+                placeholder={t('buyer.checkout.country')}
+                value={newLocation.country}
+                onChangeText={(text) => setNewLocation({ ...newLocation, country: text })}
+                style={fieldStyle}
+              />
+              <TextInput
                 placeholder={t('buyer.profile.placeholderResponsiblePerson')}
                 value={newLocation.responsiblePerson}
                 onChangeText={(text) => setNewLocation({ ...newLocation, responsiblePerson: text })}
@@ -193,7 +205,11 @@ export function LocationsTab({
                   <Text style={cancelBtnText}>{t('common.cancel')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onAdd} style={confirmBtn}>
-                  <Text style={confirmBtnText}>{t('buyer.profile.confirmAddLocation')}</Text>
+                  <Text style={confirmBtnText}>
+                    {editingLocationId
+                      ? t('buyer.profile.confirmEditLocation')
+                      : t('buyer.profile.confirmAddLocation')}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>

@@ -42,9 +42,15 @@ interface AuthorizedPerson {
 
 type TabType = 'general' | 'locations' | 'staff';
 
-function showField(v: string) {
-  return v?.trim() ? v : '—';
-}
+const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
+
+const STAFF_ROLES = [
+  { value: 'Purchasing Manager', key: 'purchasingManager' },
+  { value: 'Warehouse Lead', key: 'warehouseLead' },
+  { value: 'Accountant', key: 'accountant' },
+  { value: 'Operations Manager', key: 'operationsManager' },
+  { value: 'Quality Control', key: 'qualityControl' },
+] as const;
 
 export default function BuyerProfilePage() {
   const { t } = useTranslation();
@@ -91,6 +97,8 @@ export default function BuyerProfilePage() {
     },
     [companyData, deliveryLocations, authorizedPersonnel],
   );
+
+  const showField = (v: string) => (v?.trim() ? v : t('buyerPortalProfile.emptyField'));
 
   const handleSaveGeneral = async () => {
     setSaveError(null);
@@ -314,21 +322,15 @@ export default function BuyerProfilePage() {
         )}
         {saveError && (
           <div className="bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-lg text-sm">
-            <p className="font-medium">Could not save</p>
+            <p className="font-medium">{t('buyerPortalProfile.saveFailedTitle')}</p>
             <p className="mt-1 font-light">{saveError}</p>
-            <p className="mt-2 text-xs font-light text-red-800/90">
-              If the message mentions a migration, run the SQL in Railway (Postgres → Query) for column
-              <code className="mx-1 bg-red-100 px-1 rounded">buyerCompanyProfile</code>
-              (see <code className="mx-1 bg-red-100 px-1 rounded">backend/MIGRATIONS.md</code> and column{' '}
-              <code className="mx-1 bg-red-100 px-1 rounded">users.buyerCompanyProfile</code>) or{' '}
-              <code className="mx-1 bg-red-100 px-1 rounded">npx prisma migrate deploy</code> for a fresh install.
-            </p>
+            <p className="mt-2 text-xs font-light text-red-800/90">{t('buyerPortalProfile.saveFailedMigrationHint')}</p>
           </div>
         )}
         {loading ? (
           <div className="flex items-center justify-center py-24 gap-2 text-gray-500">
             <Loader2 className="w-5 h-5 animate-spin" />
-            <span className="text-sm font-light">Loading profile…</span>
+            <span className="text-sm font-light">{t('buyerPortalProfile.loading')}</span>
           </div>
         ) : null}
         {!loading && (
@@ -337,9 +339,9 @@ export default function BuyerProfilePage() {
         <div className="border-b border-gray-200">
           <nav className="flex space-x-8">
             {[
-              { id: 'general' as TabType, label: 'General', icon: Building2 },
-              { id: 'locations' as TabType, label: 'Delivery Locations', icon: Truck },
-              { id: 'staff' as TabType, label: 'Staff', icon: Users },
+              { id: 'general' as TabType, labelKey: 'buyerPortalProfile.tabGeneral', icon: Building2 },
+              { id: 'locations' as TabType, labelKey: 'buyerPortalProfile.tabLocations', icon: Truck },
+              { id: 'staff' as TabType, labelKey: 'buyerPortalProfile.tabStaff', icon: Users },
             ].map((tab) => {
               const Icon = tab.icon;
               return (
@@ -353,7 +355,7 @@ export default function BuyerProfilePage() {
                   }`}
                 >
                   <Icon className="w-4 h-4" strokeWidth={1.5} />
-                  {tab.label}
+                  {t(tab.labelKey)}
                 </button>
               );
             })}
@@ -364,7 +366,7 @@ export default function BuyerProfilePage() {
         {activeTab === 'general' && (
           <div className="border-b border-green-200/50 pb-8">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-light text-gray-900">Company Core</h2>
+                <h2 className="text-lg font-light text-gray-900">{t('buyerPortalProfile.companyCore')}</h2>
                 <button
                   type="button"
                   disabled={saving}
@@ -378,17 +380,17 @@ export default function BuyerProfilePage() {
                   className="px-4 py-2 text-sm font-light text-gray-700 bg-white border border-[0.5px] border-black/10 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 inline-flex items-center gap-2"
                 >
                   {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  {isEditing ? 'Save changes' : 'Edit'}
+                  {isEditing ? t('buyerPortalProfile.saveChanges') : t('buyerPortalProfile.edit')}
                 </button>
               </div>
 
               <div className="space-y-6">
                 {/* Legal Entity */}
                 <div>
-                  <h3 className="text-xs font-light tracking-[0.15em] text-gray-500 uppercase mb-4">Legal Entity</h3>
+                  <h3 className="text-xs font-light tracking-[0.15em] text-gray-500 uppercase mb-4">{t('buyerPortalProfile.legalEntity')}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">Company Name</label>
+                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.companyName')}</label>
                       {isEditing ? (
                         <input
                           type="text"
@@ -401,7 +403,7 @@ export default function BuyerProfilePage() {
                       )}
                     </div>
                     <div>
-                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">Tax ID (USt-ID)</label>
+                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.taxId')}</label>
                       {isEditing ? (
                         <input
                           type="text"
@@ -414,7 +416,7 @@ export default function BuyerProfilePage() {
                       )}
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">Headquarters</label>
+                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.headquarters')}</label>
                       {isEditing ? (
                         <input
                           type="text"
@@ -431,10 +433,10 @@ export default function BuyerProfilePage() {
 
                 {/* Management */}
                 <div className="pt-4 border-t border-[0.5px] border-black/10">
-                  <h3 className="text-xs font-light tracking-[0.15em] text-gray-500 uppercase mb-4">Management</h3>
+                  <h3 className="text-xs font-light tracking-[0.15em] text-gray-500 uppercase mb-4">{t('buyerPortalProfile.management')}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">General Director</label>
+                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.generalDirector')}</label>
                       {isEditing ? (
                         <input
                           type="text"
@@ -447,7 +449,7 @@ export default function BuyerProfilePage() {
                       )}
                     </div>
                     <div>
-                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">Finance Manager</label>
+                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.financeManager')}</label>
                       {isEditing ? (
                         <input
                           type="text"
@@ -469,13 +471,13 @@ export default function BuyerProfilePage() {
           {activeTab === 'locations' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-light text-gray-900">Delivery Points</h2>
+                <h2 className="text-lg font-light text-gray-900">{t('buyerPortalProfile.deliveryPoints')}</h2>
                 <button
                   onClick={() => openLocationModal()}
                   className="flex items-center gap-2 px-4 py-2 text-sm font-light text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
                 >
                   <Plus className="w-4 h-4" strokeWidth={1.5} />
-                  Add New Location
+                  {t('buyerPortalProfile.addNewLocation')}
                 </button>
               </div>
 
@@ -495,10 +497,13 @@ export default function BuyerProfilePage() {
                           {location.address}, {location.postalCode} {location.city}, {location.country}
                         </p>
                         <p className="text-[11px] font-light text-gray-500">
-                          Responsible: {location.responsiblePerson} • {location.responsiblePhone}
+                          {t('buyerPortalProfile.responsible', {
+                            name: location.responsiblePerson,
+                            phone: location.responsiblePhone,
+                          })}
                         </p>
                         <p className="text-[11px] font-light text-gray-500 mt-1">
-                          Hours: Mon-Fri {location.operatingHours.monday}
+                          {t('buyerPortalProfile.hoursMonFri', { hours: location.operatingHours.monday })}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -527,13 +532,13 @@ export default function BuyerProfilePage() {
           {activeTab === 'staff' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-light text-gray-900">Authorized Personnel</h2>
+                <h2 className="text-lg font-light text-gray-900">{t('buyerPortalProfile.authorizedPersonnel')}</h2>
                 <button
                   onClick={() => setShowStaffModal(true)}
                   className="flex items-center gap-2 px-4 py-2 text-sm font-light text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
                 >
                   <Plus className="w-4 h-4" strokeWidth={1.5} />
-                  Add Person
+                  {t('buyerPortalProfile.addPerson')}
                 </button>
               </div>
 
@@ -579,7 +584,11 @@ export default function BuyerProfilePage() {
             >
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-light text-gray-900">Add New Delivery Location</h3>
+                    <h3 className="text-lg font-light text-gray-900">
+                      {editingLocationId
+                        ? t('buyerPortalProfile.modalEditLocation')
+                        : t('buyerPortalProfile.modalAddLocation')}
+                    </h3>
                     <button
                       onClick={() => setShowLocationModal(false)}
                       className="p-1 text-gray-400 hover:text-gray-600"
@@ -590,19 +599,19 @@ export default function BuyerProfilePage() {
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">Alias</label>
+                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.alias')}</label>
                       <input
                         type="text"
                         value={newLocation.alias}
                         onChange={(e) => setNewLocation({ ...newLocation, alias: e.target.value })}
-                        placeholder="e.g., Glavni Distributivni Centar - Hamburg"
+                        placeholder={t('buyerPortalProfile.aliasPlaceholder')}
                         className="w-full px-3 py-2 text-sm font-light border-[0.5px] border-black/10 rounded-lg focus:ring-1 focus:ring-green-600 focus:border-green-600"
                       />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">Address</label>
+                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.address')}</label>
                         <input
                           type="text"
                           value={newLocation.address}
@@ -611,7 +620,7 @@ export default function BuyerProfilePage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">City</label>
+                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.city')}</label>
                         <input
                           type="text"
                           value={newLocation.city}
@@ -623,7 +632,7 @@ export default function BuyerProfilePage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">Postal Code</label>
+                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.postalCode')}</label>
                         <input
                           type="text"
                           value={newLocation.postalCode}
@@ -632,7 +641,7 @@ export default function BuyerProfilePage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">Country</label>
+                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.country')}</label>
                         <input
                           type="text"
                           value={newLocation.country}
@@ -644,7 +653,7 @@ export default function BuyerProfilePage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">Latitude</label>
+                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.latitude')}</label>
                         <input
                           type="number"
                           step="any"
@@ -654,7 +663,7 @@ export default function BuyerProfilePage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">Longitude</label>
+                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.longitude')}</label>
                         <input
                           type="number"
                           step="any"
@@ -667,7 +676,7 @@ export default function BuyerProfilePage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">Responsible Person</label>
+                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.responsiblePerson')}</label>
                         <input
                           type="text"
                           value={newLocation.responsiblePerson}
@@ -676,7 +685,7 @@ export default function BuyerProfilePage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">Phone</label>
+                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.phone')}</label>
                         <input
                           type="tel"
                           value={newLocation.responsiblePhone}
@@ -687,11 +696,11 @@ export default function BuyerProfilePage() {
                     </div>
 
                     <div className="pt-4 border-t border-[0.5px] border-black/10">
-                      <label className="block text-[11px] font-light text-gray-600 mb-3">Operating Hours</label>
+                      <label className="block text-[11px] font-light text-gray-600 mb-3">{t('buyerPortalProfile.operatingHours')}</label>
                       <div className="grid grid-cols-2 gap-3">
-                        {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
+                        {WEEKDAYS.map((day) => (
                           <div key={day}>
-                            <label className="block text-[10px] font-light text-gray-500 mb-1 capitalize">{day}</label>
+                            <label className="block text-[10px] font-light text-gray-500 mb-1">{t(`buyerPortalProfile.days.${day}`)}</label>
                             <input
                               type="text"
                               value={newLocation.operatingHours?.[day as keyof typeof newLocation.operatingHours] || ''}
@@ -704,7 +713,7 @@ export default function BuyerProfilePage() {
                                   } as any,
                                 })
                               }
-                              placeholder="08:00 - 18:00"
+                              placeholder={t('buyerPortalProfile.hoursPlaceholder')}
                               className="w-full px-3 py-2 text-sm font-light border-[0.5px] border-black/10 rounded-lg focus:ring-1 focus:ring-green-600 focus:border-green-600"
                             />
                           </div>
@@ -717,13 +726,15 @@ export default function BuyerProfilePage() {
                         onClick={() => setShowLocationModal(false)}
                         className="px-4 py-2 text-sm font-light text-gray-700 bg-white border border-[0.5px] border-black/10 rounded-lg hover:bg-gray-50"
                       >
-                        Cancel
+                        {t('buyerPortalProfile.cancel')}
                       </button>
                       <button
                         onClick={handleAddLocation}
                         className="px-4 py-2 text-sm font-light text-white bg-green-600 rounded-lg hover:bg-green-700"
                       >
-                        Add Location
+                        {editingLocationId
+                          ? t('buyerPortalProfile.confirmEditLocation')
+                          : t('buyerPortalProfile.confirmAddLocation')}
                       </button>
                     </div>
                   </div>
@@ -744,7 +755,7 @@ export default function BuyerProfilePage() {
             >
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-light text-gray-900">Add Authorized Person</h3>
+                    <h3 className="text-lg font-light text-gray-900">{t('buyerPortalProfile.modalAddStaff')}</h3>
                     <button
                       onClick={() => setShowStaffModal(false)}
                       className="p-1 text-gray-400 hover:text-gray-600"
@@ -756,7 +767,7 @@ export default function BuyerProfilePage() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">First Name</label>
+                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.firstName')}</label>
                         <input
                           type="text"
                           value={newStaff.firstName}
@@ -765,7 +776,7 @@ export default function BuyerProfilePage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">Last Name</label>
+                        <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.lastName')}</label>
                         <input
                           type="text"
                           value={newStaff.lastName}
@@ -776,7 +787,7 @@ export default function BuyerProfilePage() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">Email</label>
+                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.email')}</label>
                       <input
                         type="email"
                         value={newStaff.email}
@@ -786,7 +797,7 @@ export default function BuyerProfilePage() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">Phone</label>
+                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.phone')}</label>
                       <input
                         type="tel"
                         value={newStaff.phone}
@@ -796,18 +807,18 @@ export default function BuyerProfilePage() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">Role</label>
+                      <label className="block text-[11px] font-light text-gray-600 mb-1.5">{t('buyerPortalProfile.role')}</label>
                       <select
                         value={newStaff.role}
                         onChange={(e) => setNewStaff({ ...newStaff, role: e.target.value })}
                         className="w-full px-3 py-2 text-sm font-light border-[0.5px] border-black/10 rounded-lg focus:ring-1 focus:ring-green-600 focus:border-green-600"
                       >
-                        <option value="">Select Role</option>
-                        <option value="Purchasing Manager">Purchasing Manager</option>
-                        <option value="Warehouse Lead">Warehouse Lead</option>
-                        <option value="Accountant">Accountant</option>
-                        <option value="Operations Manager">Operations Manager</option>
-                        <option value="Quality Control">Quality Control</option>
+                        <option value="">{t('buyerPortalProfile.selectRole')}</option>
+                        {STAFF_ROLES.map((role) => (
+                          <option key={role.value} value={role.value}>
+                            {t(`buyerPortalProfile.roles.${role.key}`)}
+                          </option>
+                        ))}
                       </select>
                     </div>
 
@@ -816,13 +827,13 @@ export default function BuyerProfilePage() {
                         onClick={() => setShowStaffModal(false)}
                         className="px-4 py-2 text-sm font-light text-gray-700 bg-white border border-[0.5px] border-black/10 rounded-lg hover:bg-gray-50"
                       >
-                        Cancel
+                        {t('buyerPortalProfile.cancel')}
                       </button>
                       <button
                         onClick={handleAddStaff}
                         className="px-4 py-2 text-sm font-light text-white bg-green-600 rounded-lg hover:bg-green-700"
                       >
-                        Add Person
+                        {t('buyerPortalProfile.confirmAddStaff')}
                       </button>
                     </div>
                   </div>
