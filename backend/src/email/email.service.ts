@@ -740,13 +740,12 @@ Bio Vera Team
         `,
       };
 
-      if (!this.transporter) {
-        this.logger.warn('Email not configured, skipping verification email');
-        return false;
-      }
-      await this.transporter.sendMail(mailOptions);
-      this.logger.log(`Verification email sent to ${data.email}`);
-      return true;
+      return this.sendSimpleEmail({
+        to: data.email,
+        subject: mailOptions.subject,
+        html: mailOptions.html,
+        text: mailOptions.text,
+      });
     } catch (error) {
       this.logger.error(`Failed to send verification email to ${data.email}:`, error);
       return false;
@@ -870,7 +869,11 @@ Bio Vera Team
         <p style="color:#666;font-size:12px;">Bio Vera</p>
       </body></html>`;
     const text = `${data.firstName},\n\n${t.intro}\n\n${data.code}\n\n${t.expiry}\n\n— Bio Vera`;
-    return this.sendSimpleEmail({ to: data.email, subject, html, text });
+    const ok = await this.sendSimpleEmail({ to: data.email, subject, html, text });
+    if (ok) {
+      this.logger.log(`Buyer verification code email queued to ${data.email}`);
+    }
+    return ok;
   }
 
   /** Notify buyer their account was approved by admin. */
@@ -986,9 +989,12 @@ Please change your password after first sign-in.
           text: data.text,
         });
         if (error) {
-          this.logger.error(`Resend email error: ${JSON.stringify(error)}`);
+          this.logger.error(
+            `Resend email failed to=${data.to} from=${fromAddr}: ${error.message ?? JSON.stringify(error)}`,
+          );
           return false;
         }
+        this.logger.log(`Resend email sent to=${data.to} subject="${data.subject}"`);
         return true;
       }
       if (this.transporter) {

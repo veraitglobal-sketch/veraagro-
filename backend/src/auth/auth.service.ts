@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
@@ -13,6 +13,8 @@ import { RegisterGrowerDto } from './dto/register-grower.dto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
@@ -209,7 +211,18 @@ export class AuthService {
         preferredLanguage: data.preferredLanguage,
         expiresInMinutes: 15,
       })
-      .catch(() => undefined);
+      .then((ok) => {
+        if (!ok) {
+          this.logger.error(
+            `buyer verification email NOT sent user=${data.email} — check RESEND_API_KEY and EMAIL_FROM`,
+          );
+        }
+      })
+      .catch((e) =>
+        this.logger.error(
+          `buyer verification email failed user=${data.email}: ${e instanceof Error ? e.message : e}`,
+        ),
+      );
 
     const buyerLabel = [data.businessName, `${data.firstName} ${data.lastName}`.trim()]
       .filter(Boolean)
