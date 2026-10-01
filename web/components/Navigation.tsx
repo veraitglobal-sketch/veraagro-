@@ -1,5 +1,6 @@
 'use client';
 
+import { PRE_ORDER_SEASON } from '@biovera/shared/preorder';
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -53,6 +54,15 @@ export default function Navigation() {
       data-biovera-root-navigation
       className="bg-white border-b border-gray-200 sticky top-0 z-50 print:hidden"
     >
+      {/* Green announcement bar — also gives Safari a green toolbar (it samples the top of the page). */}
+      {(!isAuthenticated || (user?.roles ?? []).includes('BUYER')) && (
+      <Link
+        href={isAuthenticated ? '/pre-order' : `${loc('/login')}?returnTo=${encodeURIComponent('/pre-order')}`}
+        className="block bg-[#2D5A27] text-white text-xs sm:text-sm font-medium text-center px-4 py-2 hover:bg-[#23471f] transition-colors"
+      >
+        {t('home.hero.preOrder', { year: PRE_ORDER_SEASON })} →
+      </Link>
+      )}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16">
           {/* Logo — left */}
