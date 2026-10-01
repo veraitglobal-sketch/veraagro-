@@ -150,7 +150,7 @@
     "appAndroid": "Android",
     "logoAlt": "Bio Vera",
     "terms": "Uslovi korišćenja",
-    "impressum": "Impressum"
+    "impressum": "Pravni podaci"
   },
   "languagePage": {
     "eyebrow": "Podešavanja",
@@ -4418,7 +4418,7 @@
     "cardCookiesDesc": "Kako koristimo kolačiće i slične tehnologije na sajtovima i u aplikacijama.",
     "sectionTechTitle": "Tehnička realizacija",
     "techImplementation": "Tehnička realizacija / softver: <1>Vera IT</1>.",
-    "cardImpressumTitle": "Impressum",
+    "cardImpressumTitle": "Pravni podaci",
     "cardImpressumDesc": "Podaci o firmi: vlasnik, adresa u Hamburgu, PDV broj i kontakt."
   },
   "supplierStatusPage": {
@@ -5596,7 +5596,7 @@
     "termsUpdated": "Poslednje ažuriranje: januar 2026.",
     "cookiesTitle": "Politika kolačića",
     "cookiesUpdated": "Poslednje ažuriranje: januar 2026.",
-    "impressumTitle": "Impressum",
+    "impressumTitle": "Pravni podaci",
     "impressumUpdated": "Poslednje ažuriranje: oktobar 2026."
   },
   "refundReconciliation": {

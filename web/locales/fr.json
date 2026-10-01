@@ -38,7 +38,7 @@
     "roadmap": "Feuille de route",
     "faq": "FAQ",
     "security": "Sécurité",
-    "legalHub": "Légal",
+    "legalHub": "Informations juridiques",
     "privacy": "Confidentialité",
     "cookiePolicy": "Politique en matière de cookies",
     "manageCookies": "Gérer les cookies",
@@ -48,7 +48,7 @@
     "appAndroid": "Androïde",
     "logoAlt": "Bio Vera",
     "terms": "Termes",
-    "impressum": "Impressum"
+    "impressum": "Mentions légales"
   },
   "languagePage": {
     "eyebrow": "Paramètres",
@@ -4001,7 +4001,7 @@
     "redirecting": "Redirection…"
   },
   "legalPage": {
-    "title": "Mentions légales",
+    "title": "Informations juridiques",
     "sectionDocumentsTitle": "Documents juridiques",
     "sectionDocumentsLead": "Accédez à nos documents juridiques et politiques pour comprendre vos droits et obligations lorsque vous utilisez les services Bio Vera.",
     "cardTermsTitle": "Conditions d'utilisation",
@@ -4012,7 +4012,7 @@
     "cardCookiesDesc": "Comprendre comment nous utilisons les cookies et technologies similaires sur nos sites Web et applications.",
     "sectionTechTitle": "Réalisation technique",
     "techImplementation": "Réalisation technique / logiciel par <1>Vera IT</1>.",
-    "cardImpressumTitle": "Impressum",
+    "cardImpressumTitle": "Mentions légales",
     "cardImpressumDesc": "Informations sur l’entreprise : exploitant, adresse à Hambourg, n° de TVA et contact."
   },
   "investorDeckPage": {
@@ -4528,7 +4528,7 @@
     "termsUpdated": "Dernière mise à jour : janvier 2026",
     "cookiesTitle": "Politique en matière de cookies",
     "cookiesUpdated": "Dernière mise à jour : janvier 2026",
-    "impressumTitle": "Impressum",
+    "impressumTitle": "Mentions légales",
     "impressumUpdated": "Dernière mise à jour : octobre 2026"
   },
   "connectedWorkflow": {

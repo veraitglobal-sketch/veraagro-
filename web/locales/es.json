@@ -48,7 +48,7 @@
     "appAndroid": "Androide",
     "logoAlt": "Bio Vera",
     "terms": "Términos",
-    "impressum": "Impressum"
+    "impressum": "Aviso legal"
   },
   "languagePage": {
     "eyebrow": "Ajustes",
@@ -4012,7 +4012,7 @@
     "cardCookiesDesc": "Comprenda cómo utilizamos cookies y tecnologías similares en nuestros sitios web y aplicaciones.",
     "sectionTechTitle": "Implementación técnica",
     "techImplementation": "Implementación técnica / software de <1>Vera IT</1>.",
-    "cardImpressumTitle": "Impressum",
+    "cardImpressumTitle": "Aviso legal",
     "cardImpressumDesc": "Datos de la empresa: titular, dirección en Hamburgo, NIF-IVA y contacto."
   },
   "investorDeckPage": {
@@ -4528,7 +4528,7 @@
     "termsUpdated": "Última actualización: enero de 2026",
     "cookiesTitle": "Política de cookies",
     "cookiesUpdated": "Última actualización: enero de 2026",
-    "impressumTitle": "Impressum",
+    "impressumTitle": "Aviso legal",
     "impressumUpdated": "Última actualización: octubre de 2026"
   },
   "connectedWorkflow": {

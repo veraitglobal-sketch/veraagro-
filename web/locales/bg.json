@@ -38,7 +38,7 @@
     "roadmap": "Пътна карта",
     "faq": "ЧЗВ",
     "security": "сигурност",
-    "legalHub": "Законни",
+    "legalHub": "Правна информация",
     "privacy": "Поверителност",
     "cookiePolicy": "Политика за бисквитки",
     "manageCookies": "Управление на бисквитките",
@@ -48,7 +48,7 @@
     "appAndroid": "Android",
     "logoAlt": "Био Вера",
     "terms": "Условия",
-    "impressum": "Impressum"
+    "impressum": "Данни за компанията"
   },
   "languagePage": {
     "eyebrow": "Настройки",
@@ -4012,7 +4012,7 @@
     "cardCookiesDesc": "Разберете как използваме бисквитки и подобни технологии на нашите уебсайтове и приложения.",
     "sectionTechTitle": "Техническа реализация",
     "techImplementation": "Техническа реализация / софтуер от <1>Vera IT</1>.",
-    "cardImpressumTitle": "Impressum",
+    "cardImpressumTitle": "Данни за компанията",
     "cardImpressumDesc": "Данни за компанията: собственик, адрес в Хамбург, ДДС номер и контакт."
   },
   "investorDeckPage": {
@@ -4528,7 +4528,7 @@
     "termsUpdated": "Последна актуализация: януари 2026 г",
     "cookiesTitle": "Политика за бисквитки",
     "cookiesUpdated": "Последна актуализация: януари 2026 г",
-    "impressumTitle": "Impressum",
+    "impressumTitle": "Данни за компанията",
     "impressumUpdated": "Последна актуализация: октомври 2026 г."
   },
   "connectedWorkflow": {

@@ -38,7 +38,7 @@
     "roadmap": "Foaia de parcurs",
     "faq": "ÎNTREBĂRI FRECVENTE",
     "security": "Securitate",
-    "legalHub": "Legal",
+    "legalHub": "Informații juridice",
     "privacy": "Confidențialitate",
     "cookiePolicy": "Politica de cookie-uri",
     "manageCookies": "Gestionați cookie-urile",
@@ -48,7 +48,7 @@
     "appAndroid": "Android",
     "logoAlt": "Bio Vera",
     "terms": "Termeni",
-    "impressum": "Impressum"
+    "impressum": "Mențiuni legale"
   },
   "languagePage": {
     "eyebrow": "Setări",
@@ -4012,7 +4012,7 @@
     "cardCookiesDesc": "Înțelegeți cum folosim module cookie și tehnologii similare pe site-urile și aplicațiile noastre.",
     "sectionTechTitle": "Implementare tehnică",
     "techImplementation": "Implementare tehnică / software de <1>Vera IT</1>.",
-    "cardImpressumTitle": "Impressum",
+    "cardImpressumTitle": "Mențiuni legale",
     "cardImpressumDesc": "Datele companiei: titular, adresă în Hamburg, cod TVA și contact."
   },
   "investorDeckPage": {
@@ -4528,7 +4528,7 @@
     "termsUpdated": "Ultima actualizare: ianuarie 2026",
     "cookiesTitle": "Politica de cookie-uri",
     "cookiesUpdated": "Ultima actualizare: ianuarie 2026",
-    "impressumTitle": "Impressum",
+    "impressumTitle": "Mențiuni legale",
     "impressumUpdated": "Ultima actualizare: octombrie 2026"
   },
   "connectedWorkflow": {

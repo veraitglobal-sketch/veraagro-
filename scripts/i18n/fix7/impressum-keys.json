@@ -1,21 +1,21 @@
 {
  "footer.impressum": {
-  "en": "Impressum",
-  "sr": "Impressum",
+  "sr": "Pravni podaci",
+  "en": "Legal notice",
   "de": "Impressum",
-  "es": "Impressum",
-  "fr": "Impressum",
-  "ro": "Impressum",
-  "bg": "Impressum"
+  "es": "Aviso legal",
+  "fr": "Mentions légales",
+  "ro": "Mențiuni legale",
+  "bg": "Данни за компанията"
  },
  "legalDocsMeta.impressumTitle": {
-  "en": "Impressum",
-  "sr": "Impressum",
+  "sr": "Pravni podaci",
+  "en": "Legal notice",
   "de": "Impressum",
-  "es": "Impressum",
-  "fr": "Impressum",
-  "ro": "Impressum",
-  "bg": "Impressum"
+  "es": "Aviso legal",
+  "fr": "Mentions légales",
+  "ro": "Mențiuni legale",
+  "bg": "Данни за компанията"
  },
  "legalDocsMeta.impressumUpdated": {
   "en": "Last updated: October 2026",
@@ -27,13 +27,13 @@
   "bg": "Последна актуализация: октомври 2026 г."
  },
  "legalPage.cardImpressumTitle": {
-  "en": "Impressum",
-  "sr": "Impressum",
+  "sr": "Pravni podaci",
+  "en": "Legal notice",
   "de": "Impressum",
-  "es": "Impressum",
-  "fr": "Impressum",
-  "ro": "Impressum",
-  "bg": "Impressum"
+  "es": "Aviso legal",
+  "fr": "Mentions légales",
+  "ro": "Mențiuni legale",
+  "bg": "Данни за компанията"
  },
  "legalPage.cardImpressumDesc": {
   "en": "Company details: owner, address in Hamburg, VAT ID and contact.",
@@ -43,5 +43,23 @@
   "fr": "Informations sur l’entreprise : exploitant, adresse à Hambourg, n° de TVA et contact.",
   "ro": "Datele companiei: titular, adresă în Hamburg, cod TVA și contact.",
   "bg": "Данни за компанията: собственик, адрес в Хамбург, ДДС номер и контакт."
+ },
+ "legalPage.title": {
+  "sr": "Pravne informacije",
+  "en": "Legal information",
+  "de": "Rechtliche Informationen",
+  "es": "Información legal",
+  "fr": "Informations juridiques",
+  "ro": "Informații juridice",
+  "bg": "Правна информация"
+ },
+ "footer.legalHub": {
+  "sr": "Pravne informacije",
+  "en": "Legal",
+  "de": "Rechtliches",
+  "es": "Legal",
+  "fr": "Informations juridiques",
+  "ro": "Informații juridice",
+  "bg": "Правна информация"
  }
 }
