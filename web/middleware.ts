@@ -78,8 +78,8 @@ export function middleware(request: NextRequest) {
   const existingLocale = pathnameStartsWithLocale(pathname);
   if (existingLocale) {
     const afterLocale = pathname.slice(`/${existingLocale}`.length) || "/";
-    /** Locale-prefixed login app routes → rewrite to locale-free `/login/…`. */
-    if (afterLocale === "/login" || afterLocale.startsWith("/login/")) {
+    /** `/sr/login/buyer` etc. → locale-free `/login/buyer`. Keep `/sr/login` on `[locale]/login`. */
+    if (afterLocale.startsWith("/login/")) {
       const url = request.nextUrl.clone();
       url.pathname = afterLocale;
       const res = NextResponse.rewrite(url);
