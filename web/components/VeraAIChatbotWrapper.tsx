@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import BookCallPill from '@/components/BookCallPill';
 
 const VeraAIChatbot = dynamic(() => import('@/components/VeraAIChatbot'), { ssr: false });
 
@@ -41,7 +40,6 @@ export default function VeraAIChatbotWrapper() {
   if (!mounted || !showChat) return null;
   return (
     <div className="print:hidden">
-      <BookCallPill />
       <VeraAIChatbot />
     </div>
   );
