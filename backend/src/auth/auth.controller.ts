@@ -4,6 +4,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { LoginDto } from './dto/login.dto';
 import { RegisterBuyerDto } from './dto/register-buyer.dto';
 import { RegisterGrowerDto } from './dto/register-grower.dto';
+import { ResendVerificationCodeDto, VerifyEmailCodeDto } from './dto/verify-email-code.dto';
 import { UsersService } from '../users/users.service';
 
 @Controller('auth')
@@ -30,6 +31,16 @@ export class AuthController {
   @Post('register/grower')
   async registerGrower(@Body() dto: RegisterGrowerDto) {
     return this.authService.registerGrower(dto);
+  }
+
+  @Post('verify-email-code')
+  async verifyEmailCode(@Body() dto: VerifyEmailCodeDto) {
+    return this.authService.verifyEmailCode(dto.email, dto.code);
+  }
+
+  @Post('resend-verification-code')
+  async resendVerificationCode(@Body() dto: ResendVerificationCodeDto) {
+    return this.authService.resendBuyerVerificationCode(dto.email);
   }
 
   @Get('verify-email')

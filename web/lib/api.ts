@@ -80,6 +80,14 @@ export const authAPI = {
     }
     return response.data;
   },
+  verifyEmailCode: async (email: string, code: string) => {
+    const response = await api.post('/auth/verify-email-code', { email, code });
+    return response.data;
+  },
+  resendVerificationCode: async (email: string) => {
+    const response = await api.post('/auth/resend-verification-code', { email });
+    return response.data;
+  },
   registerBuyer: async (data: {
     email: string;
     partnerCode?: string;

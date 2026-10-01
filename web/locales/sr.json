@@ -760,7 +760,7 @@
     "confirmPassword": "Potvrdi lozinku *",
     "confirmPasswordPh": "Ponovi lozinku",
     "sectionLocation": "Lokacija (opciono)",
-    "sectionLocationLead": "Uneta lokacija može automatski formirati tačku na mapi posle odobrenja administratora.",
+    "sectionLocationLead": "Adresa isporuke i GPS koordinate se čuvaju u profilu firme za kasniju porudžbinu.",
     "useLocation": "📍 Koristi trenutnu lokaciju",
     "gettingLocation": "Učitavanje lokacije…",
     "address": "Adresa",
@@ -789,6 +789,20 @@
     "successPartnerCode": "Vaš partnerski kod: {{code}} — možete se prijaviti i e-poštom nakon odobrenja.",
     "successPending": "Vaš nalog čeka odobrenje od strane Bio Vere. Poslaćemo vam e-poruku kada bude aktivan.",
     "successTitle": "Hvala — registracija je primljena"
+  },
+  "buyerRegisterVerify": {
+    "title": "Potvrdite e-poštu",
+    "subtitle": "Poslali smo vam 4-cifreni kod na e-poštu. Unesite ga ispod.",
+    "codeLabel": "4-cifreni kod",
+    "submit": "Potvrdi e-poštu",
+    "verifying": "Provera…",
+    "resend": "Pošalji novi kod",
+    "resending": "Slanje…",
+    "successTitle": "E-pošta potvrđena",
+    "successBody": "Hvala. Bio Vera će pregledati vaš kupčev nalog i poslati e-poruku kada možete da se prijavite i naručujete.",
+    "goLogin": "Idi na prijavu",
+    "errCodeFormat": "Unesite 4-cifreni kod iz e-poruke.",
+    "errFailed": "Potvrda nije uspela. Proverite kod i pokušajte ponovo."
   },
   "authGuard": {
     "loading": "Učitavanje..."

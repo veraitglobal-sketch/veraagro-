@@ -2976,7 +2976,21 @@
     "registrationFailed": "Registracija nije uspela",
     "successLoginHint": "Dobićete e-poruku kada nalog bude aktivan.",
     "successPartnerCode": "Vaš partnerski kod: {{code}} — možete se prijaviti i e-poštom nakon odobrenja.",
-    "successPending": "Vaš nalog čeka odobrenje od strane Bio Vere. Poslaćemo vam e-poruku kada bude aktivan."
+    "successPending": "Vaš nalog čeka odobrenje od strane Bio Vere. Poslaćemo vam e-poruku kada bude aktivan.",
+    "email": "E-pošta"
+  },
+  "buyerVerifyEmail": {
+    "title": "Potvrdite e-poštu",
+    "subtitle": "Unesite 4-cifreni kod koji smo poslali na vašu e-poštu.",
+    "submit": "Potvrdi e-poštu",
+    "verifying": "Provera…",
+    "resend": "Pošalji novi kod",
+    "codeRequired": "Unesite 4-cifreni kod iz e-poruke.",
+    "successTitle": "E-pošta potvrđena",
+    "successBody": "Bio Vera će pregledati nalog i poslati e-poruku kada možete da se prijavite.",
+    "failed": "Potvrda nije uspela",
+    "resendTitle": "Kod poslat",
+    "resendBody": "Proverite e-poštu za novi 4-cifreni kod."
   },
   "reservationModal": {
     "recovered": "Otvorena je porudžbina iz prethodnog pokušaja. Proveri njenu količinu, adresu i status.",

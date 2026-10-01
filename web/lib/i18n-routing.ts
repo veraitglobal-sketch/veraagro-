@@ -180,6 +180,8 @@ export function withLocalePrefix(locale: SiteLocale, path: string): string {
   const trimmed = path.startsWith("/") ? path : `/${path}`;
   const [pathnamePart, queryPart] = trimmed.split("?");
   const q = queryPart ? `?${queryPart}` : "";
+  /** App routes (/login/buyer, /register/buyer, …) must never get a /sr/ prefix. */
+  if (pathIsLocaleFree(pathnamePart)) return `${pathnamePart}${q}`;
   if (pathnamePart === "/" || pathnamePart === "") return `/${locale}${q}`;
   return `/${locale}${pathnamePart}${q}`;
 }

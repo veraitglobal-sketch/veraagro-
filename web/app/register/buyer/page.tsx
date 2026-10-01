@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +9,7 @@ import { authAPI } from '@/lib/api';
 import Footer from '@/components/Footer';
 export default function BuyerRegisterPage() {
   const { t } = useTranslation();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -122,6 +124,10 @@ export default function BuyerRegisterPage() {
         country: formData.country || undefined,
       });
 
+      if (result?.requiresEmailVerification && formData.email) {
+        router.push(`/register/buyer/verify?email=${encodeURIComponent(formData.email.trim())}`);
+        return;
+      }
       setRegisteredPartnerCode(
         result && typeof result === 'object' && 'user' in result
           ? (result as { user?: { partnerCode?: string } }).user?.partnerCode ?? null

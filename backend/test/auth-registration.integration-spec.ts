@@ -39,7 +39,10 @@ describe('Auth registration — buyer/grower location (no hubs)', () => {
         { provide: JwtService, useValue: { sign: jest.fn().mockReturnValue('test-token') } },
         {
           provide: EmailService,
-          useValue: { sendVerificationEmail: jest.fn().mockResolvedValue(true) },
+          useValue: {
+            sendVerificationEmail: jest.fn().mockResolvedValue(true),
+            sendBuyerVerificationCodeEmail: jest.fn().mockResolvedValue(true),
+          },
         },
         {
           provide: NotificationsService,
@@ -79,11 +82,25 @@ describe('Auth registration — buyer/grower location (no hubs)', () => {
       })
       .expect(201);
 
-    expect(res.body.status).toBe('PENDING_APPROVAL');
+    expect(res.body.status).toBe('PENDING_EMAIL_VERIFICATION');
+    expect(res.body.requiresEmailVerification).toBe(true);
 
     const user = await prisma.users.findFirst({ where: { email } });
     expect(user).toBeTruthy();
     expect(user!.roles).toContain('BUYER');
+
+    const emailToken = await prisma.email_verification_tokens.findUnique({
+      where: { userId: user!.id },
+    });
+    expect(emailToken).toBeTruthy();
+    expect(emailToken!.token).toMatch(/^\d{4}$/);
+
+    const verifyRes = await request(app.getHttpServer())
+      .post('/auth/verify-email-code')
+      .send({ email, code: emailToken!.token })
+      .expect(201);
+    expect(verifyRes.body.success).toBe(true);
+    expect(await prisma.email_verification_tokens.findUnique({ where: { userId: user!.id } })).toBeNull();
 
     const profile = user!.buyerCompanyProfile as {
       deliveryLocations: Array<{ latitude: number; longitude: number; address: string; city: string }>;

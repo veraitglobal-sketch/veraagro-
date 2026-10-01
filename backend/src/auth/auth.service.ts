@@ -72,6 +72,18 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
 
+    if (user.roles.includes(UserRole.BUYER)) {
+      const pendingEmail = await this.prisma.email_verification_tokens.findUnique({
+        where: { userId: user.id },
+      });
+      if (pendingEmail) {
+        throw new UnauthorizedException({
+          message: 'Please verify your email with the 4-digit code we sent you.',
+          code: 'EMAIL_NOT_VERIFIED',
+        });
+      }
+    }
+
     if (user.status === UserStatus.PENDING_VERIFICATION) {
       throw new UnauthorizedException({
         message: 'Your account is waiting for approval by Bio Vera.',
@@ -155,9 +167,11 @@ export class AuthService {
     const passwordHash = await bcrypt.hash(data.password, 10);
 
     const buyerCompanyProfile = this.buildBuyerCompanyProfileFromRegistration(data);
+    const verificationCode = this.generateEmailVerificationCode();
+    const verificationExpiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
-    await this.prisma.$transaction(async (tx) => {
-      await tx.users.create({
+    const createdUser = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.users.create({
         data: {
           id: crypto.randomUUID(),
           partnerCode,
@@ -174,7 +188,28 @@ export class AuthService {
           updatedAt: new Date(),
         } as any,
       });
+
+      await tx.email_verification_tokens.create({
+        data: {
+          id: crypto.randomUUID(),
+          userId: user.id,
+          token: verificationCode,
+          expiresAt: verificationExpiresAt,
+        },
+      });
+
+      return user;
     });
+
+    void this.emailService
+      .sendBuyerVerificationCodeEmail({
+        email: data.email,
+        firstName: data.firstName,
+        code: verificationCode,
+        preferredLanguage: data.preferredLanguage,
+        expiresInMinutes: 15,
+      })
+      .catch(() => undefined);
 
     const buyerLabel = [data.businessName, `${data.firstName} ${data.lastName}`.trim()]
       .filter(Boolean)
@@ -187,10 +222,89 @@ export class AuthService {
       .catch(() => undefined);
 
     return {
-      status: 'PENDING_APPROVAL',
-      message: 'Thanks — your account is waiting for approval by Bio Vera. We will e-mail you when it is active.',
+      status: 'PENDING_EMAIL_VERIFICATION',
+      message:
+        'Registration received. Enter the 4-digit code we sent to your email. Your account will be reviewed by Bio Vera after verification.',
+      email: createdUser.email,
+      requiresEmailVerification: true,
       requiresAdminApproval: true,
     };
+  }
+
+  /** 4-digit numeric code for buyer email verification. */
+  private generateEmailVerificationCode(): string {
+    return String(crypto.randomInt(1000, 10000));
+  }
+
+  async verifyEmailCode(email: string, code: string) {
+    const user = await this.prisma.users.findFirst({
+      where: { email: { equals: email.trim(), mode: 'insensitive' } },
+    });
+    if (!user) {
+      throw new BadRequestException('Invalid verification code');
+    }
+
+    const record = await this.prisma.email_verification_tokens.findUnique({
+      where: { userId: user.id },
+    });
+    if (!record) {
+      return {
+        success: true,
+        message: 'Email already verified. Your account is waiting for approval by Bio Vera.',
+        requiresAdminApproval: user.status === UserStatus.PENDING_VERIFICATION,
+      };
+    }
+    if (record.expiresAt < new Date()) {
+      await this.prisma.email_verification_tokens.delete({ where: { id: record.id } });
+      throw new BadRequestException('Verification code expired. Request a new code.');
+    }
+    if (record.token !== code.trim()) {
+      throw new BadRequestException('Invalid verification code');
+    }
+
+    await this.prisma.email_verification_tokens.delete({ where: { id: record.id } });
+
+    return {
+      success: true,
+      message:
+        'Email verified. Your buyer account is waiting for approval by Bio Vera — we will email you when you can sign in and order.',
+      requiresAdminApproval: user.status === UserStatus.PENDING_VERIFICATION,
+    };
+  }
+
+  async resendBuyerVerificationCode(email: string) {
+    const user = await this.prisma.users.findFirst({
+      where: { email: { equals: email.trim(), mode: 'insensitive' } },
+    });
+    if (!user || !user.roles.includes(UserRole.BUYER)) {
+      return { success: true, message: 'If the account exists, a new code has been sent.' };
+    }
+
+    const existing = await this.prisma.email_verification_tokens.findUnique({
+      where: { userId: user.id },
+    });
+    if (!existing) {
+      return { success: true, message: 'Email is already verified.' };
+    }
+
+    const code = this.generateEmailVerificationCode();
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+    await this.prisma.email_verification_tokens.update({
+      where: { id: existing.id },
+      data: { token: code, expiresAt },
+    });
+
+    void this.emailService
+      .sendBuyerVerificationCodeEmail({
+        email: user.email!,
+        firstName: user.firstName,
+        code,
+        preferredLanguage: user.preferredLanguage,
+        expiresInMinutes: 15,
+      })
+      .catch(() => undefined);
+
+    return { success: true, message: 'A new verification code has been sent to your email.' };
   }
 
   /**

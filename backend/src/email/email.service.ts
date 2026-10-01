@@ -828,6 +828,51 @@ Bio Vera Team
     return false;
   }
 
+  /** Send 4-digit email verification code after buyer self-registration. */
+  async sendBuyerVerificationCodeEmail(data: {
+    email: string;
+    firstName: string;
+    code: string;
+    preferredLanguage?: string | null;
+    expiresInMinutes?: number;
+  }): Promise<boolean> {
+    const lang = data.preferredLanguage?.split('-')[0]?.toLowerCase() ?? 'en';
+    const expires = data.expiresInMinutes ?? 15;
+    const copy: Record<string, { subject: string; intro: string; codeLabel: string; expiry: string }> = {
+      en: {
+        subject: 'Your Bio Vera verification code',
+        intro: 'Enter this code in the app or on the registration page to confirm your email:',
+        codeLabel: 'Verification code',
+        expiry: `The code expires in ${expires} minutes.`,
+      },
+      sr: {
+        subject: 'Bio Vera — kod za potvrdu e-pošte',
+        intro: 'Unesite ovaj kod u aplikaciji ili na stranici registracije da potvrdite e-poštu:',
+        codeLabel: 'Kod za potvrdu',
+        expiry: `Kod važi ${expires} minuta.`,
+      },
+      de: {
+        subject: 'Ihr Bio Vera Bestätigungscode',
+        intro: 'Geben Sie diesen Code ein, um Ihre E-Mail zu bestätigen:',
+        codeLabel: 'Bestätigungscode',
+        expiry: `Der Code läuft in ${expires} Minuten ab.`,
+      },
+    };
+    const t = copy[lang] ?? copy.en;
+    const subject = t.subject;
+    const html = `
+      <!DOCTYPE html><html><head><meta charset="utf-8" /></head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
+        <p><strong>${data.firstName}</strong>,</p>
+        <p>${t.intro}</p>
+        <p style="font-size: 28px; letter-spacing: 6px; font-weight: 700; color: #2D5A27;">${data.code}</p>
+        <p style="color:#666;font-size:13px;">${t.expiry}</p>
+        <p style="color:#666;font-size:12px;">Bio Vera</p>
+      </body></html>`;
+    const text = `${data.firstName},\n\n${t.intro}\n\n${data.code}\n\n${t.expiry}\n\n— Bio Vera`;
+    return this.sendSimpleEmail({ to: data.email, subject, html, text });
+  }
+
   /** Notify buyer their account was approved by admin. */
   async sendBuyerAccountApprovedEmail(data: {
     email: string;

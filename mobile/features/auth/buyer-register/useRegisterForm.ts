@@ -94,6 +94,13 @@ export function useRegisterForm() {
         country: country || undefined,
       });
 
+      if (response.data?.requiresEmailVerification) {
+        router.replace({
+          pathname: '/buyer-verify-email',
+          params: { email: email.trim().toLowerCase() },
+        });
+        return;
+      }
       const pending =
         response.data?.status === 'PENDING_APPROVAL' || response.data?.requiresAdminApproval;
       const partnerCode = response.data?.user?.partnerCode;
