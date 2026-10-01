@@ -96,7 +96,7 @@
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "Un système d'exploitation qui relie production, contrôle qualité, logistique et distribution de produits frais dans une chaîne certifiée unique. Chaque lot suivi de la parcelle au point final. Chaque participant vérifié. Chaque étape documentée.",
+    "siteDescription": "Entreprise agroalimentaire intégrée verticalement, basée à Hambourg. Un passeport numérique de produit européen pour chaque lot — traçabilité du champ au rayon pour les producteurs, la logistique et les fournisseurs.",
     "ldJsonDescription": "Système agrifood certifié pour production, qualité, logistique et distribution — chaque lot suivi de la parcelle au point final, chaque participant vérifié, chaque étape documentée.",
     "keywords": [
       "Bio Vera",
@@ -3411,7 +3411,7 @@
     "hero": {
       "title1": "Intégrée verticalement",
       "title2": "Entreprise agrifood",
-      "subtitle": "Un système d'exploitation qui relie production, contrôle qualité, logistique et distribution de produits frais dans une chaîne certifiée unique. Chaque lot suivi de la parcelle au point final. Chaque participant vérifié. Chaque étape documentée.",
+      "subtitle": "Bio Vera est une entreprise agroalimentaire intégrée verticalement, basée à Hambourg. Dans le cadre de notre propre programme, nous travaillons avec des producteurs sous contrat, assurons le contrôle qualité et le conditionnement, pilotons la chaîne du froid et livrons des fruits et légumes frais jusqu’au client final. Chaque lot dispose d’un passeport numérique documenté — du champ au rayon.",
       "browseProducts": "Parcourir les produits",
       "becomeProducer": "Devenez producteur",
       "preOrder": "Les précommandes pour 2026 sont ouvertes",
@@ -3560,8 +3560,8 @@
       "subtitle": "What Bio Vera is, how traceability works, and who stands behind the platform.",
       "items": [
         {
-          "question": "What is Bio Vera?",
-          "answer": "Bio Vera is a vertically integrated agrifood company based in Hamburg. We contract growers, run quality and packing, operate refrigerated logistics, and sell fresh produce under our own programme — every batch carries a documented digital passport from parcel to shelf. We are not a marketplace that merely connects strangers."
+          "question": "Qu’est-ce que Bio Vera ?",
+          "answer": "Bio Vera est une entreprise agroalimentaire intégrée verticalement, basée à Hambourg. Nous travaillons avec des producteurs sous contrat, assurons le contrôle qualité et le conditionnement, pilotons la chaîne du froid et commercialisons des produits frais dans notre propre programme — chaque lot dispose d’un passeport numérique documenté du champ au rayon. Nous ne sommes pas une place de marché qui se contente de mettre en relation des inconnus."
         },
         {
           "question": "What is an EU Digital Product Passport?",
