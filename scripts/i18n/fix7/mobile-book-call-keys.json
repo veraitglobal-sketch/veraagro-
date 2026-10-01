@@ -1,0 +1,74 @@
+{
+ "bookCall.navCta": {
+  "en": "Book a free call",
+  "sr": "Zakažite besplatan razgovor",
+  "de": "Kostenfreies Erstgespräch",
+  "es": "Reserve una llamada gratuita",
+  "fr": "Réservez un appel gratuit",
+  "ro": "Programați o discuție gratuită",
+  "bg": "Запазете безплатен разговор"
+ },
+ "bookCall.heroSubtitle": {
+  "en": "30 minutes, free and in your language — we’ll show you how Bio Vera works for you, whether you grow, buy, supply or transport.",
+  "sr": "30 minuta, besplatno i na vašem jeziku — pokazaćemo vam kako Bio Vera radi za vas, bilo da proizvodite, kupujete, isporučujete inpute ili prevozite.",
+  "de": "30 Minuten, kostenlos und in Ihrer Sprache — wir zeigen Ihnen, wie Bio Vera für Sie funktioniert, ob Sie anbauen, einkaufen, liefern oder transportieren.",
+  "es": "30 minutos, gratis y en su idioma: le mostramos cómo funciona Bio Vera para usted, tanto si produce, compra, suministra o transporta.",
+  "fr": "30 minutes, gratuitement et dans votre langue — nous vous montrons comment Bio Vera fonctionne pour vous, que vous produisiez, achetiez, fournissiez ou transportiez.",
+  "ro": "30 de minute, gratuit și în limba dumneavoastră — vă arătăm cum funcționează Bio Vera pentru dumneavoastră, fie că produceți, cumpărați, furnizați sau transportați.",
+  "bg": "30 минути, безплатно и на вашия език — ще ви покажем как Bio Vera работи за вас, независимо дали произвеждате, купувате, доставяте или превозвате."
+ },
+ "bookCall.role.buyer": {
+  "en": "Buyer",
+  "sr": "Kupac",
+  "de": "Einkäufer",
+  "es": "Comprador",
+  "fr": "Acheteur",
+  "ro": "Cumpărător",
+  "bg": "Купувач"
+ },
+ "bookCall.role.producer": {
+  "en": "Producer / grower",
+  "sr": "Proizvođač",
+  "de": "Erzeuger",
+  "es": "Productor",
+  "fr": "Producteur",
+  "ro": "Producător",
+  "bg": "Производител"
+ },
+ "bookCall.role.supplier": {
+  "en": "Supplier",
+  "sr": "Dobavljač",
+  "de": "Lieferant",
+  "es": "Proveedor",
+  "fr": "Fournisseur",
+  "ro": "Furnizor",
+  "bg": "Доставчик"
+ },
+ "bookCall.role.logistics": {
+  "en": "Logistics partner",
+  "sr": "Logistički partner",
+  "de": "Logistikpartner",
+  "es": "Socio logístico",
+  "fr": "Partenaire logistique",
+  "ro": "Partener logistic",
+  "bg": "Логистичен партньор"
+ },
+ "bookCall.role.other": {
+  "en": "Other",
+  "sr": "Drugo",
+  "de": "Sonstiges",
+  "es": "Otro",
+  "fr": "Autre",
+  "ro": "Altceva",
+  "bg": "Друго"
+ },
+ "bookCall.talkingAs": {
+  "en": "You are booking as:",
+  "sr": "Zakazujete kao:",
+  "de": "Sie buchen als:",
+  "es": "Reserva como:",
+  "fr": "Vous réservez en tant que :",
+  "ro": "Programați în calitate de:",
+  "bg": "Записвате се като:"
+ }
+}

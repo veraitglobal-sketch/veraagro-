@@ -22,6 +22,11 @@ export async function linkMissionDelivery(db: PrismaService, actor: string, miss
     if (existing?.missionId === missionId && mission.orderId === orderId) return existing;
     if (mission.orderId && mission.orderId !== orderId) throw new ConflictException('Mission belongs to another order');
     if (existing?.missionId) throw new ConflictException('Order already has a linked delivery');
+    if (order.catalogProductId && order.packCount != null && (order.packedPackCount ?? 0) < order.packCount) {
+      throw new BadRequestException(
+        `Packed ${order.packedPackCount ?? 0} of ${order.packCount} ordered packs. The grower must record packing on the order before it is linked to transport.`,
+      );
+    }
     if (await tx.missions.findFirst({ where: { orderId, id: { not: missionId }, status: { not: 'CANCELLED' } } })) {
       throw new ConflictException('Another mission already fulfills this order. Resolve that assignment first.');
     }

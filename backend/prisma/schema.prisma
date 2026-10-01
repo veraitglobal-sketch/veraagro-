@@ -1479,6 +1479,7 @@ model users {
   package_badges_owned                         package_badges[]             @relation("PackageBadgeOwner")
   package_badges_created                       package_badges[]             @relation("PackageBadgeCreatedBy")
   buyer_delivery_issues                        buyer_delivery_issues[]
+  pre_orders                                   pre_orders[]
   badge_print_orders_requester                 badge_print_orders[]         @relation("BadgePrintOrderRequester")
   badge_print_orders_printer                   badge_print_orders[]         @relation("BadgePrintOrderPrinter")
   /// When a partner / distributor application is converted to a store user
@@ -2414,4 +2415,35 @@ model order_stock_reservations {
   order orders @relation(fields: [orderId], references: [id], onDelete: Restrict)
   inventory inventory @relation(fields: [inventoryId], references: [id], onDelete: Restrict)
   @@index([inventoryId, status])
+}
+
+/// Season pre-order (planning quantities, not a binding order) submitted by a buyer.
+model pre_orders {
+  id                 String    @id @default(uuid())
+  season             Int
+  buyerId            String?
+  companyName        String
+  contactPerson      String
+  email              String
+  phone              String?
+  /// [{ productId, varietyId?, label, quantityKg }]
+  lines              Json
+  totalKg            Float
+  deliveryFrom       String?
+  deliveryTo         String?
+  quality            String?
+  packaging          String?
+  notes              String?
+  /// NEW | REVIEWED | CONFIRMED | DECLINED
+  status             String    @default("NEW")
+  adminNote          String?
+  reviewedBy         String?
+  reviewedAt         DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @default(now()) @updatedAt
+  users              users?    @relation(fields: [buyerId], references: [id], onDelete: SetNull)
+
+  @@index([season, status])
+  @@index([buyerId])
+  @@index([createdAt])
 }

@@ -6,6 +6,7 @@ import { EnterpriseScreen } from '../../components/enterprise/EnterpriseScreen';
 import { TabRootBody } from '../../components/enterprise/TabRootBody';
 import { EnterpriseNavSection } from '../../components/enterprise/EnterpriseNavSection';
 import { GrowerTabHeader } from '../../components/grower/GrowerTabHeader';
+import { BookCallBlock } from '../../components/BookCallBlock';
 import { LanguageSettingsBlock } from '../../components/LanguageSettingsBlock';
 import { useAuth } from '../../hooks/useAuth';
 import { partnerSignInHref } from '../../lib/post-login-redirect';
@@ -40,6 +41,7 @@ export default function LogisticsProfileScreen() {
         />
         <View style={{ marginTop: 16 }}>
           <LanguageSettingsBlock />
+        <BookCallBlock />
         </View>
         <TouchableOpacity
           onPress={async () => {

@@ -11,7 +11,8 @@ import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
 import { useOrdersListData } from './useOrdersListData';
-import type { OrderFilterStatus } from './useOrdersListData';
+import { OrderPackingPanel } from './OrderPackingPanel';
+import type { OrderFilterStatus, OrdersView } from './useOrdersListData';
 
 /**
  * Orders list screen (producer): header, filters, list with refresh.
@@ -49,6 +50,22 @@ export function OrdersListScreen() {
         backgroundColor: enterpriseColors.canvas,
       }}
       >
+        <View style={{ flexDirection: 'row', gap: theme.spacing.sm, marginBottom: 8 }}>
+          {(['prepare', 'all'] as OrdersView[]).map((v) => (
+            <TouchableOpacity
+              key={v}
+              onPress={() => data.setView(v)}
+              style={[growerUi.filterChip, data.view === v && growerUi.filterChipOn]}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: data.view === v }}
+            >
+              <Text style={[growerUi.filterChipText, data.view === v && growerUi.filterChipTextOn]}>
+                {t(v === 'prepare' ? 'producer.ordersPrepare.tabPrepare' : 'producer.ordersPrepare.tabAll')}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        {data.view === 'all' ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
             {filterSpecs.map((f) => (
@@ -64,6 +81,7 @@ export function OrdersListScreen() {
             ))}
           </View>
         </ScrollView>
+        ) : null}
       </View>
 
       <ScrollView
@@ -91,17 +109,19 @@ export function OrdersListScreen() {
               </Text>
             </View>
           ) : data.filteredOrders.length === 0 ? (
-            <EmptyState message={t('producer.orders.empty')} icon={Package} />
+            <EmptyState
+              message={t(data.view === 'prepare' ? 'producer.ordersPrepare.empty' : 'producer.orders.empty')}
+              icon={Package}
+            />
           ) : (
             <View style={{ gap: theme.spacing.sm }}>
               {data.filteredOrders.map((order) => {
                 const c = data.getStatusColor(order.status);
                 return (
+                  <View key={order.id} style={[enterpriseUi.inAppPanel, { padding: 14 }]}>
                   <TouchableOpacity
-                    key={order.id}
                     onPress={() => router.push(`/(producer)/orders/${order.id}`)}
                     activeOpacity={0.6}
-                    style={[enterpriseUi.inAppPanel, { padding: 14 }]}
                     accessibilityRole="button"
                   >
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -133,6 +153,10 @@ export function OrdersListScreen() {
                       </View>
                     </View>
                   </TouchableOpacity>
+                    {data.view === 'prepare' ? (
+                      <OrderPackingPanel order={order} onSaved={() => void data.loadOrders({ background: true })} />
+                    ) : null}
+                  </View>
                 );
               })}
             </View>

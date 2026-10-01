@@ -1,5 +1,6 @@
 'use client';
 
+import BookCallButton from '@/components/BookCallButton';
 import { useState, useMemo, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Download } from 'lucide-react';
@@ -212,6 +213,7 @@ export default function LogisticsPartnerPageClient() {
         leadClassName="text-lg text-gray-600 font-light leading-relaxed max-w-2xl mx-auto mb-8 whitespace-pre-line"
         sectionClassName="pb-20"
       >
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
         <button
           type="button"
           onClick={async () => {
@@ -227,6 +229,8 @@ export default function LogisticsPartnerPageClient() {
           <Download className="w-4 h-4" />
           {t('logisticsPartnerPage.downloadProspectCta')}
         </button>
+          <BookCallButton role="logistics" from="/for-logistics" />
+        </div>
         {prospectNote ? (
           <p className="text-xs text-gray-500 mt-4 font-light">{prospectNote}</p>
         ) : null}

@@ -2278,6 +2278,33 @@
       "statusCertified": "Certificado",
       "statusActive": "Activo",
       "statusPendingSetup": "No activated aún"
+    },
+    "ordersPrepare": {
+      "packs": "Envases empacados",
+      "orderedPacks": "Pedido: {{count}}",
+      "packSize": "Tamaño del envase",
+      "netKg": "Peso neto (kg)",
+      "weightHint": "Permitido: {{min}}–{{max}} kg",
+      "save": "Guardar empaque",
+      "saveFailed": "No se pudo guardar el empaque. Inténtelo de nuevo.",
+      "errNotPaid": "Este pedido aún no está pagado: prepárelo cuando se confirme el pago.",
+      "errPacksMin": "Introduzca al menos 1 envase.",
+      "errPacksMax": "No más de los {{max}} envases pedidos.",
+      "errWeight": "El peso neto debe estar entre {{min}} y {{max}} kg.",
+      "packedState": "Empacado {{packed}} de {{total}} · {{kg}} kg · {{date}}",
+      "notPacked": "Aún sin empacar",
+      "mission": "Transporte: {{mission}}",
+      "record": "Registrar empaque",
+      "edit": "Corregir empaque",
+      "awaitingPickup": "Empacado: pendiente de recogida.",
+      "cardTitle": "Pedidos por preparar ({{count}})",
+      "cardToPack": "Pendientes de empacar: {{count}}",
+      "cardAllPacked": "Todo empacado: pendiente de transporte.",
+      "cardCta": "Abrir pedidos",
+      "requestPickup": "Solicitar recogida",
+      "tabPrepare": "Por preparar",
+      "tabAll": "Todos los pedidos",
+      "empty": "No hay pedidos pendientes de preparación."
     }
   },
   "buyer": {
@@ -3258,5 +3285,17 @@
     "title": "Portal del productor de semillas",
     "body": "Production runs and label downloads are managed in the Bio Vera web portal. Open the link below on your computer or tablet browser.",
     "openWeb": "Abrir portal web"
+  },
+  "bookCall": {
+    "navCta": "Reserve una llamada gratuita",
+    "heroSubtitle": "30 minutos, gratis y en su idioma: le mostramos cómo funciona Bio Vera para usted, tanto si produce, compra, suministra o transporta.",
+    "role": {
+      "buyer": "Comprador",
+      "producer": "Productor",
+      "supplier": "Proveedor",
+      "logistics": "Socio logístico",
+      "other": "Otro"
+    },
+    "talkingAs": "Reserva como:"
   }
 }

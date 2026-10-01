@@ -16,6 +16,8 @@ export function buildBioVeraOrganizationGraph(siteUrl: string = getSiteUrl()) {
         url: siteUrl,
         logo: `${siteUrl}/biovera-logo.png`,
         description: ENTITY_ONE_LINER_EN,
+        legalName: 'Jovica Mihajlovic – Bio Vera',
+        vatID: 'DE456074487',
         foundingDate: '2025',
         founder: {
           '@type': 'Person',
@@ -30,8 +32,10 @@ export function buildBioVeraOrganizationGraph(siteUrl: string = getSiteUrl()) {
           addressCountry: 'DE',
         },
         telephone: '+4915563740470',
-        email: 'contact@biovera.app',
+        email: 'info@biovera.app',
+        // Growers, buyers, suppliers and logistics partners from all of Europe — not a single-country export corridor.
         areaServed: { '@type': 'Continent', name: 'Europe' },
+        knowsLanguage: ['en', 'de', 'sr', 'es', 'fr', 'ro', 'bg'],
         knowsAbout: [
           'Agrifood Supply Chain',
           'Vertical Integration',

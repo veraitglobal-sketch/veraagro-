@@ -19,7 +19,7 @@
 | Portfolio | Vera Group (Vera IT, Fade, ReinAllround) |
 | Engineering | Vera IT — https://www.verait.de |
 | Canonical website | https://www.biovera.app |
-| Email | contact@biovera.app |
+| Email | info@biovera.app |
 | Phone | +49 155 63740470 |
 
 ## 2. Propoziție blocată

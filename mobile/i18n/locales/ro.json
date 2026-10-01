@@ -2278,6 +2278,33 @@
       "statusCertified": "Certificat",
       "statusActive": "Activ",
       "statusPendingSetup": "Neactivat încă"
+    },
+    "ordersPrepare": {
+      "packs": "Ambalaje pregătite",
+      "orderedPacks": "Comandat: {{count}}",
+      "packSize": "Mărimea ambalajului",
+      "netKg": "Greutate netă (kg)",
+      "weightHint": "Permis: {{min}}–{{max}} kg",
+      "save": "Salvează ambalarea",
+      "saveFailed": "Ambalarea nu a putut fi salvată. Încercați din nou.",
+      "errNotPaid": "Comanda nu este încă plătită — pregătiți-o după confirmarea plății.",
+      "errPacksMin": "Introduceți cel puțin 1 ambalaj.",
+      "errPacksMax": "Nu mai mult decât cele {{max}} ambalaje comandate.",
+      "errWeight": "Greutatea netă trebuie să fie între {{min}} și {{max}} kg.",
+      "packedState": "Ambalat {{packed}} din {{total}} · {{kg}} kg · {{date}}",
+      "notPacked": "Încă neambalat",
+      "mission": "Transport: {{mission}}",
+      "record": "Înregistrează ambalarea",
+      "edit": "Corectează ambalarea",
+      "awaitingPickup": "Ambalat — în așteptarea ridicării.",
+      "cardTitle": "Comenzi de pregătit ({{count}})",
+      "cardToPack": "De ambalat: {{count}}",
+      "cardAllPacked": "Totul este ambalat — se așteaptă transportul.",
+      "cardCta": "Deschide comenzile",
+      "requestPickup": "Solicită ridicarea",
+      "tabPrepare": "De pregătit",
+      "tabAll": "Toate comenzile",
+      "empty": "Nicio comandă de pregătit."
     }
   },
   "buyer": {
@@ -3258,5 +3285,17 @@
     "failed": "Verification eșuat",
     "resendTitle": "Cod trimis",
     "resendBody": "Check your e-mail for a new 4-digit code."
+  },
+  "bookCall": {
+    "navCta": "Programați o discuție gratuită",
+    "heroSubtitle": "30 de minute, gratuit și în limba dumneavoastră — vă arătăm cum funcționează Bio Vera pentru dumneavoastră, fie că produceți, cumpărați, furnizați sau transportați.",
+    "role": {
+      "buyer": "Cumpărător",
+      "producer": "Producător",
+      "supplier": "Furnizor",
+      "logistics": "Partener logistic",
+      "other": "Altceva"
+    },
+    "talkingAs": "Programați în calitate de:"
   }
 }

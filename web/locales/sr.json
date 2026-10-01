@@ -68,7 +68,10 @@
     "choose": "Izaberite",
     "link": "Poveži i sačuvaj dostavu",
     "saved": "Dostava je povezana:",
-    "error": "Povezivanje nije uspelo. Osvežite i pokušajte ponovo."
+    "error": "Povezivanje nije uspelo. Osvežite i pokušajte ponovo.",
+    "packedShort": "spakovano {{packed}}/{{total}}",
+    "notPackedShort": "nije spakovano {{packed}}/{{total}}",
+    "notPackedHint": "Proizvođač je spakovao {{packed}} od {{total}} pakovanja. Porudžbina se može povezati sa transportom kada se upiše pakovanje."
   },
   "deliveryReview": {
     "startReview": "Započni obradu",
@@ -120,7 +123,7 @@
     "nameEs": "Español"
   },
   "footer": {
-    "tagline": "Vertikalno vođen agrifood lanac: od standarda uzgoja do prodaje robe pod brendom Bio Vera uz Bio‑Ready dokumentaciju i EU prolaznost.",
+    "tagline": "Vertikalno vođen agrifood lanac: ugovorni proizvođači širom Evrope, kontrola kvaliteta, hladni lanac i prodaja pod brendom Bio Vera — uz Bio‑Ready dokumentaciju za svaku seriju.",
     "columnProduct": "Proizvod",
     "columnCompany": "Kompanija",
     "columnSupport": "Podrška",
@@ -146,7 +149,8 @@
     "appApple": "Apple",
     "appAndroid": "Android",
     "logoAlt": "Bio Vera",
-    "terms": "Uslovi korišćenja"
+    "terms": "Uslovi korišćenja",
+    "impressum": "Impressum (pravni podaci)"
   },
   "languagePage": {
     "eyebrow": "Podešavanja",
@@ -1624,7 +1628,11 @@
         "statusCurrent": "Sledeće za tebe",
         "statusPending": "Čeka prethodne korake",
         "footerNote": "Potrošnja đubriva ili zaštite na parceli se knjiži u mobilnoj aplikaciji (fotografija + GPS na parceli). Beli spisak i dobavljači na webu pomažu da odabereš usklađene inpute."
-      }
+      },
+      "ordersToPrepareCardTitle": "Porudžbine za pripremu ({{count}})",
+      "ordersToPrepareCardToPack": "Još za pakovanje: {{count}}",
+      "ordersToPrepareCardAllPacked": "Sve je spakovano — čeka se transport.",
+      "ordersToPrepareCardCta": "Otvori porudžbine"
     },
     "missionCreate": {
       "submitCta": "Zahtevaj transport",
@@ -1785,7 +1793,8 @@
     "goHaccp": "HACCP / polje",
     "goBatchesPlatform": "Lotovi (onlajn)",
     "seedProduction": "Proizvodnja semena",
-    "supply": "Pregled snabdevanja"
+    "supply": "Pregled snabdevanja",
+    "preOrders": "Pretporudžbine"
   },
   "adminPages": {
     "titles": {
@@ -2273,7 +2282,9 @@
       "rejectModalTitle": "Odbij porudžbinu",
       "rejectOrder": "Odbij",
       "rejectReasonLabel": "Razlog odbijanja",
-      "rejectReasonPlaceholder": "npr. Nema zalihe za ovaj rok isporuke"
+      "rejectReasonPlaceholder": "npr. Nema zalihe za ovaj rok isporuke",
+      "packedState": "Spakovano {{packed}}/{{total}} · {{kg}} kg",
+      "notPackedState": "Nije spakovano ({{packed}}/{{total}}) — proizvođač mora upisati pakovanje pre transporta"
     },
     "farmDetail": {
       "loadFailed": "Učitavanje detalja farme nije uspelo",
@@ -2535,14 +2546,15 @@
   "buyerPortalNav": {
     "dashboard": "Kontrolna tabla",
     "orders": "Porudžbine",
-    "preOrder2026": "Predporudžbina 2026",
+    "preOrder2026": "Pretporudžbina {{year}}",
     "directOrders": "Direktne porudžbine",
     "invoices": "Fakture",
     "deliveries": "Isporuke",
     "analytics": "Analitika",
     "companyProfile": "Profil kompanije",
     "veraStandard": "Bio Vera standard",
-    "marketplace": "Tržište"
+    "marketplace": "Tržište",
+    "preOrderSubtitle": "Planirajte količine za sezonu {{year}}."
   },
   "logisticsPartnerNav": {
     "dashboard": "Kontrolna tabla",
@@ -3635,7 +3647,26 @@
     "ha_COMPLETED": "Završeno",
     "ha_CANCELLED": "Otkazano",
     "ha_REJECTED": "Odbijeno",
-    "ha_STATUS": "{{status}}"
+    "ha_STATUS": "{{status}}",
+    "packingPacks": "Spakovano pakovanja",
+    "packingOrderedPacks": "Poručeno: {{count}}",
+    "packingPackSize": "Veličina pakovanja",
+    "packingNetKg": "Neto težina (kg)",
+    "packingWeightHint": "Dozvoljeno: {{min}}–{{max}} kg",
+    "packingSave": "Sačuvaj pakovanje",
+    "packingSaving": "Čuvanje…",
+    "packingSaveFailed": "Pakovanje nije sačuvano. Pokušajte ponovo.",
+    "packingErrNotPaid": "Porudžbina još nije plaćena — pripremite je kada uplata bude potvrđena.",
+    "packingErrPacksMin": "Unesite najmanje 1 pakovanje.",
+    "packingErrPacksMax": "Ne više od poručenih {{max}} pakovanja.",
+    "packingErrWeight": "Neto težina mora biti između {{min}} i {{max}} kg.",
+    "packingDone": "Spakovano {{packed}} od {{total}} · {{kg}} kg · {{date}}",
+    "packingNotYet": "Još nije spakovano",
+    "packingMission": "Transport: {{mission}}",
+    "packingRecord": "Upiši pakovanje",
+    "packingEdit": "Ispravi pakovanje",
+    "packingQualityLink": "Kontrola kvaliteta",
+    "packingAwaitingPickup": "Spakovano — čeka preuzimanje."
   },
   "supplier": {
     "nav": {
@@ -3792,10 +3823,10 @@
       "subtitle": "Bio Vera je vertikalno integrisana agrifood kompanija sa sedištem u Hamburgu. U okviru sopstvenog programa ugovaramo proizvođače, vodimo kontrolu kvaliteta i pakovanje, upravljamo hladnim lancem i plasiramo sveže voće i povrće krajnjim kupcima. Svaka serija ima dokumentovan digitalni pasoš — od parcele do police.",
       "browseProducts": "Pregledaj proizvode",
       "becomeProducer": "Postanite Vera proizvođač",
-      "preOrder": "Pretporudžbina za 2026. je otvorena",
+      "preOrder": "Pretporudžbina za {{year}}. je otvorena",
       "preOrderAria": "Informacije o pretporudžbini",
       "preOrderTip1": "Vera proizvodi se šalju sveži radi isporuke. Pored kontrole kvaliteta, trudimo se da ispunimo očekivanja kupca na svakom koraku.",
-      "preOrderTip2": "Pretporudžbina služi samo za planiranje količina za 2026.; nije obavezna porudžbina."
+      "preOrderTip2": "Pretporudžbina služi samo za planiranje količina za {{year}}. godinu; nije obavezujuća porudžbina."
     },
     "statLabels": [
       "Sledljivost",
@@ -3965,7 +3996,7 @@
     "linkHowWeOperate": "Kako radimo",
     "linkExpressInterest": "Izrazite interesovanje",
     "placeOrder": "Poruči",
-    "preOrder2026": "Prednarudžbina 2026",
+    "preOrder2026": "Pretporudžbina {{year}}",
     "purchasesTitle": "Proces kupovine",
     "purchasesLead": "",
     "purchasesSteps": [
@@ -3975,7 +4006,7 @@
       },
       {
         "title": "Pregled i narudžba",
-        "body": "Filtrirajte po kategoriji — voće, povrće, žitarice. Pogledajte poreklo, period berbe i cene. Naručite direktno ili koristite prednarudžbu za sezonsko planiranje."
+        "body": "Filtrirajte po kategoriji — voće, povrće, žitarice. Pogledajte poreklo, period berbe i cene. Naručite direktno ili koristite pretporudžbinu za {{year}}. za sezonsko planiranje."
       },
       {
         "title": "Potvrda i plaćanje",
@@ -3993,7 +4024,7 @@
       "Povrće",
       "Žitarice"
     ],
-    "productsNote": "",
+    "productsNote": "Prijavite se na kupčev panel da vidite ceo katalog, naručite ili pošaljete pretporudžbinu za {{year}}.",
     "harvestCalendarTitle": "Kalendar berbe",
     "harvestCalendarLead": "Sezonska dostupnost po proizvodu. Naša roba putuje sveža, bez zamrzavanja — ukus i tekstura ostaju kao na njivi.",
     "packagingTitle": "",
@@ -4233,10 +4264,10 @@
         "label": "Borovnica"
       }
     ],
-    "metaTitle": "Program za Proizvođače | Bio Vera — Sertifikacija, Garantovani Uslovi, EU Tržišni Pristup",
+    "metaTitle": "Program za proizvođače | Bio Vera — Sertifikacija, garantovani uslovi, kupci širom Evrope",
     "metaDescription": "Program za proizvođače: garantovani uslovi, besplatna GlobalG.A.P. IFA v6 grupna sertifikacija, isplata za 48h, koordinisana logistika i pristup EU tržištu. Otvoreno za proizvođače širom Evrope.",
     "heroEyebrow": "Bio Vera · Proizvođači",
-    "heroSubtitle": "Garantovani uslovi, pristup EU tržištu"
+    "heroSubtitle": "Garantovani uslovi i kupci širom Evrope — prijava je otvorena proizvođačima iz svih evropskih zemalja"
   },
   "logisticsPartnerPage": {
     "title": "Partner za hladni lanac",
@@ -4386,7 +4417,9 @@
     "cardCookiesTitle": "Politika kolačića",
     "cardCookiesDesc": "Kako koristimo kolačiće i slične tehnologije na sajtovima i u aplikacijama.",
     "sectionTechTitle": "Tehnička realizacija",
-    "techImplementation": "Tehnička realizacija / softver: <1>Vera IT</1>."
+    "techImplementation": "Tehnička realizacija / softver: <1>Vera IT</1>.",
+    "cardImpressumTitle": "Impressum",
+    "cardImpressumDesc": "Podaci o firmi: vlasnik, adresa u Hamburgu, PDV broj i kontakt."
   },
   "supplierStatusPage": {
     "title": "Status prijave",
@@ -4415,7 +4448,7 @@
     "featuredAd": {
       "eyebrow": "Otvorene pozicije · teren · Srbija",
       "title": "Tražimo komercijaliste",
-      "lead": "Pridružite se Vera grower programu — obilazite proizvođače, sklapate ugovore o proizvodnji i gradite mrežu u Bio Vera lancu od njive do Hamburga.",
+      "lead": "Pridružite se Bio Vera programu za proizvođače — obilazite proizvođače, sklapate ugovore o proizvodnji i gradite mrežu u svom regionu, kao deo programa koji radi širom Evrope.",
       "regionSouthCentral": "Jug i centralna Srbija",
       "regionVojvodina": "Vojvodina",
       "degreeNote": "Poželjno: diploma Poljoprivrednog fakulteta (ratarstvo, voćarstvo, zaštita bilja ili srodno)."
@@ -4507,7 +4540,7 @@
           "Osnovna plata + provizija na ugovorene obime",
           "Budžet za putovanja i teren",
           "Bio Vera mobilni alati i obuka",
-          "Karijerni rast kako se koridor širi",
+          "Karijerni rast kako se program širi",
           "Podrška QA i operativnog tima iz Hamburga"
         ]
       },
@@ -4652,7 +4685,7 @@
     "missionP1": "Koristimo tehnologiju da isti zapisi služe operacijama i prodaji. Proizvođači proizvode unutar našeg sistema, kupci ugovaraju sa Bio Verom, potrošači vide proverljivo poreklo i kvalitet.",
     "missionP2": "",
     "visionTitle": "Naša vizija",
-    "visionP1": "Voditi evropske koridore svežih proizvoda sa kontrolom kvaliteta koju kupci prepoznaju na polici. Svaki proizvod sa kompletnim digitalnim pasošom, svaki proizvođač pravično kompenzovan.",
+    "visionP1": "Da budemo vodeći vertikalno integrisani lanac svežeg voća i povrća u Evropi, sa kontrolom kvaliteta koju kupci prepoznaju na polici. Svaki proizvod sa kompletnim digitalnim pasošom, svaki proizvođač pravično plaćen, svaki potrošač siguran u poreklo.",
     "visionP2": "",
     "valuesTitle": "Naše vrednosti",
     "valueCards": [
@@ -4692,7 +4725,7 @@
         "body": "GlobalG.A.P. IFA v6 grupna sertifikacija, automatski EU sertifikati, kompletno praćenje usklađenosti za pristup evropskom tržištu."
       }
     ],
-    "ctaTitle": "Postanite deo Bio Vera koridora",
+    "ctaTitle": "Postanite deo Bio Vera programa",
     "ctaBody": "Bilo da proizvodite, isporučujete inpute, prevozite ili kupujete — pravila od parcele do isplate su ista.",
     "ctaProducer": "Postanite Vera proizvođač",
     "ctaContact": "Kontaktirajte nas",
@@ -5562,7 +5595,9 @@
     "termsTitle": "Uslovi korišćenja",
     "termsUpdated": "Poslednje ažuriranje: januar 2026.",
     "cookiesTitle": "Politika kolačića",
-    "cookiesUpdated": "Poslednje ažuriranje: januar 2026."
+    "cookiesUpdated": "Poslednje ažuriranje: januar 2026.",
+    "impressumTitle": "Impressum (pravni podaci o firmi)",
+    "impressumUpdated": "Poslednje ažuriranje: oktobar 2026."
   },
   "refundReconciliation": {
     "title": "Finansijsko usaglašavanje",
@@ -6050,5 +6085,63 @@
     },
     "subtitle": "Bio Vera kodovi etiketa, fabrički lotovi i praćenje vreća od proizvodnje do setve.",
     "title": "Proizvodnja semena"
+  },
+  "adminPreOrders": {
+    "title": "Pretporudžbine {{year}}",
+    "summary": "Pretporudžbina: {{count}} · ukupno {{kg}} kg",
+    "allStatuses": "Svi statusi",
+    "empty": "Još nema pretporudžbina.",
+    "loadFailed": "Pretporudžbine nisu učitane.",
+    "saveFailed": "Status nije sačuvan.",
+    "details": "Isporuka {{from}} → {{to}} · Kvalitet: {{quality}} · Pakovanje: {{packaging}}",
+    "status": {
+      "NEW": "Nova",
+      "REVIEWED": "Pregledana",
+      "CONFIRMED": "Potvrđena",
+      "DECLINED": "Odbijena"
+    }
+  },
+  "bookCall": {
+    "navCta": "Zakažite besplatan razgovor",
+    "heroTitle": "Zakažite besplatan razgovor",
+    "heroSubtitle": "30 minuta, besplatno i na vašem jeziku — pokazaćemo vam kako Bio Vera radi za vas, bilo da proizvodite, kupujete, isporučujete inpute ili prevozite.",
+    "cardTitle": "Izaberite termin",
+    "roleQuestion": "Želim da razgovaram kao…",
+    "role": {
+      "buyer": "Kupac",
+      "producer": "Proizvođač",
+      "supplier": "Dobavljač",
+      "logistics": "Logistički partner",
+      "other": "Drugo"
+    },
+    "roleHint": {
+      "buyer": "Maloprodaja, veleprodaja, ugostiteljstvo — sveži proizvodi sa digitalnim pasošem",
+      "producer": "Proizvođači voća i povrća iz bilo koje evropske zemlje",
+      "supplier": "Seme, đubrivo, zaštita bilja, ambalaža",
+      "logistics": "Hladni transport i dostava do kupca",
+      "other": "Partnerstva, mediji, investitori i sve ostalo"
+    },
+    "talkingAs": "Zakazujete kao:",
+    "changeRole": "Promeni",
+    "privacyNote": "Kalendar obezbeđuje Calendly. Vaše ime i e-pošta koriste se samo za dogovor i potvrdu razgovora.",
+    "loading": "Učitavanje kalendara…",
+    "notConfigured": "Online zakazivanje trenutno nije dostupno. Pišite nam na info@biovera.app.",
+    "fallbackPrefix": "Kalendar se ne učitava?",
+    "fallbackLink": "Otvorite ga u novoj kartici",
+    "fallbackOr": "ili pišite na",
+    "thanksTitle": "Hvala — razgovor je zakazan",
+    "thanksBody": "Dobićete potvrdu e-poštom sa detaljima i pozivnicom za kalendar.",
+    "backHome": "Nazad na početnu",
+    "expectTitle": "Šta vas očekuje",
+    "expectDurationTitle": "Razgovor od 30 minuta",
+    "expectDurationBody": "Video ili telefonom — kako vam odgovara.",
+    "expectLanguagesTitle": "Na vašem jeziku",
+    "expectLanguagesBody": "Engleski, nemački, srpski, španski, francuski, rumunski ili bugarski.",
+    "expectFreeTitle": "Besplatno i bez obaveza",
+    "expectFreeBody": "Nije potrebna priprema — ponesite svoja pitanja.",
+    "expectWhoTitle": "Sa kim razgovarate",
+    "expectWhoBody": "Bio Vera tim iz Hamburga zadužen za vašu oblast.",
+    "contactPromptTitle": "Radije biste razgovarali?",
+    "contactPromptCta": "Zakažite besplatan razgovor"
   }
 }

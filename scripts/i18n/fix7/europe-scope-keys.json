@@ -1,0 +1,83 @@
+{
+"footer.tagline": {
+ "sr": "Vertikalno vođen agrifood lanac: ugovorni proizvođači širom Evrope, kontrola kvaliteta, hladni lanac i prodaja pod brendom Bio Vera — uz Bio‑Ready dokumentaciju za svaku seriju.",
+ "en": "A vertically run agrifood chain: contracted growers across Europe, quality control, cold chain and Bio Vera–branded sales — with a Bio‑Ready dossier for every batch.",
+ "de": "Eine vertikal geführte Agrifood-Kette: Vertragserzeuger in ganz Europa, Qualitätskontrolle, Kühlkette und Vermarktung unter der Marke Bio Vera — mit Bio‑Ready-Dokumentation für jede Charge.",
+ "es": "Una cadena agroalimentaria gestionada de forma vertical: productores bajo contrato en toda Europa, control de calidad, cadena de frío y venta con la marca Bio Vera, con un expediente Bio‑Ready para cada lote.",
+ "fr": "Une filière agroalimentaire pilotée de bout en bout : producteurs sous contrat dans toute l’Europe, contrôle qualité, chaîne du froid et vente sous la marque Bio Vera — avec un dossier Bio‑Ready pour chaque lot.",
+ "ro": "Un lanț agroalimentar gestionat vertical: producători sub contract din toată Europa, controlul calității, lanț frigorific și vânzare sub marca Bio Vera — cu dosar Bio‑Ready pentru fiecare lot.",
+ "bg": "Вертикално управлявана агро-хранителна верига: производители по договор от цяла Европа, контрол на качеството, хладилна верига и продажба под марката Bio Vera — с Bio‑Ready досие за всяка партида."
+},
+"growersPage.metaTitle": {
+ "sr": "Program za proizvođače | Bio Vera — Sertifikacija, garantovani uslovi, kupci širom Evrope",
+ "en": "Grower Programme | Bio Vera — Certification, Guaranteed Terms, Buyers Across Europe",
+ "de": "Programm für Erzeuger | Bio Vera — Zertifizierung, garantierte Konditionen, Abnehmer in ganz Europa",
+ "es": "Programa para productores | Bio Vera — Certificación, condiciones garantizadas, compradores en toda Europa",
+ "fr": "Programme producteurs | Bio Vera — Certification, conditions garanties, acheteurs dans toute l’Europe",
+ "ro": "Programul pentru producători | Bio Vera — Certificare, condiții garantate, cumpărători din toată Europa",
+ "bg": "Програма за производители | Bio Vera — Сертифициране, гарантирани условия, купувачи в цяла Европа"
+},
+"growersPage.heroSubtitle": {
+ "sr": "Garantovani uslovi i kupci širom Evrope — prijava je otvorena proizvođačima iz svih evropskih zemalja",
+ "en": "Guaranteed terms and buyers across Europe — open to growers from every European country",
+ "de": "Garantierte Konditionen und Abnehmer in ganz Europa — offen für Erzeuger aus allen europäischen Ländern",
+ "es": "Condiciones garantizadas y compradores en toda Europa: abierto a productores de cualquier país europeo",
+ "fr": "Conditions garanties et acheteurs dans toute l’Europe — ouvert aux producteurs de tous les pays européens",
+ "ro": "Condiții garantate și cumpărători din toată Europa — deschis producătorilor din orice țară europeană",
+ "bg": "Гарантирани условия и купувачи в цяла Европа — отворено за производители от всички европейски страни"
+},
+"growersPage.groupCertBody": {
+ "sr": "Ne plaćate sertifikaciju sami. Vera Agrar je nosilac GlobalG.A.P. grupnog sertifikata. Vi se uključujete kao član grupe — Bio Vera pokriva troškove dokumentacije, revizije i održavanja sertifikata.",
+ "en": "You don’t pay for certification yourself. Vera Agrar holds the GlobalG.A.P. group certificate and you join as a group member — Bio Vera covers documentation, audit and certificate maintenance costs.",
+ "de": "Sie zahlen keine Zertifizierung selbst. Vera Agrar ist Träger des GlobalG.A.P.-Gruppenzertifikats. Sie treten als Gruppenmitglied bei — Bio Vera übernimmt die Kosten für Dokumentation, Audit und Zertifikatspflege.",
+ "es": "No paga la certificación usted mismo. Vera Agrar es titular del certificado de grupo GlobalG.A.P. y usted se incorpora como miembro del grupo: Bio Vera cubre los costes de documentación, auditoría y mantenimiento del certificado.",
+ "fr": "Vous ne payez pas la certification vous-même. Vera Agrar détient le certificat de groupe GlobalG.A.P. et vous le rejoignez en tant que membre — Bio Vera prend en charge les frais de documentation, d’audit et de maintien du certificat.",
+ "ro": "Nu plătiți singur certificarea. Vera Agrar deține certificatul de grup GlobalG.A.P., iar dumneavoastră vă alăturați ca membru al grupului — Bio Vera acoperă costurile de documentare, audit și menținere a certificatului.",
+ "bg": "Не плащате сертифицирането сами. Vera Agrar притежава груповия сертификат GlobalG.A.P., а вие се присъединявате като член на групата — Bio Vera поема разходите за документация, одит и поддържане на сертификата."
+},
+"home.cta.title": {
+ "sr": "Prodajte nam usev ili kupujte od nas",
+ "en": "Grow for us, haul for us, or buy from us",
+ "de": "Für uns anbauen, für uns transportieren oder bei uns kaufen",
+ "es": "Cultive para nosotros, transporte para nosotros o compre a nosotros",
+ "fr": "Produisez pour nous, transportez pour nous ou achetez chez nous",
+ "ro": "Cultivați pentru noi, transportați pentru noi sau cumpărați de la noi",
+ "bg": "Произвеждайте за нас, превозвайте за нас или купувайте от нас"
+},
+"aboutPage.ctaTitle": {
+ "sr": "Postanite deo Bio Vera programa",
+ "en": "Join the Bio Vera Programme",
+ "de": "Werden Sie Teil des Bio-Vera-Programms",
+ "es": "Únase al programa Bio Vera",
+ "fr": "Rejoignez le programme Bio Vera",
+ "ro": "Alăturați-vă programului Bio Vera",
+ "bg": "Присъединете се към програмата Bio Vera"
+},
+"aboutPage.visionP1": {
+ "sr": "Da budemo vodeći vertikalno integrisani lanac svežeg voća i povrća u Evropi, sa kontrolom kvaliteta koju kupci prepoznaju na polici. Svaki proizvod sa kompletnim digitalnim pasošom, svaki proizvođač pravično plaćen, svaki potrošač siguran u poreklo.",
+ "en": "To be Europe’s leading vertically integrated fresh produce chain, with quality control that buyers recognise on the shelf. Every product with a complete digital passport, every grower fairly paid, every consumer able to trust the origin.",
+ "de": "Europas führende vertikal integrierte Kette für frisches Obst und Gemüse zu sein — mit einer Qualitätskontrolle, die Einkäufer im Regal erkennen. Jedes Produkt mit vollständigem digitalen Produktpass, jeder Erzeuger fair bezahlt, jeder Verbraucher sicher über die Herkunft.",
+ "es": "Ser la cadena de fruta y verdura fresca verticalmente integrada de referencia en Europa, con un control de calidad que los compradores reconocen en el lineal. Cada producto con su pasaporte digital completo, cada productor pagado de forma justa y cada consumidor con plena confianza en el origen.",
+ "fr": "Devenir la filière de fruits et légumes frais intégrée verticalement de référence en Europe, avec un contrôle qualité que les acheteurs reconnaissent en rayon. Chaque produit avec un passeport numérique complet, chaque producteur rémunéré équitablement, chaque consommateur confiant dans l’origine.",
+ "ro": "Să fim lanțul de fructe și legume proaspete integrat vertical de referință în Europa, cu un control al calității pe care cumpărătorii îl recunosc la raft. Fiecare produs cu pașaport digital complet, fiecare producător plătit corect, fiecare consumator sigur de origine.",
+ "bg": "Да бъдем водещата вертикално интегрирана верига за пресни плодове и зеленчуци в Европа, с контрол на качеството, който купувачите разпознават на рафта. Всеки продукт с пълен дигитален паспорт, всеки производител справедливо заплатен, всеки потребител уверен в произхода."
+},
+"careersPage.featuredAd.lead": {
+ "sr": "Pridružite se Bio Vera programu za proizvođače — obilazite proizvođače, sklapate ugovore o proizvodnji i gradite mrežu u svom regionu, kao deo programa koji radi širom Evrope.",
+ "en": "Join the Bio Vera grower programme — visit producers, close contract volumes and build the grower network in your region, as part of a programme that runs across Europe.",
+ "de": "Werden Sie Teil des Bio-Vera-Erzeugerprogramms — besuchen Sie Betriebe, schließen Sie Vertragsmengen ab und bauen Sie das Erzeugernetz in Ihrer Region auf, als Teil eines Programms, das in ganz Europa läuft.",
+ "es": "Únase al programa de productores de Bio Vera: visite productores, cierre volúmenes bajo contrato y construya la red de productores en su región, dentro de un programa que opera en toda Europa.",
+ "fr": "Rejoignez le programme producteurs de Bio Vera — rendez visite aux exploitations, concluez des volumes sous contrat et développez le réseau de producteurs dans votre région, au sein d’un programme qui couvre toute l’Europe.",
+ "ro": "Alăturați-vă programului pentru producători Bio Vera — vizitați producători, încheiați volume contractate și construiți rețeaua de producători din regiunea dumneavoastră, ca parte a unui program care funcționează în toată Europa.",
+ "bg": "Присъединете се към програмата за производители на Bio Vera — посещавайте производители, договаряйте обеми и изграждайте мрежата от производители във вашия регион, като част от програма, която работи в цяла Европа."
+},
+"careersPage.jobs.salesVojvodina.benefits.3": {
+ "sr": "Karijerni rast kako se program širi",
+ "en": "Career growth as the programme expands",
+ "de": "Karrierewachstum mit dem wachsenden Programm",
+ "es": "Crecimiento profesional a medida que se amplía el programa",
+ "fr": "Évolution de carrière au rythme de l’expansion du programme",
+ "ro": "Creștere în carieră pe măsură ce programul se extinde",
+ "bg": "Кариерно развитие с разрастването на програмата"
+}
+}

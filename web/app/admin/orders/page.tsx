@@ -316,6 +316,20 @@ export default function OrdersManagementPage() {
                             })}
                           </p>
                         )}
+                        {order.catalogProductId && order.packCount != null && ['PAID', 'CONFIRMED', 'PICKED_UP', 'IN_TRANSIT'].includes(order.status) && (
+                          <p className={`text-xs mt-0.5 ${(order.packedPackCount ?? 0) >= order.packCount ? 'text-[#2D5A27]' : 'text-amber-700'}`}>
+                            {(order.packedPackCount ?? 0) >= order.packCount
+                              ? t('adminPages.orderManagement.packedState', {
+                                  packed: order.packedPackCount,
+                                  total: order.packCount,
+                                  kg: order.packedKg ?? '—',
+                                })
+                              : t('adminPages.orderManagement.notPackedState', {
+                                  packed: order.packedPackCount ?? 0,
+                                  total: order.packCount,
+                                })}
+                          </p>
+                        )}
                         {order.catalogProductId ? (
                           <CatalogOrderStock
                             catalogProductId={order.catalogProductId}

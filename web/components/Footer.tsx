@@ -1,5 +1,6 @@
 'use client';
 
+import { BOOK_CALL_ENABLED } from '@/lib/book-call';
 import Link from 'next/link';
 import { useTranslation, Trans } from 'react-i18next';
 import BrandLogo from '@/components/BrandLogo';
@@ -160,6 +161,13 @@ export default function Footer() {
                   {t('nav.helpCenter')}
                 </Link>
               </li>
+              {BOOK_CALL_ENABLED && (
+                <li>
+                  <Link href={loc('/book-a-call')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
+                    {t('bookCall.navCta')}
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link href={loc('/contact')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
                   {t('nav.contact')}
@@ -186,6 +194,11 @@ export default function Footer() {
               <li>
                 <Link href={loc('/legal')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
                   {t('footer.legalHub')}
+                </Link>
+              </li>
+              <li>
+                <Link href={loc('/impressum')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
+                  {t('footer.impressum')}
                 </Link>
               </li>
               <li>

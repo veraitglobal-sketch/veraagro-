@@ -41,7 +41,13 @@ export class NotificationTemplateService {
       };
     }
     const replace = (s: string) =>
-      s.replace(/\{\{(\w+)\}\}/g, (_, key: string) => String(params[key] ?? ''));
+      s
+        .replace(/\{\{(\w+)\}\}/g, (_, key: string) => String(params[key] ?? '').trim())
+        // An empty optional param must not leave "()", double spaces or a space before punctuation.
+        .replace(/\s*\(\s*\)/g, '')
+        .replace(/\s{2,}/g, ' ')
+        .replace(/\s+([.,:;!?])/g, '$1')
+        .trim();
     return { title: replace(entry.title), message: replace(entry.message) };
   }
 }

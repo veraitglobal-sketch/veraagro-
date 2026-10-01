@@ -204,6 +204,14 @@ export interface Order {
   packLabel?: string | null;
   packSizeKg?: number | null;
   packCount?: number | null;
+  /** Grower view (GET /orders/grower): packing state and next step. */
+  packLine?: string;
+  packedPackCount?: number | null;
+  packedKg?: number | null;
+  packedAt?: string | null;
+  nextAction?: 'PREPARE_AND_PACK' | 'REQUEST_PICKUP' | 'AWAITING_PICKUP' | 'IN_FULFILLMENT';
+  deliveryCity?: string;
+  missions?: Array<{ id: string; status: string; missionNumber: string }>;
   rejectionReason?: string | null;
   catalogProduct?: { id: string; name: string } | null;
   catalogProductId?: string | null;

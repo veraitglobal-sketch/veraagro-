@@ -68,7 +68,10 @@
     "choose": "Select",
     "link": "Link and save delivery",
     "saved": "Delivery linked:",
-    "error": "Linking failed. Refresh and retry."
+    "error": "Linking failed. Refresh and retry.",
+    "packedShort": "packed {{packed}}/{{total}}",
+    "notPackedShort": "not packed {{packed}}/{{total}}",
+    "notPackedHint": "The grower has packed {{packed}} of {{total}} packs. The order can be linked to transport after packing is recorded."
   },
   "deliveryReview": {
     "startReview": "Start review",
@@ -120,7 +123,7 @@
     "nameEs": "Español"
   },
   "footer": {
-    "tagline": "Vertically run agrifood supply chain—from grower standards through Bio Vera–branded sales, with Bio‑Ready dossiers for EU corridors.",
+    "tagline": "A vertically run agrifood chain: contracted growers across Europe, quality control, cold chain and Bio Vera–branded sales — with a Bio‑Ready dossier for every batch.",
     "columnProduct": "Product",
     "columnCompany": "Company",
     "columnSupport": "Support",
@@ -146,7 +149,8 @@
     "appApple": "Apple",
     "appAndroid": "Android",
     "logoAlt": "Bio Vera",
-    "terms": "Terms"
+    "terms": "Terms",
+    "impressum": "Impressum (legal notice)"
   },
   "languagePage": {
     "eyebrow": "Settings",
@@ -196,7 +200,7 @@
   "metadata": {
     "siteName": "Bio Vera",
     "homeTitle": "Bio Vera | Traceable Fresh Produce — Field to Shelf",
-    "siteDescription": "Vertically integrated agrifood operator in Hamburg. Documented batch passports from parcel to shelf — growers, logistics, suppliers across Europe. Not a marketplace.",
+    "siteDescription": "Vertically integrated agrifood company from Hamburg. An EU Digital Product Passport on every batch — traceability from field to shelf for growers, logistics and suppliers.",
     "ldJsonDescription": "Certified agrifood operating system for production, quality, logistics and distribution — every batch tracked from parcel to final point, every participant verified, every step documented.",
     "keywords": [
       "Bio Vera",
@@ -1624,7 +1628,11 @@
         "statusCurrent": "Next for you",
         "statusPending": "Waiting on earlier steps",
         "footerNote": "Applying fertiliser or protection products on a parcel is logged in the mobile app (photo + GPS on the plot). Whitelist and suppliers on the web help you choose compliant inputs."
-      }
+      },
+      "ordersToPrepareCardTitle": "Orders to prepare ({{count}})",
+      "ordersToPrepareCardToPack": "Still to pack: {{count}}",
+      "ordersToPrepareCardAllPacked": "All packed — waiting for transport.",
+      "ordersToPrepareCardCta": "Open orders"
     },
     "missionCreate": {
       "submitCta": "Request transport",
@@ -1785,7 +1793,8 @@
     "goEstates": "Estates & setup",
     "goHarvestPlans": "Harvest plans",
     "goHaccp": "HACCP / field",
-    "goBatchesPlatform": "Batches (online)"
+    "goBatchesPlatform": "Batches (online)",
+    "preOrders": "Pre-orders"
   },
   "seedProduction": {
     "title": "Seed production",
@@ -2571,7 +2580,9 @@
         "COMPLETED": "Completed",
         "CANCELLED": "Cancelled",
         "REFUNDED": "Refunded"
-      }
+      },
+      "packedState": "Packed {{packed}}/{{total}} · {{kg}} kg",
+      "notPackedState": "Not packed ({{packed}}/{{total}}) — grower must record packing before transport"
     },
     "farmDetail": {
       "loadFailed": "Failed to load farm detail",
@@ -2834,13 +2845,14 @@
     "marketplace": "Marketplace",
     "dashboard": "Dashboard",
     "orders": "Orders",
-    "preOrder2026": "Pre-order 2026",
+    "preOrder2026": "Pre-order {{year}}",
     "directOrders": "Direct orders",
     "invoices": "Invoices",
     "deliveries": "Deliveries",
     "analytics": "Analytics",
     "companyProfile": "Company profile",
-    "veraStandard": "Bio Vera Standard"
+    "veraStandard": "Bio Vera Standard",
+    "preOrderSubtitle": "Plan quantities for the {{year}} season"
   },
   "logisticsPartnerNav": {
     "dashboard": "Dashboard",
@@ -3977,7 +3989,26 @@
     "ha_COMPLETED": "Completed",
     "ha_CANCELLED": "Cancelled",
     "ha_REJECTED": "Rejected",
-    "ha_STATUS": "{{status}}"
+    "ha_STATUS": "{{status}}",
+    "packingPacks": "Packs packed",
+    "packingOrderedPacks": "Ordered: {{count}}",
+    "packingPackSize": "Pack size",
+    "packingNetKg": "Net weight (kg)",
+    "packingWeightHint": "Allowed: {{min}}–{{max}} kg",
+    "packingSave": "Save packing",
+    "packingSaving": "Saving…",
+    "packingSaveFailed": "Packing could not be saved. Try again.",
+    "packingErrNotPaid": "This order is not paid yet — prepare it after payment is confirmed.",
+    "packingErrPacksMin": "Enter at least 1 pack.",
+    "packingErrPacksMax": "No more than the ordered {{max}} packs.",
+    "packingErrWeight": "Net weight must be between {{min}} and {{max}} kg.",
+    "packingDone": "Packed {{packed}} of {{total}} · {{kg}} kg · {{date}}",
+    "packingNotYet": "Not packed yet",
+    "packingMission": "Transport: {{mission}}",
+    "packingRecord": "Record packing",
+    "packingEdit": "Correct packing",
+    "packingQualityLink": "Quality check",
+    "packingAwaitingPickup": "Packed — waiting for pickup."
   },
   "supplier": {
     "nav": {
@@ -4131,13 +4162,13 @@
     "hero": {
       "title1": "Vertically Integrated",
       "title2": "Agrifood Company",
-      "subtitle": "Bio Vera is a vertically integrated agrifood company based in Hamburg. We contract growers, run quality and packing, operate refrigerated logistics, and sell fresh produce under our own programme — every batch carries a documented digital passport from parcel to shelf. We are not a marketplace that merely connects strangers.",
+      "subtitle": "Bio Vera is a vertically integrated agrifood company headquartered in Hamburg. Through our own programme, we contract growers, run quality control and packing, manage the cold chain and bring fresh fruit and vegetables to end customers. Every batch carries a documented digital passport — from field to shelf.",
       "browseProducts": "Browse our products",
       "becomeProducer": "Become a Vera grower",
-      "preOrder": "Pre-order for 2026 is open",
+      "preOrder": "Pre-order for {{year}} is open",
       "preOrderAria": "Pre-order info",
       "preOrderTip1": "Vera products are sent fresh for delivery. Besides quality control, we strive to meet customer expectations at every step.",
-      "preOrderTip2": "Pre-order is for planning 2026 quantities only; it is not a binding order."
+      "preOrderTip2": "Pre-orders are for planning {{year}} quantities only; they are not a binding order."
     },
     "statLabels": [
       "Traceability",
@@ -4261,7 +4292,7 @@
       "grains": "Grains"
     },
     "cta": {
-      "title": "Supply us, haul for us, or buy from us",
+      "title": "Grow for us, haul for us, or buy from us",
       "body": "Contract estates grow to our playbook; refrigerated partners run Vera missions; retail and wholesale buyers trade with Bio Vera directly—every batch ledger lines up financially.",
       "becomeProducer": "Become a Vera grower",
       "startShopping": "Start Shopping"
@@ -4272,7 +4303,7 @@
       "items": [
         {
           "question": "What is Bio Vera?",
-          "answer": "Bio Vera is a vertically integrated agrifood company based in Hamburg. We contract growers, run quality and packing, operate refrigerated logistics, and sell fresh produce under our own programme — every batch carries a documented digital passport from parcel to shelf. We are not a marketplace that merely connects strangers."
+          "answer": "Bio Vera is a vertically integrated agrifood company headquartered in Hamburg. We contract growers, run quality control and packing, manage the cold chain and sell fresh produce through our own programme — every batch carries a documented digital passport from field to shelf. We are not a marketplace that simply connects strangers."
         },
         {
           "question": "What is an EU Digital Product Passport?",
@@ -4307,7 +4338,7 @@
     "linkHowWeOperate": "How we operate",
     "linkExpressInterest": "Express your interest",
     "placeOrder": "Place order",
-    "preOrder2026": "Pre-order 2026",
+    "preOrder2026": "Pre-order {{year}}",
     "purchasesTitle": "How Purchases Work",
     "purchasesLead": "",
     "purchasesSteps": [
@@ -4317,7 +4348,7 @@
       },
       {
         "title": "Browse and Order",
-        "body": "Filter by category — fruit, vegetables, cereals. View origin, harvest window and pricing. Place direct orders or use Pre-order 2026 for seasonal planning."
+        "body": "Filter by category — fruit, vegetables, cereals. View origin, harvest window and pricing. Place direct orders or use the {{year}} pre-order for seasonal planning."
       },
       {
         "title": "Confirm and Pay",
@@ -4335,7 +4366,7 @@
       "Vegetables",
       "Cereals"
     ],
-    "productsNote": "Log in to your buyer dashboard to see the full catalog, place orders, or submit a pre-order for 2026.",
+    "productsNote": "Log in to your buyer dashboard to see the full catalogue, place orders or submit a pre-order for {{year}}.",
     "harvestCalendarTitle": "Harvest calendar",
     "harvestCalendarLead": "",
     "packagingTitle": "Packaging",
@@ -4391,7 +4422,7 @@
     "heroSubtitle": "Full traceability from farm to your facility"
   },
   "growersPage": {
-    "metaTitle": "Grower Programme | Bio Vera — Certification, Guaranteed Terms, EU Market Access",
+    "metaTitle": "Grower Programme | Bio Vera — Certification, Guaranteed Terms, Buyers Across Europe",
     "metaDescription": "Grower programme: guaranteed terms, GlobalG.A.P. IFA v6 group certification facilitation, secured settlement after conformity, and export-ready batch passports. Open to producers throughout Europe.",
     "title": "Grower programme",
     "heroLead": "Join a network of certified growers. Bio Vera provides quality standards, group GlobalG.A.P. certification, logistics coordination and access to European buyers — at no certification cost to the grower.",
@@ -4442,7 +4473,7 @@
     ],
     "groupCertTitle": "Group Certification",
     "groupCertSubtitle": "",
-    "groupCertBody": "Vera Agrar holds the GlobalG.A.P. IFA v6 group certification. Bio Vera bears the paperwork and audit expenses while you onboard into structured placements under our corridor.",
+    "groupCertBody": "You don’t pay for certification yourself. Vera Agrar holds the GlobalG.A.P. group certificate and you join as a group member — Bio Vera covers documentation, audit and certificate maintenance costs.",
     "technicalStandardsTitle": "Technical standards",
     "tableColCategory": "Category",
     "tableColStandard": "Standard",
@@ -4578,7 +4609,7 @@
       }
     ],
     "heroEyebrow": "Bio Vera · Growers",
-    "heroSubtitle": "Guaranteed terms, EU market access"
+    "heroSubtitle": "Guaranteed terms and buyers across Europe — open to growers from every European country"
   },
   "logisticsPartnerPage": {
     "metaTitle": "Logistics Partner | Bio Vera — Refrigerated Transport Network",
@@ -4728,7 +4759,9 @@
     "cardCookiesTitle": "Cookie policy",
     "cardCookiesDesc": "Understand how we use cookies and similar technologies on our websites and apps.",
     "sectionTechTitle": "Technical implementation",
-    "techImplementation": "Technical implementation and software by <1>Vera IT</1>."
+    "techImplementation": "Technical implementation and software by <1>Vera IT</1>.",
+    "cardImpressumTitle": "Impressum",
+    "cardImpressumDesc": "Company details: owner, address in Hamburg, VAT ID and contact."
   },
   "supplierStatusPage": {
     "title": "Application status",
@@ -4757,7 +4790,7 @@
     "featuredAd": {
       "eyebrow": "Open roles · field sales · Serbia",
       "title": "We're hiring commercial representatives",
-      "lead": "Join the Vera grower programme — visit producers, close contract volumes, and build the Bio Vera corridor from parcel to Hamburg.",
+      "lead": "Join the Bio Vera grower programme — visit producers, close contract volumes and build the grower network in your region, as part of a programme that runs across Europe.",
       "regionSouthCentral": "South & Central Serbia",
       "regionVojvodina": "Vojvodina",
       "degreeNote": "Preferred: degree from a Faculty of Agriculture (agronomy, pomology, crop protection, or related)."
@@ -4849,7 +4882,7 @@
           "Base salary + commission on contracted volumes",
           "Travel and field budget",
           "Bio Vera mobile tools and training",
-          "Regional career growth as the corridor scales",
+          "Career growth as the programme expands",
           "Direct support from QA and operations teams in Hamburg"
         ]
       },
@@ -4994,7 +5027,7 @@
     "missionP1": "We use technology so the same records serve operations and sales: growers stay producers inside our system, buyers contract with Bio Vera, and end customers see verifiable origin and quality.",
     "missionP2": "",
     "visionTitle": "Our Vision",
-    "visionP1": "To lead Europe's vertically integrated fresh produce corridors with trace-ready QA that buyers recognise on shelf. Every product with a complete digital passport, every farmer fairly compensated, every consumer able to trust the origin.",
+    "visionP1": "To be Europe’s leading vertically integrated fresh produce chain, with quality control that buyers recognise on the shelf. Every product with a complete digital passport, every grower fairly paid, every consumer able to trust the origin.",
     "visionP2": "",
     "valuesTitle": "Our Values",
     "valueCards": [
@@ -5034,7 +5067,7 @@
         "body": "Automated certification management, GlobalG.A.P. IFA v6 group certification facilitation, and complete compliance tracking for EU market access."
       }
     ],
-    "ctaTitle": "Become Part of the Vera Corridor",
+    "ctaTitle": "Join the Bio Vera Programme",
     "ctaBody": "Whether you grow under our programme, supply inputs, move freight for us, or buy from Bio Vera — the playbook from parcel to payout stays the same.",
     "ctaProducer": "Become a Vera grower",
     "ctaContact": "Contact us",
@@ -5904,7 +5937,9 @@
     "termsTitle": "Terms of Service",
     "termsUpdated": "Last updated: January 2026",
     "cookiesTitle": "Cookie Policy",
-    "cookiesUpdated": "Last updated: January 2026"
+    "cookiesUpdated": "Last updated: January 2026",
+    "impressumTitle": "Impressum (legal notice)",
+    "impressumUpdated": "Last updated: October 2026"
   },
   "refundReconciliation": {
     "title": "Financial reconciliation",
@@ -6050,5 +6085,63 @@
     "manualCode": "Code (if scanning fails)",
     "handoverStartedHint": "The driver is at your dock. Check the goods, add photos and sign to receive the shipment.",
     "completeReceipt": "Complete receipt (photos + signature)"
+  },
+  "adminPreOrders": {
+    "title": "Pre-orders {{year}}",
+    "summary": "{{count}} pre-orders · {{kg}} kg in total",
+    "allStatuses": "All statuses",
+    "empty": "No pre-orders yet.",
+    "loadFailed": "Pre-orders could not be loaded.",
+    "saveFailed": "Status could not be saved.",
+    "details": "Delivery {{from}} → {{to}} · Quality: {{quality}} · Packaging: {{packaging}}",
+    "status": {
+      "NEW": "New",
+      "REVIEWED": "Reviewed",
+      "CONFIRMED": "Confirmed",
+      "DECLINED": "Declined"
+    }
+  },
+  "bookCall": {
+    "navCta": "Book a free call",
+    "heroTitle": "Book a free call",
+    "heroSubtitle": "30 minutes, free and in your language — we’ll show you how Bio Vera works for you, whether you grow, buy, supply or transport.",
+    "cardTitle": "Choose a time",
+    "roleQuestion": "I would like to talk as…",
+    "role": {
+      "buyer": "Buyer",
+      "producer": "Producer / grower",
+      "supplier": "Supplier",
+      "logistics": "Logistics partner",
+      "other": "Other"
+    },
+    "roleHint": {
+      "buyer": "Retail, wholesale, food service — fresh produce with a digital passport",
+      "producer": "Fruit and vegetable growers from anywhere in Europe",
+      "supplier": "Seeds, fertiliser, crop protection, packaging",
+      "logistics": "Refrigerated transport and last-mile delivery",
+      "other": "Partnerships, press, investors and everything else"
+    },
+    "talkingAs": "You are booking as:",
+    "changeRole": "Change",
+    "privacyNote": "The calendar is provided by Calendly. Your name and e-mail are used only to arrange and confirm the call.",
+    "loading": "Loading the calendar…",
+    "notConfigured": "Online booking is not available right now. Please write to info@biovera.app.",
+    "fallbackPrefix": "Calendar not loading?",
+    "fallbackLink": "Open it in a new tab",
+    "fallbackOr": "or write to",
+    "thanksTitle": "Thank you — your call is booked",
+    "thanksBody": "You will receive a confirmation e-mail with the details and a calendar invitation.",
+    "backHome": "Back to the home page",
+    "expectTitle": "What to expect",
+    "expectDurationTitle": "30-minute call",
+    "expectDurationBody": "Video or phone — whatever suits you.",
+    "expectLanguagesTitle": "In your language",
+    "expectLanguagesBody": "English, German, Serbian, Spanish, French, Romanian or Bulgarian.",
+    "expectFreeTitle": "Free and without obligation",
+    "expectFreeBody": "No preparation needed — bring your questions.",
+    "expectWhoTitle": "Who you’ll talk to",
+    "expectWhoBody": "The Bio Vera team in Hamburg, responsible for your area.",
+    "contactPromptTitle": "Prefer to talk?",
+    "contactPromptCta": "Book a free call"
   }
 }

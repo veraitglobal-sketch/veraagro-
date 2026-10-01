@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-export type LegalSlug = 'privacy' | 'cookies' | 'terms';
+export type LegalSlug = 'privacy' | 'cookies' | 'terms' | 'impressum';
 
 const legalDir = () => path.join(process.cwd(), 'content', 'legal');
 

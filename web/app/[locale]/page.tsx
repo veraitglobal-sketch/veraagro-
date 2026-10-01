@@ -10,6 +10,7 @@ import bg from '@/locales/bg.json';
 import fr from '@/locales/fr.json';
 import es from '@/locales/es.json';
 import HomePageClient, { type HomeHeroInitial } from '@/components/marketing/HomePageClient';
+import { PRE_ORDER_SEASON } from '@biovera/shared/preorder';
 
 type LocaleBundle = {
   metadata: {
@@ -43,7 +44,7 @@ function homeHero(locale: SiteLocale): HomeHeroInitial {
     subtitle: h.subtitle,
     browseProducts: h.browseProducts,
     becomeProducer: h.becomeProducer,
-    preOrder: h.preOrder,
+    preOrder: h.preOrder.replace('{{year}}', String(PRE_ORDER_SEASON)),
     preOrderAria: h.preOrderAria,
   };
 }

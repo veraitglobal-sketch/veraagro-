@@ -22,6 +22,7 @@ import { Eye, EyeOff, ChevronLeft } from 'lucide-react-native';
 import { AuthPanel, AuthScreenShell } from '../components/auth/AuthScreenShell';
 import { enterpriseColors, enterpriseUi } from '../lib/enterprise-ui';
 import { useAuth } from '../hooks/useAuth';
+import { openBookCall } from '../components/BookCallBlock';
 import {
   getPostLoginPath,
   normalizeUserRoles,
@@ -31,7 +32,7 @@ import { theme } from '../lib/theme';
 
 /** Login — same enterprise shell as welcome (gray-50, white panel, Vera primary CTA). */
 export default function LoginScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const rawParams = useLocalSearchParams<{ redirect?: string | string[]; partner?: string | string[] }>();
   const { login, logout } = useAuth();
@@ -94,6 +95,14 @@ export default function LoginScreen() {
           <Text style={styles.footerAccent}>{t('login.registerBuyer')}</Text>
         </TouchableOpacity>
       ) : null}
+      <TouchableOpacity
+        onPress={() => openBookCall(partnerMode ? 'producer' : 'buyer', { language: i18n.language, source: 'app-login' })}
+        activeOpacity={0.7}
+        style={styles.footerBtn}
+        accessibilityRole="link"
+      >
+        <Text style={styles.footerAccent}>{t('bookCall.navCta')}</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={() => router.replace('/')} activeOpacity={0.7} style={styles.footerBtn}>
         <Text style={styles.footerMuted}>
           {partnerMode ? t('partnerLogin.backToMarketplaceFull') : t('login.backToMarketplace')}

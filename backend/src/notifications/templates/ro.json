@@ -33,11 +33,11 @@
   },
   "buyer.paymentReceived": {
     "title": "Plată primită",
-    "message": "Plată primită — comanda {{orderNumber}} se pregătește{{packLine}}."
+    "message": "Plată primită — comanda {{orderNumber}} ({{packLine}}) este în pregătire."
   },
   "buyer.orderPacked": {
     "title": "Ambalat",
-    "message": "Ambalat și gata de ridicare: {{orderNumber}}{{packLine}}."
+    "message": "Ambalat și gata de ridicare: {{orderNumber}} ({{packLine}})."
   },
   "buyer.orderInTransit": {
     "title": "În drum",

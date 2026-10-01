@@ -21,7 +21,7 @@
     "nameEs": "Spaniolă"
   },
   "footer": {
-    "tagline": "O rețea agricolă integrată vertical pentru certificarea Bio-Ready și conformitatea cu piața UE.",
+    "tagline": "Un lanț agroalimentar gestionat vertical: producători sub contract din toată Europa, controlul calității, lanț frigorific și vânzare sub marca Bio Vera — cu dosar Bio‑Ready pentru fiecare lot.",
     "columnProduct": "Produs",
     "columnCompany": "Companie",
     "columnSupport": "Sprijin",
@@ -47,7 +47,8 @@
     "appApple": "Măr",
     "appAndroid": "Android",
     "logoAlt": "Bio Vera",
-    "terms": "Termeni"
+    "terms": "Termeni",
+    "impressum": "Impressum (date legale)"
   },
   "languagePage": {
     "eyebrow": "Setări",
@@ -96,7 +97,7 @@
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "Un sistem operațional care conectează producția, controlul calității, logistica și distribuția produselor proaspete într-un lanț certificat unic. Fiecare lot urmărit de la parcelă la punctul final. Fiecare participant verificat. Fiecare pas documentat.",
+    "siteDescription": "Companie agroalimentară integrată vertical din Hamburg. Pașaport digital de produs UE pentru fiecare lot — trasabilitate de la parcelă până la raft pentru producători, logistică și furnizori.",
     "ldJsonDescription": "Sistem agrifood certificat pentru producție, calitate, logistică și distribuție — fiecare lot de la parcelă la punctul final, fiecare participant verificat, fiecare pas documentat.",
     "keywords": [
       "Bio Vera",
@@ -1169,7 +1170,11 @@
         "statusCurrent": "Următor for you",
         "statusPending": "Waiting on earlier pași",
         "footerNote": "Applying fertiliser or protection produse on a Parcelăă is logged in the mobile app (fotografie + GPS on the plot). Whitelist and furnizori on the web help you choose compliant inputs."
-      }
+      },
+      "ordersToPrepareCardTitle": "Comenzi de pregătit ({{count}})",
+      "ordersToPrepareCardToPack": "De ambalat: {{count}}",
+      "ordersToPrepareCardAllPacked": "Totul este ambalat — se așteaptă transportul.",
+      "ordersToPrepareCardCta": "Deschide comenzile"
     },
     "missionCreate": {
       "submitCta": "Solicita transport",
@@ -1664,7 +1669,8 @@
     "goBatchesPlatform": "Loturi (online)",
     "supply": "Aprovizionare prezentare generală",
     "seedProduction": "Semințe production",
-    "goGrowerControl": "Producător control"
+    "goGrowerControl": "Producător control",
+    "preOrders": "Precomenzi"
   },
   "adminPages": {
     "titles": {
@@ -2274,7 +2280,9 @@
         "COMPLETED": "Finalizat",
         "CANCELLED": "Anulat",
         "REFUNDED": "Rambursat"
-      }
+      },
+      "packedState": "Ambalat {{packed}}/{{total}} · {{kg}} kg",
+      "notPackedState": "Neambalat ({{packed}}/{{total}}) — producătorul trebuie să înregistreze ambalarea înainte de transport"
     },
     "supply": {
       "heading": "Producător supply overview",
@@ -2385,14 +2393,15 @@
   "buyerPortalNav": {
     "dashboard": "Panou",
     "orders": "Comenzi",
-    "preOrder2026": "Precomandă 2026",
+    "preOrder2026": "Precomandă {{year}}",
     "directOrders": "Comenzi directe",
     "invoices": "Facturi",
     "deliveries": "Livrări",
     "analytics": "Analize",
     "companyProfile": "Profilul Companiei",
     "marketplace": "Piață",
-    "veraStandard": "Bio Vera Standard"
+    "veraStandard": "Bio Vera Standard",
+    "preOrderSubtitle": "Planificați cantitățile pentru sezonul {{year}}"
   },
   "logisticsPartnerNav": {
     "dashboard": "Panou",
@@ -3232,7 +3241,26 @@
     "portalPickupProofPending": "Waiting for se încarcă Predare (temperature, fotografii, badge, șofer semnătură).",
     "portalPickupBadge": "Badge fotografie",
     "portalPickupSignature": "Șofer semnătură",
-    "portalViewImage": "Deschide image"
+    "portalViewImage": "Deschide image",
+    "packingPacks": "Ambalaje pregătite",
+    "packingOrderedPacks": "Comandat: {{count}}",
+    "packingPackSize": "Mărimea ambalajului",
+    "packingNetKg": "Greutate netă (kg)",
+    "packingWeightHint": "Permis: {{min}}–{{max}} kg",
+    "packingSave": "Salvează ambalarea",
+    "packingSaving": "Se salvează…",
+    "packingSaveFailed": "Ambalarea nu a putut fi salvată. Încercați din nou.",
+    "packingErrNotPaid": "Comanda nu este încă plătită — pregătiți-o după confirmarea plății.",
+    "packingErrPacksMin": "Introduceți cel puțin 1 ambalaj.",
+    "packingErrPacksMax": "Nu mai mult decât cele {{max}} ambalaje comandate.",
+    "packingErrWeight": "Greutatea netă trebuie să fie între {{min}} și {{max}} kg.",
+    "packingDone": "Ambalat {{packed}} din {{total}} · {{kg}} kg · {{date}}",
+    "packingNotYet": "Încă neambalat",
+    "packingMission": "Transport: {{mission}}",
+    "packingRecord": "Înregistrează ambalarea",
+    "packingEdit": "Corectează ambalarea",
+    "packingQualityLink": "Control de calitate",
+    "packingAwaitingPickup": "Ambalat — în așteptarea ridicării."
   },
   "supplier": {
     "nav": {
@@ -3386,13 +3414,13 @@
     "hero": {
       "title1": "Integrat vertical",
       "title2": "Companie agrifood",
-      "subtitle": "Un sistem operațional care conectează producția, controlul calității, logistica și distribuția produselor proaspete într-un lanț certificat unic. Fiecare lot urmărit de la parcelă la punctul final. Fiecare participant verificat. Fiecare pas documentat.",
+      "subtitle": "Bio Vera este o companie agroalimentară integrată vertical, cu sediul în Hamburg. Prin programul nostru propriu contractăm producători, asigurăm controlul calității și ambalarea, gestionăm lanțul frigorific și livrăm fructe și legume proaspete direct clienților finali. Fiecare lot are un pașaport digital documentat — de la parcelă până la raft.",
       "browseProducts": "Răsfoiți produse",
       "becomeProducer": "Deveniți producător",
-      "preOrder": "Precomenzile pentru 2026 sunt deschise",
+      "preOrder": "Precomenzile pentru {{year}} sunt deschise",
       "preOrderAria": "Informații despre precomandă",
       "preOrderTip1": "Produsele Vera sunt trimise proaspete pentru livrare. Pe lângă controlul calității, ne străduim să îndeplinim așteptările clienților la fiecare pas.",
-      "preOrderTip2": "Precomanda este doar pentru planificarea cantităților pentru 2026; nu este un ordin obligatoriu."
+      "preOrderTip2": "Precomanda servește doar la planificarea cantităților pentru {{year}}; nu este o comandă fermă."
     },
     "statLabels": [
       "Trasabilitate",
@@ -3516,7 +3544,7 @@
       "grains": "Cereale"
     },
     "cta": {
-      "title": "Partener cu rețeaua",
+      "title": "Cultivați pentru noi, transportați pentru noi sau cumpărați de la noi",
       "body": "Lucrați cu cultivatorii, partenerii logistici și cumpărătorii conform unui singur set de standarde: predari clare, loturi urmăribile și termeni comerciali previzibili.",
       "becomeProducer": "Deveniți producător",
       "startShopping": "Începeți cumpărăturile"
@@ -3527,8 +3555,8 @@
       "subtitle": "What Bio Vera is, how traceability works, and who stands behind the platform.",
       "items": [
         {
-          "question": "What is Bio Vera?",
-          "answer": "Bio Vera is a vertically integrated agrifood company based in Hamburg. We contract growers, run quality and packing, operate refrigerated logistics, and sell fresh produce under our own programme — every batch carries a documented digital passport from parcel to shelf. We are not a marketplace that merely connects strangers."
+          "question": "Ce este Bio Vera?",
+          "answer": "Bio Vera este o companie agroalimentară integrată vertical, cu sediul în Hamburg. Contractăm producători, asigurăm controlul calității și ambalarea, gestionăm lanțul frigorific și vindem produse proaspete prin programul nostru propriu — fiecare lot are un pașaport digital documentat de la parcelă până la raft. Nu suntem un marketplace care doar pune în legătură părți necunoscute."
         },
         {
           "question": "What is an EU Digital Produs Passport?",
@@ -3560,7 +3588,7 @@
     "linkHowWeOperate": "Cum operăm",
     "linkExpressInterest": "Exprimați-vă interesul",
     "placeOrder": "Plasați comanda",
-    "preOrder2026": "Precomandă 2026",
+    "preOrder2026": "Precomandă {{year}}",
     "purchasesTitle": "Cum funcționează achizițiile",
     "purchasesLead": "De la înregistrare până la livrare: un proces simplu, transparent.",
     "purchasesSteps": [
@@ -3570,7 +3598,7 @@
       },
       {
         "title": "Răsfoiți și comandați",
-        "body": "În tabloul de bord puteți naviga în funcție de categorie (fructe, legume, cereale, altele), puteți vedea originea, informațiile despre recoltă și prețurile. Plasați comenzi directe sau utilizați Precomandă 2026 pentru planificarea sezonieră."
+        "body": "Filtrați după categorie — fructe, legume, cereale. Vedeți originea, perioada de recoltare și prețurile. Comandați direct sau folosiți precomanda {{year}} pentru planificarea sezonului."
       },
       {
         "title": "Confirmați și plătiți",
@@ -3588,7 +3616,7 @@
       "Legume",
       "Cereale"
     ],
-    "productsNote": "Conectați-vă la tabloul de bord pentru cumpărători pentru a vedea catalogul complet, pentru a plasa comenzi sau pentru a trimite o precomandă pentru 2026.",
+    "productsNote": "Autentificați-vă în panoul de cumpărător pentru a vedea catalogul complet, a plasa comenzi sau a trimite o precomandă pentru {{year}}.",
     "harvestCalendarTitle": "Calendarul recoltei",
     "packagingTitle": "Ambalare",
     "packagingLead": "Folosim ambalaje standardizate, trasabile, care îndeplinesc cerințele privind siguranța alimentară și calitatea.",
@@ -3646,7 +3674,7 @@
     "harvestCalendarLead": ""
   },
   "growersPage": {
-    "metaTitle": "Program pentru producători | Bio Vera — Certificare, condiții garantate, acces la piața UE",
+    "metaTitle": "Programul pentru producători | Bio Vera — Certificare, condiții garantate, cumpărători din toată Europa",
     "metaDescription": "Program pentru producători: condiții garantate, certificare de grup GlobalG.A.P. IFA v6 gratuită, plată în 48 h, logistică coordonată și acces la piața UE. Deschis producătorilor din UE și Europa.",
     "title": "Program pentru producători",
     "heroLead": "Alăturați-vă unei rețele de producători certificați. Bio Vera asigură standarde de calitate, certificare de grup GlobalG.A.P., coordonare logistică și acces la cumpărători europeni — fără costuri de certificare pentru producător.",
@@ -3697,7 +3725,7 @@
     ],
     "groupCertTitle": "Certificare de grup",
     "groupCertSubtitle": "Certificarea de grup Opțiunea 2",
-    "groupCertBody": "Vera Agrar deține certificarea pentru toți partenerii noștri. Acoperim costurile și procesul de certificare, în timp ce obțineți acces direct pe piața germană.",
+    "groupCertBody": "Nu plătiți singur certificarea. Vera Agrar deține certificatul de grup GlobalG.A.P., iar dumneavoastră vă alăturați ca membru al grupului — Bio Vera acoperă costurile de documentare, audit și menținere a certificatului.",
     "technicalStandardsTitle": "Standarde tehnice",
     "tableColCategory": "Categorie",
     "tableColStandard": "Standard",
@@ -3831,7 +3859,7 @@
       }
     ],
     "heroEyebrow": "Bio Vera · Producători",
-    "heroSubtitle": "Condiții garantate, acces la piața UE",
+    "heroSubtitle": "Condiții garantate și cumpărători din toată Europa — deschis producătorilor din orice țară europeană",
     "viewGuideOnline": "Deschide guide (screenshots)",
     "backToGrowers": "Back to Producător"
   },
@@ -3983,7 +4011,9 @@
     "cardCookiesTitle": "Politica de cookie-uri",
     "cardCookiesDesc": "Înțelegeți cum folosim module cookie și tehnologii similare pe site-urile și aplicațiile noastre.",
     "sectionTechTitle": "Implementare tehnică",
-    "techImplementation": "Implementare tehnică / software de <1>Vera IT</1>."
+    "techImplementation": "Implementare tehnică / software de <1>Vera IT</1>.",
+    "cardImpressumTitle": "Impressum",
+    "cardImpressumDesc": "Datele companiei: titular, adresă în Hamburg, cod TVA și contact."
   },
   "investorDeckPage": {
     "pageTitle": "Investitor materiale",
@@ -4023,7 +4053,7 @@
     "featuredAd": {
       "eyebrow": "Posturi deschise · teren · Serbia",
       "title": "Căutăm reprezentanți comerciali",
-      "lead": "Alătură-te programului Vera — vizitează producători, încheie volume contractuale și construiește rețeaua Bio Vera de la parcelă la Hamburg.",
+      "lead": "Alăturați-vă programului pentru producători Bio Vera — vizitați producători, încheiați volume contractate și construiți rețeaua de producători din regiunea dumneavoastră, ca parte a unui program care funcționează în toată Europa.",
       "regionSouthCentral": "Serbia de Sud și Centru",
       "regionVojvodina": "Voivodina",
       "degreeNote": "De preferință: diplomă de facultate agricolă (agronomie, pomicultură, protecția plantelor sau similar)."
@@ -4115,7 +4145,7 @@
           "Salariu de bază + comision pe volume contractate",
           "Buget de călătorii și teren",
           "Instrumente mobile Bio Vera și instruire",
-          "Creștere profesională odată cu extinderea coridorului",
+          "Creștere în carieră pe măsură ce programul se extinde",
           "Suport QA și operațiuni din Hamburg"
         ]
       },
@@ -4209,7 +4239,7 @@
     "missionP1": "Bio Vera lucrează pentru a consolida lanțurile de aprovizionare agricole prin conectarea producătorilor din întreaga lume direct cu piețele, asigurând standarde clare, asigurare a calității și compensare echitabilă la fiecare pas.",
     "missionP2": "Credem că tehnologia poate reduce decalajul dintre agricultura tradițională și cerințele pieței moderne, creând un ecosistem durabil în care fermierii prosperă, cumpărătorii au încredere, iar consumatorii beneficiază de produse cu adevărat trasabile și de înaltă calitate.",
     "visionTitle": "Viziunea noastră",
-    "visionP1": "Pentru a deveni o rețea agricolă integrată pe verticală, care stabilește noi standarde pentru trasabilitate, asigurare a calității și agricultură durabilă.",
+    "visionP1": "Să fim lanțul de fructe și legume proaspete integrat vertical de referință în Europa, cu un control al calității pe care cumpărătorii îl recunosc la raft. Fiecare produs cu pașaport digital complet, fiecare producător plătit corect, fiecare consumator sigur de origine.",
     "visionP2": "Ne imaginăm un viitor în care fiecare produs de pe raft are un pașaport digital complet, în care fermierii primesc o compensație echitabilă pentru munca lor și în care consumatorii pot avea încredere în originea și calitatea a ceea ce cumpără.",
     "valuesTitle": "Valorile noastre",
     "valueCards": [
@@ -4249,7 +4279,7 @@
         "body": "Management automatizat al certificării, GlobalG.A.P. Facilitarea certificării de grup IFA v6 și urmărirea completă a conformității pentru acces fără probleme la piețele din întreaga lume."
       }
     ],
-    "ctaTitle": "Alăturați-vă nouă în această călătorie",
+    "ctaTitle": "Alăturați-vă programului Bio Vera",
     "ctaBody": "Indiferent dacă sunteți cultivator, furnizor, partener logistic sau cumpărător, Bio Vera oferă un loc într-o singură rețea agricolă - cu procese clare de la câmp până la așezare.",
     "ctaProducer": "Deveniți producător",
     "ctaContact": "Contactaţi-ne",
@@ -4497,7 +4527,9 @@
     "termsTitle": "Termeni și condiții",
     "termsUpdated": "Ultima actualizare: ianuarie 2026",
     "cookiesTitle": "Politica de cookie-uri",
-    "cookiesUpdated": "Ultima actualizare: ianuarie 2026"
+    "cookiesUpdated": "Ultima actualizare: ianuarie 2026",
+    "impressumTitle": "Impressum (date legale)",
+    "impressumUpdated": "Ultima actualizare: octombrie 2026"
   },
   "connectedWorkflow": {
     "openHarvest": "Deschide Plan de recoltă",
@@ -4568,7 +4600,10 @@
     "choose": "Selectare",
     "link": "Link and save Livrare",
     "saved": "Livrare linked:",
-    "error": "Linking eșuat. Refresh and retry."
+    "error": "Linking eșuat. Refresh and retry.",
+    "packedShort": "ambalat {{packed}}/{{total}}",
+    "notPackedShort": "neambalat {{packed}}/{{total}}",
+    "notPackedHint": "Producătorul a ambalat {{packed}} din {{total}} ambalaje. Comanda poate fi legată de transport după înregistrarea ambalării."
   },
   "deliveryReview": {
     "startReview": "Începe verificarea",
@@ -6050,5 +6085,63 @@
     "goLogin": "Mergi la conectare",
     "errCodeFormat": "Introduce the 4-digit code from your e-mail.",
     "errFailed": "Verification eșuat. Check the code and try again."
+  },
+  "adminPreOrders": {
+    "title": "Precomenzi {{year}}",
+    "summary": "Precomenzi: {{count}} · {{kg}} kg în total",
+    "allStatuses": "Toate statusurile",
+    "empty": "Nu există încă precomenzi.",
+    "loadFailed": "Precomenzile nu au putut fi încărcate.",
+    "saveFailed": "Statusul nu a putut fi salvat.",
+    "details": "Livrare {{from}} → {{to}} · Calitate: {{quality}} · Ambalare: {{packaging}}",
+    "status": {
+      "NEW": "Nouă",
+      "REVIEWED": "Analizată",
+      "CONFIRMED": "Confirmată",
+      "DECLINED": "Respinsă"
+    }
+  },
+  "bookCall": {
+    "navCta": "Programați o discuție gratuită",
+    "heroTitle": "Programați o discuție gratuită",
+    "heroSubtitle": "30 de minute, gratuit și în limba dumneavoastră — vă arătăm cum funcționează Bio Vera pentru dumneavoastră, fie că produceți, cumpărați, furnizați sau transportați.",
+    "cardTitle": "Alegeți o oră",
+    "roleQuestion": "Doresc să discut în calitate de…",
+    "role": {
+      "buyer": "Cumpărător",
+      "producer": "Producător",
+      "supplier": "Furnizor",
+      "logistics": "Partener logistic",
+      "other": "Altceva"
+    },
+    "roleHint": {
+      "buyer": "Retail, en-gros, HoReCa — produse proaspete cu pașaport digital",
+      "producer": "Producători de fructe și legume din orice țară europeană",
+      "supplier": "Semințe, îngrășăminte, protecția plantelor, ambalaje",
+      "logistics": "Transport frigorific și livrare pe ultimul kilometru",
+      "other": "Parteneriate, presă, investitori și orice altceva"
+    },
+    "talkingAs": "Programați în calitate de:",
+    "changeRole": "Schimbă",
+    "privacyNote": "Calendarul este furnizat de Calendly. Numele și e-mailul dumneavoastră sunt folosite doar pentru stabilirea și confirmarea discuției.",
+    "loading": "Se încarcă calendarul…",
+    "notConfigured": "Programarea online nu este disponibilă momentan. Scrieți-ne la info@biovera.app.",
+    "fallbackPrefix": "Calendarul nu se încarcă?",
+    "fallbackLink": "Deschideți-l într-o filă nouă",
+    "fallbackOr": "sau scrieți la",
+    "thanksTitle": "Mulțumim — discuția este programată",
+    "thanksBody": "Veți primi un e-mail de confirmare cu detaliile și o invitație în calendar.",
+    "backHome": "Înapoi la pagina principală",
+    "expectTitle": "La ce să vă așteptați",
+    "expectDurationTitle": "Discuție de 30 de minute",
+    "expectDurationBody": "Video sau telefonic — cum vă convine.",
+    "expectLanguagesTitle": "În limba dumneavoastră",
+    "expectLanguagesBody": "Engleză, germană, sârbă, spaniolă, franceză, română sau bulgară.",
+    "expectFreeTitle": "Gratuit și fără obligații",
+    "expectFreeBody": "Nu este nevoie de pregătire — veniți cu întrebările dumneavoastră.",
+    "expectWhoTitle": "Cu cine veți vorbi",
+    "expectWhoBody": "Echipa Bio Vera din Hamburg responsabilă de domeniul dumneavoastră.",
+    "contactPromptTitle": "Preferați să discutăm?",
+    "contactPromptCta": "Programați o discuție gratuită"
   }
 }

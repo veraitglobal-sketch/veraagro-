@@ -1,5 +1,7 @@
 'use client';
 
+import BookCallButton from '@/components/BookCallButton';
+import { PRE_ORDER_SEASON } from '@biovera/shared/preorder';
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
@@ -41,8 +43,8 @@ export default function ForBuyersPageClient() {
     ? '/buyer-portal/trade-panel'
     : `${loc('/login')}?returnTo=${encodeURIComponent('/buyer-portal/trade-panel')}`;
   const preOrderHref = isAuthenticated
-    ? '/pre-order-2026'
-    : `${loc('/login')}?returnTo=${encodeURIComponent('/pre-order-2026')}`;
+    ? '/pre-order'
+    : `${loc('/login')}?returnTo=${encodeURIComponent('/pre-order')}`;
 
   const [interestForm, setInterestForm] = useState({
     companyName: '',
@@ -66,7 +68,7 @@ export default function ForBuyersPageClient() {
   };
 
   const purchasesSteps = useMemo(
-    () => t('forBuyersPage.purchasesSteps', { returnObjects: true }) as Step[],
+    () => t('forBuyersPage.purchasesSteps', { returnObjects: true, year: PRE_ORDER_SEASON }) as Step[],
     [t],
   );
   const securityCards = useMemo(
@@ -158,8 +160,9 @@ export default function ForBuyersPageClient() {
                 className="inline-flex items-center gap-2 px-5 py-2.5 border-2 border-[#2D5A27] text-[#2D5A27] text-sm font-medium rounded-lg hover:bg-[#2D5A27]/5 transition-colors min-h-[48px]"
               >
                 <CalendarCheck className="h-4 w-4" />
-                {t('forBuyersPage.preOrder2026')}
+                {t('forBuyersPage.preOrder2026', { year: PRE_ORDER_SEASON })}
               </Link>
+              <BookCallButton role="buyer" from="/for-buyers" className="px-5 py-2.5" />
             </div>
           </section>
 
@@ -195,8 +198,8 @@ export default function ForBuyersPageClient() {
                 );
               })}
             </div>
-            {t('forBuyersPage.productsNote') ? (
-              <p className="mt-4 text-sm text-gray-500">{t('forBuyersPage.productsNote')}</p>
+            {t('forBuyersPage.productsNote', { year: PRE_ORDER_SEASON }) ? (
+              <p className="mt-4 text-sm text-gray-500">{t('forBuyersPage.productsNote', { year: PRE_ORDER_SEASON })}</p>
             ) : null}
 
             <div className="mt-10 pt-10 border-t border-gray-200">
@@ -297,8 +300,9 @@ export default function ForBuyersPageClient() {
                 className="inline-flex items-center gap-2 px-5 py-2.5 border-2 border-[#2D5A27] text-[#2D5A27] text-sm font-medium rounded-lg hover:bg-[#2D5A27]/5 transition-colors min-h-[48px]"
               >
                 <CalendarCheck className="h-4 w-4" />
-                {t('forBuyersPage.preOrder2026')}
+                {t('forBuyersPage.preOrder2026', { year: PRE_ORDER_SEASON })}
               </Link>
+              <BookCallButton role="buyer" from="/for-buyers" className="px-5 py-2.5" />
             </div>
           </section>
 

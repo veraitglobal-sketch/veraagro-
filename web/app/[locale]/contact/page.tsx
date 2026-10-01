@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Send, MessageSquare } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, MessageSquare, CalendarDays } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { contactAPI } from '@/lib/api';
 import { axiosResponseStatus } from '@/lib/api-error';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
 import Footer from '@/components/Footer';
+import { BOOK_CALL_ENABLED } from '@/lib/book-call';
 
 export default function ContactPage() {
   const { t } = useTranslation();
@@ -172,6 +173,21 @@ export default function ContactPage() {
                   </div>
                 </div>
               </motion.div>
+
+              {BOOK_CALL_ENABLED && (
+                <Link
+                  href={`${loc('/book-a-call')}?from=/contact`}
+                  className="flex items-start gap-4 rounded-lg border border-[#2D5A27]/30 bg-[#2D5A27]/5 p-4 hover:bg-[#2D5A27]/10 transition-colors"
+                >
+                  <div className="flex-shrink-0 w-12 h-12 bg-[#2D5A27]/10 rounded-lg flex items-center justify-center">
+                    <CalendarDays className="w-6 h-6 text-[#2D5A27]" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900 mb-1">{t('bookCall.contactPromptTitle')}</h3>
+                    <p className="text-sm text-[#2D5A27] font-light">{t('bookCall.contactPromptCta')} →</p>
+                  </div>
+                </Link>
+              )}
 
               <motion.div
                 initial={{ opacity: 0, x: -20 }}

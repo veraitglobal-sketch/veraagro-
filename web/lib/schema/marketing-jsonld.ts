@@ -31,10 +31,10 @@ export function buildContactPageJsonLd(locale: SiteLocale) {
       contactPoint: {
         '@type': 'ContactPoint',
         contactType: 'customer support',
-        email: 'contact@biovera.app',
+        email: 'info@biovera.app',
         telephone: '+49-155-63740470',
         areaServed: 'Europe',
-        availableLanguage: ['English', 'Serbian'],
+        availableLanguage: ['English', 'German', 'Serbian', 'Spanish', 'French', 'Romanian', 'Bulgarian'],
       },
     },
   };

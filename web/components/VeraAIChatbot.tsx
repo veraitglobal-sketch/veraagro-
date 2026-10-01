@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
-import { X, Send, MessageCircle, Zap, Package, Route, Calculator, Search, ShoppingBag, Leaf, Truck, Building2, Calendar, QrCode, Mail, FileCheck, Award, BookOpen, UserPlus, MapPin, CheckCircle, ArrowLeft } from 'lucide-react';
+import { X, Send, MessageCircle, Zap, Package, Route, Calculator, Search, ShoppingBag, Leaf, Truck, Building2, Calendar, QrCode, Mail, FileCheck, Award, BookOpen, UserPlus, MapPin, CheckCircle, ArrowLeft, CalendarDays } from 'lucide-react';
+import { useBookCallHref } from '@/hooks/useBookCallHref';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 
@@ -182,6 +183,7 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
   const assistantLanguage = i18n.resolvedLanguage || i18n.language || 'en';
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
+  const bookCall = useBookCallHref();
   const [message, setMessage] = useState('');
   const [view, setView] = useState<'main' | CategoryKey>('main');
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string; link?: string; linkLabel?: string }[]>([]);
@@ -386,6 +388,17 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                         <span className="truncate">{t(labelKey)}</span>
                       </button>
                     ))}
+                    {bookCall.enabled && (
+                      <Link
+                        href={bookCall.href}
+                        onClick={() => setOpen(false)}
+                        className="col-span-2 flex items-center justify-center gap-2 rounded-md md:rounded-lg py-2 md:py-2.5 text-[11px] md:text-xs font-semibold text-white transition hover:opacity-90"
+                        style={{ backgroundColor: VERA_GREEN }}
+                      >
+                        <CalendarDays className="h-3.5 w-3.5 md:h-4 md:w-4" aria-hidden />
+                        {t('bookCall.navCta')}
+                      </Link>
+                    )}
                   </motion.div>
                 ) : (
                   <motion.div
@@ -552,6 +565,11 @@ export default function VeraAIChatbot({ inline, inlineVariant = 'default' }: Ver
                               <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 flex-shrink-0 text-[#2D5A27]" /><span className="truncate">{t(labelKey)}</span>
                             </button>
                           ))}
+                          {bookCall.enabled && (
+                            <Link href={bookCall.href} onClick={() => setOpen(false)} className="col-span-2 flex items-center justify-center gap-2 rounded-md md:rounded-lg py-2 md:py-2.5 text-[11px] md:text-xs font-semibold text-white transition hover:opacity-90" style={{ backgroundColor: VERA_GREEN }}>
+                              <CalendarDays className="h-3.5 w-3.5 md:h-4 md:w-4" aria-hidden />{t('bookCall.navCta')}
+                            </Link>
+                          )}
                         </motion.div>
                       ) : (
                         <motion.div key={view} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="space-y-2 md:space-y-3">

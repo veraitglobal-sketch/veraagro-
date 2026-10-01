@@ -700,7 +700,7 @@ export class DeliveriesService {
           batches: { select: { batchId: true, productName: true, estateId: true } } } }),
       this.prisma.orders.findMany({ where: { status: { in: ['PAID', 'CONFIRMED', 'PICKED_UP', 'IN_TRANSIT'] }, payments: { status: 'IN_ESCROW' } },
         take: 200, orderBy: { createdAt: 'desc' }, select: { id: true, orderNumber: true, productName: true, quantity: true, unit: true,
-          catalogProductId: true, fulfillingEstateId: true,
+          catalogProductId: true, fulfillingEstateId: true, packCount: true, packLabel: true, packedPackCount: true, packedKg: true, packedAt: true,
           estates: { select: { ownerId: true, name: true } }, fulfilling_estate: { select: { id: true, ownerId: true, name: true } } } }),
       this.prisma.deliveries.findMany({ where: { missionId: { not: null }, OR: [{ waybills: null }, { invoices: null }] },
         take: 200, orderBy: { createdAt: 'desc' }, select: { id: true, missionId: true, orderId: true, deliveryNumber: true } }),

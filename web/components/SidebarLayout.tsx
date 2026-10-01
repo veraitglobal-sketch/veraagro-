@@ -1,5 +1,7 @@
 'use client';
 
+import { CalendarDays } from 'lucide-react';
+import { useBookCallHref } from '@/hooks/useBookCallHref';
 import { ReactNode, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -38,6 +40,8 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
   const loc = useLocalizedHref();
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const bookCall = useBookCallHref();
+  const isAdminUser = (user?.roles ?? []).some((r) => r === 'ADMIN' || r === 'SUPER_ADMIN');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (href: string) => {
@@ -127,6 +131,16 @@ export default function SidebarLayout({ children, title, navItems, navGroups }: 
             {(user?.roles && Array.isArray(user.roles) ? user.roles : []).map(role => role.replace(/_/g, ' ')).join(', ')}
           </p>
         </div>
+        {bookCall.enabled && !isAdminUser && (
+          <Link
+            href={bookCall.href}
+            onClick={() => setMobileMenuOpen(false)}
+            className="mb-2 flex w-full min-h-[44px] items-center justify-center gap-2 rounded-lg border border-[#2D5A27]/30 px-3 py-2 text-sm font-medium text-[#2D5A27] hover:bg-[#2D5A27]/5 transition-colors"
+          >
+            <CalendarDays className="h-4 w-4" aria-hidden />
+            {t('bookCall.navCta')}
+          </Link>
+        )}
         <button
           type="button"
           onClick={() => { logout(); setMobileMenuOpen(false); }}

@@ -19,6 +19,11 @@ export function LegalDocumentsCardGrid({ className = "" }: Props) {
 
   return (
     <div className={`grid gap-6 md:grid-cols-2 ${className}`.trim()}>
+      <Link href={loc("/impressum")} className={cardClass}>
+        <h3 className="mb-2 text-xl font-medium text-gray-900">{t("legalPage.cardImpressumTitle")}</h3>
+        <p className="text-sm font-light leading-relaxed text-gray-600">{t("legalPage.cardImpressumDesc")}</p>
+      </Link>
+
       <Link href={loc("/terms")} className={cardClass}>
         <h3 className="mb-2 text-xl font-medium text-gray-900">{t("legalPage.cardTermsTitle")}</h3>
         <p className="text-sm font-light leading-relaxed text-gray-600">{t("legalPage.cardTermsDesc")}</p>

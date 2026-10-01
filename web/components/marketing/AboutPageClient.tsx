@@ -1,5 +1,6 @@
 'use client';
 
+import BookCallButton from '@/components/BookCallButton';
 import { useMemo } from 'react';
 import Link from 'next/link';
 import { Target, Users, Award, Globe, Shield, Leaf } from 'lucide-react';
@@ -178,6 +179,7 @@ export default function AboutPageClient() {
               >
                 {t('aboutPage.ctaContact')}
               </Link>
+              <BookCallButton from="/about" />
             </div>
           </div>
         </div>
