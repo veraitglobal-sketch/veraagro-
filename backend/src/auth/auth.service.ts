@@ -20,6 +20,43 @@ export class AuthService {
     private notificationsService: NotificationsService,
   ) {}
 
+  /** Delivery address from registration → persisted on users.buyerCompanyProfile for checkout prefill. */
+  buildBuyerCompanyProfileFromRegistration(data: RegisterBuyerDto) {
+    const address = data.address?.trim();
+    const city = data.city?.trim();
+    if (!address || !city) return undefined;
+
+    const postalCode = data.postalCode?.trim() || '';
+    const country = data.country?.trim() || '';
+    const fullName = `${data.firstName} ${data.lastName}`.trim();
+    const headquarters = [address, postalCode, city, country].filter(Boolean).join(', ');
+
+    return {
+      company: {
+        legalEntity: data.businessName?.trim() || fullName,
+        taxId: '',
+        headquarters,
+        generalDirector: fullName,
+        financeManager: '',
+      },
+      deliveryLocations: [
+        {
+          id: crypto.randomUUID(),
+          alias: 'Primary',
+          address,
+          city,
+          postalCode,
+          country,
+          latitude: data.location?.latitude ?? 0,
+          longitude: data.location?.longitude ?? 0,
+          responsiblePerson: fullName,
+          responsiblePhone: data.phone?.trim() || '',
+        },
+      ],
+      authorizedPersonnel: [],
+    };
+  }
+
   async validateUser(identifier: string, password: string): Promise<any> {
     // Support both email and partnerCode for login
     const user = await this.usersService.findByEmailOrPartnerCode(identifier);
@@ -106,33 +143,7 @@ export class AuthService {
     // Hash password
     const passwordHash = await bcrypt.hash(data.password, 10);
 
-    const buyerCompanyProfile =
-      data.address && data.city
-        ? {
-            company: {
-              legalEntity: data.businessName?.trim() || `${data.firstName} ${data.lastName}`.trim(),
-              taxId: '',
-              headquarters: [data.address, data.city].filter(Boolean).join(', '),
-              generalDirector: `${data.firstName} ${data.lastName}`.trim(),
-              financeManager: '',
-            },
-            deliveryLocations: [
-              {
-                id: crypto.randomUUID(),
-                alias: 'Primary',
-                address: data.address,
-                city: data.city,
-                postalCode: '',
-                country: 'Germany',
-                latitude: data.location?.latitude ?? 0,
-                longitude: data.location?.longitude ?? 0,
-                responsiblePerson: `${data.firstName} ${data.lastName}`.trim(),
-                responsiblePhone: data.phone?.trim() || '',
-              },
-            ],
-            authorizedPersonnel: [],
-          }
-        : undefined;
+    const buyerCompanyProfile = this.buildBuyerCompanyProfileFromRegistration(data);
 
     // Create user transaction
     const result = await this.prisma.$transaction(async (tx) => {

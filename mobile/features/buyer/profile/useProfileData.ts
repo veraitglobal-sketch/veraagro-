@@ -30,6 +30,7 @@ export function useProfileData() {
   const [activeTab, setActiveTab] = useState<ProfileTabType>('general');
   const [isEditing, setIsEditingState] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
+  const [editingLocationId, setEditingLocationId] = useState<string | null>(null);
   const [showStaffModal, setShowStaffModal] = useState(false);
 
   const [companyData, setCompanyData] = useState<CompanyData>(EMPTY_COMPANY);
@@ -92,13 +93,24 @@ export function useProfileData() {
   const [newLocation, setNewLocation] = useState<Partial<DeliveryLocation>>(EMPTY_LOCATION);
   const [newStaff, setNewStaff] = useState<Partial<AuthorizedPerson>>(EMPTY_STAFF);
 
+  const openLocationModal = useCallback((existing?: DeliveryLocation) => {
+    if (existing) {
+      setEditingLocationId(existing.id);
+      setNewLocation({ ...existing });
+    } else {
+      setEditingLocationId(null);
+      setNewLocation(EMPTY_LOCATION);
+    }
+    setShowLocationModal(true);
+  }, []);
+
   const handleAddLocation = useCallback(() => {
     if (!newLocation.alias || !newLocation.address || !newLocation.city) return;
     const location: DeliveryLocation = {
-      id: Date.now().toString(),
-      alias: newLocation.alias,
-      address: newLocation.address,
-      city: newLocation.city,
+      id: editingLocationId ?? Date.now().toString(),
+      alias: newLocation.alias!,
+      address: newLocation.address!,
+      city: newLocation.city!,
       postalCode: newLocation.postalCode || '',
       country: newLocation.country || '',
       latitude: newLocation.latitude || 0,
@@ -107,10 +119,14 @@ export function useProfileData() {
       responsiblePhone: newLocation.responsiblePhone || '',
       operatingHours: newLocation.operatingHours || '',
     };
-    void persist({ deliveryLocations: [...deliveryLocations, location] });
+    const next = editingLocationId
+      ? deliveryLocations.map((loc) => (loc.id === editingLocationId ? location : loc))
+      : [...deliveryLocations, location];
+    void persist({ deliveryLocations: next });
     setNewLocation(EMPTY_LOCATION);
+    setEditingLocationId(null);
     setShowLocationModal(false);
-  }, [newLocation, deliveryLocations, persist]);
+  }, [newLocation, deliveryLocations, persist, editingLocationId]);
 
   const handleAddStaff = useCallback(() => {
     if (!newStaff.firstName || !newStaff.lastName || !newStaff.email || !newStaff.role) return;
@@ -175,6 +191,7 @@ export function useProfileData() {
     setIsEditing,
     showLocationModal,
     setShowLocationModal,
+    openLocationModal,
     showStaffModal,
     setShowStaffModal,
     companyData,

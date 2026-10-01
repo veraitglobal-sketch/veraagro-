@@ -21,6 +21,8 @@ export function useRegisterForm() {
   const [companyPosition, setCompanyPosition] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [country, setCountry] = useState('');
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [locationAddress, setLocationAddress] = useState('');
 
@@ -47,6 +49,8 @@ export function useRegisterForm() {
           setLocationAddress(fullAddress);
           setAddress((prev) => prev || addr.street || '');
           setCity((prev) => prev || addr.city || '');
+          setPostalCode((prev) => prev || addr.postalCode || '');
+          setCountry((prev) => prev || addr.country || '');
         }
       } catch (error) {
         console.error('Reverse geocoding error:', error);
@@ -86,6 +90,8 @@ export function useRegisterForm() {
         location: location || undefined,
         address: address || undefined,
         city: city || undefined,
+        postalCode: postalCode || undefined,
+        country: country || undefined,
       });
 
       const pending =
@@ -118,6 +124,8 @@ export function useRegisterForm() {
     location,
     address,
     city,
+    postalCode,
+    country,
   ]);
 
   return {
@@ -141,6 +149,10 @@ export function useRegisterForm() {
     setAddress,
     city,
     setCity,
+    postalCode,
+    setPostalCode,
+    country,
+    setCountry,
     location,
     locationAddress,
     getCurrentLocation,

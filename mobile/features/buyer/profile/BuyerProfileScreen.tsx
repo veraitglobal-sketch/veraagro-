@@ -138,7 +138,8 @@ export default function BuyerProfileScreen() {
               locations={data.deliveryLocations}
               onDelete={data.handleDeleteLocation}
               showModal={data.showLocationModal}
-              onOpenModal={() => data.setShowLocationModal(true)}
+              onOpenModal={() => data.openLocationModal()}
+              onEdit={data.openLocationModal}
               onCloseModal={() => data.setShowLocationModal(false)}
               newLocation={data.newLocation}
               setNewLocation={data.setNewLocation}

@@ -9,6 +9,7 @@ type Props = {
   onDelete: (id: string) => void;
   showModal: boolean;
   onOpenModal: () => void;
+  onEdit: (location: DeliveryLocation) => void;
   onCloseModal: () => void;
   newLocation: Partial<DeliveryLocation>;
   setNewLocation: (loc: Partial<DeliveryLocation>) => void;
@@ -20,6 +21,7 @@ export function LocationsTab({
   onDelete,
   showModal,
   onOpenModal,
+  onEdit,
   onCloseModal,
   newLocation,
   setNewLocation,
@@ -57,8 +59,10 @@ export function LocationsTab({
       </TouchableOpacity>
 
       {locations.map((location) => (
-        <View
+        <TouchableOpacity
           key={location.id}
+          onPress={() => onEdit(location)}
+          activeOpacity={0.75}
           style={{
             backgroundColor: theme.colors.surface,
             borderRadius: theme.borderRadius.md,
@@ -93,14 +97,17 @@ export function LocationsTab({
               <Text style={[metaText, { marginTop: theme.spacing.xs }]}>{location.operatingHours}</Text>
             </View>
             <TouchableOpacity
-              onPress={() => onDelete(location.id)}
+              onPress={(e) => {
+                e.stopPropagation?.();
+                onDelete(location.id);
+              }}
               accessibilityRole="button"
               accessibilityLabel={t('common.delete')}
             >
               <X size={16} color={theme.colors.error} strokeWidth={1.5} />
             </TouchableOpacity>
           </View>
-        </View>
+        </TouchableOpacity>
       ))}
 
       <Modal visible={showModal} animationType="slide" transparent onRequestClose={onCloseModal}>

@@ -772,6 +772,10 @@
     "addressPh": "Street address",
     "city": "City",
     "cityPh": "City",
+    "postalCode": "Postal code",
+    "postalCodePh": "Postal / ZIP code",
+    "country": "Country",
+    "countryPh": "Country",
     "coords": "Location: {{lat}}, {{lng}}",
     "submit": "Register",
     "submitting": "Registering…",
@@ -2793,6 +2797,9 @@
     "drivers": "Drivers & reps",
     "loadingHandover": "Loading handover",
     "receiverProof": "Receiver proof"
+  },
+  "buyerPortalProfile": {
+    "editLocation": "Edit"
   },
   "buyerPortalPages": {
     "marketplace": "Marketplace",

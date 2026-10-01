@@ -767,6 +767,10 @@
     "addressPh": "Ulica i broj",
     "city": "Grad",
     "cityPh": "Grad",
+    "postalCode": "Poštanski broj",
+    "postalCodePh": "Poštanski / ZIP broj",
+    "country": "Država",
+    "countryPh": "Država",
     "coords": "Lokacija: {{lat}}, {{lng}}",
     "submit": "Registruj se",
     "submitting": "Slanje…",
@@ -2501,6 +2505,9 @@
     "drivers": "Vozači i odgovorne osobe",
     "loadingHandover": "Predaja pri utovaru",
     "receiverProof": "Potvrda primaoca"
+  },
+  "buyerPortalProfile": {
+    "editLocation": "Izmeni"
   },
   "buyerPortalPages": {
     "dashboard": "Kontrolna tabla",

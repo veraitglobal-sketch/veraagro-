@@ -186,8 +186,8 @@ Replace hosts with your production URLs (`https://biovera.app`, `https://<railwa
 | 7 | `https://biovera.app/verify/<known-batchId>` | Verify page loads |
 | 8 | Seed label flow (staging or one test bag) | Serial validates; custody events recorded |
 | 9 | Certificate upload on seed run | Email/PDF contains absolute `https://<backend>/documents/<uuid>` when `API_PUBLIC_URL` set |
-| 10 | `GET https://biovera.app/.well-known/apple-app-site-association` | JSON, no `TEAM_ID` placeholder |
-| 11 | `GET https://biovera.app/.well-known/assetlinks.json` | JSON, real SHA-256 fingerprint |
+| 10 | `GET https://biovera.app/.well-known/apple-app-site-association` | JSON, no `TEAM_ID` placeholder — **skip if universal links are postponed to the next native app build (placeholders are harmless)** |
+| 11 | `GET https://biovera.app/.well-known/assetlinks.json` | JSON, real SHA-256 fingerprint — **skip if universal links are postponed to the next native app build (placeholders are harmless)** |
 | 12 | `https://biovera.app/s/<short-code>` (if configured) | Opens web or app via universal link |
 
 Mobile (optional this release): planting entry save with GPS; seed scan from printed test label.
@@ -198,9 +198,27 @@ Mobile (optional this release): planting entry save with GPS; seed scan from pri
 - [ ] Confirm no failed `_prisma_migrations` rows.
 - [ ] Tag release in git if using tags.
 
+### Step 8 — Push
+
+After smoke tests pass:
+
+```bash
+git push origin main
+```
+
 ---
 
-## 5. Rollback
+## 5. Production data cleanup (admin panel, after deploy)
+
+Run these in the **admin panel** once production is live and smoke tests pass:
+
+1. **Reopen legacy orders without delivery** — Two picked-up / in-transit orders have no linked delivery. Admin → **Orders** → **Reopen for dispatch** on each.
+2. **Cancel duplicate missions** — Lot `BATCH-2026-1253` has duplicate missions. Admin → **Missions** → **Cancel run** on the duplicates (keep one active run).
+3. **Fulfill paid orders** — For each paid order: set the **fulfilling farm**, **reserve stock**, then link the order in Admin → **Dispatch**.
+
+---
+
+## 6. Rollback
 
 ### Web (Vercel) — fast
 
@@ -232,7 +250,7 @@ Prefer forward-fix over schema rollback.
 
 ---
 
-## 6. Local production build verification
+## 7. Local production build verification
 
 Run before every release (already verified for this checklist):
 

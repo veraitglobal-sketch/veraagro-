@@ -134,6 +134,10 @@ export default function BuyerRegisterScreen() {
             setAddress={form.setAddress}
             city={form.city}
             setCity={form.setCity}
+            postalCode={form.postalCode}
+            setPostalCode={form.setPostalCode}
+            country={form.country}
+            setCountry={form.setCountry}
           />
 
           <TouchableOpacity

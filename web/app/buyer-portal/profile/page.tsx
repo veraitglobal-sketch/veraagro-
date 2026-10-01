@@ -52,6 +52,7 @@ export default function BuyerProfilePage() {
   const [activeTab, setActiveTab] = useState<TabType>('general');
   const [isEditing, setIsEditing] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
+  const [editingLocationId, setEditingLocationId] = useState<string | null>(null);
   const [showStaffModal, setShowStaffModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -133,7 +134,7 @@ export default function BuyerProfilePage() {
     address: '',
     city: '',
     postalCode: '',
-    country: 'Germany',
+    country: '',
     latitude: 0,
     longitude: 0,
     responsiblePerson: '',
@@ -158,15 +159,49 @@ export default function BuyerProfilePage() {
     role: '',
   });
 
+  const resetNewLocation = () => {
+    setNewLocation({
+      alias: '',
+      address: '',
+      city: '',
+      postalCode: '',
+      country: '',
+      latitude: 0,
+      longitude: 0,
+      responsiblePerson: '',
+      responsiblePhone: '',
+      operatingHours: {
+        monday: '08:00 - 18:00',
+        tuesday: '08:00 - 18:00',
+        wednesday: '08:00 - 18:00',
+        thursday: '08:00 - 18:00',
+        friday: '08:00 - 18:00',
+        saturday: '09:00 - 14:00',
+        sunday: 'Closed',
+      },
+    });
+  };
+
+  const openLocationModal = (existing?: DeliveryLocation) => {
+    if (existing) {
+      setEditingLocationId(existing.id);
+      setNewLocation({ ...existing });
+    } else {
+      setEditingLocationId(null);
+      resetNewLocation();
+    }
+    setShowLocationModal(true);
+  };
+
   const handleAddLocation = async () => {
     if (newLocation.alias && newLocation.address && newLocation.city) {
       const location: DeliveryLocation = {
-        id: Date.now().toString(),
+        id: editingLocationId ?? Date.now().toString(),
         alias: newLocation.alias,
         address: newLocation.address,
         city: newLocation.city,
         postalCode: newLocation.postalCode || '',
-        country: newLocation.country || 'Germany',
+        country: newLocation.country || '',
         latitude: newLocation.latitude || 0,
         longitude: newLocation.longitude || 0,
         responsiblePerson: newLocation.responsiblePerson || '',
@@ -181,28 +216,12 @@ export default function BuyerProfilePage() {
           sunday: 'Closed',
         },
       };
-      const next = [...deliveryLocations, location];
+      const next = editingLocationId
+        ? deliveryLocations.map((loc) => (loc.id === editingLocationId ? location : loc))
+        : [...deliveryLocations, location];
       setDeliveryLocations(next);
-      setNewLocation({
-        alias: '',
-        address: '',
-        city: '',
-        postalCode: '',
-        country: 'Germany',
-        latitude: 0,
-        longitude: 0,
-        responsiblePerson: '',
-        responsiblePhone: '',
-        operatingHours: {
-          monday: '08:00 - 18:00',
-          tuesday: '08:00 - 18:00',
-          wednesday: '08:00 - 18:00',
-          thursday: '08:00 - 18:00',
-          friday: '08:00 - 18:00',
-          saturday: '09:00 - 14:00',
-          sunday: 'Closed',
-        },
-      });
+      resetNewLocation();
+      setEditingLocationId(null);
       setShowLocationModal(false);
       try {
         await buyersAPI.updateCompanyProfile({
@@ -452,7 +471,7 @@ export default function BuyerProfilePage() {
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-light text-gray-900">Delivery Points</h2>
                 <button
-                  onClick={() => setShowLocationModal(true)}
+                  onClick={() => openLocationModal()}
                   className="flex items-center gap-2 px-4 py-2 text-sm font-light text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
                 >
                   <Plus className="w-4 h-4" strokeWidth={1.5} />
@@ -482,12 +501,21 @@ export default function BuyerProfilePage() {
                           Hours: Mon-Fri {location.operatingHours.monday}
                         </p>
                       </div>
-                      <button
-                        onClick={() => handleDeleteLocation(location.id)}
-                        className="p-1 text-gray-400 hover:text-red-600 transition-colors"
-                      >
-                        <X className="w-4 h-4" strokeWidth={1.5} />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => openLocationModal(location)}
+                          className="min-h-[44px] px-3 text-sm font-medium text-[#2D5A27] hover:underline"
+                        >
+                          {t('buyerPortalProfile.editLocation')}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteLocation(location.id)}
+                          className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                        >
+                          <X className="w-4 h-4" strokeWidth={1.5} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

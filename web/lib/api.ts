@@ -92,6 +92,8 @@ export const authAPI = {
     location?: { latitude: number; longitude: number };
     address?: string;
     city?: string;
+    postalCode?: string;
+    country?: string;
   }) => {
     const response = await api.post('/auth/register/buyer', data);
     return response.data;

@@ -24,6 +24,8 @@ export default function BuyerRegisterPage() {
     companyPosition: '',
     address: '',
     city: '',
+    postalCode: '',
+    country: '',
   });
 
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -60,6 +62,8 @@ export default function BuyerRegisterPage() {
                 ? `${data.address.road}${data.address.house_number ? ' ' + data.address.house_number : ''}`
                 : prev.address,
               city: data.address.city || data.address.town || data.address.village || prev.city,
+              postalCode: data.address.postcode || prev.postalCode,
+              country: data.address.country || prev.country,
             }));
           }
         } catch (err) {
@@ -114,6 +118,8 @@ export default function BuyerRegisterPage() {
         location: location || undefined,
         address: formData.address || undefined,
         city: formData.city || undefined,
+        postalCode: formData.postalCode || undefined,
+        country: formData.country || undefined,
       });
 
       setRegisteredPartnerCode(
@@ -322,7 +328,7 @@ export default function BuyerRegisterPage() {
                       {gettingLocation ? t('buyerRegister.gettingLocation') : t('buyerRegister.useLocation')}
                     </button>
 
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
                       <div>
                         <label htmlFor="address" className="mb-2 block text-sm font-medium text-gray-700">
                           {t('buyerRegister.address')}
@@ -350,6 +356,36 @@ export default function BuyerRegisterPage() {
                           onChange={handleInputChange}
                           className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
                           placeholder={t('buyerRegister.cityPh')}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="postalCode" className="mb-2 block text-sm font-medium text-gray-700">
+                          {t('buyerRegister.postalCode')}
+                        </label>
+                        <input
+                          id="postalCode"
+                          type="text"
+                          name="postalCode"
+                          value={formData.postalCode}
+                          onChange={handleInputChange}
+                          className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+                          placeholder={t('buyerRegister.postalCodePh')}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="country" className="mb-2 block text-sm font-medium text-gray-700">
+                          {t('buyerRegister.country')}
+                        </label>
+                        <input
+                          id="country"
+                          type="text"
+                          name="country"
+                          value={formData.country}
+                          onChange={handleInputChange}
+                          className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#2D5A27]"
+                          placeholder={t('buyerRegister.countryPh')}
                         />
                       </div>
                     </div>

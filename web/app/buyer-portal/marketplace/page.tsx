@@ -59,7 +59,7 @@ export default function MarketplacePage() {
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
-  const [country, setCountry] = useState('Germany');
+  const [country, setCountry] = useState('');
   const [deliveryNotes, setDeliveryNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -121,12 +121,12 @@ export default function MarketplacePage() {
         setStreet(loc.address ?? '');
         setCity(loc.city ?? '');
         setPostalCode(loc.postalCode ?? '');
-        setCountry(loc.country ?? 'Germany');
+        setCountry(loc.country ?? '');
       } else {
         setStreet('');
         setCity('');
         setPostalCode('');
-        setCountry('Germany');
+        setCountry('');
       }
     } catch {
       /* keep empty */
@@ -142,7 +142,7 @@ export default function MarketplacePage() {
 
   const submitOrder = async () => {
     if (submitLock.current || !selectedProduct || !selectedPack) return;
-    if (!street.trim() || !city.trim() || !postalCode.trim()) {
+    if (!street.trim() || !city.trim() || !postalCode.trim() || !country.trim()) {
       setCheckoutError(t('buyerPortalMarketplace.checkout.fillRequired'));
       return;
     }
@@ -165,7 +165,7 @@ export default function MarketplacePage() {
           street: street.trim(),
           city: city.trim(),
           postalCode: postalCode.trim(),
-          country: country.trim() || 'Germany',
+          country: country.trim(),
         },
         deliveryNotes: deliveryNotes.trim() || undefined,
       });

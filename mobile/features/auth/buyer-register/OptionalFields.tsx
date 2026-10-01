@@ -23,6 +23,10 @@ type Props = Pick<
   | 'setAddress'
   | 'city'
   | 'setCity'
+  | 'postalCode'
+  | 'setPostalCode'
+  | 'country'
+  | 'setCountry'
 >;
 
 export function OptionalFields({
@@ -40,6 +44,10 @@ export function OptionalFields({
   setAddress,
   city,
   setCity,
+  postalCode,
+  setPostalCode,
+  country,
+  setCountry,
 }: Props) {
   const { t } = useTranslation();
   const locationBtnLabel = location
@@ -167,6 +175,22 @@ export function OptionalFields({
             value={city}
             onChangeText={setCity}
             placeholder={t('buyerRegisterScreen.cityPlaceholder')}
+            style={inputStyle}
+          />
+        </Field>
+        <Field label={t('buyerRegisterScreen.postalCodeLabel')} helper={t('form.helper.registerPostalCode')}>
+          <TextInput
+            value={postalCode}
+            onChangeText={setPostalCode}
+            placeholder={t('buyerRegisterScreen.postalCodePlaceholder')}
+            style={inputStyle}
+          />
+        </Field>
+        <Field label={t('buyerRegisterScreen.countryLabel')} helper={t('form.helper.registerCountry')}>
+          <TextInput
+            value={country}
+            onChangeText={setCountry}
+            placeholder={t('buyerRegisterScreen.countryPlaceholder')}
             style={inputStyle}
           />
         </Field>
