@@ -38,6 +38,21 @@ describe('AuthService.buildBuyerCompanyProfileFromRegistration', () => {
     expect(profile!.deliveryLocations[0].country).toBe('');
   });
 
+  it('stores GPS coordinates on the delivery location when location is provided', () => {
+    const profile = service.buildBuyerCompanyProfileFromRegistration({
+      email: 'buyer@test.com',
+      firstName: 'Anna',
+      lastName: 'Buyer',
+      password: 'secret123',
+      address: 'Hafenstraße 12',
+      city: 'Hamburg',
+      location: { latitude: 53.551086, longitude: 9.993682 },
+    });
+
+    expect(profile!.deliveryLocations[0].latitude).toBe(53.551086);
+    expect(profile!.deliveryLocations[0].longitude).toBe(9.993682);
+  });
+
   it('returns undefined when street or city is missing', () => {
     expect(
       service.buildBuyerCompanyProfileFromRegistration({

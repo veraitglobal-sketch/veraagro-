@@ -6,7 +6,8 @@ import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import { NotificationsService } from '../notifications/notifications.service';
-import { UserRole, UserStatus, HubStatus } from '@prisma/client';
+import { UserRole, UserStatus } from '@prisma/client';
+import { GeometryUtil } from '../common/utils/geometry.util';
 import { RegisterBuyerDto } from './dto/register-buyer.dto';
 import { RegisterGrowerDto } from './dto/register-grower.dto';
 
@@ -112,10 +113,20 @@ export class AuthService {
     };
   }
 
+  /** Small square polygon (~10 m) anchored on a GPS point — used for grower farm registration. */
+  private farmAnchorPolygon(latitude: number, longitude: number) {
+    const d = 0.0001;
+    return [
+      { lat: latitude, lng: longitude },
+      { lat: latitude + d, lng: longitude },
+      { lat: latitude + d, lng: longitude + d },
+      { lat: latitude, lng: longitude + d },
+    ];
+  }
+
   /**
-   * Register a commercial buyer (self-registration or with partner code)
-   * Email is required; partnerCode is auto-generated if not provided.
-   * Automatically creates a Hub location if location data is provided.
+   * Register a commercial buyer (self-registration or with partner code).
+   * Delivery location (incl. GPS) is stored on buyerCompanyProfile only — never as a hub.
    */
   async registerBuyer(data: RegisterBuyerDto) {
     // Email must be unique
@@ -145,10 +156,8 @@ export class AuthService {
 
     const buyerCompanyProfile = this.buildBuyerCompanyProfileFromRegistration(data);
 
-    // Create user transaction
-    const result = await this.prisma.$transaction(async (tx) => {
-      // Create buyer user
-      const user = await tx.users.create({
+    await this.prisma.$transaction(async (tx) => {
+      await tx.users.create({
         data: {
           id: crypto.randomUUID(),
           partnerCode,
@@ -159,33 +168,12 @@ export class AuthService {
           companyPosition: data.companyPosition,
           passwordHash,
           roles: [UserRole.BUYER],
-          status: UserStatus.PENDING_VERIFICATION, // Requires admin approval
+          status: UserStatus.PENDING_VERIFICATION,
           buyerCompanyProfile: buyerCompanyProfile as any,
           preferredLanguage: data.preferredLanguage?.trim() || 'en',
           updatedAt: new Date(),
         } as any,
       });
-
-      // If location data is provided, create Hub automatically
-      let hub = null;
-      if (data.location && data.address && data.city) {
-        hub = await tx.hubs.create({
-          data: {
-            name: data.businessName || `${data.firstName} ${data.lastName} - ${data.city}`,
-            location: {
-              lat: data.location.latitude,
-              lng: data.location.longitude,
-            },
-            address: data.address,
-            city: data.city,
-            status: HubStatus.ACTIVE,
-            managerId: user.id, // Link hub to buyer
-            updatedAt: new Date(),
-          } as any,
-        });
-      }
-
-      return { user, hub };
     });
 
     const buyerLabel = [data.businessName, `${data.firstName} ${data.lastName}`.trim()]
@@ -214,6 +202,10 @@ export class AuthService {
       throw new ConflictException('Email already registered');
     }
 
+    if (data.location && (!data.address || !data.city)) {
+      throw new BadRequestException('Address and city are required when location is provided');
+    }
+
     const passwordHash = await bcrypt.hash(data.password, 10);
     const partnerCode = await this.generateUniquePartnerCode();
 
@@ -234,6 +226,27 @@ export class AuthService {
           updatedAt: new Date(),
         } as any,
       });
+
+      if (data.location && data.address && data.city) {
+        const estateId = crypto.randomUUID();
+        const polygon = this.farmAnchorPolygon(data.location.latitude, data.location.longitude);
+        const calculatedArea =
+          data.totalHectares && data.totalHectares > 0
+            ? data.totalHectares
+            : GeometryUtil.calculatePolygonArea(polygon);
+        await tx.estates.create({
+          data: {
+            id: estateId,
+            name: data.farmName?.trim() || `${data.firstName} ${data.lastName} — ${data.city}`,
+            ownerId: user.id,
+            estateQrCode: `ESTATE-${estateId.replace(/-/g, '').slice(0, 8).toUpperCase()}`,
+            polygonCoordinates: polygon as any,
+            calculatedArea,
+            status: 'PENDING_SETUP',
+            updatedAt: new Date(),
+          },
+        });
+      }
 
       const token = crypto.randomBytes(32).toString('hex');
       const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h

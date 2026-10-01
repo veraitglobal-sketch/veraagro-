@@ -7,8 +7,19 @@ import {
   Min,
   Max,
   IsNotEmpty,
+  IsObject,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { PASSWORD_REQUIREMENTS } from '../../common/constants';
+
+class GrowerLocationDto {
+  @IsNumber()
+  latitude: number;
+
+  @IsNumber()
+  longitude: number;
+}
 
 export class RegisterGrowerDto {
   @IsString()
@@ -36,4 +47,26 @@ export class RegisterGrowerDto {
   @Min(0.1)
   @Max(100000)
   totalHectares?: number;
+
+  @IsOptional()
+  @IsString()
+  farmName?: string;
+
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => GrowerLocationDto)
+  location?: GrowerLocationDto;
+
+  @IsOptional()
+  @IsString()
+  address?: string;
+
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @IsOptional()
+  @IsString()
+  country?: string;
 }
