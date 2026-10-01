@@ -851,9 +851,11 @@ model notifications {
   userId    String
   type      NotificationType
   status    NotificationStatus @default(UNREAD)
-  title     String
-  message   String
-  actionUrl String?
+  title           String
+  message         String
+  templateKey     String?
+  templateParams  Json?
+  actionUrl       String?
   createdAt DateTime           @default(now())
   readAt    DateTime?
   users     users              @relation(fields: [userId], references: [id])
@@ -1407,6 +1409,7 @@ model users {
   createdAt                                    DateTime                     @default(now())
   updatedAt                                    DateTime
   lastLoginAt                                  DateTime?
+  preferredLanguage                            String?                      @default("en")
   isVeraPartner                                Boolean                      @default(false)
   farmerQrCode                                 String?                      @unique
   farmerProfileUrl                             String?

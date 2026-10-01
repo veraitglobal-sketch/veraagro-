@@ -77,4 +77,9 @@ export class RegisterBuyerDto {
   @IsOptional()
   @IsString()
   country?: string;
+
+  /** UI language at registration (en, sr, de, es, fr, ro, bg). Defaults to en. */
+  @IsOptional()
+  @IsString()
+  preferredLanguage?: string;
 }

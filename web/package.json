@@ -9,7 +9,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
-    "test:run": "vitest run",
+    "test:run": "node ../scripts/i18n-check.cjs && node ../scripts/check-hardcoded-ui-strings.cjs && vitest run",
     "test:e2e": "playwright test",
     "translate:de": "TRANSLATE_TO=de node scripts/translate-en-locale.mjs",
     "translate:ro": "TRANSLATE_TO=ro node scripts/translate-en-locale.mjs",

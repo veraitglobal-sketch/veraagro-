@@ -14,6 +14,11 @@
         "include": "../assets/**/*",
         "outDir": "dist",
         "watchAssets": true
+      },
+      {
+        "include": "notifications/templates/**/*",
+        "outDir": "dist",
+        "watchAssets": true
       }
     ]
   }

@@ -1,20 +1,22 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Globe } from 'lucide-react-native';
-import { setAppLanguage } from '../lib/i18n-language';
-import type { AppLanguage } from '../lib/i18n-language';
+import {
+  setAppLanguage,
+  SUPPORTED_LOCALES,
+  LOCALE_NATIVE_NAMES,
+  type AppLanguage,
+} from '../lib/i18n-language';
 import { EnterpriseSettingsGroup } from './enterprise/EnterpriseSettingsGroup';
 import { enterpriseColors } from '../lib/enterprise-ui';
 import { growerUi } from '../lib/grower-ui';
 
 /**
- * English / Serbian toggle — same copy and storage as producer Settings.
- * Re-used on buyer Profile so the whole app can switch language from either place.
+ * Language picker — same seven locales and native names as web LanguageSwitcher.
  */
 export function LanguageSettingsBlock() {
   const { t, i18n } = useTranslation();
-  const current = (i18n.resolvedLanguage ?? i18n.language ?? 'en').split('-')[0] as string;
-  const isSr = current === 'sr';
+  const current = (i18n.resolvedLanguage ?? i18n.language ?? 'en').split('-')[0] as AppLanguage;
 
   return (
     <EnterpriseSettingsGroup
@@ -24,20 +26,17 @@ export function LanguageSettingsBlock() {
       <Text style={[growerUi.settingsRowDesc, { marginBottom: 14 }]}>
         {t('producer.settings.languageDescription')}
       </Text>
-      <View style={{ flexDirection: 'row', gap: 10 }}>
-        {(['en', 'sr'] as const).map((code) => {
-          const active = code === 'sr' ? isSr : !isSr;
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
+        {SUPPORTED_LOCALES.map((code) => {
+          const active = code === current;
           return (
             <TouchableOpacity
               key={code}
-              onPress={() => void setAppLanguage(code as AppLanguage)}
+              onPress={() => void setAppLanguage(code)}
               activeOpacity={0.88}
-              style={[
-                growerUi.filterChip,
-                { flex: 1 },
-                active && growerUi.filterChipOn,
-              ]}
+              style={[growerUi.filterChip, active && growerUi.filterChipOn, { minWidth: 96 }]}
               accessibilityRole="button"
+              accessibilityState={{ selected: active }}
             >
               <Text
                 style={[
@@ -46,12 +45,12 @@ export function LanguageSettingsBlock() {
                   { textAlign: 'center' },
                 ]}
               >
-                {code === 'en' ? t('producer.settings.languageEnglish') : t('producer.settings.languageSerbian')}
+                {LOCALE_NATIVE_NAMES[code]}
               </Text>
             </TouchableOpacity>
           );
         })}
-      </View>
+      </ScrollView>
     </EnterpriseSettingsGroup>
   );
 }

@@ -1,0 +1,34 @@
+{
+  "buyer.accountApproved": {
+    "title": "Акаунтът на купувача е активен",
+    "message": "Вашият акаунт на купувач в Bio Vera е одобрен. Можете да влезете и да правите поръчки."
+  },
+  "buyer.orderApproved": {
+    "title": "Поръчката е приета",
+    "message": "Поръчка {{orderNumber}} е приета. Инструкциите за плащане са в детайлите на поръчката."
+  },
+  "buyer.orderRejected": {
+    "title": "Поръчката е отказана",
+    "message": "Поръчка {{orderNumber}} не беше приета. Причина: {{reason}}"
+  },
+  "delivery.assigned": {
+    "title": "Нова доставка",
+    "message": "Доставка {{deliveryNumber}} е назначена към вашия акаунт."
+  },
+  "delivery.driverNearby": {
+    "title": "Шофьорът пристига",
+    "message": "Вашата доставка {{deliveryNumber}} се приближава до дестинацията."
+  },
+  "payment.released": {
+    "title": "Плащането е освободено",
+    "message": "Ескроу за поръчка {{orderNumber}} е освободено."
+  },
+  "batch.arrived": {
+    "title": "Партида пристигна",
+    "message": "Партида {{batchId}} пристигна в хъба."
+  },
+  "buyer.registrationPending": {
+    "title": "Регистрацията е получена",
+    "message": "Благодарим за регистрацията. Bio Vera ще прегледа вашия акаунт на купувач скоро."
+  }
+}

@@ -12,6 +12,7 @@ import { Activity, Truck } from 'lucide-react';
 import { useAdminNavItems } from '@/lib/admin-nav';
 import { useTranslation } from 'react-i18next';
 import { dateIntlLocaleFromLanguageTag } from '@/lib/i18n-routing';
+import { missionStatusLabel } from '@biovera/shared/i18n/labels';
 
 const MISSION_FILTER_STATUSES = [
   'AWAITING_APPROVAL',
@@ -209,7 +210,7 @@ function MissionsManagementContent() {
               <option value="">{t('adminPages.missions.filterAllStatuses')}</option>
               {MISSION_FILTER_STATUSES.map((st) => (
                 <option key={st} value={st}>
-                  {t(`adminPages.missions.statuses.${st}`)}
+                  {missionStatusLabel(t, st, 'admin')}
                 </option>
               ))}
             </select>
@@ -345,9 +346,7 @@ function MissionsManagementContent() {
                                         : 'bg-gray-100 text-gray-800'
                             }`}
                           >
-                            {t(`adminPages.missions.statuses.${mission.status as string}`, {
-                              defaultValue: mission.status.replace(/_/g, ' '),
-                            })}
+                            {missionStatusLabel(t, mission.status as string, 'admin')}
                           </span>
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">

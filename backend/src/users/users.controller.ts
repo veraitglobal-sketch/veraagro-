@@ -20,6 +20,7 @@ import * as bcrypt from 'bcrypt';
 import { EmailService } from '../email/email.service';
 import * as crypto from 'crypto';
 import { ChangeOwnPasswordDto } from './dto/change-own-password.dto';
+import { UpdatePreferredLanguageDto } from './dto/update-preferred-language.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -37,6 +38,11 @@ export class UsersController {
   @Patch('me/password')
   async changeMyPassword(@Request() req: any, @Body() dto: ChangeOwnPasswordDto) {
     return this.usersService.changeOwnPassword(req.user.id, dto.currentPassword, dto.newPassword);
+  }
+
+  @Patch('me')
+  async updateMyProfile(@Request() req: any, @Body() dto: UpdatePreferredLanguageDto) {
+    return this.usersService.updatePreferredLanguage(req.user.id, dto.preferredLanguage);
   }
 
   // Admin endpoints

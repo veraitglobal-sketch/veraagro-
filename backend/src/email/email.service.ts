@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { Resend } from 'resend';
+import { NotificationTemplateService } from '../notifications/notification-template.service';
 
 @Injectable()
 export class EmailService {
@@ -8,7 +9,7 @@ export class EmailService {
   private transporter: nodemailer.Transporter | null = null;
   private resend: Resend | null = null;
 
-  constructor() {
+  constructor(private readonly notificationTemplates: NotificationTemplateService) {
     this.logger.log('EmailService v2 (Resend REST API support)');
     // Configure email transporter only when credentials exist (avoids "Missing credentials" in CI)
     // Supports: Resend (RESEND_API_KEY or SMTP_PASS), Gmail, Brevo, Mailgun, etc.
@@ -831,25 +832,42 @@ Bio Vera Team
   async sendBuyerAccountApprovedEmail(data: {
     email: string;
     firstName: string;
+    preferredLanguage?: string | null;
   }): Promise<boolean> {
     const webUrl = process.env.FRONTEND_URL || process.env.WEB_URL || 'https://biovera.app';
     const loginUrl = `${webUrl.replace(/\/$/, '')}/login/buyer`;
     const marketplaceUrl = `${webUrl.replace(/\/$/, '')}/buyer-portal/marketplace`;
-    const subject = 'Your Bio Vera buyer account is active';
+    const rendered = this.notificationTemplates.render(
+      'buyer.accountApproved',
+      { firstName: data.firstName },
+      data.preferredLanguage,
+    );
+    const ctaLabels: Record<string, string> = {
+      en: 'Browse marketplace',
+      sr: 'Pogledajte tržište',
+      de: 'Marktplatz öffnen',
+      es: 'Ver marketplace',
+      fr: 'Parcourir la marketplace',
+      ro: 'Deschide marketplace',
+      bg: 'Към marketplace',
+    };
+    const lang = data.preferredLanguage?.split('-')[0]?.toLowerCase() ?? 'en';
+    const cta = ctaLabels[lang] ?? ctaLabels.en;
+    const subject = rendered.title;
     const html = `
       <!DOCTYPE html>
       <html>
       <head><meta charset="utf-8" /></head>
       <body style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
-        <p>Dear <strong>${data.firstName}</strong>,</p>
-        <p>Your Bio Vera buyer account is active — you can now order from the Marketplace.</p>
-        <p><a href="${marketplaceUrl}" style="display:inline-block;padding:12px 24px;background:#2D5A27;color:#fff;text-decoration:none;border-radius:8px;">Browse marketplace</a></p>
-        <p>Sign in with your e-mail or partner code: <a href="${loginUrl}">${loginUrl}</a></p>
-        <p style="color:#666;font-size:12px;">Bio Vera — transparency from field to shelf</p>
+        <p><strong>${data.firstName}</strong>,</p>
+        <p>${rendered.message}</p>
+        <p><a href="${marketplaceUrl}" style="display:inline-block;padding:12px 24px;background:#2D5A27;color:#fff;text-decoration:none;border-radius:8px;">${cta}</a></p>
+        <p><a href="${loginUrl}">${loginUrl}</a></p>
+        <p style="color:#666;font-size:12px;">Bio Vera</p>
       </body>
       </html>
     `;
-    const text = `Dear ${data.firstName},\n\nYour Bio Vera buyer account is active — you can now order from the Marketplace.\n\nSign in: ${loginUrl}\nMarketplace: ${marketplaceUrl}\n\n— Bio Vera`;
+    const text = `${data.firstName},\n\n${rendered.message}\n\n${loginUrl}\n${marketplaceUrl}\n\n— Bio Vera`;
     return this.sendSimpleEmail({ to: data.email, subject, html, text });
   }
 

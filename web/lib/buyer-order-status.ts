@@ -1,82 +1,37 @@
 /**
- * Buyer-friendly labels for `OrderStatus` (see Prisma enum).
- * Shown in buyer portal so customers know where the order is.
+ * Buyer-friendly labels for `OrderStatus` — sourced from shared glossary.
  */
+import type { TFunction } from 'i18next';
+import {
+  getEffectiveBuyerOrderStatus,
+  orderStatusDescription,
+  orderStatusLabel,
+} from '@biovera/shared/i18n/labels';
 
-const BUYER: Record<string, { label: string; description: string }> = {
-  PENDING: {
-    label: 'Placed',
-    description: 'We have received your order. Vera will confirm before payment.',
-  },
-  APPROVED: {
-    label: 'Accepted',
-    description:
-      'BioVera has accepted your order. Use the bank transfer instructions below, then we will mark payment when it arrives (or use in-app pay when available).',
-  },
-  PAID: {
-    label: 'Paid',
-    description: 'Payment has been received. The supplier will confirm the order shortly.',
-  },
-  CONFIRMED: {
-    label: 'Preparing',
-    description: 'Your order is confirmed and is being prepared for shipment.',
-  },
-  PICKED_UP: {
-    label: 'Picked up',
-    description: 'The goods have been collected from the supplier.',
-  },
-  IN_TRANSIT: {
-    label: 'In transit',
-    description: 'Your order is on the way to the delivery address.',
-  },
-  DELIVERED: {
-    label: 'Delivered',
-    description: 'The order has been delivered. Thank you for your purchase.',
-  },
-  COMPLETED: {
-    label: 'Completed',
-    description: 'This order is complete and closed.',
-  },
-  CANCELLED: {
-    label: 'Cancelled',
-    description: 'This order was cancelled.',
-  },
-  REJECTED: {
-    label: 'Rejected',
-    description: 'This order was rejected by Bio Vera.',
-  },
-  REFUNDED: {
-    label: 'Refunded',
-    description: 'This order was refunded.',
-  },
-};
-
-export function getEffectiveBuyerOrderStatus(
-  order: { status?: string | null; rejectionReason?: string | null } | null | undefined,
-): string {
-  if (!order?.status) return 'PENDING';
-  if (order.status === 'CANCELLED' && order.rejectionReason?.trim()) return 'REJECTED';
-  return order.status;
-}
+export { getEffectiveBuyerOrderStatus };
 
 export function getBuyerOrderStatusLabel(
+  t: TFunction,
   status: string | undefined | null,
   order?: { rejectionReason?: string | null } | null,
 ): string {
-  const effective = order ? getEffectiveBuyerOrderStatus({ status, rejectionReason: order.rejectionReason }) : status;
-  if (!effective) return 'Unknown';
-  return BUYER[effective]?.label ?? effective.replace(/_/g, ' ');
+  const effective = order
+    ? getEffectiveBuyerOrderStatus({ status, rejectionReason: order.rejectionReason })
+    : status;
+  return orderStatusLabel(t, effective, 'buyer');
 }
 
 export function getBuyerOrderStatusDescription(
+  t: TFunction,
   status: string | undefined | null,
   order?: { rejectionReason?: string | null } | null,
 ): string {
-  const effective = order ? getEffectiveBuyerOrderStatus({ status, rejectionReason: order.rejectionReason }) : status;
-  if (!effective) return '';
-  const base = BUYER[effective]?.description ?? 'Status is being updated. Check back for details.';
+  const effective = order
+    ? getEffectiveBuyerOrderStatus({ status, rejectionReason: order.rejectionReason })
+    : status;
+  const base = orderStatusDescription(t, effective);
   if (effective === 'REJECTED' && order?.rejectionReason?.trim()) {
-    return `${base} Reason: ${order.rejectionReason.trim()}`;
+    return `${base} ${t('buyerPortalOrders.rejectionReason', { reason: order.rejectionReason.trim() })}`;
   }
   return base;
 }
@@ -136,16 +91,22 @@ export function formatPackLine(order: {
   return `${order.packCount} × ${order.packLabel}`;
 }
 
-export const ALL_ORDER_STATUS_FILTERS = [
-  { value: 'PENDING', label: 'Placed' },
-  { value: 'APPROVED', label: 'Accepted' },
-  { value: 'PAID', label: 'Paid' },
-  { value: 'CONFIRMED', label: 'Preparing' },
-  { value: 'PICKED_UP', label: 'Picked up' },
-  { value: 'IN_TRANSIT', label: 'In transit' },
-  { value: 'DELIVERED', label: 'Delivered' },
-  { value: 'COMPLETED', label: 'Completed' },
-  { value: 'CANCELLED', label: 'Cancelled' },
-  { value: 'REJECTED', label: 'Rejected' },
-  { value: 'REFUNDED', label: 'Refunded' },
-] as const;
+export function getAllOrderStatusFilters(t: TFunction) {
+  const codes = [
+    'PENDING',
+    'APPROVED',
+    'PAID',
+    'CONFIRMED',
+    'PICKED_UP',
+    'IN_TRANSIT',
+    'DELIVERED',
+    'COMPLETED',
+    'CANCELLED',
+    'REJECTED',
+    'REFUNDED',
+  ] as const;
+  return codes.map((value) => ({
+    value,
+    label: orderStatusLabel(t, value, 'buyer'),
+  }));
+}

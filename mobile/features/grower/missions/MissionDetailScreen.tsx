@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text, ActivityIndicator, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { deliveryStatusLabel } from '../../../../shared/i18n/labels';
 import { enterpriseColors, enterpriseUi } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { useMissionDetailData } from './useMissionDetailData';
@@ -88,7 +89,7 @@ export default function MissionDetailScreen({ missionId, variant = 'grower' }: M
                   {mission.delivery.deliveryNumber}
                   <Text style={{ fontWeight: '400', color: enterpriseColors.gray600 }}>
                     {' · '}
-                    {t(`logistics.delivery.status.${mission.delivery.status}`, { defaultValue: mission.delivery.status })}
+                    {deliveryStatusLabel(t, mission.delivery.status, 'logistics')}
                   </Text>
                 </Text>
                 {mission.delivery.status === 'IN_TRANSIT' && !mission.delivery.digital_handovers ? (

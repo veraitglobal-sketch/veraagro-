@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
-    "test": "node --test test/*.test.cjs",
+    "test": "node ../scripts/i18n-check.cjs && node ../scripts/check-hardcoded-ui-strings.cjs && node --test test/*.test.cjs",
     "typecheck": "tsc --noEmit",
     "check": "npm test && npm run typecheck",
     "start": "expo start",

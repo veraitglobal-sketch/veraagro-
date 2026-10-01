@@ -1,0 +1,180 @@
+{
+  "chainShort": [
+    {
+      "kicker": "On farm",
+      "text": "parcels approved → sowing / season notes (mostly mobile) → harvest plan near pick."
+    },
+    {
+      "kicker": "Lot",
+      "text": "batch → pack to PACKED / QUALITY_VERIFIED → quality entry → compliance photos + label roll."
+    },
+    {
+      "kicker": "Off farm",
+      "text": "request transport → dispatcher assigns driver → pickup & handover → cold chain → hub or buyer · missions track the run · buyer allocations are done in ops, not auto in the app."
+    }
+  ],
+  "intro": {
+    "sidebarBlurb": "Go 1→12 in order. The left menu is the same journey; here each card is one beat you can scan quickly.",
+    "myFieldsCta": {
+      "title": "My fields",
+      "line": "Draw blocks and crops when you start.",
+      "linkLabel": "Open My fields",
+      "webHref": "/grower/fields"
+    }
+  },
+  "fullChainTitle": "Chain in three lines",
+  "fieldsMapKicker": "Fields & map",
+  "navJumpLabel": "Jump to step",
+  "stepNumber": "Step {{n}}",
+  "stepSrOnly": "Step {{n}}. ",
+  "steps": [
+    {
+      "title": "Dashboard",
+      "paragraphs": [
+        "Alerts, active lots, messages, suggested next step — glance every few visits."
+      ],
+      "links": [
+        {
+          "label": "Open Dashboard",
+          "href": "/grower"
+        }
+      ]
+    },
+    {
+      "title": "This checklist",
+      "paragraphs": [
+        "Twelve cards on one page · same order as the sidebar (app: bottom tabs mirror the flow)."
+      ],
+      "links": []
+    },
+    {
+      "title": "My fields (parcels)",
+      "paragraphs": [
+        "Estate + parcels · m² · crop · batches / diary / treatments on a block stay limited until admin approves the parcel."
+      ],
+      "links": [
+        {
+          "label": "My fields",
+          "href": "/grower/fields"
+        }
+      ]
+    },
+    {
+      "title": "Approval",
+      "paragraphs": [
+        "Wait for approved · locked screens are normal · ping ops via messages if stalled."
+      ],
+      "links": []
+    },
+    {
+      "title": "Materials & suppliers",
+      "paragraphs": [
+        "Catalog (crates, rolls, foil, serials) · directory + B2B orders · mark received · app: Materials + Partner orders / web: Suppliers & orders."
+      ],
+      "links": [
+        {
+          "label": "Materials",
+          "href": "/grower/materials"
+        },
+        {
+          "label": "Suppliers & orders",
+          "href": "/grower/where-to-buy"
+        }
+      ]
+    },
+    {
+      "title": "Field work",
+      "paragraphs": [
+        "Daily: mobile entry log, journals, compliant sprays/treatments (GPS when required). Before harvest submit a kg/window harvest plan — for planning, not a retail checkout. Borders on web, captures in the field."
+      ],
+      "links": [
+        {
+          "label": "My fields",
+          "href": "/grower/fields"
+        }
+      ]
+    },
+    {
+      "title": "Harvest → batch",
+      "paragraphs": [
+        "When ready: declare harvest · create batch linked to parcel · use mobile flows for qty / window."
+      ],
+      "links": [
+        {
+          "label": "My fields",
+          "href": "/grower/fields"
+        },
+        {
+          "label": "My batches",
+          "href": "/grower/batches"
+        }
+      ]
+    },
+    {
+      "title": "Packing & status",
+      "paragraphs": [
+        "Work the lot until PACKED or QUALITY_VERIFIED · transport waits until packing + compliance (next step)."
+      ],
+      "links": [
+        {
+          "label": "My batches",
+          "href": "/grower/batches"
+        }
+      ]
+    },
+    {
+      "title": "Quality & compliance pics",
+      "paragraphs": [
+        "(1) Quality entry · (2) Compliance photos + label roll · transport form validates both."
+      ],
+      "links": [
+        {
+          "label": "Quality entry",
+          "href": "/grower/quality-entry"
+        },
+        {
+          "label": "Compliance photos",
+          "href": "/grower/compliance-photos"
+        }
+      ]
+    },
+    {
+      "title": "Request transport",
+      "paragraphs": [
+        "Only after packed / verified + compliance · pickup GPS/address + destination · queued until dispatcher assigns driver."
+      ],
+      "footnote": "Who ships which kg to which buyer is set in ops — not inferred from forecasts in-app.",
+      "links": [
+        {
+          "label": "Request transport",
+          "href": "/grower/missions/create"
+        }
+      ]
+    },
+    {
+      "title": "Missions",
+      "paragraphs": [
+        "Handover · cold chain · hub/buyer milestones · app: missions list · web: /grower/portal."
+      ],
+      "links": [
+        {
+          "label": "Mission tracker",
+          "href": "/grower/portal"
+        }
+      ]
+    },
+    {
+      "title": "Profile",
+      "paragraphs": [
+        "Partner code, country, notifications · wallet & certs live under Profile on mobile."
+      ],
+      "links": [
+        {
+          "label": "My profile",
+          "href": "/grower/profile"
+        }
+      ]
+    }
+  ],
+  "seasonMetaChip": "12 steps · sidebar order"
+}

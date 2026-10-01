@@ -11,6 +11,7 @@ import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 import { formatDateEn } from '@/lib/en-locale-dates';
 import { Search, Store, X, Minus, Plus, MapPin, Package } from 'lucide-react';
 import { productEmoji } from '@/lib/product-emoji';
+import { isBuyerDeliveryAddressComplete } from '@biovera/shared/validation/buyer-address';
 
 type PackOption = {
   id: string;
@@ -142,7 +143,7 @@ export default function MarketplacePage() {
 
   const submitOrder = async () => {
     if (submitLock.current || !selectedProduct || !selectedPack) return;
-    if (!street.trim() || !city.trim() || !postalCode.trim() || !country.trim()) {
+    if (!isBuyerDeliveryAddressComplete({ street, city, postalCode, country })) {
       setCheckoutError(t('buyerPortalMarketplace.checkout.fillRequired'));
       return;
     }

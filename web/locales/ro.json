@@ -112,7 +112,8 @@
       "Agricultura durabilă",
       "Transparența alimentară"
     ],
-    "ldJsonContactType": "Serviciu clienți"
+    "ldJsonContactType": "Serviciu clienți",
+    "homeTitle": "Bio Vera | Traceable Fresh Produce — Field to Shelf"
   },
   "chat": {
     "needHelp": "Ai nevoie de ajutor?",
@@ -166,7 +167,8 @@
     "unitKg": "kg",
     "save": "Salva",
     "cancel": "Anula",
-    "apiErrorGeneric": "Ceva nu a funcționat. Încercați din nou."
+    "apiErrorGeneric": "Ceva nu a funcționat. Încercați din nou.",
+    "databaseSchemaOutOfDate": "The server database is out of date — Prisma migrations were probably not applied (this usually isn't wrong input on this screen).\n\nWhat to do: deploy the latest API and on that environment run: npx prisma migrate deploy (with production DATABASE_URL). Then retry the action."
   },
   "nav": {
     "home": "Acasă",
@@ -625,7 +627,8 @@
     "backToHome": "← Înapoi acasă",
     "noAccount": "Nu ai un cont?",
     "register": "Registru",
-    "errorFailed": "Autentificare eșuată. Vă rugăm să vă verificați acreditările."
+    "errorFailed": "Autentificare eșuată. Vă rugăm să vă verificați acreditările.",
+    "pendingApproval": "Your account is waiting for approval by Bio Vera."
   },
   "buyerRegister": {
     "title": "Înregistrați-vă ca Cumpărător",
@@ -669,7 +672,16 @@
     "errPasswordMismatch": "Parolele nu se potrivesc",
     "errLocationNeedsAddress": "Adresa și orașul sunt necesare atunci când este furnizată locația",
     "errRegistrationFailed": "Înregistrarea a eșuat",
-    "logoAlt": "Bio Vera"
+    "logoAlt": "Bio Vera",
+    "successTitle": "Thanks — registration received",
+    "successPending": "Your account is waiting for approval by Bio Vera. We will e-mail you when it is active.",
+    "successPartnerCode": "Your partner code: {{code}} — you can also sign in with your e-mail once approved.",
+    "successLoginHint": "You will receive an e-mail when your account is active.",
+    "successGoLogin": "Go to sign in",
+    "postalCode": "Postal code",
+    "postalCodePh": "Postal / ZIP code",
+    "country": "Country",
+    "countryPh": "Country"
   },
   "authGuard": {
     "loading": "Încărcare..."
@@ -755,7 +767,11 @@
       "packageBadges": "Ecusoane de pachet",
       "scanPackageBadges": "Scanați insigne",
       "scanPallets": "Scanați paleți",
-      "printOrderNav": "Comanda de imprimare"
+      "printOrderNav": "Comanda de imprimare",
+      "fieldCapture": "Field capture",
+      "education": "Education",
+      "appGuide": "App guide",
+      "confidential": "Partner plans (protected)"
     },
     "placeholders": {
       "plantingsTitle": "Plantațiile mele",
@@ -981,7 +997,11 @@
         "uploadFailed": "Nu s-au încărcat fotografiile de conformitate",
         "genericUploadError": "Încărcarea nu a reușit",
         "photoSize": "Dimensiunea fotografiei trebuie să fie mai mică de 10 MB"
-      }
+      },
+      "parcelFilterLabel": "Parcel first",
+      "selectLotHeading": "Then pick the lot",
+      "allParcels": "All parcels",
+      "parcelNotLinked": "No parcel linked on batch"
     },
     "dashboard": {
       "loading": "Se încarcă tabloul de bord...",
@@ -1057,7 +1077,67 @@
       "outboxEntryLine": "{{activity}} · {{date}}",
       "outboxMoreCount": "+ încă {{count}}",
       "outboxSyncDone": "{{synced}} trimise cu succes.",
-      "outboxSyncPartial": "{{synced}} trimise; {{failed}} încă în așteptare — încercați din nou „Sincronizează acum”."
+      "outboxSyncPartial": "{{synced}} trimise; {{failed}} încă în așteptare — încercați din nou „Sincronizează acum”.",
+      "eyebrow": "Producer portal",
+      "workflow": {
+        "blockTitle": "On the farm — follow this order",
+        "blockHint": "1 Instructions · 2 Parcels · 3 Plantings · 4 Entry log · 5 Materials · 6–8 Allowed products, forbidden list, certificates — same order as the mobile app.",
+        "instructionsTitle": "Instructions",
+        "instructionsDesc": "Season steps — full chain on one page (How it works).",
+        "parcelsTitle": "My parcels",
+        "parcelsDesc": "Estates and boundaries; add parcels and manage blocks.",
+        "plantingsTitle": "My plantings",
+        "plantingsDesc": "Per approved parcel add a planting or harvest plan.",
+        "materialsTitle": "Materials",
+        "materialsDesc": "Barcode whitelist and stock aligned with diary entries.",
+        "diaryTitle": "Entry log",
+        "diaryDesc": "Review synced field entries (add new ones in mobile with photo + GPS).",
+        "allowedTitle": "Allowed products",
+        "allowedDesc": "Only from the list — seed, fertiliser, crop protection.",
+        "bannedTitle": "Not allowed",
+        "bannedDesc": "Read the steps and standards before you buy inputs.",
+        "certsTitle": "Certificates & proof",
+        "certsDesc": "Profile, photos and papers for organic and other rules.",
+        "logisticsBlockTitle": "Lots & transport",
+        "logisticsBlockHint": "Batches (lots), pickup request, track missions, scan pallets — same path as the app.",
+        "logisticsBatches": "My batches",
+        "logisticsQuality": "Quality (lot checklist)",
+        "logisticsCompliance": "Compliance photos",
+        "logisticsTransport": "Request transport",
+        "logisticsMissions": "Mission tracker",
+        "logisticsBadges": "Package badges",
+        "alsoBlock": "Also",
+        "alsoEducation": "Education & video guides",
+        "alsoPartnerOrders": "Partner orders (inputs)",
+        "alsoProducts": "My products (batches)",
+        "alsoScan": "Scan (QR / barcode)",
+        "alsoHarvest": "Harvest / plantings",
+        "alsoPhotos": "Compliance photos",
+        "alsoQuality": "Quality (entry)"
+      },
+      "journey": {
+        "loading": "Loading your progress…",
+        "loadError": "Could not load your farm checklist. Try again.",
+        "retry": "Retry",
+        "blockTitle": "Your chain — from field to handover",
+        "blockHint": "Complete the steps in order. Green means done; amber is your next action. Logistics assignment and final delivery to the buyer are handled by operations and the carrier after you request transport.",
+        "stepParcelsTitle": "1. Approved parcels",
+        "stepParcelsHint": "Draw parcels on your estate and wait for operations to approve them — otherwise planting, treatments, and most field APIs return errors.",
+        "stepPlanTitle": "2. Planting or harvest plan",
+        "stepPlanHint": "Register planting or expected harvest per approved parcel (required context for growth logs and some harvest rules).",
+        "stepBatchTitle": "3. Packed lot (batch)",
+        "stepBatchHint": "Create a batch after harvest/packing — this is the unit that moves with QR traceability.",
+        "stepReadyTitle": "4. Quality + compliance complete",
+        "stepReadyHint": "Lot must be PACKED or QUALITY_VERIFIED with quality entry and compliance photos (and label roll) so transport can be accepted.",
+        "stepTransportTitle": "5. Request transport",
+        "stepTransportHint": "Two routes: save an expected harvest on My plantings (opens a mission before packing) — or, after PACKED / QUALITY_VERIFIED and compliance, request pickup tied to that batch.",
+        "stepTrackTitle": "6. Track handover & cold chain",
+        "stepTrackHint": "Follow milestones on Mission tracker — loading at farm, transit, arrival (buyer address is not shown to growers).",
+        "statusDone": "Done",
+        "statusCurrent": "Next for you",
+        "statusPending": "Waiting on earlier steps",
+        "footerNote": "Applying fertiliser or protection products on a parcel is logged in the mobile app (photo + GPS on the plot). Whitelist and suppliers on the web help you choose compliant inputs."
+      }
     },
     "missionCreate": {
       "submitCta": "Solicita transport",
@@ -1067,7 +1147,458 @@
       "emptyBatchNextSteps": "Pașii următori:",
       "emptyBatchLinkBatches": "Loturile mele (ambalare)",
       "emptyBatchLinkQuality": "Înregistrare calitate",
-      "emptyBatchLinkCompliance": "Fotografii conformitate"
+      "emptyBatchLinkCompliance": "Fotografii conformitate",
+      "headerDescSuccess": "Your request was sent. You can follow the run in Mission tracker.",
+      "headerDescForm": "Pick a ready batch and farm pickup. Prerequisites: quality entry and compliance complete for the lot. Operations assigns the carrier and sets delivery — you do not see the buyer destination.",
+      "successTitle": "Transport request received",
+      "successBody": "Your request is queued for dispatch. Operations assigns cold-chain logistics in the admin panel; you can track pickup and handover as soon as a carrier is assigned.",
+      "successRedirect": "Redirecting to <0>Mission tracker</0>…",
+      "introBeforeLabel": "Before this page:",
+      "introBeforeStatuses": "batch in PACKED or QUALITY_VERIFIED",
+      "introIfRequired": "if required",
+      "introAfterCompliance": "+ label roll complete. Then pick the lot below.",
+      "introChooseLead": "Choose a ready batch and pickup (GPS or coordinates). The request goes to BioVera operations — they assign logistics and set the route in the admin panel; you follow farm-side steps on Mission tracker. Order stock on",
+      "introIfNeedSupplies": "if you still need crates or labels.",
+      "introAfterLabel": "After transport:",
+      "introAfterBody": "when the request is created successfully, the app takes you to",
+      "introAfterTail": "to follow status, handover, and milestones (without the delivery address).",
+      "splitOrderTitle": "Split order (e.g. 800 kg + 200 kg, two farms, same day)",
+      "splitOrderBody": "One mission = one batch and one farm pickup. If several farms supply the same buyer order, each farm submits their own transport request. Operations links the runs and assigns carriers in the admin panel; you do not enter the final delivery address.",
+      "submitErrorTitle": "Could not create transport",
+      "submitErrorFooter": "Add photos: <compliance>Compliance photos</compliance>. Order crates / stock: <materials>Materials</materials>. Message your material partner: <suppliers>Suppliers & orders</suppliers>. Still stuck: <contact>Contact</contact>.",
+      "complianceLink": "Compliance photos",
+      "materialsLink": "Materials",
+      "suppliersLink": "Suppliers & orders",
+      "contactLink": "Contact",
+      "errLoadBatches": "Could not load batches. Check your connection and try again.",
+      "geoNotSupported": "Geolocation is not supported by this browser. Enter latitude, longitude, and address manually.",
+      "geoDenied": "Location permission was denied. Allow location for this site or enter coordinates and address below.",
+      "geoTimeout": "Could not get GPS before timeout. Enter latitude, longitude, and address manually.",
+      "geoPlaceholderAddress": "Near {{lat}}, {{lng}} — add farm name, street, and city",
+      "geoLookupNoName": "Address lookup did not return a name. We filled a placeholder — please edit the address.",
+      "geoLookupFailed": "Address lookup failed. You can still submit — please type the full pickup address.",
+      "valSelectBatch": "Please select a batch",
+      "valPickupAddress": "Please enter pickup address",
+      "valLocation": "Please get your location or enter coordinates manually",
+      "valLatLngNumbers": "Latitude and longitude must be valid numbers",
+      "valLatLngRange": "Coordinates are out of range (lat ±90, lng ±180)",
+      "valDestinationCity": "Enter destination city or region (for dispatch to combine loads)",
+      "valDestinationAddress": "Enter full delivery address (buyer, hub, market, dock)",
+      "labelSelectBatch": "Select batch *",
+      "noReadyBatches": "(No ready batches available)",
+      "selectBatchPlaceholder": "-- Select batch --",
+      "complianceChecking": "Checking compliance for this lot…",
+      "complianceOk": "Compliance and label roll are on file for this lot",
+      "complianceIncomplete": "Compliance not complete for this lot",
+      "complianceMissingPhotos": "Missing photo types:",
+      "complianceNoRoll": "Label roll is not linked to this lot in the system yet.",
+      "complianceOpenLink": "Open Compliance photos",
+      "complianceOpenTail": "and submit all three photos plus the sticker roll ID, then return here.",
+      "complianceLoadFailed": "Could not load compliance status. You can still try to submit.",
+      "pickupLocation": "Pickup location *",
+      "gpsGetting": "Getting GPS…",
+      "gpsLookupAddress": "Looking up address…",
+      "gpsUseCurrent": "Use my current location",
+      "manualCoordsHint": "Or type lat/lng and address manually—no need to use GPS.",
+      "lineageTitle": "Data source (not from your batch in the database)",
+      "lineageCoordLabel": "Coordinates:",
+      "lineageCoordGps": "last set from this browser’s GPS (WGS-84).",
+      "lineageCoordTyped": "you typed (or edited) the numbers in the fields.",
+      "lineageCoordNone": "not set yet. Use the button or type lat/lng.",
+      "lineageAddrLabel": "Address:",
+      "lineageAddrNominatim": "from OpenStreetMap (Nominatim) after GPS. Street + number only if that point exists in the map data — not 100% from GPS.",
+      "lineageAddrPlaceholder": "a temporary line we filled when the geocoder had no name — you should fix it to the real farm gate if needed.",
+      "lineageAddrTyped": "you typed in the box (or last edit was by you).",
+      "lineageAddrNone": "not set from lookup yet — add it yourself for the driver.",
+      "lineageDevSummary": "How to double-check in the browser",
+      "lineageDevBody": "Open DevTools (F12) → Network → after clicking the green button, look for the request to /api/reverse-geocode — that is the address lookup. The mission send goes to your API POST /missions (see axios in Network).",
+      "latLabel": "Latitude",
+      "lngLabel": "Longitude",
+      "latPlaceholder": "e.g. 44.7866",
+      "lngPlaceholder": "e.g. 20.4489",
+      "pickupAddressLabel": "Pickup address *",
+      "pickupAddressPlaceholder": "Enter full pickup address (e.g. Farm Name, Street, City, Country)",
+      "houseNumberHint": "House or gate number not in the address. The public map (OpenStreetMap) often has no building number at your GPS point. Add the exact street and number, or a farm / gate name, so the driver knows where to stop.",
+      "opsRouteSectionTitle": "Delivery route (operations only)",
+      "opsRouteSectionBody": "You do not see where the load is consigned. After you request pickup, operations assigns a logistics partner in the admin panel and enters the full drop-off for the carrier. You still see mission status, cold-chain handover, and milestones without destination names.",
+      "cancel": "Back",
+      "errRequestFailed": "Request failed",
+      "errBrowserCouldNotReachApi": "The browser could not reach the API (network / CORS / wrong URL).",
+      "errTriedBaseUrl": "Config base URL (see Network tab for the real URL): {{base}}",
+      "errDetail": "Error: {{detail}}",
+      "errNoResponseFromServer": "No response from server{{codePart}}. {{msg}}",
+      "errCodePart": " ({{code}})",
+      "errEmptyBody": "Empty or unreadable error body — open DevTools → Network, open the /missions request, and read the Response; the reason is also in API server logs.",
+      "errCouldNotReadBody": "Could not read error body"
+    },
+    "appGuide": {
+      "pageTitle": "How to use the app",
+      "pageDescription": "Step-by-step through the Bio Vera grower mobile app — with phone screenshots.",
+      "hint": "Screenshots are added to the project folder; until a file is present you will see the expected filename.",
+      "hintLive": "Download the ready-made PDF (button above) or browse each step with screenshots below. Click a screen to enlarge.",
+      "pdfHowTo": "PDF: print this page and choose Save as PDF in your browser.",
+      "openPublicLink": "Open public link",
+      "enlargeScreenshot": "Open screenshot at full size",
+      "tapToEnlarge": "Click the screen to view at full resolution",
+      "zoomLabel": "Zoom",
+      "closeLightbox": "Close",
+      "screenColumnLabel": "App screen",
+      "detailColumnLabel": "Detailed explanation",
+      "checklistTitle": "Quick checklist",
+      "tocTitle": "Contents",
+      "imagePending": "Add this screenshot to the folder (see README).",
+      "printPdf": "Print / save as PDF",
+      "downloadPdf": "Download PDF",
+      "pdfDownloadHint": "Download the ready-made PDF — one file with all steps and screenshots. You do not need to load the full page.",
+      "viewOnline": "View online",
+      "footer": "For legal and contract matters use formal Bio Vera documents. This guide is a practical walkthrough of the app.",
+      "openFromEducation": "Mobile app guide (screenshots)",
+      "faqTitle": "Common questions",
+      "faqLead": "Quick answers on permissions, parcel map drawing, growth journal photos, and testing the app.",
+      "faqItems": [
+        {
+          "title": "What is “Experience needs permissions”?",
+          "body": "If you run the app inside Expo Go (developer client), iOS/Android show Expo’s English dialog, not Bio Vera’s. For real field work use the installed Bio Vera app (EAS APK/IPA). There you first see a short explanation in your language, then the normal system permission dialog."
+        },
+        {
+          "title": "Camera, location, and notifications",
+          "body": "Camera and GPS are requested only when you tap a photo or GPS action (growth journal, field log, map center). Notifications are offered once after login — you can turn them off later in phone settings. If you denied access, use “Open settings” in the app."
+        },
+        {
+          "title": "New parcel — map keeps moving",
+          "body": "On “Add estate”, enable drawing, choose Tap points or Finger, then mark the boundary. While drawing, do not pull the page down. Use the location pin button next to the controls to center the map, not pull-to-refresh."
+        },
+        {
+          "title": "Growth journal — photo required",
+          "body": "Every entry needs a photo taken on the parcel. After Continue in the form the app opens the camera and records GPS for the passport. If the camera fails, allow access in settings or pick an existing photo from the gallery when offered."
+        },
+        {
+          "title": "Red 404 error after login",
+          "body": "If the server does not have the push module yet, token registration may return 404 — that does not block parcels or the diary. Operations should deploy the latest API to Railway. In app Settings you can check the API URL and connection."
+        }
+      ],
+      "steps": {
+        "welcome": {
+          "title": "Welcome",
+          "lead": "The first Bio Vera screen — entry for partners and growers.",
+          "b1": "Choose sign in if you already have an account.",
+          "b2": "Registration is for new partners as directed by the team.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je ovaj ekran",
+              "body": "Početni ekran Bio Vera mobilne aplikacije. Prikazuje brend i dve glavne opcije: ulaz za postojeće korisnike i put ka registraciji novog proizvođača u programu."
+            },
+            {
+              "heading": "Dugme „Prijava” (Log in)",
+              "body": "Koristite ako vam je tim već otvorio nalog i dobili ste pristupne podatke. Vodi na ekran za unos e-pošte ili korisničkog imena i lozinke."
+            },
+            {
+              "heading": "„Postani Vera proizvođač” (Become a Vera grower)",
+              "body": "Za nove partnere koji prvi put ulaze u program. Otvara formu za registraciju. Registracija obično ide uz uputstvo operativnog tima — ne šaljite podatke nasumično bez dogovora."
+            },
+            {
+              "heading": "Zašto je važno",
+              "body": "Sa ovog ekrana kreće ceo rad u aplikaciji: terenski unosi, porudžbine inputa, lotovi i sinhronizacija sa web portalom. Bez prijave nijedan podatak se ne vezuje za vašu farmu."
+            }
+          ]
+        },
+        "register": {
+          "title": "Register",
+          "lead": "Creating a grower / partner account.",
+          "b1": "Enter details provided by operations.",
+          "b2": "After registration you may wait for approval before full access.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je ovaj ekran",
+              "body": "Forma za kreiranje naloga proizvođača (farmer account). Podaci koje unesete koriste se za identifikaciju farme u sistemu Bio Vera i kasniju verifikaciju od strane tima."
+            },
+            {
+              "heading": "Polja na formi",
+              "body": "Ime i prezime — kontakt osoba na farmi.\nE-pošta — za prijavu i obaveštenja; mora biti ispravna.\nHectares (hektari) — približna ukupna površina pod kulturom; dovoljna procena, ne mora biti tačna do decimale.\nLozinka — minimum 6 karaktera; čuvajte je privatno, ne delite sa drugim farmama."
+            },
+            {
+              "heading": "Dugme „Create account”",
+              "body": "Šalje prijavu na server. Ako je sve ispravno, dobijate potvrdu; pun pristup aplikaciji često stiže tek posle odobrenja naloga od strane Bio Vera tima."
+            },
+            {
+              "heading": "„Already have an account? Sign in”",
+              "body": "Ako ste se već registrovali, vratite se na prijavu umesto ponovne registracije — dupli nalozi otežavaju rad tima."
+            }
+          ]
+        },
+        "login": {
+          "title": "Sign in",
+          "lead": "Daily access to the app.",
+          "b1": "Use email, username, or partner code.",
+          "b2": "Do not share your password — the account is tied to your farm.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je ovaj ekran",
+              "body": "Standardna prijava za postojeće korisnike. Svaki dan počinjete ovde — bez prijave ne možete unositi podatke sa njive niti videti porudžbine i lotove."
+            },
+            {
+              "heading": "Šta unosite",
+              "body": "E-pošta ili korisničko ime — ono što vam je dodeljeno pri aktivaciji naloga.\nLozinka — ista koju ste postavili pri registraciji ili koju vam je tim poslao."
+            },
+            {
+              "heading": "Bezbednost",
+              "body": "Nalog je vezan za jednu farmu i jednu odgovornost u lancu. Ne delite lozinku sa radnicima koji nisu ovlašćeni; za pomoć na terenu koristite uputstva tima, ne zajednički nalog."
+            },
+            {
+              "heading": "Ako prijava ne uspe",
+              "body": "Proverite mrežu, tačnost e-pošte i lozinke. Ako i dalje ne radi, obratite se operativnom timu — možda nalog još nije odobren ili je lozinka resetovana."
+            }
+          ]
+        },
+        "home": {
+          "title": "Home",
+          "lead": "Dashboard — what to do next and offline sync.",
+          "b1": "The “What to do next” card points to the next seasonal step.",
+          "b2": "The sync strip uploads offline entries when online.",
+          "b3": "Shortcuts to wallet, instructions, and alerts.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je ovaj ekran",
+              "body": "Glavna kontrolna tabla posle prijave. Ovde vidite šta sistem od vas očekuje u sezoni, da li imate podataka koji čekaju slanje na server i brze prečice ka važnim delovima aplikacije."
+            },
+            {
+              "heading": "„Šta dalje” / sledeći korak",
+              "body": "Kartica koja vodi na aktuelni zadatak u programu (npr. registracija parcele, terenski unos, pakovanje). Pratite je redom — preskakanje koraka može blokirati kasnije faze (lot, transport)."
+            },
+            {
+              "heading": "Sinhronizacija (offline)",
+              "body": "Ako ste radili bez interneta, ovde vidite koliko unosa čeka slanje. Kada se pojavi mreža, pokrenite sinhronizaciju i sačekajte potvrdu — tek tada podaci ulaze u zvanični trag proizvodnje."
+            },
+            {
+              "heading": "Prečice i obaveštenja",
+              "body": "Odavde ulazite u novčanik, uputstva, obaveštenja tima i druge tabove (Polje, Lotovi, Snabdevači). Početna je „centar” — ne morate sve raditi odavde, ali je dobro proveriti je jednom dnevno."
+            }
+          ]
+        },
+        "field": {
+          "title": "Field tab",
+          "lead": "Everything on the farm — parcels, plantings, journals, and field log.",
+          "b1": "My fields / estates — register and view parcels.",
+          "b2": "Parcels & zones — map boundaries (GPS), approval status.",
+          "b3": "My plantings — crop / harvest plan per parcel.",
+          "b4": "Growth journal — photo evidence of crop development.",
+          "b5": "Field log — sowing, fertilising, spraying: barcode (when required) + photo + GPS.",
+          "b6": "Materials — check inputs against the whitelist.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je tab „Polje”",
+              "body": "Centralno mesto za sve što se dešava na njivi pre berbe: imanja, parcele, zasade, dnevnik rasta i terenski dnevnik (setva, đubrenje, zaštita). Većina compliance dokaza nastaje ovde."
+            },
+            {
+              "heading": "Moja polja / imanja",
+              "body": "Registrujete farmu kao celinu i vidite listu imanja povezanih sa vašim nalogom. Bez registrovanog imanja i parcele kasniji GPS unosi mogu biti odbijeni."
+            },
+            {
+              "heading": "Parcels and zones",
+              "body": "Draw or confirm parcel boundaries on the map (polygon). Enable drawing, choose Tap points or Finger, at least three points. While drawing the map should stay still — use the location button to center, not pull-to-refresh on the page. GPS checks apply on field entries. “Pending approval” means operations have not confirmed the boundary yet."
+            },
+            {
+              "heading": "Moji zasadi",
+              "body": "Za svaku parcelu definišete kulturu, sezonu i plan berbe. Zasadi povezuju terenske unose sa konkretnim usevom — važno za trag od semena do robe."
+            },
+            {
+              "heading": "Dnevnik rasta i terenski dnevnik",
+              "body": "Dnevnik rasta: periodične fotografije razvoja useva.\nTerenski dnevnik: svaka značajna radnja (setva, đubrenje, prskanje) sa fotografijom, GPS koordinatom i, gde važi, skeniranjem barkoda sa ambalaže inputa. Input mora biti na beloj listi — sistem blokira neodobrene proizvode."
+            }
+          ]
+        },
+        "lots": {
+          "title": "Lots tab",
+          "lead": "After harvest — batches, quality, packing, and transport.",
+          "b1": "Lot list and status (packed, in hub, in transit).",
+          "b2": "Quality and compliance packaging photos.",
+          "b3": "Request transport when goods are ready.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je tab „Lotovi”",
+              "body": "Posle berbe prelazite sa „polja” na „robu”: svaka partija (lot) dobija identitet u sistemu — status, kvalitet, ambalaža i veza sa transportom."
+            },
+            {
+              "heading": "Lista lotova i statusi",
+              "body": "Vidite sve partije i gde su u procesu: u pripremi, spakovano, u hub-u, u transportu, isporučeno. Boja ili oznaka statusa pomaže da ne pošaljete istu robu dva puta."
+            },
+            {
+              "heading": "Kvalitet i usklađenost ambalaže",
+              "body": "Unosite ili priložite fotografije kvaliteta i pakovanja prema programu Bio Vera. Neusklađena ambalaža može smanjiti bonus ili blokirati otpremu."
+            },
+            {
+              "heading": "Transport",
+              "body": "Kad je lot spreman i dokumentovan, podnesete zahtev za prevoz. Vozač i hub vide lot u svom delu aplikacije — vi ne završavate proces dok se roba ne preuzme i ne skenira na sledećoj stanici."
+            }
+          ]
+        },
+        "suppliers": {
+          "title": "Suppliers",
+          "lead": "Inputs (seed, packaging) from partners on the map.",
+          "b1": "Suppliers map — find a partner nearby.",
+          "b2": "Orders tab — order status and received-at-farm.",
+          "b3": "Messages tab — chat with supplier (separate from the order list).",
+          "detailBlocks": [
+            {
+              "heading": "Šta je ovaj deo aplikacije",
+              "body": "Ovde naručujete odobrene inpute (semena, ambalaža, batch ID) od Vera partnera na mapi. Porudžbina u aplikaciji povezuje se sa kasnijim terenskim unosom i tragom."
+            },
+            {
+              "heading": "Mapa snabdevača",
+              "body": "Prikaz partnera u blizini. Izaberite snabdevača, pogledajte ponudu i pokrenite porudžbinu. Koristite samo proizvode iz programa — van liste rizikujete blokadu unosa."
+            },
+            {
+              "heading": "Tab „Porudžbine”",
+              "body": "Pratite status svake porudžbine: naručeno, u pripremi, poslato, primljeno na farmi. Kada robu primite, potvrdite prijem u aplikaciji — to zatvara krug za audit."
+            },
+            {
+              "heading": "Tab „Poruke”",
+              "body": "Chat sa snabdevačem za pitanja o rokovima, dostavi ili šiframa proizvoda. Poruke su odvojene od liste porudžbina — porudžbinu ne otvarate preko chata."
+            }
+          ]
+        },
+        "profile": {
+          "title": "Profile",
+          "lead": "Your account, settings, and wallet entry.",
+          "b1": "Farm details and partner code.",
+          "b2": "Notifications and sign out.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je ekran profila",
+              "body": "Lični i poslovni podaci vašeg naloga: ime farme, kontakt, partnerski kod, jezik i obaveštenja. Odavde se odjavljujete sa uređaja koji ne koristite više."
+            },
+            {
+              "heading": "Podaci farme",
+              "body": "Proverite da su naziv farme, adresa i partnerski kod tačni — greške otežavaju isplate i komunikaciju sa timom. Za izmene kontaktirajte operativni tim ako polje nije editabilno."
+            },
+            {
+              "heading": "Obaveštenja i bezbednost",
+              "body": "Uključite obaveštenja za porudžbine, odobrenja parcela i poruke. Uvek se odjavite na zajedničkim telefonima/tabletima na farmi."
+            }
+          ]
+        },
+        "wallet": {
+          "title": "Wallet",
+          "lead": "Payout overview and order-related balances.",
+          "b1": "In escrow and available balance.",
+          "b2": "Aligned with the grower dashboard on the web.",
+          "detailBlocks": [
+            {
+              "heading": "Šta je novčanik",
+              "body": "Finansijski pregled vezan za vašu proizvodnju u programu Bio Vera: šta je u escrow-u (čeka uslove isplate), šta je dostupno i istorija po lotovima ili porudžbinama."
+            },
+            {
+              "heading": "Escrow i dostupno",
+              "body": "Escrow: iznos koji je rezervisan dok se ne ispune uslovi (npr. potvrda isporuke, kvalitet).\nDostupno: iznos koji možete očekivati u isplati prema pravilima programa. Iznosi na telefonu treba da se poklapaju sa web kontrolnom tablom — ako ne, sinhronizujte i kontaktirajte tim."
+            },
+            {
+              "heading": "Kada proveravati",
+              "body": "Posle zatvaranja lota, prijema robe od kupca i na kraju meseca. Novčanik nije zamena za ugovor — za sporazume i reklamacije i dalje važe pisana pravila Bio Vere."
+            }
+          ]
+        }
+      }
+    },
+    "education": {
+      "pageTitle": "Grower education",
+      "pageDescription": "Short guides and videos about packing, legal responsibility for the goods you hand over, and ethics in the Bio Vera chain — use this alongside the app and Season instructions.",
+      "pageLeadOneLine": "Packing, goods responsibility, and ethics — open a topic for details.",
+      "comingSoon": "Videos and extra links will appear here gradually. Check back when you prepare a new shipment; urgent notices also arrive through the platform.",
+      "comingSoonShort": "Videos arrive gradually; urgent notices also through the platform.",
+      "topicsTitle": "Topics",
+      "videoSectionTitle": "Packing & video guides",
+      "videoSectionIntro": "How to pack, label, and tie serials to your lot before transport.",
+      "videoBullet1": "Prep packaging and cold-chain protection",
+      "videoBullet2": "Labels, QR, and sticker roll aligned with programme rules",
+      "videoBullet3": "Final palletisation before handover to the carrier",
+      "liabilitySectionTitle": "Responsibility for goods & sanctions",
+      "liabilitySectionIntro": "You are responsible for the quality and compliance of each batch you submit, per contract and programme rules.",
+      "liabilityBullet1": "Major non-compliance can lead to withheld payments, exclusion of lots, or end of cooperation",
+      "liabilityBullet2": "Recorded deviations are reviewed by operations and may underpin contractual steps",
+      "liabilityBullet3": "Always rely on formal documents from the Bio Vera team for binding rights & obligations",
+      "ethicsSectionTitle": "Ethics in the chain",
+      "ethicsSectionIntro": "Transparency, truthful data, respect for buyer, haulier, and operations.",
+      "ethicsBullet1": "Accurate diary and quality declarations — don’t withhold material facts",
+      "ethicsBullet2": "Honour timelines, commitments, food-safety guidance, and cold-chain rules",
+      "moreSectionTitle": "More topics",
+      "moreSectionIntro": "FAQs and tips that complement the steps in app and browser.",
+      "moreBullet1": "Keeping paperwork and proofs that travel with each lot",
+      "moreBullet2": "What to check when onboarding new crates or packing materials",
+      "footerNote": "Binding legal and financial wording always comes from Bio Vera or your legal adviser. This page outlines topics only — escalate specific cases with a written reply from operations.",
+      "footerNoteShort": "Binding wording comes from Bio Vera in writing; this page is a topic overview."
+    },
+    "confidential": {
+      "pageTitle": "Partner business plans",
+      "pageDescription": "Each horizon has its own password. Short-term unlocks anytime it is configured. Medium-term unlocks after {{mediumYears}} full calendar years on your grower account; long-term unlocks after {{longYears}} full calendar years — plus the correct password for each.",
+      "ndWarning": "Confidential — for authorised Bio Vera partners only. Do not forward links or passwords.",
+      "shortTitle": "Short-term plan",
+      "shortHint": "Near-term priorities and milestones.",
+      "mediumTitle": "Medium-term plan",
+      "mediumHint": "Planning horizon covering the coming seasons. Unlocks with password once your account is {{years}} full calendar years old.",
+      "longTitle": "Long-term plan",
+      "longHint": "Strategic outlook and multi-year direction. Unlocks with password once your account is {{years}} full calendar years old.",
+      "passwordLabel": "Access password",
+      "passwordPlaceholder": "Enter password for this plan",
+      "unlock": "Unlock",
+      "unlocking": "Checking…",
+      "wrongPassword": "Incorrect password or this plan is not configured.",
+      "openPresentation": "Open reading view",
+      "openExternalLink": "Open PDF / external link",
+      "refreshClears": "Refreshing the page clears unlocked links — you will enter passwords again.",
+      "lockAgain": "Hide link",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "tierTenureBlockedMedium": "This plan is published, but Bio Vera unlocks the medium-term document only after {{years}} full calendar years from your grower account registration — in addition to the password.",
+      "tierTenureBlockedLong": "This plan is published, but Bio Vera unlocks the long-term document only after {{years}} full calendar years from registration — later than the medium-term gate — plus the password.",
+      "tenureRejectedNoticeMedium": "The password matched, but your account has not reached {{years}} full calendar years yet — required for the medium-term plan.",
+      "tenureRejectedNoticeLong": "The password matched, but your account has not reached {{years}} full calendar years yet — required for the long-term plan.",
+      "tierUnavailable": "This plan is not published yet for your organisation. Contact Bio Vera operations if you believe this is a mistake.",
+      "inviteGateSessionHint": "Your administrator may require an invitation link before passwords work. Open the link they sent you once on this browser; then unlock each plan with its password.",
+      "retry": "Try again",
+      "loadingSkeleton": "Loading partner plans…",
+      "planBack": "Back to protected plans",
+      "planReaderIntro": "Bio Vera formatted overview — edit the markdown source in the repository when operations publishes updates.",
+      "planReaderFooter": "Binding figures and annexes remain in your signed agreements; this layout is for clarity only.",
+      "footerNote": "Each password is unique per plan. If you lost access, contact operations — do not share passwords in chat or email.",
+      "sectionDisabled": "This area is not enabled for your environment.",
+      "errorAuth": "Please sign in again as a grower.",
+      "errorGate": "Additional access from your invitation link is missing or expired. Open the link operations sent you, then try again.",
+      "errorNetwork": "Could not reach the server. Check your connection and try again."
+    },
+    "partnerStoreOrder": {
+      "backToLocations": "Back to locations",
+      "loading": "Loading store…",
+      "loadFailedDefault": "Store not found, or partner is inactive.",
+      "notOnMap": "This partner is not on the public “Where to buy” map yet. You can still order using this link.",
+      "partnerCode": "Partner code:",
+      "phone": "Phone:",
+      "email": "Email:",
+      "website": "Store website",
+      "catalogTitle": "Product list & quantities",
+      "catalogHint": "Enter how much you need for each line (same units as in the store catalog). Your order is sent to this partner; they confirm or adjust in the supplier portal.",
+      "emptyCatalog": "This store has not published catalog lines yet. Use the note below to describe what you need, or contact them by phone/email.",
+      "unit": "Unit:",
+      "listPrice": "list €{{price}}",
+      "qty": "Qty",
+      "qtyPlaceholder": "0",
+      "noteLabel": "Note to the store (optional)",
+      "notePlaceholder": "e.g. needed for field prep by date …",
+      "submit": "Send order to store",
+      "successTitle": "Order sent",
+      "successBody": "The partner will see it under Supplier → Orders. You can continue the conversation in your messages (mobile app) or check back for their confirmation.",
+      "successRef": "Ref: {{id}}",
+      "placeAnother": "Place another order",
+      "invalidQty": "Invalid quantity for “{{name}}”. Use a positive number.",
+      "needQtyOrNote": "Enter a quantity for at least one product line, or add a note if the catalog is empty.",
+      "orderFailed": "Order failed",
+      "sku": "SKU {{sku}}",
+      "inquiryLineLabel": "Request: {{snippet}}"
+    },
+    "batchesApproval": {
+      "confirmApprove": "Approve this batch for loading? All requirements must be met.",
+      "approvedOk": "Batch approved for loading.",
+      "checkFailed": "Could not check approval requirements.",
+      "approveFailed": "Could not approve. Please check all requirements."
     }
   },
   "adminNav": {
@@ -1098,7 +1629,10 @@
     "goEstates": "Moșii și amenajări",
     "goHarvestPlans": "Planuri de recoltare",
     "goHaccp": "HACCP / câmp",
-    "goBatchesPlatform": "Loturi (online)"
+    "goBatchesPlatform": "Loturi (online)",
+    "supply": "Supply overview",
+    "seedProduction": "Seed production",
+    "goGrowerControl": "Grower control"
   },
   "adminPages": {
     "titles": {
@@ -1124,7 +1658,9 @@
       "estates": "Aprobarea succesiunii",
       "products": "Catalog de produse",
       "harvestPlans": "Planuri de recoltare",
-      "haccp": "Monitorizarea HACCP"
+      "haccp": "Monitorizarea HACCP",
+      "supply": "Supply overview",
+      "growerControl": "Grower control"
     },
     "financeOverview": {
       "heading": "Finanțe platformă",
@@ -1185,7 +1721,11 @@
       "noRecentOrders": "Fără comenzi recente",
       "noRecentAlerts": "Nu există alerte recente",
       "estateFallback": "Bunuri",
-      "parcelFallback": "Pachet"
+      "parcelFallback": "Pachet",
+      "buyersPendingApproval": "Buyers waiting for approval",
+      "buyersPendingCount": "{{count}} pending",
+      "growerControl": "Grower control",
+      "growerControlBadge": "{{count}} pending"
     },
     "farmDetail": {
       "loadFailed": "Nu s-au încărcat detaliile fermei",
@@ -1247,7 +1787,552 @@
       "heading": "Catalog de produse",
       "subtitle": "Gestionați catalogul de produse (în curând).",
       "addProduct": "Adăugați produsul",
-      "empty": "Gestionarea catalogului de produse va fi disponibilă după implementarea backend-ului."
+      "empty": "Gestionarea catalogului de produse va fi disponibilă după implementarea backend-ului.",
+      "edit": "Edit",
+      "publish": "Publish",
+      "publishAgain": "Publish again",
+      "archive": "Archive",
+      "packMaxPacks": "Max {{count}} packs",
+      "sourceLotOptional": "Source lot ID (optional)",
+      "addStockNoteOptional": "Note (optional)",
+      "editProduct": "Edit product",
+      "newProduct": "New product",
+      "save": "Save",
+      "cancel": "Cancel",
+      "colName": "Name",
+      "colCategory": "Category",
+      "colFarm": "Farm",
+      "colPlanned": "Planned",
+      "colAvailable": "Available",
+      "colSold": "Sold",
+      "colUntil": "Available until",
+      "colPacks": "Pack options",
+      "colStatus": "Status",
+      "colActions": "Actions",
+      "fieldName": "Product name",
+      "fieldCategory": "Category",
+      "fieldFarm": "Supplying farm",
+      "fieldDescription": "Description",
+      "fieldPlannedKg": "Planned quantity (kg)",
+      "fieldAvailableFrom": "Available from",
+      "fieldAvailableUntil": "Available until",
+      "categoryNone": "— Select —",
+      "farmNone": "— No farm —",
+      "packOptions": "Pack options",
+      "addPack": "Add pack",
+      "packLabel": "Label (e.g. 5 kg)",
+      "packSize": "Size (kg)",
+      "packPrice": "Price (€)",
+      "stockPanel": "Stock",
+      "stockPlanned": "Planned",
+      "stockOnOffer": "On offer",
+      "stockSold": "Sold",
+      "addStock": "Add stock",
+      "removeStock": "Remove stock",
+      "quantityKg": "Quantity (kg)",
+      "removeReason": "Reason (required)",
+      "addStockBtn": "Add",
+      "removeStockBtn": "Remove",
+      "removeReasonRequired": "A reason is required when removing stock.",
+      "stockHistory": "Movement history",
+      "noStockHistory": "No stock movements yet.",
+      "histDate": "Date",
+      "histType": "Type",
+      "histKg": "Kg",
+      "histBalance": "Balance",
+      "histOrder": "Order",
+      "histReason": "Reason / lot",
+      "publishAlready": "Already published",
+      "publishArchived": "Archived products cannot be published",
+      "publishNeedsPacks": "Add at least one active pack option",
+      "publishNeedsStock": "Add stock before publishing",
+      "publishNeedsUntil": "Set an available-until date in the future",
+      "archiveAlready": "Already archived"
+    },
+    "growerControl": {
+      "title": "Grower control",
+      "intro": "Approve transport after compliance checks, reject progress photos, and remove plantings. Notifications link here.",
+      "tabTransport": "Transport (awaiting)",
+      "tabGrowth": "Progress photos",
+      "tabPlantings": "Plantings",
+      "tabPlans": "Harvest plans",
+      "loading": "Loading…",
+      "emptyTransport": "No transport awaiting approval.",
+      "emptyGrowth": "No new photos to review.",
+      "emptyGrowthFiltered": "No photos for this partner code. Enter FARMER001 and search — compliance packaging photos and growth journal both appear on the public profile.",
+      "photosIntro": "Photos on the public farmer profile come from two sources: compliance packaging uploads and the growth journal. Search by partner code to find and delete them.",
+      "complianceSectionTitle": "Compliance / packaging (shown on public profile)",
+      "growthSectionTitle": "Growth journal",
+      "badgeCompliance": "Compliance / packaging",
+      "badgeGrowth": "Growth journal",
+      "confirmDeleteCompliancePhoto": "Delete this compliance photo? It will be removed from the public farmer profile and the batch record.",
+      "partnerCodeFilter": "Partner code",
+      "partnerCodePlaceholder": "e.g. FARMER001",
+      "photoStatusFilter": "Status",
+      "photoStatusAll": "All",
+      "photoStatusApproved": "Approved",
+      "photoStatusRejected": "Rejected",
+      "applyPhotoFilter": "Search photos",
+      "photoStatusLabel": "Status: {{status}}",
+      "confirmRejectPhoto": "Reject this photo? It will be hidden from the public farmer profile.",
+      "emptyPlantings": "No active plantings.",
+      "emptyPlans": "No plans pending review.",
+      "approveTransport": "Approve transport",
+      "rejectTransport": "Reject transport",
+      "rejectPhoto": "Reject photo",
+      "deletePhoto": "Delete",
+      "deletePlanting": "Remove planting",
+      "confirmPlan": "Confirm plan",
+      "rejectPlan": "Reject plan",
+      "reasonOptional": "Reason (optional)",
+      "reasonRequired": "Reason (required for rejection)",
+      "openMissions": "Missions & driver assign",
+      "openHarvestPlans": "All harvest plans",
+      "grower": "Grower",
+      "estate": "Estate",
+      "crop": "Crop",
+      "gps": "GPS",
+      "notes": "Notes",
+      "batch": "Batch",
+      "mission": "Mission",
+      "destination": "Destination",
+      "created": "Created",
+      "confirmDeletePlanting": "Remove this planting? The grower will be notified.",
+      "confirmDeletePhoto": "Permanently delete this photo?",
+      "confirmRejectTransport": "Reject this transport request?",
+      "transportApprovedHint": "After approval the mission becomes PENDING — assign a driver in Missions or logistics claims the run.",
+      "planPendingHint": "Confirm harvest plans before transport when the API requires it.",
+      "tabFieldDiary": "Field diary",
+      "fieldDiaryIntro": "Server-persisted planting, fertilizing, and spraying entries for a grower (same data as the mobile field diary).",
+      "applyFieldDiaryFilter": "Load entries",
+      "emptyFieldDiary": "Enter a partner code to view field diary entries.",
+      "emptyFieldDiaryFiltered": "No field diary entries for this partner code.",
+      "fieldEntryBags": "Bags",
+      "fieldEntryArea": "Area: {{ha}} ha",
+      "fieldEntryParcel": "Parcel"
+    },
+    "veraInsights": {
+      "loading": "Loading insights…",
+      "headerTitle": "Vera Insights management",
+      "headerSubtitle": "Manage crop profitability scores and market intelligence",
+      "addInsight": "Add insight",
+      "addFormTitle": "Add new insight",
+      "cropName": "Crop name",
+      "cropPlaceholder": "e.g., Hazelnut",
+      "veraScore": "Vera score (1–100)",
+      "historicalDeficit": "Historical deficit (%)",
+      "historicalDeficitPlaceholder": "e.g., 20 (or −15 for oversupply)",
+      "riskLevel": "Risk level",
+      "priceTrend": "Price trend",
+      "seedIdOptional": "Seed ID (optional)",
+      "seedIdPlaceholder": "Link to recommended seed",
+      "whyText": "Why text",
+      "whyTextPlaceholder": "Explanation for the score…",
+      "activeLabel": "Active (visible to growers)",
+      "save": "Save",
+      "cancel": "Cancel",
+      "colCrop": "Crop",
+      "colScore": "Score",
+      "colDeficit": "Deficit",
+      "colRisk": "Risk",
+      "colTrend": "Trend",
+      "colStatus": "Status",
+      "colActions": "Actions",
+      "statusActive": "Active",
+      "statusInactive": "Inactive",
+      "emptyState": "No insights yet. Create the first one above.",
+      "confirmDelete": "Delete this insight?",
+      "errCreate": "Could not create insight",
+      "errUpdate": "Could not update insight",
+      "errDelete": "Could not delete insight",
+      "risk": {
+        "LOW": "Low",
+        "MEDIUM": "Medium",
+        "HIGH": "High"
+      },
+      "trend": {
+        "UP": "Up",
+        "DOWN": "Down",
+        "STABLE": "Stable"
+      }
+    },
+    "userManagement": {
+      "headerTitle": "User management",
+      "headerSubtitle": "Manage all users in the system",
+      "createUser": "Create user",
+      "searchPlaceholder": "Search users…",
+      "filterAllRoles": "All roles",
+      "filterAllStatuses": "All statuses",
+      "loading": "Loading users…",
+      "noUsers": "No users found",
+      "colUser": "User",
+      "colRole": "Role",
+      "colStatus": "Status",
+      "colAgent": "Agent",
+      "colEstates": "Estates",
+      "colCreated": "Created",
+      "colActions": "Actions",
+      "titleFarmDetail": "View farm detail",
+      "titleApproveVerification": "Approve verification",
+      "titleEditUser": "Edit user",
+      "titleDeleteUser": "Delete user",
+      "modalCreateTitle": "Create new user",
+      "labelPartnerCode": "Partner code *",
+      "labelEmail": "Email",
+      "labelFirstName": "First name *",
+      "labelLastName": "Last name *",
+      "labelFirstNameEdit": "First name",
+      "labelLastNameEdit": "Last name",
+      "labelPhone": "Phone",
+      "labelProductionCountry": "Production country (for QR label)",
+      "productionCountryPlaceholder": "e.g. Serbia, Italy",
+      "productionCountryHint": "Shown as \"Produced in [country], Region [X]. Grown to Vera standards.\"",
+      "labelPassword": "Password",
+      "autoGenPassword": "Auto-generate password",
+      "sendPasswordEmail": "Send password to email",
+      "labelRoles": "Roles",
+      "labelStatus": "Status",
+      "cancel": "Cancel",
+      "submitCreate": "Create user",
+      "qrModalTitle": "Farmer QR code generated",
+      "qrModalLead": "QR code for {{name}}",
+      "qrModalHint": "This QR code will be printed on product boxes",
+      "qrCodeImageAlt": "Farmer QR code",
+      "qrCodeIdLabel": "QR code ID:",
+      "profileUrlLabel": "Profile URL:",
+      "downloadQr": "Download QR code",
+      "close": "Close",
+      "modalEditTitle": "Edit user",
+      "userIdLabel": "User ID",
+      "copyUserIdTitle": "Copy user ID",
+      "userIdHint": "Use this UUID in API filters, database joins, or support tickets.",
+      "labelPartnerCodeReadonly": "Partner code",
+      "assignedAgentLabel": "Assigned commercial agent",
+      "assignedAgentHint": "Who supports this account in the field. You assign manually; agent office (below) can help match by region.",
+      "agentNone": "— None —",
+      "caSectionTitle": "Field / office (for matching growers & partners)",
+      "caOfficeName": "Office name (optional)",
+      "caOfficePlaceholder": "e.g. South Serbia",
+      "caStreet": "Street & number *",
+      "caStreetPlaceholder": "Bulevar 1",
+      "caPostal": "Postal code",
+      "caCity": "City *",
+      "caCountry": "Country *",
+      "caCountryPlaceholder": "Serbia",
+      "buyerJsonLabel": "Buyer company profile (JSON)",
+      "buyerJsonHint": "Same data as in the buyer portal under Company profile. Use valid JSON: company, deliveryLocations, authorizedPersonnel.",
+      "resetPasswordTitle": "Lost password / new temporary login",
+      "resetPasswordHint": "Creates a new 12-character password. After they log in, they can set their own in Supplier settings (web) or profile.",
+      "resetPasswordGenerating": "Generating…",
+      "resetPasswordCta": "Generate new temporary password",
+      "submitUpdate": "Update user",
+      "confirmDeleteUser": "Delete this user?",
+      "confirmApproveVerification": "Approve verification for this user?",
+      "confirmResetPassword": "Generate a new temporary password for {{partnerCode}}? The password they have now will stop working immediately.",
+      "errLoadUsers": "Failed to load users",
+      "errDeleteUser": "Failed to delete user",
+      "errCreateUser": "Failed to create user",
+      "errApproveVerification": "Failed to approve verification",
+      "errUpdateUser": "Failed to update user",
+      "errInvalidBuyerJson": "Buyer company profile must be valid JSON",
+      "errResetPassword": "Failed to reset password",
+      "approveSuccess": "Verification approved successfully!",
+      "createSuccess": "User created successfully!",
+      "createGeneratedPassword": "Generated password: {{password}}",
+      "createPasswordEmailed": "Password sent to email.",
+      "createEmailNotSent": "Email not sent (check email configuration).",
+      "resetAlertPartner": "Partner code: {{code}}",
+      "resetAlertEmail": "Email: {{email}}",
+      "resetAlertPasswordIntro": "New temporary password (copy and send securely; shown once):",
+      "roles": {
+        "FARMER": "Farmer",
+        "GROWER": "Grower",
+        "BUYER": "Buyer",
+        "LOGISTICS_PARTNER": "Logistics partner",
+        "MATERIAL_SUPPLIER": "Material supplier (B2B map)",
+        "COMMERCIAL_AGENT": "Commercial agent (field)",
+        "ADMIN": "Admin",
+        "SUPER_ADMIN": "Super admin"
+      },
+      "statuses": {
+        "ACTIVE": "Active",
+        "SUSPENDED": "Suspended",
+        "PENDING_VERIFICATION": "Pending verification"
+      }
+    },
+    "missions": {
+      "headerTitle": "Missions & transport dispatch",
+      "headerSubtitle": "Flow: harvest plan (grower) → you confirm in Harvest plans; when the grower ships, Request transport creates a mission. PENDING means no driver yet: you can Assign a partner and vehicle, or leave the mission open for logistics to claim in their app (first come, then accept).",
+      "multiStopHint": "Multi-stop / one truck: the system still stores one batch per mission. To group two grower lots, keep both requests on the same destination city and address and reference the same order in notes — then assign the same driver to both rows here, or use Command Control to reassign.",
+      "filterAllStatuses": "All statuses",
+      "unassignedOnly": "Only PENDING, no driver yet",
+      "commandControlLink": "Command Control (reassign)",
+      "loading": "Loading missions…",
+      "colMission": "Mission",
+      "colLinks": "Links",
+      "linkFarmerAdmin": "Farmer (admin)",
+      "linkGrowerPortal": "Grower portal",
+      "linkGrowerPortalTitle": "Opens the grower journey page for this mission (grower must be logged in).",
+      "batchPublicIdTitle": "Public batch id on the label / QR",
+      "colGrower": "Grower",
+      "colDestination": "Destination",
+      "colBuyerOrder": "Buyer order",
+      "colDriver": "Driver",
+      "colProduct": "Product",
+      "colStatus": "Status",
+      "colCreated": "Created",
+      "colActions": "Actions",
+      "unassigned": "Unassigned",
+      "assignDriver": "Assign driver",
+      "setDestination": "Set destination",
+      "editDestination": "Destination",
+      "cancelRun": "Cancel run",
+      "destinationModalTitle": "Delivery destination",
+      "destinationModalHint": "Only logistics and admin see this; the grower does not.",
+      "labelDestCity": "City",
+      "labelDestAddress": "Full delivery address",
+      "save": "Save",
+      "saving": "Saving…",
+      "errDestination": "Could not save the destination.",
+      "cancelModalTitle": "Cancel this run?",
+      "cancelModalBody": "{{missionNumber}} will be cancelled. The grower and the carrier are notified; the truck is released if it has no other open run.",
+      "labelCancelReason": "Reason (optional, sent to grower and carrier)",
+      "keepRun": "Keep run",
+      "confirmCancelRun": "Cancel run",
+      "errCancel": "Could not cancel the run.",
+      "duplicateBadge": "Duplicate lot",
+      "duplicateTitle": "Another open run exists for the same lot — keep one and cancel the rest.",
+      "emptyState": "No missions in this view",
+      "assignModalTitle": "Assign driver",
+      "assignModalMission": "Mission {{missionNumber}} — {{product}}",
+      "loadFallback": "Load",
+      "loadingPartners": "Loading partners…",
+      "labelLogisticsPartner": "Logistics partner *",
+      "selectPartner": "Select…",
+      "partnerVehicles": "{{count}} vehicle(s)",
+      "partnerNoColdVehicle": "no temperature-controlled vehicle available",
+      "labelVehicleOptional": "Vehicle (optional)",
+      "vehicleAuto": "Auto (first available cold truck)",
+      "cancel": "Cancel",
+      "assign": "Assign",
+      "assigning": "Assigning…",
+      "errLoadMissions": "Failed to load missions",
+      "errLoadPartners": "Could not load logistics partners",
+      "errAssign": "Assign failed",
+      "statuses": {
+        "AWAITING_APPROVAL": "Awaiting approval (admin)",
+        "PENDING": "Pending",
+        "ASSIGNED": "Assigned",
+        "ACCEPTED": "Accepted",
+        "IN_PROGRESS": "In progress",
+        "READY_FOR_LOADING": "Ready for loading",
+        "PICKED_UP": "Picked up",
+        "IN_TRANSIT": "In transit",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
+      }
+    },
+    "commandControl": {
+      "loading": "Loading…",
+      "loadFailed": "Failed to load dashboard",
+      "systemStatus": "System status",
+      "statusOperational": "Operational",
+      "statusPaused": "Paused",
+      "pause": "Pause",
+      "resume": "Resume",
+      "pauseReasonPrompt": "Reason for pausing the system:",
+      "pauseSuccess": "System paused.",
+      "pauseFail": "Could not pause (Super Admin only, or check your network).",
+      "resumeSuccess": "System resumed.",
+      "resumeFail": "Could not resume (Super Admin only, or check your network).",
+      "liveMissions": "Live missions",
+      "openCount": "{{count}} open",
+      "allMissions": "All missions",
+      "noMissions": "No open missions (pending through in-transit).",
+      "reassign": "Reassign",
+      "reassignModalTitle": "Reassign mission",
+      "reassignModalMission": "Mission {{missionNumber}} — choose another logistics partner (account). The correct user ID is applied when you confirm.",
+      "usersDirectoryLink": "User directory",
+      "usersDirectoryHint": "full list of accounts and IDs.",
+      "partnerSearch": "Filter partners",
+      "labelNewPartner": "New logistics partner *",
+      "labelReason": "Reason *",
+      "reasonPlaceholder": "e.g. Driver unavailable, route change",
+      "confirmReassign": "Confirm reassignment",
+      "reassigning": "Reassigning…",
+      "successReassign": "Mission reassigned.",
+      "errReassign": "Reassignment failed. Check permissions or try again.",
+      "nonCompliantAudit": "Non-compliant audit",
+      "noViolations": "No recent non-compliant rows in the audit log.",
+      "trustScoreHeading": "Trust score (accounts with a record)"
+    },
+    "orderManagement": {
+      "headerTitle": "Orders management",
+      "headerSubtitleBefore": "Assign a fulfilling farm to link the buyer to a grower. Then use ",
+      "headerPrepMissionStrong": "Prep + mission",
+      "headerSubtitleMid": " to create a transport task with your notes (kg, industrial / retail, packaging). The mission stays ",
+      "headerPendingStrong": "PENDING",
+      "headerSubtitleAfterMissions": " until you assign logistics on ",
+      "missionsLink": "Missions",
+      "headerSubtitleEnd": " or a driver claims it.",
+      "loading": "Loading orders…",
+      "errLoad": "Failed to load orders",
+      "errUpdateStatus": "Failed to update status",
+      "errApprove": "Failed to accept order",
+      "errBank": "Failed to confirm bank payment",
+      "errMission": "Could not create mission for this order",
+      "errFulfillment": "Failed to update fulfilling farm",
+      "colOrderNumber": "Order number",
+      "colBuyer": "Buyer",
+      "colProduct": "Product",
+      "colQuantity": "Quantity",
+      "colAmount": "Amount",
+      "colFulfillingFarm": "Fulfilling farm",
+      "colGrowerMission": "Grower mission",
+      "colLinkedMissions": "Transport missions",
+      "portalMissionLink": "Grower portal",
+      "colStatus": "Status",
+      "colChangeStatus": "Change status",
+      "colCreated": "Created",
+      "notSet": "(not set)",
+      "fulfillingFarmAria": "Fulfilling farm for {{orderNumber}}",
+      "prepMissionTitle": "Create a PENDING mission for this grower with prep notes (set fulfilling farm first)",
+      "prepMissionCta": "Prep + mission",
+      "setFarmFirst": "Set farm first",
+      "acceptOrder": "Accept order",
+      "rejectOrder": "Reject",
+      "confirmReject": "Confirm rejection",
+      "rejectModalTitle": "Reject order",
+      "rejectModalLead": "Order {{orderNumber}} will be cancelled and stock returned. The buyer will see your reason.",
+      "rejectReasonLabel": "Reason for rejection",
+      "rejectReasonPlaceholder": "e.g. Out of stock for this delivery window",
+      "errReject": "Failed to reject order",
+      "catalogFilter": "Marketplace (catalogue) orders",
+      "packLine": "{{count}} × {{label}}",
+      "confirmBankPayment": "Confirm bank payment",
+      "emptyState": "No orders found",
+      "updateStatusAria": "Update status for {{orderNumber}}",
+      "missionModalTitle": "Prep & transport mission",
+      "missionModalLead": "Order {{orderNumber}} — creates a task for the assigned grower: pickup at the farm and delivery to the order address. Stays PENDING until you assign a driver or logistics claims it.",
+      "labelTargetKg": "Target kg (optional)",
+      "placeholderTargetKg": "e.g. 500",
+      "labelChannel": "Channel (optional)",
+      "channelIndustrial": "Industrial",
+      "channelRetail": "Retail",
+      "channelMixed": "Mixed",
+      "labelOpsNotes": "Operations notes (class, box type, time window, buyer ref…)",
+      "placeholderOpsNotes": "What the grower should prepare and how it should be sorted/packed for this buyer.",
+      "cancel": "Cancel",
+      "createMission": "Create mission",
+      "creating": "Creating…",
+      "bankModalTitle": "Confirm bank transfer received",
+      "bankModalLead": "Order {{orderNumber}} will be marked PAID and a secured-payment (held) record will be created. Use when the amount is visible on the BioVera account.",
+      "bankRefLabel": "Bank reference (optional)",
+      "bankRefPlaceholder": "e.g. payment order number",
+      "markPaid": "Mark as PAID",
+      "saving": "Saving…",
+      "statuses": {
+        "PENDING": "Pending",
+        "APPROVED": "Approved",
+        "PAID": "Paid",
+        "CONFIRMED": "Confirmed",
+        "PICKED_UP": "Picked up",
+        "IN_TRANSIT": "In transit",
+        "DELIVERED": "Delivered",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled",
+        "REFUNDED": "Refunded"
+      }
+    },
+    "supply": {
+      "heading": "Grower supply overview",
+      "subtitle": "Every planting and harvest plan from the mobile app — expected kilos, lots harvested, and what is already in the product catalog.",
+      "refresh": "Refresh",
+      "empty": "No plantings or harvest plans yet. Growers register them in the mobile app.",
+      "closePanel": "Close detail panel",
+      "stats": {
+        "expected": "Total expected (kg)",
+        "harvested": "Total harvested (kg)",
+        "inProducts": "In catalog products (kg)",
+        "unallocated": "Unallocated (kg)"
+      },
+      "filters": {
+        "search": "Search grower, farm, crop…",
+        "allCrops": "All crops",
+        "allStatuses": "All statuses"
+      },
+      "colGrower": "Grower",
+      "colFarm": "Farm",
+      "colCrop": "Crop",
+      "colDates": "Dates",
+      "colExpected": "Expected",
+      "colHarvested": "Harvested",
+      "colStatus": "Status",
+      "derivedStatus": {
+        "PLANNED": "Planned",
+        "HARVESTED": "Harvested",
+        "LOT_CREATED": "Lot created",
+        "IN_CATALOGUE": "In catalogue"
+      },
+      "planted": "Planted",
+      "harvest": "Harvest",
+      "inProducts": "In products",
+      "unallocated": "Unallocated",
+      "lots": "Lots / batches",
+      "noLots": "No lots recorded yet.",
+      "latestPhoto": "Latest growth photo",
+      "noPhoto": "No growth photos yet",
+      "linkGrowerControl": "Open in grower control",
+      "linkHarvestPlans": "Open harvest plan",
+      "createProduct": "Create catalog product",
+      "viewProduct": "View catalog product",
+      "bioVeraSeedBadge": "Bio Vera seed: {{count}} bag(s) · {{lots}}",
+      "bioVeraSeedTitle": "Bio Vera seed on this parcel",
+      "bioVeraSeedDetail": "{{count}} bag(s) planted · lot(s): {{lots}}"
+    },
+    "estatesApproval": {
+      "loading": "Loading pending estates…",
+      "emptyTitle": "No pending estates to review",
+      "emptyHint": "New grower estates awaiting approval will show up here.",
+      "emptyCtaDashboard": "Admin dashboard",
+      "emptyCtaParcels": "Parcels pending approval"
+    },
+    "marketPricesPage": {
+      "emptyTitle": "No market prices found",
+      "emptyHint": "Reference buy/sell prices for crops are listed here. Super admins can add an active price row.",
+      "emptyCtaAdd": "Set market price",
+      "emptyCtaDashboard": "Admin dashboard"
+    },
+    "haccpMonitoring": {
+      "title": "HACCP Monitoring",
+      "subtitle": "Real-time compliance: load temperature, hygiene photos",
+      "refresh": "Refresh",
+      "loading": "Loading HACCP data…",
+      "emptyTitle": "No batches for HACCP monitoring yet",
+      "emptyHint": "Lots with loading handover and compliance evidence will appear in this table.",
+      "emptyCtaDashboard": "Admin dashboard",
+      "emptyCtaCommandControl": "Command & control",
+      "colFarmer": "Farmer",
+      "colBatch": "Batch",
+      "colProduct": "Product",
+      "colLoadTemp": "Load temp",
+      "colPhotos": "Photos",
+      "colHaccpStatus": "HACCP status",
+      "colLastUpdated": "Last updated",
+      "colTrack": "Track",
+      "trackView": "View",
+      "statusVerified": "Verified",
+      "statusFail": "Fail",
+      "statusPending": "Pending"
+    },
+    "securityPage": {
+      "title": "Security Alerts",
+      "subtitle": "Monitor and resolve security violations",
+      "loading": "Loading alerts…",
+      "emptyTitle": "No security alerts in this view",
+      "emptyHint": "Clear filters to see all statuses, or check back when integrity-guard events are logged.",
+      "emptyCtaDashboard": "Admin dashboard",
+      "emptyCtaResetFilters": "Reset filters"
     }
   },
   "internalShell": {
@@ -1273,14 +2358,17 @@
     "invoices": "Facturi",
     "deliveries": "Livrări",
     "analytics": "Analytics",
-    "companyProfile": "Profilul Companiei"
+    "companyProfile": "Profilul Companiei",
+    "marketplace": "Marketplace",
+    "veraStandard": "Bio Vera Standard"
   },
   "logisticsPartnerNav": {
     "dashboard": "Dashboard",
     "missions": "Misiuni",
     "vehicles": "Vehicule",
     "loadingHandover": "Se încarcă predarea",
-    "receiverProof": "Dovada receptorului"
+    "receiverProof": "Dovada receptorului",
+    "drivers": "Drivers & reps"
   },
   "buyerPortalPages": {
     "dashboard": "Dashboard",
@@ -1293,7 +2381,9 @@
     "veraTrade": "Vera comerț",
     "suppliers": "Vera parteneri",
     "invoices": "Facturi",
-    "analytics": "Analize și rapoarte"
+    "analytics": "Analize și rapoarte",
+    "marketplace": "Marketplace",
+    "veraStandard": "Bio Vera Standard"
   },
   "buyerTrade": {
     "loading": "Se încarcă datele comerciale...",
@@ -1314,7 +2404,241 @@
     "dashboard": "Tabloul de bord logistic",
     "loadingHandover": "Se încarcă predarea",
     "receiverProof": "Dovada receptorului",
-    "receiverAtHandover": "Destinatar la predare"
+    "receiverAtHandover": "Destinatar la predare",
+    "receivingTitle": "At the buyer — start receipt",
+    "receivingHint": "Scan or type the receiving code the buyer shows (Deliveries → Show receiving code). The buyer then checks the goods and signs.",
+    "receivingStart": "Start handover",
+    "receivingErr": "Code not accepted — check it with the buyer.",
+    "receivingStatus": "Buyer receipt: {{status}}",
+    "receivingHandover_INITIATED": "waiting for the buyer to check and sign",
+    "receivingHandover_IN_PROGRESS": "buyer is checking",
+    "receivingHandover_COMPLETED": "received and signed",
+    "receivingHandover_DISPUTED": "disputed — operations will review",
+    "dashboardPartnerFallback": "Logistics partner",
+    "dashboardShellLoading": "Loading…",
+    "dashboardPartnerTagline": "Cold chain transport",
+    "dashboardPartnerActiveBadge": "Active",
+    "dashboardTypicalFlowTitle": "Typical flow",
+    "dashboardTypicalFlow": "<strong>Missions</strong> — accept / assign the run → <handoverLink>Loading handover</handoverLink> at the farm (after grower quality: truck temp + photos, then <strong>READY FOR LOADING</strong>) → pickup and <strong>in transit</strong> to hub or buyer. <strong>Vehicles</strong> must stay cold-chain ready.",
+    "dashboardStatOngoing": "Ongoing missions",
+    "dashboardStatCompletedWeek": "Completed this week",
+    "dashboardStatTotal": "Total missions",
+    "dashboardOngoingTitle": "Ongoing missions",
+    "dashboardAllMissionsLink": "All missions →",
+    "dashboardOngoingLoadingMissions": "Loading missions…",
+    "dashboardOngoingEmptyTitle": "No ongoing missions",
+    "dashboardOngoingEmptyHint": "Claim an available run under Missions, or wait for operations or a grower to open a pickup.",
+    "dashboardOngoingEmptyCtaAllMissions": "Open Missions",
+    "dashboardOngoingEmptyCtaAvailable": "Jump to available runs",
+    "dashboardOngoingEmptyCtaVehicles": "Fleet: Vehicles",
+    "dashboardLabelPickup": "Pickup",
+    "dashboardLabelDestination": "Destination",
+    "dashboardLabelProgress": "Progress",
+    "dashboardLabelEta": "ETA",
+    "dashboardUiStatusLoading": "Loading",
+    "dashboardUiStatusInTransit": "In transit",
+    "dashboardUiStatusDelivery": "Delivery",
+    "dashboardTrackCta": "Track",
+    "dashboardHandoverReminderTitle": "Loading in progress",
+    "dashboardHandoverReminderBody": "One or more missions need temperature verification. Check the truck temperature and complete Loading Handover.",
+    "dashboardHandoverReminderCta": "Go to Loading Handover →",
+    "vehiclesFleetEmpty": "No vehicles in your fleet yet.",
+    "vehiclesFleetEmptyHint": "Add a refrigerated vehicle above so you can claim cold-chain runs.",
+    "vehiclesFleetEmptyCtaMissions": "Browse available missions",
+    "vehiclesListLoadError": "Could not load vehicles",
+    "vehiclesIntro": "Register refrigerated vehicles for your fleet. <strong>Claiming a mission</strong> requires at least one vehicle marked as available with active cooling (0–4°C). You can add more than one.",
+    "vehiclesFormTitle": "Add vehicle",
+    "vehiclesFleetTitle": "Your fleet",
+    "vehiclesLicenseLabel": "License plate *",
+    "vehiclesLicensePlaceholder": "e.g. HH-AB 1234",
+    "vehiclesCategoryLabel": "Category *",
+    "vehiclesCategoryHint": "Pick the size class you use for this vehicle; missions can then be matched to your fleet.",
+    "vehiclesMakeLabel": "Make (optional)",
+    "vehiclesMakePlaceholder": "e.g. Mercedes",
+    "vehiclesModelLabel": "Model (optional)",
+    "vehiclesModelPlaceholder": "e.g. Sprinter",
+    "vehiclesTempNote": "Temperature range is stored as 0–4°C (refrigerated) for cold-chain transport. Contact support if you need a different profile.",
+    "vehiclesSubmit": "Add vehicle",
+    "vehiclesSubmitting": "Saving…",
+    "vehiclesBackMissions": "Back to missions",
+    "vehiclesCooling": "Cooling {{min}}–{{max}}°C",
+    "vehiclesType_refrigerated_van": "Refrigerated van",
+    "vehiclesType_rigid_7_5t": "Rigid truck (~7.5 t)",
+    "vehiclesType_rigid_12t": "Rigid truck (~12 t)",
+    "vehiclesType_artic": "Articulated / truck + trailer",
+    "vehiclesType_other": "Other (describe in make/model if needed)",
+    "driversEmptyCtaMissions": "Open Missions",
+    "handoverHeaderTitle": "Loading handover",
+    "handoverHeaderDescription": "Document inside truck temperature and photos here—same layout style as grower Quality entry. Required before the run can move to ready for loading.",
+    "handoverChainTitle": "Where this sits in the chain",
+    "handoverChainBody": "The grower completes quality entry for the lot first. You record the truck here (inside temperature {{min}}–{{max}}°C, pallet load + interior photos). When saved, the mission can advance to READY FOR LOADING. Cold-chain evidence before goods leave the farm gate.",
+    "handoverEvidenceSaved": "Evidence saved. Loading can proceed.",
+    "handoverFormTitle": "Logistics handover",
+    "handoverFormLead": "Required: pickup driver, ID badge photo, and driver signature (green block below), then truck temperature in range, plus pallet and inside-truck photos.",
+    "handoverSelectMission": "Select mission *",
+    "handoverMissionsLoading": "Loading…",
+    "handoverMissionsEmpty": "No missions awaiting handover",
+    "handoverMissionsEmptyHint": "You need a run assigned to you in farm / loading status. Claim one under Missions, or wait until a grower opens a pickup.",
+    "handoverMissionsEmptyCtaMissions": "Open Missions",
+    "handoverMissionsEmptyCtaDashboard": "Logistics dashboard",
+    "handoverMissionPickPlaceholder": "— Select mission —",
+    "handoverMissionOption": "{{missionNumber}} – Batch {{batchId}}",
+    "handoverTruckTempLabel": "Inside truck temperature (°C) *",
+    "handoverTempPlaceholder": "e.g. 4.5",
+    "handoverTempValid": "Temperature is within standard range ({{min}}°C – {{max}}°C)",
+    "handoverTempInvalid": "Temperature is outside standard range. Loading blocked. Adjust the temperature.",
+    "handoverTempRangeHint": "Standard range: {{min}}°C – {{max}}°C",
+    "handoverPalletPhotosTitle": "Pallet photos *",
+    "handoverPalletPhotosHint": "At least one; up to {{max}} photos (max 5MB per file)",
+    "handoverTruckPhotosTitle": "Inside the truck *",
+    "handoverTruckPhotosHint": "At least one; up to {{max}} photos (max 5MB per file)",
+    "handoverNotesLabel": "Notes (optional)",
+    "handoverNotesPlaceholder": "Any additional information…",
+    "handoverSubmitSaving": "Saving…",
+    "handoverSubmit": "Finish loading handover",
+    "handoverBlockedByTemp": "Cannot proceed: temperature must be within the standard range",
+    "handoverNeedPhotos": "Add pallet and inside-truck photos to finish.",
+    "handoverPickupSectionTitle": "Pickup person & proof at the farm",
+    "handoverPickupSectionLead": "The grower sees this on the portal: who is taking the load, badge photo, and signature.",
+    "handoverPickupDriverNoDrivers": "No active drivers yet — add people first",
+    "handoverPickupDriverAddLink": "Open Drivers & reps",
+    "handoverBadgeRemove": "Remove badge photo",
+    "handoverNeedPickupProof": "Choose the pickup driver, add the badge photo, and capture the signature to finish.",
+    "handoverPickupDriverLabel": "Pickup driver (responsible person) *",
+    "handoverPickupDriverHint": "Register drivers under Drivers & reps. The grower sees this profile on the portal.",
+    "handoverPickupDriverPlaceholder": "— Select driver —",
+    "handoverBadgeTitle": "Partner / ID badge photo *",
+    "handoverBadgeHint": "Photo of the logistics ID or driver card shown at pickup.",
+    "handoverDriverSigTitle": "Driver signature at pickup *",
+    "handoverDriverSigHint": "The person taking the load signs here (mouse or touch).",
+    "handoverDriverSigClear": "Clear signature",
+    "handoverErrPickupDriver": "Select the pickup driver.",
+    "handoverErrBadge": "Add a photo of the partner or driver ID badge.",
+    "handoverErrDriverSignature": "Capture the driver's signature.",
+    "driversLoading": "Loading…",
+    "handoverPhotoMaxFile": "Max 5MB per photo.",
+    "handoverPhotoMaxGroup": "Max {{max}} photos per group.",
+    "handoverPhotoReadFailed": "Could not read file.",
+    "handoverErrSelectMission": "Please select a mission",
+    "handoverErrTempRange": "Truck temperature ({{temp}}°C) is outside the standard range ({{min}}°C – {{max}}°C). Loading is blocked. Adjust the temperature before continuing.",
+    "handoverErrPalletPhoto": "Add at least one pallet photo.",
+    "handoverErrTruckPhoto": "Add at least one inside-truck photo.",
+    "handoverErrComplete": "Failed to complete handover",
+    "handoverRemovePhotoAria": "Remove",
+    "receiverHeaderTitle": "Receiver at handover",
+    "receiverHeaderDescription": "After loading is documented, record who received the load and optionally capture a signature. A PDF is generated for your audit trail.",
+    "receiverPrereqTitle": "Step order",
+    "receiverPrereqBody": "This page comes after Loading handover: there you enter truck temperature and loading photos. When that is saved, the mission becomes Ready for loading in the system — meaning loading documentation is complete, not that loading is still pending. Then pick the same mission here and enter who received the handover (name required, signature optional). Only missions that already finished loading handover appear in the list.",
+    "receiverSuccessMessage": "Receiver proof saved. You can open the PDF below if this tab is still on the same mission.",
+    "receiverFormTitle": "Receiver name and signature",
+    "receiverFormLead": "Name is required; sign on the pad or leave blank to submit name only.",
+    "receiverMissionLabel": "Mission *",
+    "receiverMissionsLoading": "Loading…",
+    "receiverMissionsEmpty": "No eligible missions (complete loading handover first)",
+    "receiverMissionsEmptyHint": "Receiver proof runs after loading handover at the farm. Complete handover for an assigned mission first, then return here.",
+    "receiverMissionsEmptyCtaHandover": "Loading handover",
+    "receiverMissionsEmptyCtaMissions": "Open Missions",
+    "receiverMissionsEmptyCtaDashboard": "Logistics dashboard",
+    "receiverMissionPlaceholder": "— Select mission —",
+    "receiverMissionOption": "{{missionNumber}} — {{batchId}} ({{status}})",
+    "receiverNameLabel": "Receiver name *",
+    "receiverNamePlaceholder": "Name of person receiving the load",
+    "receiverSignatureLabel": "Signature (optional)",
+    "receiverSignatureClear": "Clear",
+    "receiverSignatureHint": "Use mouse or finger on a tablet. Clear and redraw if needed.",
+    "receiverSubmitSaving": "Saving…",
+    "receiverSubmit": "Save receiver proof",
+    "receiverPdfSection": "Download PDF (after proof is saved for this mission)",
+    "receiverPdfButton": "Open receiver PDF",
+    "receiverErrSelectMission": "Please select a mission",
+    "receiverErrName": "Enter the receiver's name",
+    "receiverErrSave": "Failed to save receiver proof",
+    "receiverErrPdf": "Could not open PDF",
+    "driversIntro": "Add the people who physically pick up goods (name, contacts, optional photo). Assign them when you claim a mission and again at loading handover.",
+    "driversMissionsLink": "Missions",
+    "driversAddTitle": "Add driver or responsible person",
+    "driversFirstName": "First name *",
+    "driversLastName": "Last name *",
+    "driversEmail": "Email",
+    "driversPhone": "Phone",
+    "driversPhotoOptional": "Profile photo (optional)",
+    "driversSave": "Save",
+    "driversSaving": "Saving…",
+    "driversListTitle": "Your team",
+    "driversEmpty": "No people added yet.",
+    "driversInactive": "inactive",
+    "driversActivate": "Activate",
+    "driversDeactivate": "Deactivate",
+    "driversErrSave": "Could not save",
+    "driversErrUpdate": "Could not update",
+    "driversPhotoType": "Only image files allowed.",
+    "driversPhotoSize": "Max 5MB for profile photo.",
+    "missionsClaimDriverLabel": "Pickup driver (optional)",
+    "missionsClaimDriverPlaceholder": "— Later / assign on mission —",
+    "missionsClaimDriverHint": "You can add people under Drivers & reps. Leaving blank still allows claim; assign before loading handover.",
+    "missionsClaimMission": "Claim mission",
+    "missionsClaimMissionWorking": "Claiming…",
+    "missionsAssignDriverLabel": "Pickup driver for this mission",
+    "missionsAssignDriverSave": "Save driver",
+    "missionsAssignDriverSaving": "Saving…",
+    "missionsAssignDriverUpdated": "Driver assignment updated.",
+    "missionsAssignDriverErr": "Could not update driver. Try again.",
+    "missionsJourneyTitle": "Shipment progress (grower map)",
+    "missionsJourneyHint": "After loading handover, tap these in order so the grower’s “route map” matches the truck.",
+    "missionsLifecycleDepart": "Truck left farm",
+    "missionsLifecycleTransit": "Started EU transit",
+    "missionsLifecycleDelivered": "Delivered to hub / buyer",
+    "missionsLifecycleWorking": "Updating…",
+    "missionsLifecycleErr": "Could not update status.",
+    "missionsLifecycleOk": "Shipment status updated — the grower’s route map will refresh.",
+    "missionBadgeLoading": "At farm / loading",
+    "missionBadgePickedUp": "Left farm",
+    "missionBadgeInTransit": "In transit",
+    "missionBadgeDone": "Delivered",
+    "missionsPageActiveTitle": "Active missions",
+    "missionsPageActiveLoading": "Loading…",
+    "missionsPageActiveEmpty": "No active missions right now.",
+    "missionsPageActiveEmptyCtaPool": "Claim a run below",
+    "missionsPageActiveEmptyCtaVehicles": "Fleet: Vehicles",
+    "missionsPageAvailableTitle": "Available missions",
+    "missionsPageAvailableEmpty": "No missions available right now.",
+    "missionsPageAvailableEmptyHint": "When growers request pickup or operations opens a run, loads appear here. Keep refrigerated vehicles registered.",
+    "missionsPageAvailableEmptyCtaVehicles": "Manage vehicles",
+    "missionsPageLoadError": "Failed to load missions",
+    "missionsShellLoading": "Loading…",
+    "missionsErrorVehicleCta": "<vehiclesLink>Open Vehicles</vehiclesLink> to register at least one <strong>available</strong> refrigerated vehicle, then try again.",
+    "missionsClaimBanner": "<strong>Before you claim:</strong> add a refrigerated (0–4°C) vehicle under <vehiclesLink>Vehicles</vehiclesLink>. Claim assigns the next free suitable vehicle in your fleet. Growers set <strong>destination city</strong> and <strong>full delivery address</strong> on each run — use “Same city” below to see loads you may combine on one truck.",
+    "missionsLabelFrom": "From ·",
+    "missionsMissionLabel": "Mission #{{num}}",
+    "missionsLabelTo": "To ·",
+    "missionsLoadDockLabel": "Loading / dock:",
+    "missionsCrop": "Crop: {{crop}}",
+    "missionsLoadSummary": "Load: {{product}} — {{quantity}} {{unit}}",
+    "missionsActiveLoad": "Load: {{product}} · {{quantity}} {{unit}}",
+    "missionsActivePalletBatch": "(≈ {{count}} pallet(s) (batch unit))",
+    "missionsActivePalletWeight": "(≈ {{count}} EU pallet(s) from weight)",
+    "missionsPalletCountAsBatch": "Pallet count (as in batch): {{count}}",
+    "missionsPalletCountApprox": "Approx. EU pallets from weight: {{count}} (~500 kg each; confirm with grower)",
+    "missionsSizeClass": "Suggested size class: {{hint}}",
+    "missionsRequiresFrigo": "Requires: refrigerated (fridge) 0–4°C vehicle registered under Vehicles",
+    "missionsAvailableNoBatch": "No batch linked in this request — check notes or contact the grower for weight and dimensions.",
+    "missionsSameCityActive": "Same city — possible one-truck run",
+    "missionsSameCityPool": "Same city — you may load one truck for:",
+    "missionsTargetPickup": "Target pickup window: {{when}}",
+    "missionsRouteAssist": "Route assist (est.): {{distance}}{{durationPart}}",
+    "missionsCardHandover": "Handover",
+    "missionsCardDashboard": "Dashboard",
+    "missionsDestChannel": "Channel / market: {{value}}",
+    "missionsDestNotes": "Notes: {{value}}",
+    "missionsDestNotesTrunc": "Notes: {{value}}…",
+    "missionsDestFallback": "Delivery address not set — confirm with the grower.",
+    "missionsSuggest_kg_van": "Typical: refrigerated van",
+    "missionsSuggest_kg_rigid": "Typical: rigid refrigerated truck (7.5–12 t class)",
+    "missionsSuggest_kg_large": "Typical: large truck or curtainsider + trailer — confirm space with the shipper",
+    "missionsSuggest_plt_van": "Typical: refrigerated van",
+    "missionsSuggest_plt_rigid": "Typical: rigid truck",
+    "missionsSuggest_plt_artic": "Typical: articulated or full trailer — confirm dimensions",
+    "missionsSuggest_default": "Match vehicle to weight and floor space; temperature-controlled (0–4°C) is required for claims."
   },
   "growerPages": {
     "partnerStore": "Magazin partener",
@@ -1362,7 +2686,14 @@
       "errConfirmProtocol": "Trebuie să confirmați că ambalajul, filmul și etichetele Bio Vera sunt aplicate conform protocolului.",
       "errThreePhotos": "Trebuie să încărcați exact 3 fotografii (cutii de sus, de mijloc, de jos).",
       "errSubmitFailed": "Nu s-a putut trimite intrarea de calitate.",
-      "errPhotoMaxSize": "Fotografia trebuie să aibă sub 10 MB."
+      "errPhotoMaxSize": "Fotografia trebuie să aibă sub 10 MB.",
+      "filterByParcel": "Parcel / plot",
+      "filterByParcelLead": "Pick the parcel first, then the lot you are documenting. Submissions include parcel ID when the lot is tied to a parcel.",
+      "filterAllParcels": "All plots",
+      "parcelNotLinkedFilter": "Lot with no parcel",
+      "noBatchesForParcel": "No lots for this parcel yet. Pick another parcel or add a lot from My parcels (approved parcel → Create batch).",
+      "errInvalidPreCooling": "Enter a valid pre-cooling start date & time.",
+      "errInvalidWeatherNumbers": "Enter valid harvest temperature and humidity."
     },
     "requestTransport": "Solicita transport",
     "fieldParcel": "Pachet",
@@ -1786,7 +3117,80 @@
     "ha_COMPLETED": "Terminat",
     "ha_CANCELLED": "Anulat",
     "ha_REJECTED": "Respins",
-    "ha_STATUS": "{{status}}"
+    "ha_STATUS": "{{status}}",
+    "parcelEligibleBadge": "Active · can pack",
+    "addLotCta": "Add lot",
+    "createBatchNeedProduct": "Enter the product name (crop) for this lot.",
+    "createBatchNeedQty": "Enter a quantity greater than zero.",
+    "createBatchInvalidDate": "Choose a valid harvest date.",
+    "batchesLeadOneLine": "Each lot has a public BATCH-ID and system ID; then packing photos and transport request.",
+    "lotLabel": "Lot",
+    "lotSystemBatchId": "Batch ID (system)",
+    "lotsGroupedByEstate": "{{estate}}",
+    "filterHere": "With me",
+    "filterMoving": "In transit",
+    "filterDone": "Delivered",
+    "listCountLabel": "{{count}} lots",
+    "batchStatusPacked": "Packed",
+    "batchStatusInHub": "At hub",
+    "batchStatusInTransit": "In transit",
+    "batchStatusDelivered": "Delivered",
+    "batchStatusReturned": "Returned",
+    "batchStatusExpired": "Expired",
+    "batchStatusQualityVerified": "Quality verified",
+    "batchStatusHarvested": "Harvested",
+    "b2bOrderCount": "{{count}} orders",
+    "b2bOrdersEmbeddedLead": "Track status and mark receipt at the farm. New partner? Use the directory on the left first.",
+    "whereToBuySupplyFlowIntro": "Quick guide: from ordering supplies to farm receipt and transport — expand if you need the step order.",
+    "whereToBuyColumnDirectory": "Partner directory",
+    "whereToBuyColumnDirectoryHint": "Where you find packaging / input suppliers and open their store.",
+    "whereToBuyColumnOrders": "Orders & messages",
+    "whereToBuyColumnOrdersHint": "Direct B2B orders to your material partner (crates, rolls…). This is not selling your crop to the end buyer — use Request transport / Mission tracker for that.",
+    "plantingsErrDateFormat": "Enter a valid date. Use YYYY-MM-DD as in the date picker, or for manual entry day.month.year.",
+    "plantingsErrCropTooLong": "Crop name is too long (max 500 characters). Shorten the text.",
+    "plantingsProgressObligation": "For each active planting plan, the mobile Growth journal is mandatory: about every 18 days (server setting), submit a field photo with GPS, growth stage, and notes on progress. Harvest plans follow the previous rules.",
+    "plantingsProgressCol": "Planting progress",
+    "plantingsProgressOverdue": "{{days}}d overdue",
+    "plantingsProgressOk": "Due {{date}}",
+    "plantingsProgressNone": "—",
+    "plantingsHarvestFormTitle": "Expected harvest — book transport early",
+    "plantingsHarvestFormLead": "Saving this notifies operations and tries to create a logistics mission from your estate map centre (same as filing a harvest plan in mobile). Packing and batch QR come later.",
+    "plantingsHarvestEmpty": "No harvest windows yet.",
+    "plantingsHarvestEmptyGoToForm": "Go to harvest plan form above",
+    "plantingsHarvestFormParcel": "Parcel (approved, active or certified)",
+    "plantingsHarvestFormCrop": "Crop / grade on this plot",
+    "plantingsHarvestFormDate": "Expected harvest date *",
+    "plantingsHarvestFormQty": "Rough quantity when picking (kg) *",
+    "plantingsHarvestQtyPlaceholder": "e.g. 2500",
+    "plantingsHarvestFormNotes": "Pickup / hub note (optional)",
+    "plantingsHarvestFormSubmit": "Save harvest plan & notify logistics",
+    "plantingsHarvestFormSaving": "Saving…",
+    "plantingsHarvestErrQty": "Enter a rough quantity greater than zero (kg).",
+    "plantingsHarvestSavedNotice": "Harvest plan submitted. Transport should appear shortly in Mission tracker. If nothing shows, check that My fields outlines the estate correctly.",
+    "plantingsHarvestErrHarvestExists": "This parcel already has an active harvest plan. Open Mission tracker or contact support.",
+    "plantingsNoParcelsYet": "No parcels yet. Add a field and parcel first under My fields, then refresh this page.",
+    "plantingsParcelPendingTag": "(awaiting approval)",
+    "plantingsHarvestNeedsApprovedParcel": "Harvest plans stay disabled until operations approves your parcel — you can register a planting for a pending parcel using the planting form above. After approval you can submit a harvest plan here.",
+    "plantingsHarvestErrParcelNotApproved": "Choose an approved parcel for the harvest plan, or finish admin approval first.",
+    "plantingsSelectParcelFirstHint": "Choose a parcel in the list above first — then you can enter crop, date, and save.",
+    "portalLinkedBuyerOrder": "Buyer sale tied to this run: {{order}}",
+    "portalLinkedOrderHint": "This run fulfills a buyer order — product and quantity are shown below; prep details are in the instructions when operations attached them.",
+    "portalPrepInstructionsTitle": "Prep instructions",
+    "portalPrepInstructionsLead": "Text operations attached to this mission (quantities, grade, notes).",
+    "portalOrderMissionTitle": "Linked buyer order",
+    "portalPickupTitle": "Pickup — who takes the load",
+    "portalPickupIntro": "Logistics partner assigns a responsible person. After loading handover you also see badge and signature proof.",
+    "portalPickupLogisticsCompany": "Logistics contact",
+    "portalPickupDriverHeading": "Assigned pickup person",
+    "portalPickupVehicleHeading": "Vehicle",
+    "portalPickupNoVehicle": "No vehicle linked to this trip yet.",
+    "portalPickupLicensePlate": "License plate",
+    "portalPickupNoDriver": "Not assigned yet — the carrier should name the driver before pickup.",
+    "portalPickupProofTitle": "Farm pickup documentation",
+    "portalPickupProofPending": "Waiting for loading handover (temperature, photos, badge, driver signature).",
+    "portalPickupBadge": "Badge photo",
+    "portalPickupSignature": "Driver signature",
+    "portalViewImage": "Open image"
   },
   "supplier": {
     "nav": {
@@ -1796,7 +3200,8 @@
       "messages": "Mesaje",
       "badges": "Ecusoane",
       "printOrder": "Comanda de imprimare",
-      "settings": "Setări"
+      "settings": "Setări",
+      "shop": "Shop"
     },
     "badges": {
       "printOrderPageTitle": "Imprimare comanda și stoc",
@@ -1858,6 +3263,81 @@
       "REJECTED": "Respins",
       "FULFILLED": "Îndeplinit",
       "CANCELLED": "Anulat"
+    },
+    "storefront": {
+      "intro": "Direct grower orders and message threads in one place. Build your in-app catalog so growers see what you stock; orders still use free-text lines — the catalog is your reference list.",
+      "shopWindow": "Shop window",
+      "shopWindowHint": "Upload product photos in Catalog — they appear here and on your public profile.",
+      "windowPlaceholderTitle": "Add products with photos in Catalog",
+      "mapApproved": "Approved on the grower map",
+      "mapPending": "Map listing pending team approval for your address. Contact Bio Vera to update profile or location.",
+      "cardOrdersSub": "From growers — pending, confirmed, fulfilled",
+      "cardMessagesSub": "Threads with growers",
+      "cardCatalogSub": "Products & reference prices",
+      "open": "Open",
+      "footerBeforeLink": "Update store name, website, contact, and address in",
+      "footerLink": "Settings",
+      "footerAfterLink": ". If your map pin or address changes, Bio Vera re-verifies the listing."
+    },
+    "shop": {
+      "pageTitle": "Shop — catalog",
+      "pageIntro": "Reference products and prices for growers (public store profile). Orders can still use free text — this list aligns names and units.",
+      "tabsLabel": "Shop sections",
+      "tabProducts": "Products",
+      "tabBarcodes": "Unit barcodes",
+      "barcodesTitle": "Physical unit barcodes",
+      "barcodesIntro": "When you receive stock, register each scannable code (EAN, Code 128, etc.). Codes are unique in Bio Vera. Mark rows SOLD when you sell. Grower scanners can resolve your codes.",
+      "barcodeLabel": "Barcode (from label)",
+      "barcodePlaceholder": "Scan or type — must be unique",
+      "linkCatalog": "Link to catalog line (optional)",
+      "notLinked": "— Not linked —",
+      "lotLabel": "Lot / batch",
+      "lotShort": "lot {{lot}}",
+      "noteLabel": "Note (e.g. invoice ref.)",
+      "registerBarcode": "Register received unit",
+      "recentUnits": "Recent units",
+      "noBarcodesYet": "No barcodes registered yet.",
+      "markSold": "Mark sold",
+      "voidBarcode": "Void",
+      "confirmMarkSold": "Mark this unit as SOLD? Growers can still verify the barcode in the system.",
+      "confirmVoidBarcode": "Void this barcode? It will no longer be accepted in field apps.",
+      "confirmDeleteProduct": "Remove this line from your catalog?",
+      "addProduct": "Add product",
+      "editProduct": "Edit product",
+      "deleteProduct": "Remove",
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g. Organic tomato seed – variety X",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Optional",
+      "unitLabel": "Unit",
+      "priceLabel": "Reference list price",
+      "pricePlaceholder": "optional",
+      "skuLabel": "SKU / internal code",
+      "skuPlaceholder": "optional",
+      "photoTitle": "Product photo",
+      "photoHint": "Optional — JPEG, PNG, or WebP. Shown on your public store and dashboard.",
+      "noPhoto": "No photo",
+      "choosePhoto": "Choose image",
+      "changePhoto": "Change image",
+      "removePhoto": "Remove image",
+      "saving": "Saving…",
+      "saveProduct": "Add to catalog",
+      "update": "Update",
+      "cancelEdit": "Cancel edit",
+      "inactive": "inactive",
+      "validation": {
+        "nameRequired": "Enter a product name.",
+        "nameTooLong": "Name can be at most 200 characters.",
+        "descriptionTooLong": "Description can be at most 2000 characters.",
+        "unitTooLong": "Unit can be at most 32 characters.",
+        "priceInvalid": "Price must be a non-negative number.",
+        "skuTooLong": "SKU can be at most 64 characters.",
+        "barcodeRequired": "Enter a barcode.",
+        "barcodeTooShort": "Barcode must be at least 3 characters.",
+        "barcodeTooLong": "Barcode can be at most 128 characters.",
+        "lotTooLong": "Lot can be at most 64 characters.",
+        "noteTooLong": "Note can be at most 500 characters."
+      }
     }
   },
   "home": {
@@ -2007,7 +3487,37 @@
       "becomeProducer": "Deveniți producător",
       "startShopping": "Începeți cumpărăturile"
     },
-    "help": "Întrebări? Suntem aici pentru a vă ajuta."
+    "help": "Întrebări? Suntem aici pentru a vă ajuta.",
+    "faq": {
+      "title": "Frequently asked questions",
+      "subtitle": "What Bio Vera is, how traceability works, and who stands behind the platform.",
+      "items": [
+        {
+          "question": "What is Bio Vera?",
+          "answer": "Bio Vera is a vertically integrated agrifood company based in Hamburg. We contract growers, run quality and packing, operate refrigerated logistics, and sell fresh produce under our own programme — every batch carries a documented digital passport from parcel to shelf. We are not a marketplace that merely connects strangers."
+        },
+        {
+          "question": "What is an EU Digital Product Passport?",
+          "answer": "An EU Digital Product Passport is a digital record that accompanies a product from production to the consumer. Bio Vera generates these automatically for every batch — documenting origin, harvest data, quality checks, transport conditions, and EU compliance certificates. The QR code on every crate links to its passport."
+        },
+        {
+          "question": "How does Bio Vera ensure food traceability?",
+          "answer": "Bio Vera uses Protocol 360 — an end-to-end quality system with soil analysis, biometric scanning at packaging, cold chain monitoring, and GPS-verified anti-fraud protection. Every checkpoint is recorded in the batch dossier. Optionally, dossiers are anchored to Polygon blockchain for immutable verification."
+        },
+        {
+          "question": "Who is behind Bio Vera?",
+          "answer": "Bio Vera was founded by Jovica Mihajlovic in Hamburg. It is part of the Vera Group, which also includes Vera IT (software engineering — built Denis AI Co-Worker, Fade, and the Bio Vera platform), Fade (global salon booking app for iOS & Android), and ReinAllround (professional cleaning in Hamburg)."
+        },
+        {
+          "question": "Can I invest in Bio Vera?",
+          "answer": "Bio Vera is preparing for a growth-stage investment round. Investor materials, pitch deck, and project documentation are available at biovera.app/investor-deck."
+        },
+        {
+          "question": "How does Bio Vera use AI?",
+          "answer": "Bio Vera's AI Intelligence Terminal provides real-time logistics decisions, route optimization, demand forecasting, and harvest planning. The AI system was developed by Vera IT and integrates with the Bio Vera operating system for predictive supply chain management."
+        }
+      ]
+    }
   },
   "forBuyersPage": {
     "title": "Pentru Cumpărători",
@@ -2123,7 +3633,10 @@
     "formSubmit": "Trimiteți",
     "formSending": "Se trimite…",
     "required": "*",
-    "heroSubtitle": "Trasabilitate completă de la fermă la depozitul dvs."
+    "heroSubtitle": "Trasabilitate completă de la fermă la depozitul dvs.",
+    "metaTitle": "Buy Traceable Fresh Produce | Bio Vera for Buyers",
+    "metaDescription": "Order certified fresh fruit, vegetables and cereals with full Batch_ID traceability. Digital product passport, harvest calendar, and secured payment. Register for dashboard access.",
+    "harvestCalendarLead": ""
   },
   "growersPage": {
     "metaTitle": "Program pentru producători | Bio Vera — Certificare, condiții garantate, acces la piața UE",
@@ -2311,7 +3824,9 @@
       }
     ],
     "heroEyebrow": "Bio Vera · Producători",
-    "heroSubtitle": "Condiții garantate, acces la piața UE"
+    "heroSubtitle": "Condiții garantate, acces la piața UE",
+    "viewGuideOnline": "Open guide (screenshots)",
+    "backToGrowers": "Back to growers"
   },
   "logisticsPartnerPage": {
     "title": "Program pentru logistică",
@@ -2453,7 +3968,9 @@
     "submitting": "Se trimite…",
     "submitError": "Trimiterea eșuată. Vă rugăm să încercați din nou sau să contactați info@biovera.app",
     "heroEyebrow": "Bio Vera · Logistică",
-    "heroSubtitle": "Curse regulate de la fermă la retail în UE"
+    "heroSubtitle": "Curse regulate de la fermă la retail în UE",
+    "metaTitle": "Logistics Partner | Bio Vera — Refrigerated Transport Network",
+    "metaDescription": "Join Bio Vera's contracted cold chain network. Regular missions, route optimisation, fast payment on delivery. Small fleets, large companies and independent drivers welcome."
   },
   "productsPage": {
     "redirecting": "Se redirecționează…"
@@ -2478,7 +3995,9 @@
     "documentsLead": "Choose a card to open the investor presentation, the structured project overview, or the full technical proposal.",
     "cardPitchDesc": "Slide-style narrative and optional video — use the toolbar to print or save as PDF.",
     "cardProjectDesc": "Structured project summary: scope, roadmap, markets, and current status.",
-    "cardTechnicalDesc": "Architecture, compliance, offline-first operations, and programme fit for evaluators."
+    "cardTechnicalDesc": "Architecture, compliance, offline-first operations, and programme fit for evaluators.",
+    "cardConfidentialTitle": "Confidential",
+    "cardConfidentialDesc": "Password-protected partner plans."
   },
   "supplierStatusPage": {
     "title": "Starea aplicației",
@@ -2982,5 +4501,1540 @@
     "termsUpdated": "Ultima actualizare: ianuarie 2026",
     "cookiesTitle": "Politica de cookie-uri",
     "cookiesUpdated": "Ultima actualizare: ianuarie 2026"
+  },
+  "connectedWorkflow": {
+    "openHarvest": "Open harvest plan",
+    "adminHarvestHelp": "Track linked lots and the transport request alongside each harvest plan. Open transport to approve the request and assign a carrier.",
+    "sourcePlanting": "Open source planting",
+    "lot": "Lot",
+    "allMissions": "Show all transport"
+  },
+  "paymentSettlement": {
+    "review": "Review and release funds",
+    "title": "Release funds",
+    "grower": "Grower",
+    "transport": "Transport",
+    "platform": "Platform",
+    "explanation": "Confirmation credits the linked wallets. It does not confirm a bank transfer. The server validates receipt, evidence and open claims.",
+    "confirm": "Confirm wallet credits",
+    "changed": "The payment status changed. The list was refreshed.",
+    "loadFailed": "Could not load payment details.",
+    "releaseFailed": "Wallet credit was not confirmed. Check the current status before retrying.",
+    "released": "Funds credited to wallets"
+  },
+  "returnFlow": {
+    "title": "Returns and refunds",
+    "plan": "Create return order",
+    "planHint": "The assigned carrier returns the entire shipment to the farm. Enter the exact receiving address and instructions.",
+    "planned": "Return order saved.",
+    "address": "Exact receiving farm address",
+    "instructions": "Return instructions (at least 10 characters)",
+    "empty": "No returns for this account.",
+    "error": "The action failed. Check the details, refresh and retry.",
+    "collect": "Confirm return collection",
+    "receive": "Confirm receipt at farm",
+    "fullShipment": "I confirm the entire shipment has physically been collected or received at this step.",
+    "proofHint": "Take at least two photos and describe the condition. The carrier records collection; the farm records receipt.",
+    "notes": "Condition and notes (at least 10 characters)",
+    "photos": "Evidence photos (2–6)",
+    "evidence": "View return evidence",
+    "collectedAt": "Collected for return",
+    "receivedAt": "Received at farm",
+    "approveRefund": "Authorize full refund",
+    "refundHint": "Authorization reserves the full amount for refund. This app does not send money to a bank. Execute the bank refund separately.",
+    "reason": "Authorization reason (at least 20 characters)",
+    "bankHint": "Enter details only for an executed bank refund of the authorized amount and attach the bank confirmation.",
+    "bankReference": "Unique bank refund reference",
+    "bankDate": "Executed bank refund time",
+    "bankEvidence": "Bank confirmation (image)",
+    "recordBank": "Record executed bank refund",
+    "bankConfirm": "Confirm the bank has already refunded {{amount}} {{currency}} to the buyer? This app records evidence; it does not execute the transfer.",
+    "reconciliation": "Funds were previously distributed to recipients. Financial reconciliation is required: this refund does not reverse their wallets.",
+    "listHint": "Latest 200 orders. Operations may record a physical step only with actual collection or receipt evidence.",
+    "states": {
+      "PLANNED": "Return planned",
+      "COLLECTED": "Collected from buyer",
+      "RECEIVED": "Received at farm"
+    },
+    "refundStates": {
+      "APPROVED": "Refund authorized — awaiting bank refund",
+      "CONFIRMED": "Bank refund recorded"
+    }
+  },
+  "dispatchFlow": {
+    "documentsPending": "Linked delivery awaiting waybill or invoice",
+    "retryDocuments": "Retry documents",
+    "title": "Link mission and delivery",
+    "hint": "Select a mission and paid order from the same farm. Confirm this mission fulfills the entire order; destination comes from the order. The latest 200 records are shown.",
+    "mission": "Mission",
+    "order": "Order",
+    "choose": "Select",
+    "link": "Link and save delivery",
+    "saved": "Delivery linked:",
+    "error": "Linking failed. Refresh and retry."
+  },
+  "deliveryReview": {
+    "startReview": "Start review",
+    "decision": "Decision",
+    "explanation": "Explanation for the buyer (at least 20 characters)",
+    "saveDecision": "Save decision",
+    "conflict": "This report changed. Refresh and review the current decision.",
+    "moneyHint": "This records an operational decision. It does not refund or release funds. Reinspection requires new buyer evidence and signature; a return keeps receipt blocked.",
+    "states": {
+      "PENDING": "Received",
+      "IN_REVIEW": "Under review",
+      "RESOLVED": "Decision recorded"
+    },
+    "outcomes": {
+      "ACCEPTED": "Complaint accepted",
+      "REJECTED": "Complaint rejected",
+      "REINSPECTION": "New buyer inspection required",
+      "RETURN_REQUIRED": "Return required — receipt remains blocked"
+    },
+    "title": "Delivery reports",
+    "hint": "The latest 100 buyer reports and 100 handover disputes. Review reports and evidence here; operations handles decisions and any compensation.",
+    "refresh": "Refresh",
+    "error": "Could not load data. Please retry.",
+    "loading": "Loading…",
+    "empty": "No saved reports.",
+    "received": "Report received",
+    "photos": "Open photos",
+    "photoAlt": "Delivery evidence {{number}}"
+  },
+  "notificationCenter": {
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "loading": "Loading notifications…",
+    "empty": "No notifications",
+    "unreadSection": "Unread ({{count}})",
+    "readSection": "Read ({{count}})"
+  },
+  "seedProduction": {
+    "title": "Seed production",
+    "subtitle": "Bio Vera label codes, factory lots, and bag traceability from production to planting.",
+    "nav": {
+      "dashboard": "Dashboard",
+      "approvedProducts": "Approved products",
+      "producers": "Producers",
+      "lookup": "Bag lookup"
+    },
+    "stats": {
+      "labeled": "Bags labeled",
+      "available": "Available",
+      "assigned": "Assigned to growers",
+      "planted": "Planted",
+      "recalled": "Recalled",
+      "voided": "Voided"
+    },
+    "runs": {
+      "title": "Production runs",
+      "newRun": "New production run",
+      "empty": "No production runs yet. Create one to issue Bio Vera label codes for a factory lot.",
+      "lot": "Lot",
+      "product": "Product",
+      "producer": "Producer",
+      "seedYear": "Seed year",
+      "bagsPlanned": "Bags planned",
+      "bagsProduced": "Bags produced",
+      "status": "Status",
+      "created": "Created",
+      "view": "View run"
+    },
+    "runStatus": {
+      "PLANNED": "Planned",
+      "LABELS_ISSUED": "Labels issued",
+      "PRODUCED": "Produced",
+      "RELEASED": "Released",
+      "RECALLED": "Recalled"
+    },
+    "bagStatus": {
+      "LABELED": "Labeled",
+      "AVAILABLE": "Available",
+      "ASSIGNED": "Assigned",
+      "SOLD": "Sold",
+      "PLANTED": "Planted",
+      "USED": "Used",
+      "VOIDED": "Voided",
+      "RECALLED": "Recalled"
+    },
+    "newRunModal": {
+      "title": "New production run",
+      "product": "Approved seed product",
+      "producer": "Factory / producer",
+      "lotNumber": "Lot number",
+      "lotHint": "3–12 uppercase letters and digits, e.g. NS2604",
+      "seedCropYear": "Seed-crop year",
+      "originCountry": "Origin country",
+      "originRegion": "Origin region",
+      "bagSizeLabel": "Bag size label",
+      "bagSizeHint": "e.g. 5 kg",
+      "bagsPlanned": "Bags planned",
+      "expiresAt": "Best before (optional)",
+      "create": "Create run",
+      "cancel": "Cancel"
+    },
+    "runDetail": {
+      "back": "Back to dashboard",
+      "stepper": {
+        "planned": "Planned",
+        "labelsIssued": "Labels issued",
+        "produced": "Produced",
+        "released": "Released",
+        "recalled": "Recalled"
+      },
+      "issueLabels": "Issue labels",
+      "issueLabelsConfirm": "This creates {{count}} unique Bio Vera codes. The factory must print exactly these labels.",
+      "downloadPdfSheet": "Download PDF (sticker sheet)",
+      "downloadPdfRoll": "Download PDF (roll)",
+      "downloadCsv": "Download CSV",
+      "confirmProduction": "Confirm production",
+      "release": "Release for assignment",
+      "assignBags": "Assign bags to grower",
+      "recall": "Recall lot",
+      "summary": "Run summary",
+      "bagsTable": "Bags",
+      "serial": "Serial",
+      "bagNo": "Bag #",
+      "holder": "Holder",
+      "parcel": "Planted parcel",
+      "lastEvent": "Last event",
+      "noBags": "No bags yet — issue labels first.",
+      "affectedParcels": "Affected parcels",
+      "affectedParcelsBags": "{{count}} bag(s) planted",
+      "confirmModal": {
+        "title": "Confirm production",
+        "bagsProduced": "Bags actually produced",
+        "productionDate": "Production date",
+        "germinationPct": "Germination %",
+        "purityPct": "Purity %",
+        "certificateUpload": "Upload certificates (PDF/JPG)",
+        "certificateFilesSelected": "{{count}} file(s) selected",
+        "certificateUrls": "Certificate URLs (one per line)",
+        "certificateUrlsHint": "Optional — paste URLs if certificates are hosted elsewhere",
+        "submit": "Confirm production"
+      },
+      "assignModal": {
+        "title": "Assign bags to grower",
+        "growerPartnerCode": "Grower partner code",
+        "growerSearch": "Grower (name or partner code)",
+        "growerSearchPlaceholder": "Type to search growers…",
+        "serials": "Serial numbers",
+        "serialsHint": "Paste serials separated by comma, space, or newline. USB scanners work — scan and press Enter.",
+        "preview": "Preview",
+        "validCount": "{{count}} valid",
+        "submit": "Assign bags"
+      },
+      "recallModal": {
+        "title": "Recall lot",
+        "reason": "Recall reason",
+        "reasonRequired": "Reason is required",
+        "warning": "This will mark all non-planted bags as recalled and notify affected growers.",
+        "impact": "{{count}} bag(s) will be recalled",
+        "growers": "Growers holding bags",
+        "parcels": "Parcels already planted from this lot",
+        "submit": "Confirm recall"
+      },
+      "releaseConfirm": "Release this lot so bags can be assigned to growers?",
+      "errLoad": "Could not load production run.",
+      "errAction": "Action failed. Check run status and try again."
+    },
+    "approvedProducts": {
+      "title": "Approved products",
+      "subtitle": "Bio Vera recommended seed inputs used for label generation.",
+      "new": "Add product",
+      "edit": "Edit product",
+      "retire": "Retire",
+      "retireConfirm": "Retire this product? It cannot be used for new production runs.",
+      "empty": "No approved products yet. Add a SEED product to start a production run.",
+      "name": "Name",
+      "category": "Category",
+      "categorySeed": "Seed",
+      "categoryFertilizer": "Fertilizer",
+      "categoryPlantProtection": "Plant protection",
+      "categoryPackaging": "Packaging",
+      "categoryOther": "Other",
+      "variety": "Variety",
+      "cropType": "Crop type",
+      "unit": "Unit",
+      "packSize": "Pack size",
+      "status": "Status",
+      "tabDetails": "Details",
+      "tabInstructions": "Instructions",
+      "manufacturer": "Manufacturer",
+      "description": "Description",
+      "isBioVeraBrand": "Bio Vera brand",
+      "instructionsPdfUrl": "Instructions PDF URL",
+      "videoUrl": "Video URL",
+      "sowingTime": "Sowing / planting time",
+      "spacingDepth": "Spacing & depth",
+      "seedRate": "Seed rate per ha",
+      "soilTemperature": "Soil & temperature",
+      "irrigation": "Irrigation",
+      "firstSteps": "First steps after sowing",
+      "storage": "Storage (opened bag)",
+      "safety": "Safety notes",
+      "harvestWindow": "Expected harvest window",
+      "save": "Save product",
+      "cancel": "Cancel"
+    },
+    "producers": {
+      "title": "Seed producers",
+      "subtitle": "Partner factories that print Bio Vera labels.",
+      "new": "Add producer",
+      "edit": "Edit producer",
+      "empty": "No producers yet. Add a factory before creating a production run.",
+      "name": "Name",
+      "country": "Country",
+      "city": "City",
+      "address": "Address",
+      "licenseNumber": "License number",
+      "contactName": "Contact name",
+      "contactEmail": "Contact email",
+      "isActive": "Active",
+      "save": "Save producer",
+      "cancel": "Cancel",
+      "invite": "Invite portal user",
+      "inviteTitle": "Invite factory portal user",
+      "inviteFirstName": "First name",
+      "inviteLastName": "Last name",
+      "inviteEmail": "E-mail",
+      "inviteSend": "Send invite",
+      "linkedUser": "Portal user linked",
+      "unlink": "Unlink user"
+    },
+    "lookup": {
+      "title": "Bag lookup",
+      "subtitle": "Scan or type a serial number and press Enter to view the full custody timeline.",
+      "placeholder": "Serial number or QR URL",
+      "search": "Look up",
+      "notFound": "Bag not found.",
+      "timeline": "Custody timeline",
+      "event": "Event",
+      "when": "When",
+      "note": "Note",
+      "productInfo": "Product & lot",
+      "openRun": "Open production run"
+    },
+    "custodyEvent": {
+      "LABEL_ISSUED": "Label issued",
+      "PRODUCED": "Produced",
+      "VOIDED": "Voided",
+      "RELEASED": "Released",
+      "ASSIGNED_TO_GROWER": "Assigned to grower",
+      "SHIPPED_TO_SUPPLIER": "Shipped to supplier",
+      "RECEIVED_BY_SUPPLIER": "Received by supplier",
+      "SOLD_TO_GROWER": "Sold to grower",
+      "PLANTED": "Planted",
+      "RECALLED": "Recalled"
+    },
+    "common": {
+      "loading": "Loading…",
+      "refresh": "Refresh",
+      "close": "Close",
+      "save": "Save",
+      "actions": "Actions"
+    },
+    "reports": {
+      "title": "Reporting",
+      "yearFilter": "Seed year",
+      "exportCsv": "Export bag register (CSV)",
+      "funnelTitle": "Funnel by product & year",
+      "suppliersTitle": "Supplier stock",
+      "plantedParcelsTitle": "Parcels planted with Bio Vera seed",
+      "shipped": "Shipped",
+      "sold": "Sold",
+      "received": "Received",
+      "inStock": "In stock",
+      "viewParcel": "View parcel",
+      "tooltip": {
+        "labeled": "All Bio Vera codes issued (every bag serial created for runs in this filter).",
+        "produced": "Sum of bags actually confirmed at the factory (bagsProduced on each run).",
+        "atProducer": "Bags still at the producer (AVAILABLE, not yet shipped to a supplier).",
+        "shipped": "Bags ever shipped to a supplier (cumulative — includes bags already sold or planted).",
+        "sold": "Bags sold to growers through suppliers (SOLD status).",
+        "assignedAdmin": "Bags assigned directly to a grower by Bio Vera admin.",
+        "planted": "Bags recorded as planted or partially used in the field.",
+        "recalled": "Bags marked recalled from this lot."
+      }
+    }
+  },
+  "seedProducer": {
+    "header": {
+      "badge": "Seed producer portal",
+      "logOut": "Log out"
+    },
+    "nav": {
+      "runs": "My runs",
+      "profile": "Profile"
+    },
+    "runs": {
+      "title": "My production runs",
+      "subtitle": "Lots assigned to your factory by Bio Vera.",
+      "empty": "Bio Vera will create a production run and issue labels for you.",
+      "lot": "Lot",
+      "product": "Product",
+      "year": "Seed year",
+      "bags": "Bags (produced / planned)",
+      "status": "Status",
+      "labels": "Labels",
+      "labelsReady": "Labels ready"
+    },
+    "run": {
+      "back": "Back to runs",
+      "subtitle": "Seed year {{year}} · {{status}}",
+      "labelsTitle": "Download labels",
+      "printGuide": "Sheet: A4 with 3×8 labels (70×37 mm). Roll: 100×60 mm. Print exactly these codes — one unique label per bag, never duplicate.",
+      "downloadSheet": "Download labels (sticker sheet PDF)",
+      "downloadRoll": "Download labels (roll PDF)",
+      "downloadCsv": "Download CSV",
+      "confirmTitle": "Confirm production",
+      "bagsProduced": "Bags produced",
+      "productionDate": "Production date",
+      "germination": "Germination %",
+      "purity": "Purity %",
+      "certificates": "Certificates (PDF/JPG)",
+      "confirmCta": "Confirm production",
+      "waitingTitle": "Waiting for Bio Vera",
+      "waitingBody": "Production confirmed. Bio Vera will review and release the lot for the supply chain."
+    },
+    "profile": {
+      "title": "Profile",
+      "subtitle": "Your factory details on file with Bio Vera.",
+      "city": "City",
+      "country": "Country",
+      "licence": "Licence",
+      "contact": "Contact e-mail",
+      "contactBioVera": "To update licence or contact details, contact Bio Vera support."
+    }
+  },
+  "fleetPartnerPages": {
+    "missionsDemoNote": "Sample missions below are for layout preview only. Connect the hub feed to show live work.",
+    "missionsAllQuietTitle": "No missions on the board",
+    "missionsAllQuietHint": "Hub legs assigned to your fleet will show here when routing is enabled.",
+    "missionsCtaDashboard": "Fleet dashboard",
+    "missionsCtaDeliveries": "Active deliveries",
+    "missionsCtaProfile": "Company profile",
+    "missionsAvailableTitle": "Available local drops",
+    "missionsAcceptedTitle": "Accepted missions",
+    "missionsEmptyAvailableTitle": "No open drops right now",
+    "missionsEmptyAvailableHint": "Accepted runs stay below; new legs appear when operations assigns them.",
+    "missionLabel": "Mission #{{id}}",
+    "badgeTruckSoon": "Truck arriving soon",
+    "badgeAvailable": "Available",
+    "badgeAccepted": "Accepted",
+    "pickup": "Pickup:",
+    "deliver": "Deliver:",
+    "truckArrivalEta": "Truck arrival:",
+    "beReady": "Be ready:",
+    "payout": "Payout",
+    "palletsUnit": "{{count}} pallets",
+    "acceptMission": "Accept mission",
+    "acceptStubMessage": "Mission {{id}} accepted — have your van ready at the dock. (Demo action)",
+    "timeArrived": "Arrived",
+    "timeMinutes": "{{count}} min",
+    "timeHoursMinutes": "{{hours}}h {{minutes}}m",
+    "alertTitle": "Truck arriving soon",
+    "alertBody": "Have your vans ready at the loading dock."
+  },
+  "buyerPortalProfile": {
+    "editLocation": "Edit",
+    "loading": "Loading profile…",
+    "emptyField": "—",
+    "saveFailedTitle": "Could not save",
+    "saveFailedMigrationHint": "If the message mentions a migration, run the SQL in Railway (Postgres → Query) for column buyerCompanyProfile (see backend/MIGRATIONS.md and users.buyerCompanyProfile) or npx prisma migrate deploy for a fresh install.",
+    "tabGeneral": "General",
+    "tabLocations": "Delivery locations",
+    "tabStaff": "Staff",
+    "companyCore": "Company core",
+    "saveChanges": "Save changes",
+    "edit": "Edit",
+    "legalEntity": "Legal entity",
+    "companyName": "Company name",
+    "taxId": "Tax ID (VAT)",
+    "headquarters": "Headquarters",
+    "management": "Management",
+    "generalDirector": "General director",
+    "financeManager": "Finance manager",
+    "deliveryPoints": "Delivery points",
+    "addNewLocation": "Add new location",
+    "responsible": "Responsible: {{name}} · {{phone}}",
+    "hoursMonFri": "Hours: Mon–Fri {{hours}}",
+    "authorizedPersonnel": "Authorized personnel",
+    "addPerson": "Add person",
+    "modalAddLocation": "Add delivery location",
+    "modalEditLocation": "Edit delivery location",
+    "alias": "Alias",
+    "aliasPlaceholder": "e.g. Main distribution centre",
+    "address": "Address",
+    "city": "City",
+    "postalCode": "Postal code",
+    "country": "Country",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "responsiblePerson": "Responsible person",
+    "phone": "Phone",
+    "operatingHours": "Operating hours",
+    "hoursPlaceholder": "08:00 - 18:00",
+    "cancel": "Cancel",
+    "confirmAddLocation": "Add location",
+    "confirmEditLocation": "Save location",
+    "modalAddStaff": "Add authorized person",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "role": "Role",
+    "selectRole": "Select role",
+    "roles": {
+      "purchasingManager": "Purchasing manager",
+      "warehouseLead": "Warehouse lead",
+      "accountant": "Accountant",
+      "operationsManager": "Operations manager",
+      "qualityControl": "Quality control"
+    },
+    "confirmAddStaff": "Add person",
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    }
+  },
+  "buyerPortalOrders": {
+    "transportStatusHint": "When Bio Vera allocates a fulfilment mission for your farm-sourced order, status here updates as logistics advances (picked up → in transit); final receipt may still depend on depot or store handover.",
+    "shipmentTimelineTitle": "Shipment timeline (logistics checkpoints)",
+    "shipmentMissionRef": "Transport ref: {{number}}",
+    "shipmentTimelineEmpty": "Detailed logistics steps will appear once a transport run or delivery is booked for this order.",
+    "tracking": {
+      "ORDER_RECORDED": "Order recorded",
+      "LINE_OPENED": "Cold-chain transport booked for your line",
+      "LINEHAUL_ASSIGNED": "Carrier assigned to the pickup run",
+      "LINEHAUL_ACCEPTED": "Carrier accepted the run",
+      "LOADING_QUALITY_CHECK_COMPLETE": "Farm loading checks completed (temperature / cargo evidence)",
+      "DEPARTED_FARM": "Departed farm gate",
+      "BORDER_STOP_ARRIVAL": "Border / regulatory stop — arrived",
+      "BORDER_STOP_DEPARTURE": "Border / regulatory stop — continued",
+      "LINEHAUL_FINISHED": "Main transport leg completed toward distribution",
+      "DELIVERY_BOOKED": "Delivery record opened",
+      "LAST_MILE_DISPATCHED": "Driver / van assigned (last mile)",
+      "SHIPMENT_COLLECTED": "Goods collected for final leg",
+      "SHIPMENT_ENTRY_TRANSIT_LINE": "On the way to delivery address",
+      "SHIPMENT_DROP_OFF_CONFIRMED": "Receiving location recorded dock handover / digital intake with signature",
+      "SHIPMENT_BUYER_RECEIPT_CONFIRMED": "Your takeover acknowledged — complaint window countdown starts here"
+    },
+    "emptyTitle": "No orders found",
+    "emptyHintFiltered": "Try adjusting your filters.",
+    "emptyHintShop": "Place an order from Vera Trade or browse the product shop.",
+    "emptyCtaTrade": "Open Vera Trade",
+    "emptyCtaShop": "Browse shop",
+    "emptyCtaDashboard": "Dashboard",
+    "rejectionReason": "Rejected: {{reason}}",
+    "catalogTimelineTitle": "Order progress",
+    "catalogTimeline": {
+      "submitted": "Submitted",
+      "accepted": "Accepted",
+      "paid": "Paid",
+      "preparing": "Preparing",
+      "inTransit": "In transit",
+      "delivered": "Delivered",
+      "receiptConfirmed": "Receipt confirmed",
+      "rejected": "Rejected"
+    }
+  },
+  "buyerPortalMarketplace": {
+    "title": "Marketplace",
+    "subtitle": "Browse certified produce on offer now — order by pack size with live availability.",
+    "searchPlaceholder": "Search by product, farm, or category…",
+    "allCategories": "All categories",
+    "loading": "Loading marketplace…",
+    "empty": "Nothing on offer right now. Check back soon.",
+    "farmFallback": "Bio Vera partner farm",
+    "availableKg": "{{kg}} kg available",
+    "availableUntil": "Available until {{date}}",
+    "fromPrice": "From €{{price}} / {{label}}",
+    "packChip": "{{label}} · €{{price}}",
+    "category": {
+      "FRUIT": "Fruit",
+      "VEGETABLE": "Vegetable",
+      "GRAIN": "Grain",
+      "OTHER": "Other"
+    },
+    "decreasePacks": "Decrease pack count",
+    "increasePacks": "Increase pack count",
+    "packCountInput": "Number of packs",
+    "selectPack": "Choose pack size",
+    "packCount": "Number of packs",
+    "maxPacks": "Max {{count}} packs",
+    "lineTotal": "Order total",
+    "deliveryAddress": "Delivery address",
+    "streetPlaceholder": "Street and number",
+    "cityPlaceholder": "City",
+    "postalPlaceholder": "Postal code",
+    "countryPlaceholder": "Country",
+    "notesPlaceholder": "Delivery notes (optional)",
+    "checkout": {
+      "fillRequired": "Please fill in street, city, postal code, and country.",
+      "failed": "Could not place order. Try again or contact support.",
+      "submitting": "Placing order…",
+      "confirm": "Confirm order",
+      "cancel": "Cancel"
+    }
+  },
+  "buyerPortalDashboard": {
+    "onOfferNow": "On offer now",
+    "onOfferCount": "{{count}} product(s) available in the marketplace",
+    "browseMarketplace": "Browse marketplace"
+  },
+  "buyerPortalHistory": {
+    "emptyTitle": "No order history found",
+    "emptyHintAll": "You have not completed or cancelled any orders yet.",
+    "emptyHintFilter": "No orders match the selected filter.",
+    "emptyCtaOrders": "View current orders",
+    "emptyCtaTrade": "Open Vera Trade"
+  },
+  "buyerPortalDeliveries": {
+    "pageHeading": "My deliveries",
+    "pageSubtitle": "Track deliveries, takeover confirmation, and dock handover.",
+    "searchPlaceholder": "Search by delivery number, order, product, or supplier…",
+    "retryButton": "Retry",
+    "loadingMessage": "Loading deliveries…",
+    "deliveryFallbackTitle": "Delivery #{{slice}}",
+    "labelOrder": "Order:",
+    "labelProduct": "Product:",
+    "labelSupplier": "Supplier:",
+    "pickupFrom": "From",
+    "deliveryTo": "To",
+    "deliveryDriver": "Driver",
+    "timelineTitle": "Delivery timeline",
+    "timelineAssigned": "Carrier assigned",
+    "timelinePickedUp": "Collected for final leg",
+    "timelineInTransit": "In transit",
+    "timelineWaybillPdf": "Download waybill PDF",
+    "detailButton": "Details",
+    "dockReceiptShort": "Dock:",
+    "pickedUpShort": "Collected:",
+    "assignedShort": "Assigned:",
+    "qrConfirmLead": "Scan the QR or tap the button when you want receipt recorded — this starts your takeover confirmation (and payment release where configured).",
+    "qrConfirmButton": "Confirm via QR",
+    "qrConfirmSuccess": "Confirmation recorded.",
+    "modalConfirmQrTitle": "QR delivery confirmation",
+    "modalConfirmQrLead": "When the load is accepted, scan the driver’s code or confirm below.",
+    "networkErrorDeliveries": "Cannot reach the server. Check your network and that NEXT_PUBLIC_API_URL points to the Bio Vera API.",
+    "sectionPickupTitle": "Pickup location",
+    "sectionDeliveryTitle": "Delivery destination",
+    "sectionOrderTitle": "Order line",
+    "modalDetailTitle": "Delivery {{number}}",
+    "labelLocation": "Location:",
+    "labelAddress": "Address:",
+    "labelQuantity": "Quantity:",
+    "labelTotalAmount": "Total:",
+    "qrConfirmAlertSuccess": "Receipt recorded. Escrow or payment is released where the system is configured to do so.",
+    "reportIssuePhotoRemoveAria": "Remove photo",
+    "deliveryStatus_PENDING": "Pending",
+    "deliveryStatus_ASSIGNED": "Assigned",
+    "deliveryStatus_PICKED_UP": "Picked up",
+    "deliveryStatus_IN_TRANSIT": "In transit",
+    "deliveryStatus_DELIVERED": "Received at dock",
+    "deliveryStatus_CONFIRMED": "Takeover confirmed",
+    "deliveryStatus_COMPLETED": "Completed",
+    "deliveryStatus_CANCELLED": "Cancelled",
+    "filterLabelAll": "All statuses",
+    "filter_ASSIGNED": "Assigned",
+    "filter_PICKED_UP": "Picked up",
+    "filter_IN_TRANSIT": "In transit",
+    "filter_DELIVERED": "Dock received",
+    "filter_CONFIRMED": "Takeover confirmed",
+    "filter_COMPLETED": "Completed",
+    "emptyTitle": "No deliveries found",
+    "emptyHintSearch": "Try adjusting your search.",
+    "emptyHintNone": "Deliveries appear after you place orders and logistics assigns transport.",
+    "emptyCtaOrders": "My orders",
+    "emptyCtaTrade": "Open Vera Trade",
+    "confirmPickupCta": "Confirm takeover",
+    "confirmPickupHint": "After your warehouse or store has signed off the inbound handover at the dock, confirm here that goods are physically in your custody. The 24-hour photo-based dispute window begins from this moment.",
+    "timelineDockReceipt": "Dock / warehouse digital intake recorded (goods arrived at facility)",
+    "timelineTakeoverConfirmed": "Your takeover confirmed (24-hour issue window starts here)",
+    "confirmPickupDoing": "Saving confirmation…",
+    "confirmPickupSuccess": "Takeover confirmed. Issue reporting stays open for 24 hours.",
+    "confirmPickupNeedDockFirst": "The dock handover (receiver signature at the warehouse) must be finished first.",
+    "reportIssue": "Report a problem or remark",
+    "reportIssueShort": "Report issue",
+    "reportIssueTitle": "Delivery problem or remark",
+    "reportIssueIntro": "Add at least one current photo of the shipment and a clear description. You can only start the 24-hour clock after you confirm takeover in this portal or by scanning the delivery QR: the window runs from that confirmation, not from the truck arrival time.",
+    "reportIssueLegal": "Reports without photos and a description cannot be processed. Submitting within this window lets operations tie your remark to the condition of the shipment at handover; it is not itself a legal finding on liability.",
+    "reportIssueDeadline": "Reporting deadline: {{time}}",
+    "reportIssueNoReceipt": "Takeover is not confirmed yet in the portal (or via QR scan) — reporting is unavailable. Finish dock handover, then confirm takeover here.",
+    "reportIssueWindowClosed": "More than 24 hours have passed since recorded receipt — contact Bio Vera operations.",
+    "reportIssuePhotosLabel": "Shipment photos required",
+    "reportIssuePhotosHint": "Minimum 1, maximum 6 images — JPG, PNG or WebP.",
+    "reportIssueDescriptionLabel": "Describe the issue",
+    "reportIssueDescriptionPlaceholder": "What is wrong, approximate quantity or carton count if helpful, anything we should know.",
+    "reportIssueSubmit": "Submit report",
+    "reportIssueSending": "Sending…",
+    "reportIssueCancel": "Cancel",
+    "reportIssueSuccess": "Your report has been logged. Our team will review it.",
+    "reportIssuePhotosRequired": "Please add at least one photo.",
+    "reportIssueDescMin": "Description is too short — at least 20 characters.",
+    "reportIssueBadFileType": "Only JPG, PNG or WebP are allowed.",
+    "reportIssueFileTooLarge": "Each image must be under about 1.7 MB."
+  },
+  "buyerPortalHandover": {
+    "pageTitle": "Dock handover",
+    "heading": "Recipient digital intake",
+    "lead": "When the driver starts handover at your site, capture condition, temperature, and a receiver signature when the load is acceptable.",
+    "backDeliveries": "Back to deliveries",
+    "loading": "Loading handover…",
+    "orderMeta": "Order {{order}} · delivery {{delivery}}",
+    "photosLabel": "Delivery photos",
+    "photosHint": "At least {{min}}, up to {{max}} photos — compressed in the browser before upload.",
+    "photoOnlyImages": "Only JPG, PNG or WebP.",
+    "photoTooLarge": "Image is too large to send from the browser.",
+    "photoReadFailed": "Could not read the image.",
+    "visualLabel": "Cargo condition",
+    "freshOk": "Fresh / OK to receive",
+    "damaged": "Damaged — dispute",
+    "temperatureLabel": "Temperature at offload (°C)",
+    "temperaturePlaceholder": "e.g. 4.5",
+    "signatureLabel": "Receiver signature",
+    "signatureClear": "Clear",
+    "signatureHint": "Draw a clear signature inside the box — needed for escrow release and cold-chain evidence.",
+    "notesLabel": "Notes (optional)",
+    "notesPlaceholder": "Brief note if anything was irregular…",
+    "submitting": "Saving…",
+    "submit": "Confirm dock receipt",
+    "viewOnlyFinished": "This handover is already closed or flagged as disputed.",
+    "errNoId": "Handover reference is missing.",
+    "errNotYourOrder": "This account is not linked to this handover order.",
+    "errAlreadyFinished": "This workflow is already completed in the system.",
+    "errPhotosMin": "At least {{count}} photos are required.",
+    "errVisual": "Choose whether the load is acceptable or damaged.",
+    "errTemperature": "Enter a valid temperature figure (comma or dot is OK).",
+    "errSignature": "Signature is required for an OK intake — draw inside the box."
+  },
+  "buyerPortalSuppliers": {
+    "emptyTitle": "No Vera partners found",
+    "emptyHintSearch": "Try adjusting your search.",
+    "emptyHintNone": "Partner farms appear when they are active in the network.",
+    "emptyCtaTrade": "Browse Vera Trade"
+  },
+  "buyerPortalVeraStandard": {
+    "title": "Bio Vera Standard",
+    "description": "Our standard guarantees indisputable digital proof for every product.",
+    "requirements": {
+      "title": "Certification requirements:",
+      "gps": "GPS tracking of farm boundaries",
+      "images": "Chronological growth images",
+      "lab": "Laboratory results",
+      "duration": "3 years of continuous monitoring"
+    }
+  },
+  "careersApplyPage": {
+    "heroTitle": "Job application",
+    "heroSubtitle": "Use this dedicated form for open roles — cover letter and CV go to the same team inbox as messages to info@biovera.app (with a careers subject line so we can prioritise).",
+    "backToCareers": "Back to careers",
+    "formIntro": "All fields marked * are required. LinkedIn must be linkedin.com (optional). Cover letter at least ~35 characters (one short paragraph is better).",
+    "nameLabel": "Full name *",
+    "namePlaceholder": "Your name",
+    "emailLabel": "Email *",
+    "phoneLabel": "Phone",
+    "phoneHint": "Optional — helps recruiters reach you quickly.",
+    "roleLabel": "Position *",
+    "rolePlaceholder": "Select a role…",
+    "roleOptSalesSouthCentralKey": "salesSouthCentral",
+    "roleOptSalesSouthCentral": "Commercial Representative — South & Central Serbia",
+    "roleOptSalesVojvodinaKey": "salesVojvodina",
+    "roleOptSalesVojvodina": "Commercial Representative — Vojvodina",
+    "roleOptSalesRetailKey": "salesRetail",
+    "roleOptSalesRetail": "Commercial Representative — Germany & EU Retail",
+    "roleOptDevKey": "dev",
+    "roleOptDev": "Senior Full-Stack Developer",
+    "roleOptAgriKey": "agritech",
+    "roleOptAgri": "Agricultural Technology Specialist",
+    "roleOptBizKey": "bizdev",
+    "roleOptBiz": "Business Development Manager",
+    "roleOptGeneralKey": "general",
+    "roleOptGeneral": "General / speculative application",
+    "roleOptOtherKey": "other",
+    "roleOptOther": "Other (specify)",
+    "otherRoleLabel": "Describe the role",
+    "otherRolePlaceholder": "Title or programme you are applying for",
+    "coverLabel": "Cover letter / motivation *",
+    "coverHint": "What you bring, earliest availability, languages, relocation — approx. one short paragraph.",
+    "coverPlaceholder": "Write here…",
+    "coverTooShort": "Your cover letter is too short — add a fuller motivation (minimum length required by server).",
+    "linkedinLabel": "LinkedIn profile",
+    "linkedinPlaceholder": "https://www.linkedin.com/in/…",
+    "linkedinHint": "Optional — only linkedin.com links are accepted.",
+    "linkedinInvalid": "LinkedIn URL must be a linkedin.com link.",
+    "cvLabel": "CV / Lebenslauf *",
+    "cvHint": "PDF or Word (.doc / .docx), max 5 MB.",
+    "cvRequired": "Please attach your CV.",
+    "cvInvalidType": "Use PDF or Word (.doc / .docx).",
+    "cvTooLarge": "Maximum file size is 5 MB.",
+    "otherRoleRequired": "Please describe the role you are applying for.",
+    "submit": "Submit application",
+    "sending": "Sending…",
+    "success": "Thank you — we received your application and will reply when there is next step.",
+    "errorFallback": "Could not submit. Try again later or email us at info@biovera.app"
+  },
+  "investorBusinessPlans": {
+    "passwordAriaLabel": "Password",
+    "submitAriaLabel": "Continue",
+    "pageDescription": "This page is not listed on the public website. Enter the password you received from Bio Vera.",
+    "ndWarning": "Confidential — for recipients authorised by Bio Vera only. Do not forward the URL, links, or passwords.",
+    "shortTitle": "Part 1",
+    "mediumTitle": "Part 2",
+    "longTitle": "Part 3",
+    "shortHint": "Use the password Bio Vera provided for this section.",
+    "mediumHint": "Use the password Bio Vera provided for this section.",
+    "longHint": "Use the password Bio Vera provided for this section.",
+    "tierUnavailable": "This plan is not published in this deployment yet.",
+    "footerNote": "If you lost access, contact the Bio Vera team — do not share passwords in unsecured channels.",
+    "sectionDisabled": "This protected area is not enabled for this deployment.",
+    "errorNetwork": "Could not reach the server. Check your connection and try again.",
+    "retry": "Try again",
+    "loadingSkeleton": "Loading…",
+    "planBack": "Back to plan passwords",
+    "planReaderIntro": "Formatted overview. Updates follow Bio Vera operations.",
+    "planReaderFooter": "Binding content remains in materials signed or supplied by Bio Vera; this view is for convenience only.",
+    "docSeriesEyebrow": "Investor deck",
+    "docSeriesTitle": "Partner business plans",
+    "docConfidentialBadge": "Confidential",
+    "docUnlockCta": "Unlock",
+    "docClickToUnlockHint": "This excerpt mirrors the formal programme document. Click to enter the password Bio Vera sent you — the full text opens on this page after verification.",
+    "docTapToOpen": "Open password",
+    "docBackToPreview": "Back",
+    "docLockedSubtitle": "Not distributed here",
+    "docLockedDescription": "Further programme materials are not released through this link. Contact Bio Vera if your mandate includes additional parts.",
+    "docLoadingContent": "Loading document…",
+    "docOpenExternal": "Open document",
+    "docOpenFull": "Open full document",
+    "gateNotConfigured": "The first-step password for this page is not configured in this environment (INVESTOR_BUSINESS_PLANS_GATE_PASSWORD).",
+    "bundleTitle": "Open the document set",
+    "bundleHint": "Enter the first password Bio Vera gave you for this link. Then choose a part below — only one document is open at a time, and each asks for its own password.",
+    "afterGateLead": "Choose which part you want to read. You will only see one document at a time.",
+    "docPickerAria": "Business plan parts",
+    "bundlePasswordLabel": "First password (all documents)",
+    "lockAllDocuments": "Lock all and sign out",
+    "tierHintAfterGate": "Tap below, then enter the password Bio Vera sent for this part only.",
+    "bundleRequiredAgain": "Your session for this page expired or the first-step lock was applied again. Enter the first password again."
+  },
+  "pitchDeck": {
+    "toolbarCopyLink": "Copy link",
+    "toolbarCopied": "Copied",
+    "toolbarPrintPdf": "Save as PDF",
+    "toolbarPrintAria": "Open print dialog to save as PDF",
+    "toolbarHint": "Tip for PDFs: in the print dialog pick “Save as PDF” — handy for forwarding to colleagues who prefer an attachment.",
+    "introNote": "Starts with readable context—how food crosses Europe today and how Bio Vera behaves as a vertically integrated company—then shows how we run operations in practice. Grab the link for your committee or tuck a PDF in the packet.",
+    "heroTechPill": "Protocol 360 · Integrity Guard · QR passport",
+    "narrativeEyebrow": "Opening context",
+    "narrativeTitle": "Europe’s food economy still needs clearer paths to trust",
+    "narrativeParagraphs": [
+      "If you look at Europe today, agriculture is still one of the most important parts of our economy.",
+      "But the way food moves across the market… is not as clear as it should be.",
+      "Products are traded every day, across regions and borders, yet in many cases, it’s hard to truly understand where they come from, how they were produced, or who is behind them.",
+      "At the same time, small farmers are often left out.",
+      "Not because they can’t produce more — but because they don’t have reliable access to the market.",
+      "And without that certainty, growth becomes a risk.",
+      "So the system stays fragmented.\nAnd trust remains limited.",
+      "That’s where Bio Vera comes in.",
+      "Bio Vera organises contracted production, oversees quality, and sells branded product to customers—with one auditable batch story end to end.",
+      "No vague hand-offs: one responsible company, not a site that merely introduces strangers.",
+      "Traceability and commerce move together on evidence, not slogans.",
+      "For farmers, that means confidence to grow.\nFor buyers, it means knowing exactly what they’re sourcing.",
+      "And for the system as a whole, it means moving towards something that is more open, more reliable, and more fair.",
+      "That’s what we’re building with Bio Vera."
+    ],
+    "plainLanguageEyebrow": "In plain words",
+    "plainLanguageTitle": "What we are, how deals move, what we gain",
+    "plainLanguageIntro": "Before appendix detail lands, three anchors help: what kind of company this is, how a normal week runs operationally, and what partners gain when everyone shares the same batch spine. The next cards spell that out plainly.",
+    "plainLanguageCards": [
+      {
+        "title": "What Bio Vera is",
+        "body": "Bio Vera is the selling company—not a bulletin board matching strangers. Contracted parcels and authorised Vera pack-outs feed one Bio‑Ready dossier that commercial, QA and treasury all defend; shoppers still see tomatoes, auditors see lineage."
+      },
+      {
+        "title": "How the operation runs week to week",
+        "body": "Commercial life follows a loop most teams already intuit: buy sanctioned inputs (including programme-priced seed with optional insurance when it applies), prove what happened in the field with GPS that respects the parcel line, mint batches under Protocol 360, ship them via missions where custody actually changes hands, then close through Bio Vera selling to the downstream customer. Money doesn’t tumble out as one blurry lump — we stagger releases so the grower line, haulage line, programme economics (including Vera work bonuses where earned) and VAT legs across borders stay readable for finance folk who still have to sleep at night."
+      },
+      {
+        "title": "Outcomes we’re optimising for",
+        "body": "If you audit us, pick a batch ID and scroll forward instead of begging three departments for stray attachments. If you walk a supermarket floor, what the QR says shouldn’t blush when compared with the back-office file. Farmers get tooling that survives spotty LTE and payouts that aren’t improvised in retrospect. When refrigerant slips or timelines fight, custody isn’t reconstructed from WhatsApp. And when leadership asks “what really happened?” there’s only one chronological spine feeding quality, logistics and finance — because three competing truths rarely age well."
+      }
+    ],
+    "videoTitle": "Bio Vera — short pitch overview",
+    "videoCaption": "Quick orientation: why a vertically managed chain matters for programme growers, freight partners, and customers who buy Bio Vera—with trace checks baked into operations.",
+    "videoPlaceholderTitle": "Embed your pitch video here",
+    "videoPlaceholderBody": "Publish on YouTube or Vimeo (public or unlisted), set NEXT_PUBLIC_PITCH_DECK_VIDEO_URL where you deploy this site, redeploy — this area becomes the embedded player.",
+    "howItWorksEyebrow": "How it actually flows",
+    "howItWorksTitle": "From the farm boundary scan to the shelf QR — one continuous thread",
+    "howItWorksLead": "Nobody absorbs seventeen diagrams over lukewarm coffee — so we order this exactly how crews live it day to day: inputs and boundaries, trustworthy field notebooks, auditable pallets, lorries acknowledging custody loudly enough for finance to hear, and only then passports plus splits that accountants can reconcile. Roles differ but facts share the same bloodstream. Prefer every guardrail enumerated? Drop to the appendix: fourteen pillars spelled out patiently.",
+    "howItWorksPhases": [
+      {
+        "title": "Estates, seed economics and guarding what goes onto the crop",
+        "body": "Every farm snaps to a GIS polygon your lawyer can screenshot. Vera Partner tariffing behaves when enrolment flips — and seed flows can politely bundle insurance beside the SKU when that programme smiles on it. Anything chemical-looking survives a whitelist first; rejecting a dubious barcode hurts once, retrofitting folklore months later hurts everyone louder."
+      },
+      {
+        "title": "Field teams work offline — GPS still tells the honest parcel",
+        "body": "Technicians jot diaries offline when the mast vanishes; the phone syncs when it can breathe again. Locations must land inside that polygon so arguments later lean on satellites, not who remembers shouting across the orchard."
+      },
+      {
+        "title": "Packing converts fruit into labelled batches Protocol 360 can sign",
+        "body": "The pack-house isn’t choreography for auditors — it emits batch IDs everybody downstream inherits. Fingerprints stay where biology matters, materials where buyers squint at polythene stacks. Nail the Vera material brief and the Vera work bonus isn’t philanthropy; it’s economics tied to proofs you’d show a sceptical QA lead."
+      },
+      {
+        "title": "Trucks inherit missions, not rumours",
+        "body": "We script pickups, hops and signature moments so “who stared at which pallet?” is boringly answerable — especially when coolant drifts north of tolerant. Attachment chains thin out because telemetry rides in the mission story category managers already skim."
+      },
+      {
+        "title": "Shoppers swipe QR; finance honours the choreography",
+        "body": "Retail QR merges grower swagger, certs, corridors and refrigerated chapters without inventing treasury theatre nobody authorised. Releases fan out deliberately so growers, hauliers, Vera bonuses where earned, seeds margin and insurer slices keep their receipts. Taxes differ between export throats and European shelf zip codes — upstream modelling avoids last-minute archaeology at quarter close."
+      }
+    ],
+    "coverEyebrow": "Investor deck",
+    "coverTitle": "One operating spine for growers, buyers and trucking partners",
+    "coverSubtitle": "Bio Vera is the merchant: we contract growing capacity, run QA, packaging and refrigerated missions, and place the batch story that retail buyers scan. One stack keeps polygons, field books, pack-line checks, carrier handovers and shelf QR aligned so finance, agriculture and sales argue over the same Batch_ID.",
+    "whyTitle": "Why trace stops being polite once audits lean in",
+    "whyLead": "Nobody wins when procurement chases heroic PDFs while agronomists scribble contradictory truths offline. Vera exists because intermittent networks shouldn’t disqualify conscientious notebooks — and because reconciling ghosts every shipment is misery disguised as ops tempo.",
+    "whyBullets": [
+      "Broken folders don’t magically heal before certification renewals — they rot quietly until someone expensive notices.",
+      "Retail expects a barcode story that survives a cynical tap; fluff collapses quicker than heirloom tomatoes bruise.",
+      "When custody, QA and treasury only shake hands once a quarter, auditors sense it before KPI decks print.",
+      "Three partial truths about the same pallet inflate finance busywork exponentially — one spine amortises diligence instead."
+    ],
+    "solutionTitle": "More than listings — stitched field, freight and treasury",
+    "solutionLead": "We connect agronomy data, refrigerated custody trails and phased settlement so commercial, compliance and finance teams argue over one coherent record from planting decisions through checkout. Grower phones and warehouse dashboards consume the same APIs — parity without parallel fiction.",
+    "chainTitle": "The vertical loop end-to-end",
+    "chainSteps": [
+      "Seed economics — differentiated Vera Partner lifts for enrolled growers",
+      "Insurance — optional companions to qualifying seed orders when programmes allow",
+      "Cultivation — journals tethered within estate polygons; disciplined barcodes",
+      "Packaging — Protocol 360 depth plus Vera work bonuses when proofs hold",
+      "Logistics — missions, custody swaps, pallets never orphaned in narrative",
+      "Retail — shopper QR marrying origin biography, certs and cold-chain moments"
+    ],
+    "advantagesEyebrow": "Upside travels with the role",
+    "advantagesTitle": "Who feels the lift",
+    "advantages": [
+      {
+        "title": "Growers & estates",
+        "body": "Phones bias toward sleepy LTE basements yet still remember every photo; syncing feels like slack tide instead of confession. Sensitive inputs politely refuse shady barcodes, and parcel GPS wards off “helpful” photos shot from cousin’s hillside."
+      },
+      {
+        "title": "Retail & procurement",
+        "body": "Category chats graduate from screenshot archaeology—passports hand you cold arcs, certs and geography in one calm scroll when the buyer’s patience is thin."
+      },
+      {
+        "title": "Carriers & logistics partners",
+        "body": "Missions read like stage directions: who signed which palette when the reefer hiccupped, without inventing new nouns after the truck idled too long."
+      },
+      {
+        "title": "Revenue allocation",
+        "body": "Seed economics, insurance slices, haulage, platform lift and Vera bonuses sit in separate pockets so nobody’s margin becomes someone else’s ghost write-off."
+      },
+      {
+        "title": "Compliance & assurance",
+        "body": "Attachments graduate from annual treasure hunts because estate and batch IDs already anchor the proof—auditors scroll chronology instead of bullying Slack exports."
+      },
+      {
+        "title": "Brand & origin",
+        "body": "Shelf stories stop cosplaying — provenance, certifications and movement trail share the same nervous system the compliance team brags about."
+      }
+    ],
+    "techTitle": "Engineering that stops fighting the field",
+    "techLead": "Ops leads and warehouse leads refresh the same tables for once—edge resilience isn’t a slide promise, it’s table stakes when harvest weeks refuse Wi-Fi.",
+    "techItems": [
+      {
+        "title": "Offline-first field capture",
+        "body": "Critical moments stay on-device until signal returns—no more superstitious retyping after the combine crawls under a hill."
+      },
+      {
+        "title": "Integrity Guard",
+        "body": "Green-list barcodes and fence-honest GPS catch creative logging before it metastasises into board-level apologies."
+      },
+      {
+        "title": "Protocol 360",
+        "body": "Structured checks from soil through pack line and refrigerated legs give quality teams a narrative they can defend in front of buyers."
+      },
+      {
+        "title": "Security & access control",
+        "body": "Roles, sane rate limits and searchable logs keep a multi-party network legible when integrations misbehave."
+      },
+      {
+        "title": "Analytics without shadow spreadsheets",
+        "body": "Because missions, batches and settlements share IDs, dwell and drift metrics stop mutating per department — finance nods, ops nods, fewer pivot tables."
+      }
+    ],
+    "transparencyTitle": "What shoppers deserve to believe",
+    "transparencyBullets": [
+      "That QR resolves to someone’s face, certs and route breadcrumbs — succinct, factual, stubbornly linkable.",
+      "Cold narratives and custody sit next to geography instead of politely ignoring each other in separate decks.",
+      "Bio-Ready language on packaging isn’t orphaned from what operations actually surfaced.",
+      "We leave purple adjectives stranded when artefacts don’t back them — reputations downstream matter."
+    ],
+    "financeTitle": "Money that stops pretending to be monolithic",
+    "financeLead": "Phased secured settlement exists so finance can narrate who earned which slice once verification clears — without heroically merging unrelated lines on a Friday night.",
+    "financeBullets": [
+      "Vera Partner seed math is baked in from purchase one — no surprise footnotes at payout o’clock.",
+      "Insurance programme picks show their platform commission honestly when they apply.",
+      "International legs pick up the VAT story they actually deserve — reporting teams thank you quietly.",
+      "Driver cheques and platform margins stay in different pockets so reconciliation isn’t theatre."
+    ],
+    "detailSpecEyebrow": "When you need every rivet",
+    "appendixWatermark": "Appendix — operator depth",
+    "detailSpecTitle": "Extended programme map — all fourteen pillars",
+    "detailSpecLead": "You’ve read the story; this is the workshop manual. We wrote it the way we onboard partners, survive audits and extend the platform: inputs, maps, Integrity Guard, Protocol 360, offline capture, missions, passports, settlement plumbing, supplier catalogues, security posture, engineering footprint, and the desk layouts each role actually touches. Skim or print — it’s meant to be useful, not decorative.",
+    "detailSections": [
+      {
+        "title": "1. Seed, insurance and controlled inputs",
+        "items": [
+          {
+            "heading": "Vera Partner seed economics",
+            "body": "Aligned growers access programme pricing that differs from standard catalogue seed. That delta feeds models that reconcile grower payouts and platform seed margin—keeping economics explicit rather than opaque."
+          },
+          {
+            "heading": "Insurance alongside seed purchases",
+            "body": "Where growers elect coverage, InsurancePolicy placement can accompany qualifying seed purchases; commissions are surfaced as attributable platform revenue when programmes run through Vera rails."
+          },
+          {
+            "heading": "Input integrity before field use",
+            "body": "Fertilisers and plant-protection products must validate against whitelist catalogues. Barcodes absent from authoritative lists trigger blocking workflows instead of slipping into dossiers."
+          },
+          {
+            "heading": "Global partnership, unified rulebook",
+            "body": "Partner geography is open; onboarding still enforces Vera Partner semantics, whitelist enforcement and auditing discipline consistently."
+          },
+          {
+            "heading": "Seed cohort traceability",
+            "body": "Qualifying workflows bind purchased seed to programme cohort identifiers so auditors connect variety choice, Vera Partner tariffing and insured lots without reconstructing paper trails shipment by shipment."
+          }
+        ]
+      },
+      {
+        "title": "2. Estates, cultivation journals and boundaries",
+        "items": [
+          {
+            "heading": "Polygon-based validation",
+            "body": "Estate polygons govern GPS validation so field evidence anchors to parcels under contract—not adjacent land or informal plots."
+          },
+          {
+            "heading": "Field chronology versus snapshot compliance",
+            "body": "Journals accumulate growth-phase notes, inspections and photographic evidence chronologically—supporting continuous assurance instead of frantic annual compilation."
+          },
+          {
+            "heading": "Device-level accountability",
+            "body": "Device fingerprint concepts complement policy controls so operators know which handset produced each evidence artefact."
+          },
+          {
+            "heading": "Boundary governance",
+            "body": "Polygon revisions follow controlled onboarding practices so parcels under contract—and only those parcels—authorize GPS-bearing evidence throughout the season."
+          },
+          {
+            "heading": "Certification metadata at source",
+            "body": "Estate-attached certifications and attestations propagate into buyer dossiers alongside field entries, eliminating duplicate collection every audit cycle."
+          }
+        ]
+      },
+      {
+        "title": "3. Integrity Guard — enforcement playbook",
+        "items": [
+          {
+            "heading": "Whitelist ↔ barcode parity",
+            "body": "Biological chemistry SKUs reconcile with whitelist tables; unauthorised chemistry cannot be converted into compliant events."
+          },
+          {
+            "heading": "Co-ordinate fidelity",
+            "body": "Field submissions honour estate polygons; malformed GPS cannot masquerade as verified evidence."
+          },
+          {
+            "heading": "Blocking with traceability",
+            "body": "Rejections escalate for review—closing the gap between ‘blocked’ narratives and investigative follow-through."
+          },
+          {
+            "heading": "Seed and packaging barcode parity",
+            "body": "Seed units and sanctioned packaging SKUs reconcile against authoritative catalogue rows; scans that do not resolve stop upstream of compliance narration."
+          },
+          {
+            "heading": "Admin surfaces for exceptions",
+            "body": "Policy teams review blocked attempts with timestamps, identities and SKU context—making exceptions rare, explicit and attributable."
+          }
+        ]
+      },
+      {
+        "title": "4. Protocol 360 — staged quality assurance",
+        "items": [
+          {
+            "heading": "Field and soil stewardship",
+            "body": "First-layer checks evidence agronomic stewardship (soil, monitoring) aligning with downstream buyer specifications."
+          },
+          {
+            "heading": "Pack-house biometric fidelity",
+            "body": "Second-layer checks scrutinise calibre, visual conformity and wrapping integrity immediately before pallets exit cultivation regions."
+          },
+          {
+            "heading": "Cold chain narrative",
+            "body": "Third-layer instrumentation tracks refrigeration commitments end-to-end, pairing telemetry with custody transitions through destination corridors."
+          },
+          {
+            "heading": "Non-conformance and rework visibility",
+            "body": "When checks fail, deviations remain tied to batches and checkpoints so buyers see resolution paths rather than unexplained gaps in the chronological record."
+          }
+        ]
+      },
+      {
+        "title": "5. Packaging, batches and Vera work bonus",
+        "items": [
+          {
+            "heading": "Batch IDs bind finance and visibility",
+            "body": "Every batch inherits identifiers propagating across MaterialControl dossiers, logistics manifests and passports—preventing SKU shadowing."
+          },
+          {
+            "heading": "Vera bonus predicates",
+            "body": "Work bonuses remunerate materially compliant throughput and wrapping evidence so incentives align with inspection outcomes—not arbitrary adjustments."
+          },
+          {
+            "heading": "MaterialControl trace line",
+            "body": "Material suppliers, certificates and conformance statements converge for buyer-grade proof."
+          },
+          {
+            "heading": "Harvest-to-batch continuity",
+            "body": "Declared harvest windows and field outputs feed conversion into batch identities so SKU-level passports inherit agronomic chronology—not only pack-house timestamps."
+          },
+          {
+            "heading": "Bonus governance",
+            "body": "Vera bonus triggers reference verified material compliance artefacts; payout reviews can replay predicate logic without discretionary overrides."
+          }
+        ]
+      },
+      {
+        "title": "6. Offline-first cultivation capture",
+        "items": [
+          {
+            "heading": "Local persistence mandates",
+            "body": "Web surfaces lean on IndexedDB-style durability; Expo mobile leverages SQLite equivalents so harvest peaks remain capture-safe without waiting for WAN."
+          },
+          {
+            "heading": "Sync orchestration",
+            "body": "Automatic synchronisation activates when transports resume; unresolved conflicts surface to operators—not silently overwriting history."
+          },
+          {
+            "heading": "Resilience KPIs baked in",
+            "body": "SLAs assume rural fade; uptime narratives extend to intermittent operators without degrading dossier fidelity."
+          },
+          {
+            "heading": "Idempotent ingestion",
+            "body": "Retries and duplicated uploads converge to deterministic server state so flaky connectivity does not fork batch histories."
+          }
+        ]
+      },
+      {
+        "title": "7. Logistics missions, custody control towers",
+        "items": [
+          {
+            "heading": "Mission ontology",
+            "body": "Missions unify routes, pickups, manifests, checkpoints and escalation metadata so operations centres answer who held custody when—without archaeology."
+          },
+          {
+            "heading": "Handover attestations",
+            "body": "Digital acceptance records demarcate liability migrations between growers, hubs, fleets and hubs near retail."
+          },
+          {
+            "heading": "Location intelligence",
+            "body": "LocationLog-style traces keep dispatchers oriented on lateness, deviations and refrigerated drift before buyers raise alarms."
+          },
+          {
+            "heading": "Multi-leg partner workspaces",
+            "body": "Grower dispatch, fleet hubs, intermediary receivers and final-mile crews each interact through role-scoped dashboards while referencing identical mission identifiers."
+          },
+          {
+            "heading": "Exception runbooks baked into missions",
+            "body": "Temperature excursions or missed handovers generate structured escalation metadata linked to batches so QA teams respond with evidence—not screenshots."
+          }
+        ]
+      },
+      {
+        "title": "8. QR passport and buyer-facing transparency",
+        "items": [
+          {
+            "heading": "Passport schema",
+            "body": "Passports summarise farmer identity, certification stack, refrigerated segments and narrative copy suitable for Hamburg-grade retail QA teams—while remaining truthful for any global buyer."
+          },
+          {
+            "heading": "Category collateral",
+            "body": "Single-link summaries expedite diligence packets for supermarkets, food-service and speciality retail."
+          },
+          {
+            "heading": "Public integrity",
+            "body": "Only machine-backed statements surface—preventing overstated farm-to-fork language without artefacts."
+          },
+          {
+            "heading": "Live operational context where enabled",
+            "body": "When telemetry is active, passports can reflect freshness indicators and ETA-style context anchored to custody logs—still bounded by factual inputs."
+          }
+        ]
+      },
+      {
+        "title": "9. Secured settlement, payout splits and multi-party finance",
+        "items": [
+          {
+            "heading": "Hold until verification",
+            "body": "Buyer settlement passes through intermediary, Bio Vera-controlled states until delivery plus conformity checkpoints clear; disbursement waterfalls then execute—matching enterprise-grade risk controls."
+          },
+          {
+            "heading": "Waterfall constituents",
+            "body": "Farmer payouts, Vera bonus pools, haulage remuneration, seed margin uplift, insurance commissions and Vera platform envelopes each carry attributable ledgers inside TaxCalculation-aligned logic."
+          },
+          {
+            "heading": "Driver economics inclusion",
+            "body": "Driver fees remain explicit counterparts to grower and platform allocations during settlement reviews."
+          },
+          {
+            "heading": "Order-to-batch reconciliation",
+            "body": "Commercial orders reference batch identities so invoicing, approvals and conditional release triggers chase the same stock objects finance teams analyse."
+          },
+          {
+            "heading": "Period-end readability",
+            "body": "Because components are segmented early, CFO offices can reconcile season-level programmes without reverse-engineering mixed-line invoices."
+          }
+        ]
+      },
+      {
+        "title": "10. Supplier storefronts aligned with whitelist logic",
+        "items": [
+          {
+            "heading": "Controlled merchandising",
+            "body": "Supplier catalogues obey the same integrity constraints as field inputs—prohibiting grey-market chemistry from entering Vera-qualified baskets."
+          },
+          {
+            "heading": "Grower-ready procurement",
+            "body": "Connected journeys let growers source packaging, seedlings and sanctioned inputs without violating programme guardrails."
+          },
+          {
+            "heading": "SKU sunset and substitutions",
+            "body": "When chemistry or packaging rows retire, storefronts honour supersession rules instead of silently selling obsolete catalogue lines into compliant programmes."
+          },
+          {
+            "heading": "Price and partner overlays",
+            "body": "Vera Partner users see entitlement-aware merchandising layered on whitelist truth—avoiding contradictory offers between storefront and settlement engines."
+          },
+          {
+            "heading": "Invoicing alignment",
+            "body": "Supplier billing artefacts can cite the same article IDs Integrity Guard recognises in the field, closing reconciliation gaps across procurement and compliance teams."
+          }
+        ]
+      },
+      {
+        "title": "11. Identity, RBAC, API security and observability",
+        "items": [
+          {
+            "heading": "Multi-role tenancy",
+            "body": "Users may traverse grower, buyer, logistics, supplier and administrator contexts with policy-enforced segregation."
+          },
+          {
+            "heading": "JWT + rate limiting",
+            "body": "REST integrations inherit JWT protections and throttled surfaces to deter scripted abuse across partner APIs."
+          },
+          {
+            "heading": "Logging & incident lineage",
+            "body": "Server-side verbosity supports trace identifiers and Prisma-aware diagnostics so responders rebuild timelines quickly."
+          },
+          {
+            "heading": "Input validation everywhere",
+            "body": "Controllers validate payloads centrally so scripted partners cannot bypass Integrity Guard-equivalent semantics through alternate paths."
+          },
+          {
+            "heading": "Hardened sessions and optional MFA posture",
+            "body": "Authentication stacks align with multi-tenant SaaS expectations; privileged roles leverage stricter hurdles where deployments enable them."
+          }
+        ]
+      },
+      {
+        "title": "12. Engineering footprint and channel parity",
+        "items": [
+          {
+            "heading": "Data plane",
+            "body": "PostgreSQL anchors authoritative state; Prisma migrations favour idempotent SQL when historical deployments drifted."
+          },
+          {
+            "heading": "Modular Nest services",
+            "body": "Controllers and services obey domain seams (finance, estates, batches, missions) with guarded boundaries and repeatable health probes."
+          },
+          {
+            "heading": "Web + Expo parity ethos",
+            "body": "Next.js App Router presents marketing shells, investor-grade decks and dashboards; Expo RN repeats grower ergonomics with translation parity per workspace rules."
+          },
+          {
+            "heading": "Locale routing fidelity",
+            "body": "Locale-prefixed marketing routes (for example /en/ and /sr/) cooperate with middleware and cookies so multilingual partners bookmark consistent URLs without breaking apps that remain locale-neutral."
+          },
+          {
+            "heading": "API contracts and versioning discipline",
+            "body": "Domain modules expose stable REST verbs for estates, batches, missions and finance consumers; additive evolution preserves mobile and web parity during releases."
+          }
+        ]
+      },
+      {
+        "title": "13. Operational roles and workspaces",
+        "items": [
+          {
+            "heading": "Grower and pack-house operators",
+            "body": "Expo RN prioritises tactile, offline-safe flows for estates, journals, plot evidence, harvesting and packaging transitions while mirroring entitlement logic surfaced on responsive grower dashboards."
+          },
+          {
+            "heading": "Logistics, fleet partners and receivers",
+            "body": "Dedicated dashboards cover mission creation, driver assignment, checkpoints, custody acceptance and escalation—without granting unrelated estate data across tenant boundaries."
+          },
+          {
+            "heading": "Merchants and category managers",
+            "body": "Buyer tooling surfaces passports, dossier downloads and order states grounded in authoritative batch timelines rather than marketing microsites disconnected from fulfilment truth."
+          },
+          {
+            "heading": "Programme administrators",
+            "body": "Internal operators wield moderation, catalogue governance and exception tooling with auditable footprints so policy changes propagate predictably across channels."
+          }
+        ]
+      },
+      {
+        "title": "14. Evidence bundles, QA continuity and contingency",
+        "items": [
+          {
+            "heading": "Structured quality and compliance artefacts",
+            "body": "Quality narratives, photographic evidence (where programmes require it), GPS stamps and checkpoints append to chronological dossiers keyed by estates and batches—supporting inspectors without bespoke spreadsheets per retailer."
+          },
+          {
+            "heading": "Targeted containment",
+            "body": "Immutable batch lineage supports narrow holds: teams can correlate suspect cohorts via identifiers shared by logistics and finance rather than shutting entire unspecified SKUs."
+          },
+          {
+            "heading": "Cross-functional retrospectives",
+            "body": "Because finance, QA and missions reference one identifier set, quarterly business reviews quantify leakage, deviations and bonus outcomes from the same datastore leadership trusts for regulatory defence."
+          }
+        ]
+      }
+    ],
+    "ctaClosingTitle": "Let’s talk about your lane in this loop",
+    "ctaClosingEyebrow": "What’s next",
+    "ctaClosingBody": "You’ve got the narrative and the torque wrench appendix. Copy the live link for your committee, or export a PDF for someone who still prints. From there hop to grower, buyer, logistics or investor pages — whichever hat you’re wearing today.",
+    "ctaClosingBodyPrint": "You’ve read the business narrative and the technical appendix. Continue with the contacts and programme links below, or share the canonical deck URL separately for reviewers who prefer the live version.",
+    "ctaContact": "Contact Bio Vera",
+    "ctaGrowers": "Grower programme",
+    "ctaBuyers": "Buyer information",
+    "ctaInvestors": "Investor resources"
+  },
+  "projectOverview": {
+    "toolbarCopyLink": "Copy link",
+    "toolbarCopied": "Copied",
+    "toolbarPrintPdf": "Save as PDF",
+    "toolbarPrintAria": "Open print dialog to save as PDF",
+    "contentsTitle": "Contents",
+    "contentsNav": "Jump to section",
+    "skipToContent": "Skip to document",
+    "introNote": "Concise project summary for reviewers and funding bodies. Use the table of contents for navigation; use your browser’s print dialog to attach a PDF.",
+    "pdfLimitHint": "Length and layout are intentionally constrained for formal submissions. Banner imagery may be customised in deployment.",
+    "coverEyebrow": "Project overview",
+    "coverTitle": "Bio Vera — Project overview",
+    "coverSubtitle": "Vertically operated agrifood company under Bio‑Ready rules—from sanctioned inputs through packing, refrigerated legs and passports our sales teams honour at checkout.",
+    "sections": [
+      {
+        "title": "Introduction",
+        "body": "Bio Vera operates as an agrifood company that organizes production through contracted growers, coordinates logistics and sells to customers—all under Bio‑Ready transparency. The corridor ambition is single-recipe assurance: Southeastern European cultivation inside EU QA rails without contradictory spreadsheet folklore."
+      },
+      {
+        "title": "Problem",
+        "body": "European food commerce still wastes energy on brittle folders: parcels and chemistry are narrated inconsistently; quality teams chase screenshots instead of timestamps; conscientious growers miss market access without expensive compliance theatre; refrigerated custody often fails to reconcile with finance."
+      },
+      {
+        "title": "Solution",
+        "body": "We replace fragmented narratives with one spine covering estates, Integrity Guard scans, Protocol 360 batch integrity, refrigerated missions with explicit handovers, retail QR passports, and phased settlement — so auditors, growers and treasury argue over identical batch IDs."
+      },
+      {
+        "title": "Product",
+        "body": "Web grower/supplier dashboards, Expo-ready mobile ergonomics for field teams, logistics partner workspaces for missions and handovers, buyer-facing passports plus admin surfaces for whitelist and exception governance — all hardened for offline stretches and deterministic sync."
+      },
+      {
+        "title": "Market",
+        "body": "Initial focus is international growers who can meet regulated retail programmes that require verifiable dossiers — scaling partner-by-partner into additional compliant trade lanes rather than undifferentiated listings."
+      },
+      {
+        "title": "Business Model",
+        "body": "Programme-aligned economics spanning Vera Partner inputs, programme insurance companions where permissible, Vera material/work bonuses grounded in controls, corridor-specific transport settlements and secured conditional releases segmented for growers, logistics and platform uplift."
+      },
+      {
+        "title": "Current status",
+        "body": "Operating software stack spanning estates, Integrity Guard primitives, cultivation capture, batches, missions and passports in staged rollout — pilot cohort onboarding, corridor logistics partnerships and QA hardening continue in tandem with selective retail-facing pilots."
+      },
+      {
+        "title": "Roadmap",
+        "body": "Near term: broaden pilot estates, deepen cold-chain telemetry, widen buyer dossier tooling, automate settlement narration. Medium term: deeper supplier tooling for sanctioned inputs and packaging programmes, multinational retail SKUs, and additional certified carriers."
+      },
+      {
+        "title": "Impact",
+        "body": "Measurable traceability lowers audit drag for procurement, improves farmer price discovery where documentation is no longer punitive, trims food-safety ambiguity through structured custody timelines, and reinforces consumer trust wherever QR passports surface."
+      }
+    ],
+    "founderTitle": "Founder",
+    "founderPhotoPlaceholder": "Founder banner",
+    "founderPhotoAlt": "Jovica Mihajlovic, founder of Bio Vera, at the Vera office",
+    "founderPhotoCaption": "Jovica Mihajlovic · Founder · Bio Vera",
+    "founderPhotoHint": "Use a sharp print‑friendly photo; original width about 2400px or larger works well for retina screens and exported PDF.",
+    "founderParagraphs": [
+      "Bio Vera is founded by Jovica Mihajlovic, a Serbian national based in Hamburg, Germany, where he has been living and working for the past five years.",
+      "He holds a Bachelor’s degree in Communications and Public Relations from the University of Niš, which shaped his understanding of communication, market positioning, and user-oriented thinking.",
+      "Over the past years he has been building the Vera brand within IT consulting, deepening experience delivering digital operational systems—not generic marketing sites—for complex industries.",
+      "With Bio Vera, he applies that craftsmanship to agrifood: transparent, scalable operating infrastructure purpose-built for food chains Bio Vera sells through.",
+      "His long-term focus is pragmatic systems that tighten trust across supply chains—with room for the Vera product family to grow into adjacent sectors over time."
+    ],
+    "seeAlsoEyebrow": "Related page",
+    "seeAlsoBody": "Open the Investor Deck for the fuller narrative, technical appendix depth, and optional embedded video.",
+    "seeAlsoLink": "Open Investor Deck",
+    "seeAlsoPrintEyebrow": "Supplementary material",
+    "seeAlsoPrintBody": "An investor-oriented presentation with extended narrative and appendix (and multimedia where applicable) is published separately on the Bio Vera website as the Investor Deck."
+  },
+  "refundReconciliation": {
+    "title": "Financial reconciliation",
+    "open": "Open original credits",
+    "closed": "Reconciliation recorded",
+    "recovered": "Recovered from wallets",
+    "platformCost": "Platform cost",
+    "uncredited": "Platform share not credited to a wallet",
+    "available": "Currently available in wallet",
+    "choose": "Choose a method for this share",
+    "hint": "For each original payment share, choose recovery from the available wallet balance or record a decision that the platform bears the cost. Explain the decision. Wallet recovery reduces the available balance; platform cost is not collected money. This form does not execute a bank transfer.",
+    "reason": "Reason for the cost decision (at least 20 characters)",
+    "confirm": "Confirm reconciliation: debit {{recovered}} from wallets and record {{cost}} as platform cost. A different request cannot overwrite this decision.",
+    "save": "Confirm and record reconciliation",
+    "error": "Reconciliation was not saved. Refresh and check the current balances.",
+    "methods": {
+      "WALLET_RECOVERY": "Recover from available wallet balance",
+      "PLATFORM_COST": "Platform bears the cost"
+    },
+    "walletEntry": "Debit for buyer refund",
+    "orderReference": "Order",
+    "participantMethods": {
+      "WALLET_RECOVERY": "Your wallet debit for this refund",
+      "PLATFORM_COST": "The platform bears your share; your wallet was not debited"
+    }
+  },
+  "returnDisposition": {
+    "title": "Returned goods disposition",
+    "states": {
+      "QUARANTINED": "Quarantine — decision pending",
+      "WRITTEN_OFF": "Written off",
+      "RESTOCKED": "Approved for sale with stock count"
+    },
+    "actions": {
+      "QUARANTINE": "Keep in quarantine",
+      "WRITE_OFF": "Record write-off",
+      "RESTOCK": "Approve sale with physical count"
+    },
+    "open": "Open inspection and history",
+    "initial": "The goods have been received and await a disposition decision. The return has not increased saleable stock.",
+    "action": "Decision for the complete shipment",
+    "choose": "Choose",
+    "quantity": "Enter the inspected full-shipment quantity: {{quantity}} {{unit}}",
+    "notes": "Inspection findings and reason (at least 20 characters)",
+    "countHint": "Legacy orders lack a reliable stock issue ledger. Enter the total physically counted saleable quantity for this stock record, including this approved return. Do not enter only the added quantity. Exclude all other quarantined or written-off goods.",
+    "noStock": "No eligible stock for this farm, product and unit. The return remains quarantined until stock records are reconciled.",
+    "stock": "Stock record and actual goods location",
+    "currentCount": "Current recorded quantity",
+    "currentExpiry": "Existing expiry",
+    "counted": "Total physical saleable count, including this return",
+    "expiry": "Verified stock expiry (cannot extend existing expiry)",
+    "quality": "The full returned shipment was inspected and approved for sale.",
+    "countConfirmed": "The count includes this shipment and excludes goods not approved for sale.",
+    "location": "The goods are physically at the selected stock location.",
+    "confirmCount": "Set the total saleable stock to {{count}} {{unit}} based on the physical count? This does not add to the existing quantity.",
+    "confirmDecision": "Record “{{action}}” for the full returned shipment? Write-off and sale approval are final in this workflow.",
+    "save": "Save inspection and decision",
+    "savedCount": "Physical count: previously {{before}}, verified {{after}} {{unit}}.",
+    "error": "Decision was not saved. Refresh and check the evidence and stock state.",
+    "writeOffHint": "This write-off applies to the separate returned quantity. Existing saleable stock is not automatically reduced because the original stock issue is not reliably linked. If these goods are already included in saleable stock, a separate physical count and reconciliation are required."
+  },
+  "orderStock": {
+    "catalogReserved": "Reserved from marketplace stock: {{kg}} {{unit}}",
+    "catalogReservedForYou": "Reserved for you{{detail}}",
+    "catalogPending": "Marketplace stock reservation pending",
+    "viewStockHistory": "View stock history",
+    "states": {
+      "UNALLOCATED": "Stock not allocated",
+      "RESERVED": "Goods reserved",
+      "ISSUED": "Goods dispatched",
+      "RELEASED": "Reservation released"
+    },
+    "choose": "Choose stock",
+    "noStock": "No matching available stock. Check the fulfilling farm and lot link.",
+    "reserve": "Reserve for this order",
+    "cancel": "Cancel unpaid order",
+    "cancelConfirm": "Cancel this unpaid order and release the reserved goods? If you have already transferred money, contact operations instead of cancelling here.",
+    "keep": "Keep order",
+    "error": "Change was not saved",
+    "retry": "Refresh and try again."
+  },
+  "checkoutRecovery": {
+    "recovered": "An order from the previous attempt was recovered without creating a duplicate. Check its original quantity, address and status in your orders; any remaining quantity stays in the cart.",
+    "storageError": "The cart could not be saved safely. Check storage space and permissions, then try again.",
+    "missingOrder": "Order confirmation is missing. Retry with the same cart.",
+    "partial": "Orders saved: {{count}}. Remaining items are in the cart."
+  },
+  "orderOperations": {
+    "stuckNoDelivery": "Marked picked up / in transit but no delivery exists (legacy). Reopen it for dispatch, then reserve stock and link a mission.",
+    "reopenDispatch": "Reopen for dispatch",
+    "reopenDispatchConfirm": "Return {{number}} to Paid so it can be dispatched again?",
+    "title": "Order operations overview",
+    "open": "Open orders",
+    "held": "Total reserved goods",
+    "unpaidHeld": "Reserved on unpaid orders",
+    "hint": "Review the oldest requests first. Age is measured from order creation; stock is not released automatically. Quantities are grouped by unit.",
+    "queues": {
+      "settlement": "Settlement",
+      "open": "Open",
+      "stock": "Allocate stock",
+      "approval": "Approve",
+      "payment": "Awaiting payment",
+      "dispatch": "Dispatch",
+      "progress": "Delivery in progress",
+      "closed": "Closed",
+      "all": "All"
+    },
+    "steps": {
+      "settlement": "Delivery is finished. Review the release of funds.",
+      "stock": "Allocate specific stock in the product column.",
+      "approval": "Review and approve the request.",
+      "payment": "Check the received bank transfer.",
+      "dispatch": "Link this order to the appropriate transport mission.",
+      "progress": "Track pickup, transport and buyer receipt.",
+      "closed": "No new operations action in this overview."
+    },
+    "search": "Search: number, product, buyer or farm",
+    "sort": "Sort",
+    "oldest": "Oldest first",
+    "newest": "Newest first",
+    "refresh": "Refresh",
+    "showing": "Showing {{count}} of {{total}} orders",
+    "loaded": "Loaded at {{time}}",
+    "nextStep": "Next step",
+    "cancelAction": "Unpaid cancellation",
+    "release": "Cancel and release goods",
+    "cancel": "Cancel request",
+    "cancelConfirm": "Cancel order {{number}} and release any reserved goods? First verify that no bank transfer has arrived but is still unrecorded in the application.",
+    "ageDays": "Age: {{count}} d.",
+    "openDispatch": "Open dispatch",
+    "noMatches": "No orders match this step and search.",
+    "dispatchContext": "Dispatch for {{number}} · {{product}} · {{quantity}} {{unit}}",
+    "dispatchUnavailable": "This order is not currently listed as available for linkage. Check its status and existing delivery, then refresh.",
+    "noMission": "No available mission matches this farm and order. Prepare or assign transport in orders/missions.",
+    "backOrders": "Back to orders",
+    "allDispatch": "Show all dispatches"
+  },
+  "buyerReceiving": {
+    "title": "Receiving code",
+    "hint": "When the truck arrives, show this code to the driver — they scan it to start the handover. Then you check the goods and sign.",
+    "show": "Show receiving code",
+    "loading": "Loading…",
+    "manualCode": "Code (if scanning fails)",
+    "handoverStartedHint": "The driver is at your dock. Check the goods, add photos and sign to receive the shipment.",
+    "completeReceipt": "Complete receipt (photos + signature)"
   }
 }

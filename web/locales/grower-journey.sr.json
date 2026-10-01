@@ -33,7 +33,12 @@
       "paragraphs": [
         "Obaveštenja, aktivne partije, poruke, šta sledi — bacite pogled povremeno."
       ],
-      "links": [{ "label": "Kontrolna tabla", "href": "/grower" }]
+      "links": [
+        {
+          "label": "Kontrolna tabla",
+          "href": "/grower"
+        }
+      ]
     },
     {
       "title": "Ova lista (uputstva)",
@@ -47,7 +52,12 @@
       "paragraphs": [
         "Gazdinstvo + parcele, m², usev · partije/tretmani/dnevnik na bloku aktivni tek kad admin odobri parcelu."
       ],
-      "links": [{ "label": "Moja polja", "href": "/grower/fields" }]
+      "links": [
+        {
+          "label": "Moja polja",
+          "href": "/grower/fields"
+        }
+      ]
     },
     {
       "title": "Odobrenje",
@@ -62,8 +72,14 @@
         "Katalog (gajbe, role, folija, serijski) · imenik + B2B porudžbine · primalo robe · mobilno Materijali + Partner porudžbine / na webu Dobavljači."
       ],
       "links": [
-        { "label": "Materijali", "href": "/grower/materials" },
-        { "label": "Dobavljači", "href": "/grower/where-to-buy" }
+        {
+          "label": "Materijali",
+          "href": "/grower/materials"
+        },
+        {
+          "label": "Dobavljači",
+          "href": "/grower/where-to-buy"
+        }
       ]
     },
     {
@@ -71,7 +87,12 @@
       "paragraphs": [
         "Svakodnevno: mobilni Dnevnik unosa, dnevnici, usklađeni tretmani (GPS gde pravilo traži). Pre berbe plan berbe kg/prozor za logistiku — nije maloprodajna porudžbina. Granice/mapu na web, unosi u redu."
       ],
-      "links": [{ "label": "Moja polja", "href": "/grower/fields" }]
+      "links": [
+        {
+          "label": "Moja polja",
+          "href": "/grower/fields"
+        }
+      ]
     },
     {
       "title": "Berba → partija",
@@ -79,8 +100,14 @@
         "Kada zrije: berba · partija vezana za parcelu · mobilni tok za kg i prozor."
       ],
       "links": [
-        { "label": "Moja polja", "href": "/grower/fields" },
-        { "label": "Moji lotovi", "href": "/grower/batches" }
+        {
+          "label": "Moja polja",
+          "href": "/grower/fields"
+        },
+        {
+          "label": "Moji lotovi",
+          "href": "/grower/batches"
+        }
       ]
     },
     {
@@ -88,7 +115,12 @@
       "paragraphs": [
         "Dovedite lot do PACKED ili QUALITY_VERIFIED · transport čeka pakovanje + usklađenost."
       ],
-      "links": [{ "label": "Moji lotovi", "href": "/grower/batches" }]
+      "links": [
+        {
+          "label": "Moji lotovi",
+          "href": "/grower/batches"
+        }
+      ]
     },
     {
       "title": "Kvalitet i fotografije",
@@ -96,8 +128,14 @@
         "(1) Unos kvaliteta · (2) fotografije + ID role · formular transporta proverava oba."
       ],
       "links": [
-        { "label": "Unos kvaliteta", "href": "/grower/quality-entry" },
-        { "label": "Fotografije usklađenosti", "href": "/grower/compliance-photos" }
+        {
+          "label": "Unos kvaliteta",
+          "href": "/grower/quality-entry"
+        },
+        {
+          "label": "Fotografije usklađenosti",
+          "href": "/grower/compliance-photos"
+        }
       ]
     },
     {
@@ -106,21 +144,36 @@
         "Tek posle pakovanja / verifikacije + usklađenosti · GPS/adresa preuzimanja i odredište · čekanje dok dispečer ne dodeli vozača."
       ],
       "footnote": "Ko šta koliko kilograma nosi kojem kupcu — operativa, ne prognoza u aplikaciji.",
-      "links": [{ "label": "Zahtev za transport", "href": "/grower/missions/create" }]
+      "links": [
+        {
+          "label": "Zahtev za transport",
+          "href": "/grower/missions/create"
+        }
+      ]
     },
     {
       "title": "Misije",
       "paragraphs": [
         "Predaja na utovaru · hladnjak · koraci ka hub/kupcu · mobilni: lista misija · web: /grower/portal."
       ],
-      "links": [{ "label": "Praćenje misija", "href": "/grower/portal" }]
+      "links": [
+        {
+          "label": "Praćenje misija",
+          "href": "/grower/portal"
+        }
+      ]
     },
     {
       "title": "Profil",
       "paragraphs": [
         "Partnerski kod, država, obaveštenja · novčanik i sertifikati ispod Profil na mobilnom."
       ],
-      "links": [{ "label": "Moj profil", "href": "/grower/profile" }]
+      "links": [
+        {
+          "label": "Moj profil",
+          "href": "/grower/profile"
+        }
+      ]
     }
   ],
   "seasonMetaChip": "12 koraka · kao u meniju"

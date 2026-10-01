@@ -1,0 +1,34 @@
+{
+  "buyer.accountApproved": {
+    "title": "Käuferkonto aktiv",
+    "message": "Ihr Bio Vera Käuferkonto wurde freigeschaltet. Sie können sich anmelden und Bestellungen aufgeben."
+  },
+  "buyer.orderApproved": {
+    "title": "Bestellung angenommen",
+    "message": "Bestellung {{orderNumber}} wurde angenommen. Zahlungsanweisungen finden Sie in den Bestelldetails."
+  },
+  "buyer.orderRejected": {
+    "title": "Bestellung abgelehnt",
+    "message": "Bestellung {{orderNumber}} wurde nicht angenommen. Grund: {{reason}}"
+  },
+  "delivery.assigned": {
+    "title": "Neue Lieferung",
+    "message": "Lieferung {{deliveryNumber}} wurde Ihrem Konto zugewiesen."
+  },
+  "delivery.driverNearby": {
+    "title": "Fahrer unterwegs",
+    "message": "Ihre Lieferung {{deliveryNumber}} nähert sich dem Ziel."
+  },
+  "payment.released": {
+    "title": "Zahlung freigegeben",
+    "message": "Treuhand für Bestellung {{orderNumber}} wurde freigegeben."
+  },
+  "batch.arrived": {
+    "title": "Charge angekommen",
+    "message": "Charge {{batchId}} ist im Hub angekommen."
+  },
+  "buyer.registrationPending": {
+    "title": "Registrierung eingegangen",
+    "message": "Vielen Dank für Ihre Registrierung. Bio Vera prüft Ihr Käuferkonto in Kürze."
+  }
+}

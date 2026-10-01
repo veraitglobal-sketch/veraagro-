@@ -3,6 +3,7 @@ import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationTrigger, UserRole } from '@prisma/client';
 import { PushNotificationService } from './push-notification.service';
+import { NotificationTemplateService } from './notification-template.service';
 
 /**
  * Enhanced Notifications Service
@@ -15,6 +16,7 @@ export class NotificationsService {
   constructor(
     private prisma: PrismaService,
     private pushNotificationService: PushNotificationService,
+    private templateService: NotificationTemplateService,
   ) {}
 
   /**
@@ -26,6 +28,8 @@ export class NotificationsService {
     title: string;
     message: string;
     actionUrl?: string;
+    templateKey?: string;
+    templateParams?: Record<string, string | number | undefined>;
   }) {
     const row = await this.prisma.notifications.create({
       data: {
@@ -34,6 +38,8 @@ export class NotificationsService {
         type: data.type,
         title: data.title,
         message: data.message,
+        templateKey: data.templateKey,
+        templateParams: data.templateParams as any,
         actionUrl: data.actionUrl,
         status: 'UNREAD',
       },
@@ -52,6 +58,34 @@ export class NotificationsService {
       });
 
     return row;
+  }
+
+  /** Render title/message in the recipient's preferred language; store template metadata. */
+  async createLocalized(data: {
+    userId: string;
+    type: 'ACTION_REQUIRED' | 'REMINDER' | 'ALERT' | 'SYSTEM';
+    templateKey: string;
+    templateParams?: Record<string, string | number | undefined>;
+    actionUrl?: string;
+  }) {
+    const user = await this.prisma.users.findUnique({
+      where: { id: data.userId },
+      select: { preferredLanguage: true },
+    });
+    const rendered = this.templateService.render(
+      data.templateKey,
+      data.templateParams ?? {},
+      user?.preferredLanguage,
+    );
+    return this.create({
+      userId: data.userId,
+      type: data.type,
+      title: rendered.title,
+      message: rendered.message,
+      actionUrl: data.actionUrl,
+      templateKey: data.templateKey,
+      templateParams: data.templateParams,
+    });
   }
 
   /**
@@ -91,11 +125,10 @@ export class NotificationsService {
     firstName: string;
     email?: string | null;
   }): Promise<void> {
-    await this.create({
+    await this.createLocalized({
       userId: data.buyerId,
       type: 'SYSTEM',
-      title: 'Buyer account active',
-      message: 'Your Bio Vera buyer account is active — you can now order from the Marketplace.',
+      templateKey: 'buyer.accountApproved',
       actionUrl: '/buyer-portal/marketplace',
     });
   }

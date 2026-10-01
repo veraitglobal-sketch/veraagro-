@@ -1,0 +1,34 @@
+{
+  "buyer.accountApproved": {
+    "title": "Buyer account active",
+    "message": "Your Bio Vera buyer account has been approved. You can now sign in and place orders."
+  },
+  "buyer.orderApproved": {
+    "title": "Order accepted",
+    "message": "Order {{orderNumber}} has been accepted. Payment instructions are in your order details."
+  },
+  "buyer.orderRejected": {
+    "title": "Order rejected",
+    "message": "Order {{orderNumber}} was not accepted. Reason: {{reason}}"
+  },
+  "delivery.assigned": {
+    "title": "New delivery",
+    "message": "Delivery {{deliveryNumber}} has been assigned to your account."
+  },
+  "delivery.driverNearby": {
+    "title": "Driver arriving",
+    "message": "Your delivery {{deliveryNumber}} is approaching the destination."
+  },
+  "payment.released": {
+    "title": "Payment released",
+    "message": "Escrow for order {{orderNumber}} has been released."
+  },
+  "batch.arrived": {
+    "title": "Batch arrived",
+    "message": "Batch {{batchId}} has arrived at the hub."
+  },
+  "buyer.registrationPending": {
+    "title": "Registration received",
+    "message": "Thank you for registering. Bio Vera will review your buyer account shortly."
+  }
+}

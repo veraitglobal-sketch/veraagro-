@@ -42,8 +42,9 @@ import bioVeraFreshPageRo from "../locales/biovera-fresh-page.ro.json";
 import bioVeraFreshPageBg from "../locales/biovera-fresh-page.bg.json";
 import bioVeraFreshPageFr from "../locales/biovera-fresh-page.fr.json";
 import bioVeraFreshPageEs from "../locales/biovera-fresh-page.es.json";
+import { withGlossary } from "../../shared/i18n/load-glossary";
 
-const enWithJourney = {
+const enWithJourney = withGlossary("en", {
   ...en,
   bioVeraFresh: bioVeraFreshPageEn,
   suppliersPage: suppliersPageEn,
@@ -53,8 +54,8 @@ const enWithJourney = {
     ...en.grower,
     journey: growerJourneyEn,
   },
-};
-const srWithJourney = {
+});
+const srWithJourney = withGlossary("sr", {
   ...sr,
   bioVeraFresh: bioVeraFreshPageSr,
   suppliersPage: suppliersPageSr,
@@ -64,8 +65,8 @@ const srWithJourney = {
     ...sr.grower,
     journey: growerJourneySr,
   },
-};
-const deWithJourney = {
+});
+const deWithJourney = withGlossary("de", {
   ...de,
   bioVeraFresh: bioVeraFreshPageDe,
   suppliersPage: suppliersPageDe,
@@ -75,8 +76,8 @@ const deWithJourney = {
     ...de.grower,
     journey: growerJourneyDe,
   },
-};
-const roWithJourney = {
+});
+const roWithJourney = withGlossary("ro", {
   ...ro,
   bioVeraFresh: bioVeraFreshPageRo,
   suppliersPage: suppliersPageRo,
@@ -86,8 +87,8 @@ const roWithJourney = {
     ...ro.grower,
     journey: growerJourneyRo,
   },
-};
-const bgWithJourney = {
+});
+const bgWithJourney = withGlossary("bg", {
   ...bg,
   bioVeraFresh: bioVeraFreshPageBg,
   suppliersPage: suppliersPageBg,
@@ -97,8 +98,8 @@ const bgWithJourney = {
     ...bg.grower,
     journey: growerJourneyBg,
   },
-};
-const frWithJourney = {
+});
+const frWithJourney = withGlossary("fr", {
   ...fr,
   bioVeraFresh: bioVeraFreshPageFr,
   suppliersPage: suppliersPageFr,
@@ -108,8 +109,8 @@ const frWithJourney = {
     ...fr.grower,
     journey: growerJourneyFr,
   },
-};
-const esWithJourney = {
+});
+const esWithJourney = withGlossary("es", {
   ...es,
   bioVeraFresh: bioVeraFreshPageEs,
   suppliersPage: suppliersPageEs,
@@ -119,7 +120,7 @@ const esWithJourney = {
     ...es.grower,
     journey: growerJourneyEs,
   },
-};
+});
 
 if (!i18n.isInitialized) {
   i18n.use(initReactI18next).init({

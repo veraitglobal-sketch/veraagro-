@@ -22,6 +22,7 @@ import GrowerOfflineOutboxBanner from '@/components/grower/GrowerOfflineOutboxBa
 import GrowerDashboardHomeWorkflow from '@/components/grower/GrowerDashboardHomeWorkflow';
 import GrowerJourneyProgress from '@/components/grower/GrowerJourneyProgress';
 import { growerApiErrorOrT } from '@/lib/grower-api-error';
+import { missionStatusLabel } from '@biovera/shared/i18n/labels';
 
 export default function GrowerDashboardPage() {
   const { t } = useTranslation();
@@ -497,9 +498,7 @@ export default function GrowerDashboardPage() {
                           {t('grower.dashboard.missionLabel', { id: mission.missionNumber || mission.id })}
                         </h3>
                         <span className={`px-3 py-1.5 rounded text-sm font-medium border ${getMissionStatusColor(mission.status || 'PENDING')}`}>
-                          {t(`adminPages.missions.statuses.${mission.status as string}`, {
-                            defaultValue: (mission.status || 'PENDING').replace(/_/g, ' '),
-                          })}
+                          {missionStatusLabel(t, mission.status as string, 'admin')}
                         </span>
                       </div>
                       {mission.batches && (

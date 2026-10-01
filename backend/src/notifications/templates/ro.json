@@ -1,0 +1,34 @@
+{
+  "buyer.accountApproved": {
+    "title": "Cont cumpărător activ",
+    "message": "Contul dvs. de cumpărător Bio Vera a fost aprobat. Vă puteți autentifica și plasa comenzi."
+  },
+  "buyer.orderApproved": {
+    "title": "Comandă acceptată",
+    "message": "Comanda {{orderNumber}} a fost acceptată. Instrucțiunile de plată sunt în detaliile comenzii."
+  },
+  "buyer.orderRejected": {
+    "title": "Comandă respinsă",
+    "message": "Comanda {{orderNumber}} nu a fost acceptată. Motiv: {{reason}}"
+  },
+  "delivery.assigned": {
+    "title": "Livrare nouă",
+    "message": "Livrarea {{deliveryNumber}} a fost atribuită contului dvs."
+  },
+  "delivery.driverNearby": {
+    "title": "Șoferul se apropie",
+    "message": "Livrarea {{deliveryNumber}} se apropie de destinație."
+  },
+  "payment.released": {
+    "title": "Plată eliberată",
+    "message": "Escrow-ul pentru comanda {{orderNumber}} a fost eliberat."
+  },
+  "batch.arrived": {
+    "title": "Lot sosit",
+    "message": "Lotul {{batchId}} a sosit la hub."
+  },
+  "buyer.registrationPending": {
+    "title": "Înregistrare primită",
+    "message": "Vă mulțumim pentru înregistrare. Bio Vera va examina contul dvs. de cumpărător în curând."
+  }
+}

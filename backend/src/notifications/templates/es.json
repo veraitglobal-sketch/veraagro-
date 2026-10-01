@@ -1,0 +1,34 @@
+{
+  "buyer.accountApproved": {
+    "title": "Cuenta de comprador activa",
+    "message": "Su cuenta de comprador de Bio Vera ha sido aprobada. Ya puede iniciar sesión y realizar pedidos."
+  },
+  "buyer.orderApproved": {
+    "title": "Pedido aceptado",
+    "message": "El pedido {{orderNumber}} ha sido aceptado. Las instrucciones de pago están en los detalles del pedido."
+  },
+  "buyer.orderRejected": {
+    "title": "Pedido rechazado",
+    "message": "El pedido {{orderNumber}} no fue aceptado. Motivo: {{reason}}"
+  },
+  "delivery.assigned": {
+    "title": "Nueva entrega",
+    "message": "La entrega {{deliveryNumber}} ha sido asignada a su cuenta."
+  },
+  "delivery.driverNearby": {
+    "title": "Conductor en camino",
+    "message": "Su entrega {{deliveryNumber}} se acerca al destino."
+  },
+  "payment.released": {
+    "title": "Pago liberado",
+    "message": "El depósito en garantía del pedido {{orderNumber}} ha sido liberado."
+  },
+  "batch.arrived": {
+    "title": "Lote recibido",
+    "message": "El lote {{batchId}} ha llegado al centro de distribución."
+  },
+  "buyer.registrationPending": {
+    "title": "Registro recibido",
+    "message": "Gracias por registrarse. Bio Vera revisará su cuenta de comprador en breve."
+  }
+}

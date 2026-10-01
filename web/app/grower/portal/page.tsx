@@ -20,6 +20,7 @@ import type { CommercialAgentPublic } from '@/lib/auth';
 import { useToast } from '@/hooks/useToast';
 import ToastContainer from '@/components/Toast';
 import { growerApiErrorOrT } from '@/lib/grower-api-error';
+import { missionStatusLabel as sharedMissionStatusLabel } from '@biovera/shared/i18n/labels';
 
 // Dynamically import map components to avoid SSR issues
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
@@ -159,14 +160,7 @@ const PORTAL_MILESTONE_I18N: Record<string, string> = {
 };
 
 function missionStatusLabel(t: TFunction, raw: string) {
-  const u = (raw || '').toUpperCase().replace(/\s+/g, '_');
-  const adminKey = `adminPages.missions.statuses.${u}`;
-  const adminTr = t(adminKey);
-  if (adminTr !== adminKey) return adminTr;
-  const key = `growerPages.missionStatus_${u}`;
-  const tr = t(key);
-  if (tr !== key) return tr;
-  return raw.replace(/_/g, ' ');
+  return sharedMissionStatusLabel(t, raw, 'admin');
 }
 
 function portalMilestoneLabel(t: TFunction, apiName: string) {

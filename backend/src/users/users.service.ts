@@ -420,6 +420,7 @@ export class UsersService {
           .sendBuyerAccountApprovedEmail({
             email: updated.email,
             firstName: updated.firstName,
+            preferredLanguage: updated.preferredLanguage,
           })
           .catch((e) => this.logger.warn(`sendBuyerAccountApprovedEmail: ${e instanceof Error ? e.message : e}`));
       }
@@ -429,6 +430,24 @@ export class UsersService {
   }
 
   /** Logged-in user changes password (any role with JWT). */
+  async updatePreferredLanguage(userId: string, preferredLanguage: string) {
+    await this.prisma.users.update({
+      where: { id: userId },
+      data: { preferredLanguage, updatedAt: new Date() },
+    });
+    return { ok: true, preferredLanguage };
+  }
+
+  async ensurePreferredLanguage(userId: string, preferredLanguage: string) {
+    const user = await this.prisma.users.findUnique({
+      where: { id: userId },
+      select: { preferredLanguage: true },
+    });
+    if (!user?.preferredLanguage?.trim()) {
+      await this.updatePreferredLanguage(userId, preferredLanguage);
+    }
+  }
+
   async changeOwnPassword(userId: string, currentPassword: string, newPassword: string) {
     const user = await this.prisma.users.findUnique({
       where: { id: userId },

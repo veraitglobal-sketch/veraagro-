@@ -12,7 +12,7 @@ import {
   getBuyerOrderStatusDescription,
   getBuyerStatusBadgeClass,
   getEffectiveBuyerOrderStatus,
-  ALL_ORDER_STATUS_FILTERS,
+  getAllOrderStatusFilters,
   isCatalogOrder,
   formatPackLine,
   CATALOG_ORDER_TIMELINE,
@@ -26,6 +26,7 @@ import { PaymentInstructionsPanel } from '@/components/PaymentInstructionsPanel'
 
 export default function OrdersPage() {
   const { t } = useTranslation();
+  const orderStatusFilters = getAllOrderStatusFilters(t);
   const buyerPortalNavItems = useBuyerPortalNavItems();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -192,7 +193,7 @@ export default function OrdersPage() {
                   className="px-4 py-2 border border-gray-300 text-sm font-light focus:outline-none focus:border-[#2D5A27]/50"
                 >
                   <option value="all">All status</option>
-                  {ALL_ORDER_STATUS_FILTERS.map((s) => (
+                  {orderStatusFilters.map((s) => (
                     <option key={s.value} value={s.value}>
                       {s.label}
                     </option>
@@ -293,10 +294,10 @@ export default function OrdersPage() {
                     <div className="flex items-center gap-2">
                       <span
                         className={`px-3 py-1 text-xs font-light border flex items-center gap-1 rounded ${getBuyerStatusBadgeClass(getEffectiveBuyerOrderStatus(order))}`}
-                        title={getBuyerOrderStatusDescription(order.status, order)}
+                        title={getBuyerOrderStatusDescription(t, order.status, order)}
                       >
                         {getStatusIcon(order.status)}
-                        {getBuyerOrderStatusLabel(order.status, order)}
+                        {getBuyerOrderStatusLabel(t, order.status, order)}
                       </span>
                       <button
                         onClick={() => loadOrderDetails(order.id)}
@@ -454,7 +455,7 @@ export default function OrdersPage() {
                     >
                       {getStatusIcon(selectedOrder.status)}
                       <span className="font-medium">
-                        {getBuyerOrderStatusLabel(selectedOrder.status, selectedOrder)}
+                        {getBuyerOrderStatusLabel(t, selectedOrder.status, selectedOrder)}
                       </span>
                     </div>
                     <p
@@ -462,7 +463,7 @@ export default function OrdersPage() {
                         selectedOrder.status === 'APPROVED' ? 'mb-3' : 'mb-2'
                       }`}
                     >
-                      {getBuyerOrderStatusDescription(selectedOrder.status, selectedOrder)}
+                      {getBuyerOrderStatusDescription(t, selectedOrder.status, selectedOrder)}
                     </p>
                     {getEffectiveBuyerOrderStatus(selectedOrder) === 'REJECTED' && selectedOrder.rejectionReason && (
                       <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800 font-light">

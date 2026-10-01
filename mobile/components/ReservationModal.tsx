@@ -8,6 +8,7 @@ import { theme } from '../lib/theme';
 import { ordersAPI, type Order } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
 import { useAppLocaleTag } from '../lib/date-locale';
+import { isBuyerDeliveryAddressComplete } from '../lib/buyer-address';
 
 const LAST_DELIVERY_KEY = 'buyer_last_delivery';
 
@@ -86,7 +87,7 @@ export default function ReservationModal({
   const unit = availability?.unit || product?.unit || 'units';
   const canReserve = !loading && !!user && !!product?.estate?.id && !!product.price && Number.isFinite(product.price) && product.price > 0 &&
     Number.isFinite(quantity) && quantity > 0 && quantity <= maxQuantity &&
-    !!street.trim() && !!city.trim() && !!postalCode.trim();
+    isBuyerDeliveryAddressComplete({ street, city, postalCode, country });
   const close = () => { if (!submitting.current) onClose(); };
 
   const handleReserve = async () => {
@@ -111,7 +112,7 @@ export default function ReservationModal({
       return;
     }
 
-    if (!street.trim() || !city.trim() || !postalCode.trim()) {
+    if (!isBuyerDeliveryAddressComplete({ street, city, postalCode, country })) {
       Alert.alert(t('error'), t('buyer.checkout.fillRequired'));
       return;
     }

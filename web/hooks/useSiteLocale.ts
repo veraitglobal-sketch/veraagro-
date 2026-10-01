@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useCallback, useMemo } from "react";
 import { LOCALE_STORAGE_KEY, type SiteLocale } from "@/i18n/config";
 import { getSwitchLocaleTarget, pathnameStartsWithLocale, siteLocaleFromLanguageTag } from "@/lib/i18n-routing";
+import { usersAPI } from "@/lib/api";
 
 function setLocaleCookieClient(locale: SiteLocale) {
   try {
@@ -38,6 +39,14 @@ export function useSiteLocale() {
         /* ignore */
       }
       setLocaleCookieClient(lng);
+
+      try {
+        if (typeof localStorage !== "undefined" && localStorage.getItem("token")) {
+          void usersAPI.updatePreferredLanguage(lng);
+        }
+      } catch {
+        /* not logged in */
+      }
 
       const target = getSwitchLocaleTarget(pathname, lng);
       if (target.kind === "navigate") {

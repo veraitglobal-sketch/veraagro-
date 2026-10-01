@@ -161,6 +161,7 @@ export class AuthService {
           roles: [UserRole.BUYER],
           status: UserStatus.PENDING_VERIFICATION, // Requires admin approval
           buyerCompanyProfile: buyerCompanyProfile as any,
+          preferredLanguage: data.preferredLanguage?.trim() || 'en',
           updatedAt: new Date(),
         } as any,
       });

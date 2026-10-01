@@ -26,6 +26,8 @@ const nextConfig: NextConfig = {
   trailingSlash: false,
   experimental: {
     optimizePackageImports: ["lucide-react"],
+    /** Allow importing shared/i18n from repo root (Vercel Root Directory = web). */
+    externalDir: true,
   },
   output: "standalone",
   async redirects() {

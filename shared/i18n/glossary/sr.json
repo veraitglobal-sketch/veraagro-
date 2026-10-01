@@ -1,0 +1,197 @@
+{
+  "orderStatus": {
+    "buyer": {
+      "PENDING": "Poslato",
+      "APPROVED": "Prihvaćeno",
+      "PAID": "Plaćeno",
+      "CONFIRMED": "U pripremi",
+      "PICKED_UP": "Preuzeto",
+      "IN_TRANSIT": "U transportu",
+      "DELIVERED": "Isporučeno",
+      "COMPLETED": "Završeno",
+      "CANCELLED": "Otkazano",
+      "REJECTED": "Odbijeno",
+      "REFUNDED": "Refundirano",
+      "UNKNOWN": "Ažuriranje u toku"
+    },
+    "buyerDescription": {
+      "PENDING": "Primili smo vašu porudžbinu. Vera će potvrditi pre plaćanja.",
+      "APPROVED": "Bio Vera je prihvatila porudžbinu. Koristite uputstva za uplatu ispod.",
+      "PAID": "Uplata je primljena. Dobavljač će uskoro potvrditi porudžbinu.",
+      "CONFIRMED": "Porudžbina je potvrđena i priprema se za otpremu.",
+      "PICKED_UP": "Roba je preuzeta od proizvođača.",
+      "IN_TRANSIT": "Porudžbina je na putu ka adresi isporuke.",
+      "DELIVERED": "Porudžbina je isporučena. Hvala na kupovini.",
+      "COMPLETED": "Porudžbina je završena i zatvorena.",
+      "CANCELLED": "Porudžbina je otkazana.",
+      "REJECTED": "Porudžbina je odbijena od strane Bio Vere.",
+      "REFUNDED": "Porudžbina je refundirana.",
+      "UNKNOWN": "Status se ažurira. Proverite ponovo uskoro."
+    },
+    "admin": {
+      "PENDING": "Na čekanju",
+      "APPROVED": "Odobreno",
+      "PAID": "Plaćeno",
+      "CONFIRMED": "Potvrđeno",
+      "PICKED_UP": "Preuzeto",
+      "IN_TRANSIT": "U transportu",
+      "DELIVERED": "Isporučeno",
+      "COMPLETED": "Završeno",
+      "CANCELLED": "Otkazano",
+      "REJECTED": "Odbijeno",
+      "REFUNDED": "Refundirano",
+      "UNKNOWN": "Nepoznato"
+    }
+  },
+  "deliveryStatus": {
+    "buyer": {
+      "PENDING": "Na čekanju",
+      "ASSIGNED": "Dodeljeno prevozniku",
+      "PICKED_UP": "Preuzeto od prevoznika",
+      "IN_TRANSIT": "U transportu",
+      "DELIVERED": "Dopremljena — čeka prijem",
+      "CONFIRMED": "Prijem potvrđen",
+      "COMPLETED": "Završeno",
+      "CANCELLED": "Otkazano"
+    },
+    "admin": {
+      "PENDING": "Na čekanju",
+      "ASSIGNED": "Dodeljeno",
+      "PICKED_UP": "Preuzeto",
+      "IN_TRANSIT": "U transportu",
+      "DELIVERED": "Isporučeno",
+      "CONFIRMED": "Potvrđeno",
+      "COMPLETED": "Završeno",
+      "CANCELLED": "Otkazano"
+    },
+    "logistics": {
+      "PENDING": "Na čekanju",
+      "ASSIGNED": "Dodeljeno",
+      "PICKED_UP": "Preuzeto",
+      "IN_TRANSIT": "U transportu",
+      "DELIVERED": "Isporučeno",
+      "CONFIRMED": "Potvrđeno",
+      "COMPLETED": "Završeno",
+      "CANCELLED": "Otkazano"
+    }
+  },
+  "missionStatus": {
+    "admin": {
+      "AWAITING_APPROVAL": "Čeka odobrenje (admin)",
+      "PENDING": "Na čekanju",
+      "ASSIGNED": "Dodeljeno",
+      "ACCEPTED": "Prihvaćeno",
+      "IN_PROGRESS": "U toku",
+      "READY_FOR_LOADING": "Spremno za utovar",
+      "PICKED_UP": "Preuzeto",
+      "IN_TRANSIT": "U transportu",
+      "COMPLETED": "Završeno",
+      "CANCELLED": "Otkazano"
+    },
+    "logistics": {
+      "AWAITING_APPROVAL": "Čeka odobrenje",
+      "PENDING": "Otvoreno",
+      "ASSIGNED": "Dodeljeno",
+      "ACCEPTED": "Prihvaćeno",
+      "IN_PROGRESS": "U toku",
+      "READY_FOR_LOADING": "Spremno za utovar",
+      "PICKED_UP": "Preuzeto",
+      "IN_TRANSIT": "U transportu",
+      "COMPLETED": "Završeno",
+      "CANCELLED": "Otkazano"
+    }
+  },
+  "handoverStatus": {
+    "PENDING": "Na čekanju",
+    "APPROVED": "Odobreno",
+    "REJECTED": "Odbijeno",
+    "BLOCKED": "Blokirano"
+  },
+  "seedBagStatus": {
+    "AVAILABLE": "Dostupno",
+    "ASSIGNED": "Dodeljeno",
+    "SCANNED": "Skenirano",
+    "USED": "Iskorišćeno",
+    "EXPIRED": "Isteklo",
+    "LABELED": "Obeleženo",
+    "VOIDED": "Poništeno",
+    "IN_SUPPLIER_STOCK": "Kod dobavljača",
+    "SOLD": "Prodato",
+    "PLANTED": "Posađeno",
+    "PARTIALLY_USED": "Delimično iskorišćeno",
+    "RECALLED": "Povučeno"
+  },
+  "seedRunStatus": {
+    "PLANNED": "Planirano",
+    "LABELS_ISSUED": "Nalepnice izdate",
+    "PRODUCED": "Proizvedeno",
+    "RELEASED": "Pušteno u promet",
+    "RECALLED": "Povučeno"
+  },
+  "catalogProductStatus": {
+    "DRAFT": "Nacrt",
+    "PUBLISHED": "Objavljeno",
+    "ARCHIVED": "Arhivirano"
+  },
+  "stockMovementType": {
+    "ADMIN_ADD": "Admin dodao",
+    "ADMIN_REMOVE": "Admin uklonio",
+    "ORDER_RESERVE": "Rezervacija porudžbine",
+    "ORDER_RELEASE": "Oslobođenje rezervacije"
+  },
+  "units": {
+    "kg": "kg",
+    "g": "g",
+    "pack": "pakovanje",
+    "bag": "kesa",
+    "crate": "gajba",
+    "pallet": "paleta"
+  },
+  "roles": {
+    "BUYER": "Kupac",
+    "GROWER": "Proizvođač",
+    "FARMER": "Farmer",
+    "LOGISTICS_PARTNER": "Logistički partner",
+    "MATERIAL_SUPPLIER": "Dobavljač",
+    "SEED_PRODUCER": "Proizvođač semena",
+    "ADMIN": "Admin",
+    "SUPER_ADMIN": "Admin",
+    "DRIVER": "Vozač",
+    "COORDINATOR": "Koordinator",
+    "COMMERCIAL_AGENT": "Komercijalni agent",
+    "PARTNER": "Partner"
+  },
+  "fieldEntryType": {
+    "SETVA": "Setva",
+    "PRSKANJE": "Prskanje",
+    "BERBA": "Berba",
+    "OBRADA": "Obrada",
+    "DJUBRENJE": "Đubrenje",
+    "OTHER": "Ostalo"
+  },
+  "qualityGrade": {
+    "FRESH": "Sveže / u redu",
+    "DAMAGED": "Oštećeno"
+  },
+  "marketChannel": {
+    "MARKETPLACE": "Tržište",
+    "DIRECT": "Direktno",
+    "RESERVATION": "Rezervacija"
+  },
+  "nouns": {
+    "estate": "Gazdinstvo",
+    "parcel": "Parcela",
+    "lot": "Lot",
+    "batch": "Serija",
+    "planting": "Zasad",
+    "harvestPlan": "Plan berbe",
+    "mission": "Misija",
+    "run": "Vožnja",
+    "delivery": "Isporuka",
+    "receivingCode": "Kod prijema",
+    "handover": "Predaja",
+    "marketplace": "Tržište",
+    "catalogue": "Katalog",
+    "fieldDiary": "Poljski dnevnik"
+  }
+}

@@ -11,3 +11,4 @@ export * from './buyer';
 export * from './catalog';
 export * from './notifications';
 export * from './other';
+export * from './users';

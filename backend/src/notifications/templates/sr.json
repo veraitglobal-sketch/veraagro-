@@ -1,0 +1,34 @@
+{
+  "buyer.accountApproved": {
+    "title": "Kupčev nalog aktivan",
+    "message": "Vaš Bio Vera kupčev nalog je odobren. Možete se prijaviti i naručivati."
+  },
+  "buyer.orderApproved": {
+    "title": "Porudžbina prihvaćena",
+    "message": "Porudžbina {{orderNumber}} je prihvaćena. Uputstva za plaćanje su u detaljima porudžbine."
+  },
+  "buyer.orderRejected": {
+    "title": "Porudžbina odbijena",
+    "message": "Porudžbina {{orderNumber}} nije prihvaćena. Razlog: {{reason}}"
+  },
+  "delivery.assigned": {
+    "title": "Nova isporuka",
+    "message": "Isporuka {{deliveryNumber}} je dodeljena vašem nalogu."
+  },
+  "delivery.driverNearby": {
+    "title": "Vozač stiže",
+    "message": "Isporuka {{deliveryNumber}} se približava destinaciji."
+  },
+  "payment.released": {
+    "title": "Uplata oslobođena",
+    "message": "Escrow za porudžbinu {{orderNumber}} je oslobođen."
+  },
+  "batch.arrived": {
+    "title": "Serija stigla",
+    "message": "Serija {{batchId}} je stigla u distribucioni centar."
+  },
+  "buyer.registrationPending": {
+    "title": "Registracija primljena",
+    "message": "Hvala na registraciji. Bio Vera će uskoro pregledati vaš kupčev nalog."
+  }
+}

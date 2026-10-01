@@ -10,6 +10,7 @@ import { pickFromCamera } from '../../../lib/camera-picker';
 import { apiErrorMessage } from '../../../lib/api-error';
 import { EnterpriseButton } from '../../../design-system/EnterpriseButton';
 import { useAppLocaleTag } from '../../../lib/date-locale';
+import { deliveryStatusLabel } from '../../../../shared/i18n/labels';
 
 const BEFORE_HANDOVER = new Set(['ASSIGNED', 'PICKED_UP', 'IN_TRANSIT']);
 
@@ -108,7 +109,7 @@ export function BuyerDeliveryPanel({ orderId, deliveryId, onChanged }: { orderId
     {!fresh && delivery ? <Text>{t('buyerOrderActions.stale')}</Text> : null}
     <EnterpriseButton label={t('deliveryFlow.refresh')} onPress={() => void load()} disabled={busy} variant="secondary" />
     {!delivery ? <Text>{error ? '' : t('deliveryFlow.notAssigned')}</Text> : <>
-      <Text>{delivery.deliveryNumber} · {t(`buyerDeliveryStatus.${delivery.status}`, { defaultValue: t('buyer.orders.statuses.UNKNOWN') })}</Text>
+      <Text>{delivery.deliveryNumber} · {deliveryStatusLabel(t, delivery.status, 'buyer')}</Text>
       {delivery.returnCase ? <View style={{ gap: 8 }}>
         <Text>{t('returnFlow.title')}: {t(`returnFlow.states.${delivery.returnCase.status}`)}</Text>
         {delivery.returnCase.status === 'RECEIVED' && delivery.returnCase.stockStatus ? <Text>{t('returnDisposition.title')}: {t(`returnDisposition.states.${delivery.returnCase.stockStatus}`)}</Text> : null}

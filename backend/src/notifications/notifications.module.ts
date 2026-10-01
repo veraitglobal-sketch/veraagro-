@@ -3,6 +3,7 @@ import { NotificationsService } from './notifications.service';
 import { NotificationsController } from './notifications.controller';
 import { NotificationsGateway } from './notifications.gateway';
 import { PushNotificationService } from './push-notification.service';
+import { NotificationTemplateService } from './notification-template.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
 
@@ -14,8 +15,8 @@ import { JwtModule } from '@nestjs/jwt';
       signOptions: { expiresIn: '7d' },
     }),
   ],
-  providers: [NotificationsService, NotificationsGateway, PushNotificationService],
+  providers: [NotificationsService, NotificationsGateway, PushNotificationService, NotificationTemplateService],
   controllers: [NotificationsController],
-  exports: [NotificationsService, NotificationsGateway, PushNotificationService],
+  exports: [NotificationsService, NotificationsGateway, PushNotificationService, NotificationTemplateService],
 })
 export class NotificationsModule {}
