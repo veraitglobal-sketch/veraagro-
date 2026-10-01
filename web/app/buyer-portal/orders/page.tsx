@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PRE_ORDER_SEASON } from '@biovera/shared/preorder';
 import { BuyerOrderStock, orderStockIsReady } from '@/components/orders/BuyerOrderStock';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
@@ -150,15 +151,15 @@ export default function OrdersPage() {
           {/* Pre-orders & Direct orders */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Link
-              href="/pre-order-2026"
+              href="/pre-order"
               className="flex items-center gap-4 p-4 rounded-lg border border-[#2D5A27]/30 bg-[#2D5A27]/10 hover:bg-[#2D5A27]/10 hover:border-[#2D5A27]/40 transition-colors"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#2D5A27]/10">
                 <FileText className="h-6 w-6 text-[#2D5A27]" strokeWidth={1.5} />
               </div>
               <div>
-                <p className="font-medium text-gray-900">Pre-order 2026</p>
-                <p className="text-sm text-gray-600 font-light">Plan quantities for the 2026 season</p>
+                <p className="font-medium text-gray-900">{t('buyerPortalNav.preOrder2026', { year: PRE_ORDER_SEASON })}</p>
+                <p className="text-sm text-gray-600 font-light">{t('buyerPortalNav.preOrderSubtitle', { year: PRE_ORDER_SEASON })}</p>
               </div>
             </Link>
             <Link

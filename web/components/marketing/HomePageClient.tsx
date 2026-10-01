@@ -1,5 +1,6 @@
 'use client';
 
+import { PRE_ORDER_SEASON } from '@biovera/shared/preorder';
 import Link from 'next/link';
 import { useCallback, useLayoutEffect, useMemo, useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -78,7 +79,7 @@ export default function HomePageClient({
   const heroSubtitle = localeSynced ? t('home.hero.subtitle') : (initialHero?.subtitle ?? t('home.hero.subtitle'));
   const heroBrowseProducts = localeSynced ? t('home.hero.browseProducts') : (initialHero?.browseProducts ?? t('home.hero.browseProducts'));
   const heroBecomeProducer = localeSynced ? t('home.hero.becomeProducer') : (initialHero?.becomeProducer ?? t('home.hero.becomeProducer'));
-  const heroPreOrder = localeSynced ? t('home.hero.preOrder') : (initialHero?.preOrder ?? t('home.hero.preOrder'));
+  const heroPreOrder = localeSynced ? t('home.hero.preOrder', { year: PRE_ORDER_SEASON }) : (initialHero?.preOrder ?? t('home.hero.preOrder', { year: PRE_ORDER_SEASON }));
   const heroPreOrderAria = localeSynced ? t('home.hero.preOrderAria') : (initialHero?.preOrderAria ?? t('home.hero.preOrderAria'));
   const titleFallback = t('home.hero.title');
   const heroUsesSplitTitle =
@@ -149,7 +150,7 @@ export default function HomePageClient({
             </div>
             <div ref={preOrderRef} className="relative mt-10 flex items-center justify-center gap-2">
               <Link
-                href={`${loc('/login')}?returnTo=${encodeURIComponent('/pre-order-2026')}`}
+                href={`${loc('/login')}?returnTo=${encodeURIComponent('/pre-order')}`}
                 className="text-sm font-light text-gray-500 hover:text-[#2D5A27] transition-colors"
               >
                 {heroPreOrder}
@@ -170,7 +171,7 @@ export default function HomePageClient({
                 >
                   <p className="leading-relaxed">{t('home.hero.preOrderTip1')}</p>
                   <p className="mt-2 pt-2 border-t border-gray-100 text-gray-500 text-xs leading-relaxed">
-                    {t('home.hero.preOrderTip2')}
+                    {t('home.hero.preOrderTip2', { year: PRE_ORDER_SEASON })}
                   </p>
                 </motion.div>
               )}

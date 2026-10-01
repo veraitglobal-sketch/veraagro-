@@ -2673,4 +2673,27 @@ export const seedProducerAPI = {
   },
 };
 
+/** Season pre-orders (planning quantities) — stored in `pre_orders`, admins notified. */
+export const preOrdersAPI = {
+  config: async (): Promise<{ season: number; open: boolean }> => (await api.get('/pre-orders/config')).data,
+  create: async (body: {
+    season: number;
+    companyName: string;
+    contactPerson: string;
+    email: string;
+    phone?: string;
+    lines: Array<{ productId: string; varietyId?: string; label: string; quantityKg: number }>;
+    deliveryFrom?: string;
+    deliveryTo?: string;
+    quality?: string;
+    packaging?: string;
+    notes?: string;
+  }) => (await api.post('/pre-orders', body)).data,
+  listMine: async () => (await api.get('/pre-orders/my')).data,
+  listAdmin: async (params?: { season?: number; status?: string }) =>
+    (await api.get('/pre-orders/admin', { params })).data,
+  updateStatus: async (id: string, body: { status: string; adminNote?: string }) =>
+    (await api.patch(`/pre-orders/admin/${encodeURIComponent(id)}`, body)).data,
+};
+
 export default api;

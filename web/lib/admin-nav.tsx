@@ -66,6 +66,7 @@ export function buildAdminNavItems(t: TFunction) {
     { href: '/admin/dispatch', label: t('dispatchFlow.title'), icon: <Package className="w-5 h-5" /> },
     { href: '/admin/delivery-issues', label: t('deliveryReview.title'), icon: <AlertTriangle className="w-5 h-5" /> },
     { href: '/admin/orders', label: t('adminNav.orders'), icon: <ShoppingCart className="w-5 h-5" /> },
+    { href: '/admin/pre-orders', label: t('adminNav.preOrders'), icon: <ShoppingCart className="w-5 h-5" /> },
     { href: '/admin/finance-overview', label: t('adminNav.financeOverview'), icon: <PieChart className="w-5 h-5" /> },
     { href: '/admin/operations', label: t('adminNav.supplySnapshot'), icon: <Layers className="w-5 h-5" /> },
     { href: '/admin/missions', label: t('adminNav.missions'), icon: <Activity className="w-5 h-5" /> },

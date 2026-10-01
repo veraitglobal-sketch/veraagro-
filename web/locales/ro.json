@@ -1669,7 +1669,8 @@
     "goBatchesPlatform": "Loturi (online)",
     "supply": "Supply overview",
     "seedProduction": "Seed production",
-    "goGrowerControl": "Grower control"
+    "goGrowerControl": "Grower control",
+    "preOrders": "Precomenzi"
   },
   "adminPages": {
     "titles": {
@@ -2392,14 +2393,15 @@
   "buyerPortalNav": {
     "dashboard": "Dashboard",
     "orders": "Comenzi",
-    "preOrder2026": "Precomandă 2026",
+    "preOrder2026": "Precomandă {{year}}",
     "directOrders": "Comenzi directe",
     "invoices": "Facturi",
     "deliveries": "Livrări",
     "analytics": "Analytics",
     "companyProfile": "Profilul Companiei",
     "marketplace": "Marketplace",
-    "veraStandard": "Bio Vera Standard"
+    "veraStandard": "Bio Vera Standard",
+    "preOrderSubtitle": "Planificați cantitățile pentru sezonul {{year}}"
   },
   "logisticsPartnerNav": {
     "dashboard": "Dashboard",
@@ -3415,10 +3417,10 @@
       "subtitle": "Bio Vera este o companie agroalimentară integrată vertical, cu sediul în Hamburg. Prin programul nostru propriu contractăm producători, asigurăm controlul calității și ambalarea, gestionăm lanțul frigorific și livrăm fructe și legume proaspete direct clienților finali. Fiecare lot are un pașaport digital documentat — de la parcelă până la raft.",
       "browseProducts": "Răsfoiți produse",
       "becomeProducer": "Deveniți producător",
-      "preOrder": "Precomenzile pentru 2026 sunt deschise",
+      "preOrder": "Precomenzile pentru {{year}} sunt deschise",
       "preOrderAria": "Informații despre precomandă",
       "preOrderTip1": "Produsele Vera sunt trimise proaspete pentru livrare. Pe lângă controlul calității, ne străduim să îndeplinim așteptările clienților la fiecare pas.",
-      "preOrderTip2": "Precomanda este doar pentru planificarea cantităților pentru 2026; nu este un ordin obligatoriu."
+      "preOrderTip2": "Precomanda servește doar la planificarea cantităților pentru {{year}}; nu este o comandă fermă."
     },
     "statLabels": [
       "Trasabilitate",
@@ -3594,7 +3596,7 @@
     "linkHowWeOperate": "Cum operăm",
     "linkExpressInterest": "Exprimați-vă interesul",
     "placeOrder": "Plasați comanda",
-    "preOrder2026": "Precomandă 2026",
+    "preOrder2026": "Precomandă {{year}}",
     "purchasesTitle": "Cum funcționează achizițiile",
     "purchasesLead": "De la înregistrare până la livrare: un proces simplu, transparent.",
     "purchasesSteps": [
@@ -3604,7 +3606,7 @@
       },
       {
         "title": "Răsfoiți și comandați",
-        "body": "În tabloul de bord puteți naviga în funcție de categorie (fructe, legume, cereale, altele), puteți vedea originea, informațiile despre recoltă și prețurile. Plasați comenzi directe sau utilizați Precomandă 2026 pentru planificarea sezonieră."
+        "body": "Filtrați după categorie — fructe, legume, cereale. Vedeți originea, perioada de recoltare și prețurile. Comandați direct sau folosiți precomanda {{year}} pentru planificarea sezonului."
       },
       {
         "title": "Confirmați și plătiți",
@@ -3623,7 +3625,7 @@
       "Cereale",
       "Alte"
     ],
-    "productsNote": "Conectați-vă la tabloul de bord pentru cumpărători pentru a vedea catalogul complet, pentru a plasa comenzi sau pentru a trimite o precomandă pentru 2026.",
+    "productsNote": "Autentificați-vă în panoul de cumpărător pentru a vedea catalogul complet, a plasa comenzi sau a trimite o precomandă pentru {{year}}.",
     "harvestCalendarTitle": "Calendarul recoltei",
     "packagingTitle": "Ambalare",
     "packagingLead": "Folosim ambalaje standardizate, trasabile, care îndeplinesc cerințele privind siguranța alimentară și calitatea.",
@@ -6128,5 +6130,20 @@
     "goLogin": "Go to sign in",
     "errCodeFormat": "Enter the 4-digit code from your email.",
     "errFailed": "Verification failed. Check the code and try again."
+  },
+  "adminPreOrders": {
+    "title": "Precomenzi {{year}}",
+    "summary": "Precomenzi: {{count}} · {{kg}} kg în total",
+    "allStatuses": "Toate statusurile",
+    "empty": "Nu există încă precomenzi.",
+    "loadFailed": "Precomenzile nu au putut fi încărcate.",
+    "saveFailed": "Statusul nu a putut fi salvat.",
+    "details": "Livrare {{from}} → {{to}} · Calitate: {{quality}} · Ambalare: {{packaging}}",
+    "status": {
+      "NEW": "Nouă",
+      "REVIEWED": "Analizată",
+      "CONFIRMED": "Confirmată",
+      "DECLINED": "Respinsă"
+    }
   }
 }

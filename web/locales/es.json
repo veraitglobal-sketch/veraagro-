@@ -1669,7 +1669,8 @@
     "goBatchesPlatform": "Lotes (en línea)",
     "supply": "Supply overview",
     "seedProduction": "Seed production",
-    "goGrowerControl": "Grower control"
+    "goGrowerControl": "Grower control",
+    "preOrders": "Reservas anticipadas"
   },
   "adminPages": {
     "titles": {
@@ -2392,14 +2393,15 @@
   "buyerPortalNav": {
     "dashboard": "Panel",
     "orders": "Órdenes",
-    "preOrder2026": "Reserva 2026",
+    "preOrder2026": "Reserva anticipada {{year}}",
     "directOrders": "Pedidos directos",
     "invoices": "Facturas",
     "deliveries": "Entregas",
     "analytics": "Analítica",
     "companyProfile": "Perfil de la empresa",
     "marketplace": "Marketplace",
-    "veraStandard": "Bio Vera Standard"
+    "veraStandard": "Bio Vera Standard",
+    "preOrderSubtitle": "Planifique cantidades para la temporada {{year}}"
   },
   "logisticsPartnerNav": {
     "dashboard": "Panel",
@@ -3415,10 +3417,10 @@
       "subtitle": "Bio Vera es una empresa agroalimentaria verticalmente integrada con sede en Hamburgo. A través de nuestro propio programa, trabajamos con productores bajo contrato, nos encargamos del control de calidad y del envasado, gestionamos la cadena de frío y llevamos fruta y verdura fresca hasta el cliente final. Cada lote cuenta con un pasaporte digital documentado: del campo al lineal.",
       "browseProducts": "Explorar productos",
       "becomeProducer": "Conviértete en productor",
-      "preOrder": "El pedido anticipado para 2026 está abierto",
+      "preOrder": "La reserva anticipada para {{year}} está abierta",
       "preOrderAria": "Información de reserva",
       "preOrderTip1": "Los productos Vera se envían frescos para su entrega. Además del control de calidad, nos esforzamos por satisfacer las expectativas del cliente en cada paso.",
-      "preOrderTip2": "El pedido anticipado es únicamente para planificar cantidades para 2026; no es una orden vinculante."
+      "preOrderTip2": "La reserva anticipada sirve solo para planificar las cantidades de {{year}}; no es un pedido vinculante."
     },
     "statLabels": [
       "Trazabilidad",
@@ -3594,7 +3596,7 @@
     "linkHowWeOperate": "Cómo operamos",
     "linkExpressInterest": "Expresa tu interés",
     "placeOrder": "Realizar pedido",
-    "preOrder2026": "Reserva 2026",
+    "preOrder2026": "Reserva anticipada {{year}}",
     "purchasesTitle": "Cómo funcionan las compras",
     "purchasesLead": "Desde el registro hasta la entrega: un proceso sencillo y transparente.",
     "purchasesSteps": [
@@ -3604,7 +3606,7 @@
       },
       {
         "title": "Navega y ordena",
-        "body": "En el panel puede buscar por categoría (frutas, verduras, cereales, otros), ver origen, información de cosecha y precios. Realice pedidos directos o utilice Reserva 2026 para la planificación estacional."
+        "body": "Filtre por categoría: fruta, verdura, cereales. Consulte origen, ventana de cosecha y precios. Haga pedidos directos o use la reserva anticipada {{year}} para planificar la temporada."
       },
       {
         "title": "Confirmar y pagar",
@@ -3623,7 +3625,7 @@
       "Cereales",
       "Otro"
     ],
-    "productsNote": "Inicie sesión en su panel de comprador para ver el catálogo completo, realizar pedidos o enviar un pedido anticipado para 2026.",
+    "productsNote": "Inicie sesión en su panel de comprador para ver el catálogo completo, hacer pedidos o enviar una reserva anticipada para {{year}}.",
     "harvestCalendarTitle": "Calendario de cosecha",
     "packagingTitle": "Embalaje",
     "packagingLead": "Utilizamos envases estandarizados y trazables que cumplen con los requisitos de calidad y seguridad alimentaria.",
@@ -6128,5 +6130,20 @@
     "goLogin": "Go to sign in",
     "errCodeFormat": "Enter the 4-digit code from your email.",
     "errFailed": "Verification failed. Check the code and try again."
+  },
+  "adminPreOrders": {
+    "title": "Reservas anticipadas {{year}}",
+    "summary": "Reservas: {{count}} · {{kg}} kg en total",
+    "allStatuses": "Todos los estados",
+    "empty": "Todavía no hay reservas anticipadas.",
+    "loadFailed": "No se pudieron cargar las reservas anticipadas.",
+    "saveFailed": "No se pudo guardar el estado.",
+    "details": "Entrega {{from}} → {{to}} · Calidad: {{quality}} · Envasado: {{packaging}}",
+    "status": {
+      "NEW": "Nueva",
+      "REVIEWED": "Revisada",
+      "CONFIRMED": "Confirmada",
+      "DECLINED": "Rechazada"
+    }
   }
 }

@@ -1793,7 +1793,8 @@
     "goEstates": "Estates & setup",
     "goHarvestPlans": "Harvest plans",
     "goHaccp": "HACCP / field",
-    "goBatchesPlatform": "Batches (online)"
+    "goBatchesPlatform": "Batches (online)",
+    "preOrders": "Pre-orders"
   },
   "seedProduction": {
     "title": "Seed production",
@@ -2844,13 +2845,14 @@
     "marketplace": "Marketplace",
     "dashboard": "Dashboard",
     "orders": "Orders",
-    "preOrder2026": "Pre-order 2026",
+    "preOrder2026": "Pre-order {{year}}",
     "directOrders": "Direct orders",
     "invoices": "Invoices",
     "deliveries": "Deliveries",
     "analytics": "Analytics",
     "companyProfile": "Company profile",
-    "veraStandard": "Bio Vera Standard"
+    "veraStandard": "Bio Vera Standard",
+    "preOrderSubtitle": "Plan quantities for the {{year}} season"
   },
   "logisticsPartnerNav": {
     "dashboard": "Dashboard",
@@ -4163,10 +4165,10 @@
       "subtitle": "Bio Vera is a vertically integrated agrifood company headquartered in Hamburg. Through our own programme, we contract growers, run quality control and packing, manage the cold chain and bring fresh fruit and vegetables to end customers. Every batch carries a documented digital passport — from field to shelf.",
       "browseProducts": "Browse our products",
       "becomeProducer": "Become a Vera grower",
-      "preOrder": "Pre-order for 2026 is open",
+      "preOrder": "Pre-order for {{year}} is open",
       "preOrderAria": "Pre-order info",
       "preOrderTip1": "Vera products are sent fresh for delivery. Besides quality control, we strive to meet customer expectations at every step.",
-      "preOrderTip2": "Pre-order is for planning 2026 quantities only; it is not a binding order."
+      "preOrderTip2": "Pre-orders are for planning {{year}} quantities only; they are not a binding order."
     },
     "statLabels": [
       "Traceability",
@@ -4336,7 +4338,7 @@
     "linkHowWeOperate": "How we operate",
     "linkExpressInterest": "Express your interest",
     "placeOrder": "Place order",
-    "preOrder2026": "Pre-order 2026",
+    "preOrder2026": "Pre-order {{year}}",
     "purchasesTitle": "How Purchases Work",
     "purchasesLead": "",
     "purchasesSteps": [
@@ -4346,7 +4348,7 @@
       },
       {
         "title": "Browse and Order",
-        "body": "Filter by category — fruit, vegetables, cereals. View origin, harvest window and pricing. Place direct orders or use Pre-order 2026 for seasonal planning."
+        "body": "Filter by category — fruit, vegetables, cereals. View origin, harvest window and pricing. Place direct orders or use the {{year}} pre-order for seasonal planning."
       },
       {
         "title": "Confirm and Pay",
@@ -4364,7 +4366,7 @@
       "Vegetables",
       "Cereals"
     ],
-    "productsNote": "Log in to your buyer dashboard to see the full catalog, place orders, or submit a pre-order for 2026.",
+    "productsNote": "Log in to your buyer dashboard to see the full catalogue, place orders or submit a pre-order for {{year}}.",
     "harvestCalendarTitle": "Harvest calendar",
     "harvestCalendarLead": "",
     "packagingTitle": "Packaging",
@@ -6083,5 +6085,20 @@
     "manualCode": "Code (if scanning fails)",
     "handoverStartedHint": "The driver is at your dock. Check the goods, add photos and sign to receive the shipment.",
     "completeReceipt": "Complete receipt (photos + signature)"
+  },
+  "adminPreOrders": {
+    "title": "Pre-orders {{year}}",
+    "summary": "{{count}} pre-orders · {{kg}} kg in total",
+    "allStatuses": "All statuses",
+    "empty": "No pre-orders yet.",
+    "loadFailed": "Pre-orders could not be loaded.",
+    "saveFailed": "Status could not be saved.",
+    "details": "Delivery {{from}} → {{to}} · Quality: {{quality}} · Packaging: {{packaging}}",
+    "status": {
+      "NEW": "New",
+      "REVIEWED": "Reviewed",
+      "CONFIRMED": "Confirmed",
+      "DECLINED": "Declined"
+    }
   }
 }

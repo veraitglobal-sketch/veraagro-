@@ -1669,7 +1669,8 @@
     "goBatchesPlatform": "Chargen (online)",
     "supply": "Supply overview",
     "seedProduction": "Seed production",
-    "goGrowerControl": "Grower control"
+    "goGrowerControl": "Grower control",
+    "preOrders": "Vorbestellungen"
   },
   "adminPages": {
     "titles": {
@@ -2392,14 +2393,15 @@
   "buyerPortalNav": {
     "dashboard": "Dashboard",
     "orders": "Bestellungen",
-    "preOrder2026": "Vorbestellung 2026",
+    "preOrder2026": "Vorbestellung {{year}}",
     "directOrders": "Direkte Bestellungen",
     "invoices": "Rechnungen",
     "deliveries": "Lieferungen",
     "analytics": "Analytik",
     "companyProfile": "Unternehmensprofil",
     "marketplace": "Marketplace",
-    "veraStandard": "Bio Vera Standard"
+    "veraStandard": "Bio Vera Standard",
+    "preOrderSubtitle": "Mengen für die Saison {{year}} planen"
   },
   "logisticsPartnerNav": {
     "dashboard": "Dashboard",
@@ -3415,10 +3417,10 @@
       "subtitle": "Bio Vera ist ein vertikal integriertes Agrifood-Unternehmen mit Sitz in Hamburg. In unserem eigenen Programm arbeiten wir mit Vertragserzeugern, übernehmen Qualitätskontrolle und Verpackung, steuern die Kühlkette und bringen frisches Obst und Gemüse zu unseren Kunden. Jede Charge hat einen lückenlos dokumentierten digitalen Produktpass — vom Feld bis ins Regal.",
       "browseProducts": "Produkte durchsuchen",
       "becomeProducer": "Werden Sie Vera-Erzeuger",
-      "preOrder": "Die Vorbestellung für 2027 ist geöffnet",
+      "preOrder": "Die Vorbestellung für {{year}} ist geöffnet",
       "preOrderAria": "Informationen zur Vorbestellung",
       "preOrderTip1": "Vera-Produkte werden frisch zur Lieferung verschickt. Neben der Qualitätskontrolle sind wir bestrebt, die Erwartungen unserer Kunden in jedem Schritt zu erfüllen.",
-      "preOrderTip2": "Die Vorbestellung gilt nur für geplante Mengen im Jahr 2027; es handelt sich nicht um eine verbindliche Bestellung."
+      "preOrderTip2": "Die Vorbestellung dient nur der Mengenplanung für {{year}}; sie ist keine verbindliche Bestellung."
     },
     "statLabels": [
       "Rückverfolgbarkeit",
@@ -3588,7 +3590,7 @@
     "linkHowWeOperate": "Wie wir arbeiten",
     "linkExpressInterest": "Anfrage stellen",
     "placeOrder": "Bestellung aufgeben",
-    "preOrder2026": "Vorbestellung 2026",
+    "preOrder2026": "Vorbestellung {{year}}",
     "purchasesTitle": "Beschaffungsprozess",
     "purchasesLead": "",
     "purchasesSteps": [
@@ -3598,7 +3600,7 @@
       },
       {
         "title": "Sortiment und Bestellung",
-        "body": "Filtern nach Kategorie — Obst, Gemüse, Getreide. Herkunft, Erntefenster und Preise einsehen. Direktbestellung oder Vorbestellung für die nächste Saison."
+        "body": "Nach Kategorie filtern — Obst, Gemüse, Getreide. Herkunft, Erntefenster und Preise ansehen. Direkt bestellen oder die Vorbestellung {{year}} für die Saisonplanung nutzen."
       },
       {
         "title": "Bestätigung und Zahlung",
@@ -3616,7 +3618,7 @@
       "Gemüse",
       "Getreide"
     ],
-    "productsNote": "",
+    "productsNote": "Melden Sie sich im Käuferbereich an, um den vollständigen Katalog zu sehen, zu bestellen oder eine Vorbestellung für {{year}} abzugeben.",
     "harvestCalendarTitle": "Erntekalender",
     "harvestCalendarLead": "Saisonale Verfügbarkeit nach Produkt. Unsere Ware reist frisch, ohne Tiefkühlung — Geschmack und Textur wie vom Feld.",
     "packagingTitle": "",
@@ -5831,5 +5833,20 @@
     "goLogin": "Go to sign in",
     "errCodeFormat": "Enter the 4-digit code from your email.",
     "errFailed": "Verification failed. Check the code and try again."
+  },
+  "adminPreOrders": {
+    "title": "Vorbestellungen {{year}}",
+    "summary": "Vorbestellungen: {{count}} · insgesamt {{kg}} kg",
+    "allStatuses": "Alle Status",
+    "empty": "Noch keine Vorbestellungen.",
+    "loadFailed": "Vorbestellungen konnten nicht geladen werden.",
+    "saveFailed": "Status konnte nicht gespeichert werden.",
+    "details": "Lieferung {{from}} → {{to}} · Qualität: {{quality}} · Verpackung: {{packaging}}",
+    "status": {
+      "NEW": "Neu",
+      "REVIEWED": "Geprüft",
+      "CONFIRMED": "Bestätigt",
+      "DECLINED": "Abgelehnt"
+    }
   }
 }

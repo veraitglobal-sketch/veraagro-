@@ -59,6 +59,7 @@ export const LOCALE_FREE_FIRST_SEGMENTS = new Set([
   "certificate",
   "transparency",
   "missions",
+  "pre-order",
   "pre-order-2026",
   "hub-manager",
   "aeo-dashboard",

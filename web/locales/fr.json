@@ -1669,7 +1669,8 @@
     "goBatchesPlatform": "Lots (en ligne)",
     "supply": "Supply overview",
     "seedProduction": "Seed production",
-    "goGrowerControl": "Grower control"
+    "goGrowerControl": "Grower control",
+    "preOrders": "Précommandes"
   },
   "adminPages": {
     "titles": {
@@ -2392,14 +2393,15 @@
   "buyerPortalNav": {
     "dashboard": "Tableau de bord",
     "orders": "Ordres",
-    "preOrder2026": "Précommande 2026",
+    "preOrder2026": "Précommande {{year}}",
     "directOrders": "Commandes directes",
     "invoices": "Factures",
     "deliveries": "Livraisons",
     "analytics": "Analytique",
     "companyProfile": "Profil de l'entreprise",
     "marketplace": "Marketplace",
-    "veraStandard": "Bio Vera Standard"
+    "veraStandard": "Bio Vera Standard",
+    "preOrderSubtitle": "Planifiez les quantités pour la saison {{year}}"
   },
   "logisticsPartnerNav": {
     "dashboard": "Tableau de bord",
@@ -3415,10 +3417,10 @@
       "subtitle": "Bio Vera est une entreprise agroalimentaire intégrée verticalement, basée à Hambourg. Dans le cadre de notre propre programme, nous travaillons avec des producteurs sous contrat, assurons le contrôle qualité et le conditionnement, pilotons la chaîne du froid et livrons des fruits et légumes frais jusqu’au client final. Chaque lot dispose d’un passeport numérique documenté — du champ au rayon.",
       "browseProducts": "Parcourir les produits",
       "becomeProducer": "Devenez producteur",
-      "preOrder": "Les précommandes pour 2026 sont ouvertes",
+      "preOrder": "Les précommandes pour {{year}} sont ouvertes",
       "preOrderAria": "Informations sur la précommande",
       "preOrderTip1": "Les produits Vera sont envoyés frais pour la livraison. Outre le contrôle qualité, nous nous efforçons de répondre aux attentes des clients à chaque étape.",
-      "preOrderTip2": "La précommande concerne uniquement la planification de quantités de 2026 ; ce n’est pas une ordonnance contraignante."
+      "preOrderTip2": "La précommande sert uniquement à planifier les quantités pour {{year}} ; ce n’est pas une commande ferme."
     },
     "statLabels": [
       "Traçabilité",
@@ -3594,7 +3596,7 @@
     "linkHowWeOperate": "Comment nous opérons",
     "linkExpressInterest": "Exprimez votre intérêt",
     "placeOrder": "Passer la commande",
-    "preOrder2026": "Précommande 2026",
+    "preOrder2026": "Précommande {{year}}",
     "purchasesTitle": "Comment fonctionnent les achats",
     "purchasesLead": "De l'inscription à la livraison : un processus simple et transparent.",
     "purchasesSteps": [
@@ -3604,7 +3606,7 @@
       },
       {
         "title": "Parcourir et commander",
-        "body": "Dans le tableau de bord, vous pouvez parcourir par catégorie (fruits, légumes, céréales, autres), voir l'origine, les informations sur la récolte et les prix. Passez des commandes directes ou utilisez la précommande 2026 pour la planification saisonnière."
+        "body": "Filtrez par catégorie — fruits, légumes, céréales. Consultez l’origine, la période de récolte et les prix. Commandez directement ou utilisez la précommande {{year}} pour planifier la saison."
       },
       {
         "title": "Confirmer et payer",
@@ -3623,7 +3625,7 @@
       "Céréales",
       "Autre"
     ],
-    "productsNote": "Connectez-vous à votre tableau de bord acheteur pour voir le catalogue complet, passer des commandes ou soumettre une précommande pour 2026.",
+    "productsNote": "Connectez-vous à votre espace acheteur pour voir le catalogue complet, passer commande ou envoyer une précommande pour {{year}}.",
     "harvestCalendarTitle": "Calendrier des récoltes",
     "packagingTitle": "Conditionnement",
     "packagingLead": "Nous utilisons des emballages standardisés et traçables qui répondent aux exigences de sécurité alimentaire et de qualité.",
@@ -6128,5 +6130,20 @@
     "goLogin": "Go to sign in",
     "errCodeFormat": "Enter the 4-digit code from your email.",
     "errFailed": "Verification failed. Check the code and try again."
+  },
+  "adminPreOrders": {
+    "title": "Précommandes {{year}}",
+    "summary": "Précommandes : {{count}} · {{kg}} kg au total",
+    "allStatuses": "Tous les statuts",
+    "empty": "Aucune précommande pour l’instant.",
+    "loadFailed": "Impossible de charger les précommandes.",
+    "saveFailed": "Impossible d’enregistrer le statut.",
+    "details": "Livraison {{from}} → {{to}} · Qualité : {{quality}} · Conditionnement : {{packaging}}",
+    "status": {
+      "NEW": "Nouvelle",
+      "REVIEWED": "Examinée",
+      "CONFIRMED": "Confirmée",
+      "DECLINED": "Refusée"
+    }
   }
 }
