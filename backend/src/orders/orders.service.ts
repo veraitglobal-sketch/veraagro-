@@ -20,6 +20,11 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { resolveOrderPrice } from './order-pricing';
 import { enrichOrdersWithCatalogReserve } from './order-catalog-enrich';
 
+/** Statuses in which a grower may record packing (matches GET /orders/grower?queue=prepare). */
+export const GROWER_PACKABLE_ORDER_STATUSES: OrderStatus[] = ['PAID', 'CONFIRMED'];
+/** Allowed deviation of the packed net weight from packs × pack size. */
+export const PACKED_WEIGHT_TOLERANCE = 0.05;
+
 function orderPackLine(order: {
   packCount?: number | null;
   packLabel?: string | null;
@@ -392,7 +397,7 @@ export class OrdersService {
         ...(prepareQueue
           ? {
               catalogProductId: { not: null },
-              status: { in: ['PAID', 'CONFIRMED'] },
+              status: { in: GROWER_PACKABLE_ORDER_STATUSES },
             }
           : {}),
       },
@@ -461,23 +466,49 @@ export class OrdersService {
     }
     const order = await this.prisma.orders.findFirst({
       where: { id: orderId, fulfilling_estate: { ownerId: growerId } },
-      include: { users: { select: { id: true } } },
+      include: {
+        missions: {
+          where: { status: { not: 'CANCELLED' } },
+          select: { status: true },
+        },
+      },
     });
     if (!order) throw new NotFoundException('Order not found');
     if (!order.catalogProductId) {
       throw new BadRequestException('Packing records apply to catalogue orders only');
+    }
+    // Same set as the "orders to prepare" queue: nothing is packed before payment is confirmed.
+    if (!GROWER_PACKABLE_ORDER_STATUSES.includes(order.status)) {
+      throw new BadRequestException(
+        order.status === 'PENDING' || order.status === 'APPROVED'
+          ? 'This order is not paid yet — prepare it after payment is confirmed.'
+          : `Packing can no longer be changed for an order with status ${order.status}.`,
+      );
+    }
+    const departed = order.missions.some((m) =>
+      ['PICKED_UP', 'IN_TRANSIT', 'DELIVERED', 'COMPLETED'].includes(m.status),
+    );
+    if (departed) {
+      throw new BadRequestException('The goods have already left the farm — packing can no longer be changed.');
     }
     if (order.packCount != null && packedPackCount > order.packCount) {
       throw new BadRequestException(
         `Packed quantity exceeds ordered packs (${order.packCount} max)`,
       );
     }
-    const packedKg =
-      body.packedKg != null
-        ? Number(body.packedKg)
-        : order.packSizeKg != null
-          ? packedPackCount * order.packSizeKg
-          : null;
+    const expectedKg = order.packSizeKg != null ? packedPackCount * order.packSizeKg : null;
+    let packedKg: number | null = expectedKg;
+    if (body.packedKg != null) {
+      packedKg = Number(body.packedKg);
+      if (
+        expectedKg != null &&
+        Math.abs(packedKg - expectedKg) > expectedKg * PACKED_WEIGHT_TOLERANCE + 1e-9
+      ) {
+        throw new BadRequestException(
+          `Packed weight must be within ±5 % of ${expectedKg} kg (${packedPackCount} × ${order.packSizeKg} kg).`,
+        );
+      }
+    }
     const wasPacked = Boolean(order.packedAt);
     const updated = await this.prisma.orders.update({
       where: { id: orderId },
@@ -496,7 +527,7 @@ export class OrdersService {
           templateKey: 'buyer.orderPacked',
           templateParams: {
             orderNumber: order.orderNumber,
-            packLine: orderPackLine(order),
+            packLine: orderPackLine(order) || `${order.quantity} ${order.unit}`,
           },
           actionUrl: `/buyer-portal/orders`,
         });
@@ -625,12 +656,16 @@ export class OrdersService {
             productName: true,
             packCount: true,
             packLabel: true,
+            quantity: true,
+            unit: true,
             buyerId: true,
             fulfilling_estate: { select: { ownerId: true } },
           },
         });
+        const packLine = paidOrder
+          ? orderPackLine(paidOrder) || `${paidOrder.quantity} ${paidOrder.unit}`
+          : '';
         if (paidOrder?.buyerId) {
-          const packLine = orderPackLine(paidOrder);
           await this.notificationsService.createLocalized({
             userId: paidOrder.buyerId,
             type: 'SYSTEM',
@@ -647,7 +682,7 @@ export class OrdersService {
             templateKey: 'grower.orderToPrepare',
             templateParams: {
               orderNumber: paidOrder?.orderNumber ?? orderId,
-              packLine: orderPackLine(paidOrder ?? {}),
+              packLine,
               productName: paidOrder?.productName ?? '',
             },
             actionUrl: '/grower/orders',

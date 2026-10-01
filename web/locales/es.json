@@ -1169,7 +1169,11 @@
         "statusCurrent": "Next for you",
         "statusPending": "Waiting on earlier steps",
         "footerNote": "Applying fertiliser or protection products on a parcel is logged in the mobile app (photo + GPS on the plot). Whitelist and suppliers on the web help you choose compliant inputs."
-      }
+      },
+      "ordersToPrepareCardTitle": "Pedidos por preparar ({{count}})",
+      "ordersToPrepareCardToPack": "Pendientes de empacar: {{count}}",
+      "ordersToPrepareCardAllPacked": "Todo empacado: pendiente de transporte.",
+      "ordersToPrepareCardCta": "Abrir pedidos"
     },
     "missionCreate": {
       "submitCta": "Solicitar transporte",
@@ -2274,7 +2278,9 @@
         "COMPLETED": "Completed",
         "CANCELLED": "Cancelled",
         "REFUNDED": "Refunded"
-      }
+      },
+      "packedState": "Empacado {{packed}}/{{total}} · {{kg}} kg",
+      "notPackedState": "Sin empacar ({{packed}}/{{total}}): el productor debe registrar el empaque antes del transporte"
     },
     "supply": {
       "heading": "Grower supply overview",
@@ -3232,7 +3238,26 @@
     "portalPickupProofPending": "Waiting for loading handover (temperature, photos, badge, driver signature).",
     "portalPickupBadge": "Badge photo",
     "portalPickupSignature": "Driver signature",
-    "portalViewImage": "Open image"
+    "portalViewImage": "Open image",
+    "packingPacks": "Envases empacados",
+    "packingOrderedPacks": "Pedido: {{count}}",
+    "packingPackSize": "Tamaño del envase",
+    "packingNetKg": "Peso neto (kg)",
+    "packingWeightHint": "Permitido: {{min}}–{{max}} kg",
+    "packingSave": "Guardar empaque",
+    "packingSaving": "Guardando…",
+    "packingSaveFailed": "No se pudo guardar el empaque. Inténtelo de nuevo.",
+    "packingErrNotPaid": "Este pedido aún no está pagado: prepárelo cuando se confirme el pago.",
+    "packingErrPacksMin": "Introduzca al menos 1 envase.",
+    "packingErrPacksMax": "No más de los {{max}} envases pedidos.",
+    "packingErrWeight": "El peso neto debe estar entre {{min}} y {{max}} kg.",
+    "packingDone": "Empacado {{packed}} de {{total}} · {{kg}} kg · {{date}}",
+    "packingNotYet": "Aún sin empacar",
+    "packingMission": "Transporte: {{mission}}",
+    "packingRecord": "Registrar empaque",
+    "packingEdit": "Corregir empaque",
+    "packingQualityLink": "Control de calidad",
+    "packingAwaitingPickup": "Empacado: pendiente de recogida."
   },
   "supplier": {
     "nav": {
@@ -4613,7 +4638,10 @@
     "choose": "Select",
     "link": "Link and save delivery",
     "saved": "Delivery linked:",
-    "error": "Linking failed. Refresh and retry."
+    "error": "Linking failed. Refresh and retry.",
+    "packedShort": "empacado {{packed}}/{{total}}",
+    "notPackedShort": "sin empacar {{packed}}/{{total}}",
+    "notPackedHint": "El productor ha empacado {{packed}} de {{total}} envases. El pedido podrá vincularse al transporte cuando se registre el empaque."
   },
   "deliveryReview": {
     "startReview": "Start review",

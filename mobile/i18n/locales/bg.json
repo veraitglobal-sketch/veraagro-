@@ -2278,6 +2278,33 @@
       "statusCertified": "Certified",
       "statusActive": "Active",
       "statusPendingSetup": "Not activated yet"
+    },
+    "ordersPrepare": {
+      "packs": "Опаковани пакети",
+      "orderedPacks": "Поръчани: {{count}}",
+      "packSize": "Размер на опаковката",
+      "netKg": "Нетно тегло (кг)",
+      "weightHint": "Допустимо: {{min}}–{{max}} кг",
+      "save": "Запази опаковането",
+      "saveFailed": "Опаковането не можа да бъде запазено. Опитайте отново.",
+      "errNotPaid": "Поръчката още не е платена — подгответе я след потвърждаване на плащането.",
+      "errPacksMin": "Въведете поне 1 пакет.",
+      "errPacksMax": "Не повече от поръчаните {{max}} пакета.",
+      "errWeight": "Нетното тегло трябва да е между {{min}} и {{max}} кг.",
+      "packedState": "Опаковани {{packed}} от {{total}} · {{kg}} кг · {{date}}",
+      "notPacked": "Още не е опаковано",
+      "mission": "Транспорт: {{mission}}",
+      "record": "Запиши опаковането",
+      "edit": "Коригирай опаковането",
+      "awaitingPickup": "Опаковано — очаква вземане.",
+      "cardTitle": "Поръчки за подготовка ({{count}})",
+      "cardToPack": "Остава за опаковане: {{count}}",
+      "cardAllPacked": "Всичко е опаковано — очаква се транспорт.",
+      "cardCta": "Отвори поръчките",
+      "requestPickup": "Заяви вземане",
+      "tabPrepare": "За подготовка",
+      "tabAll": "Всички поръчки",
+      "empty": "Няма поръчки за подготовка."
     }
   },
   "buyer": {

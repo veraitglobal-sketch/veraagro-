@@ -33,11 +33,11 @@
   },
   "buyer.paymentReceived": {
     "title": "Payment received",
-    "message": "Payment received — your order {{orderNumber}} is being prepared{{packLine}}."
+    "message": "Payment received — your order {{orderNumber}} ({{packLine}}) is being prepared."
   },
   "buyer.orderPacked": {
     "title": "Packed and ready",
-    "message": "Packed and ready for pickup: {{orderNumber}}{{packLine}}."
+    "message": "Packed and ready for pickup: {{orderNumber}} ({{packLine}})."
   },
   "buyer.orderInTransit": {
     "title": "On the way",

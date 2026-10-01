@@ -2278,6 +2278,33 @@
       "statusCertified": "Sertifikovano",
       "statusActive": "Aktivno",
       "statusPendingSetup": "Još nije aktivirano u sistemu"
+    },
+    "ordersPrepare": {
+      "packs": "Spakovano pakovanja",
+      "orderedPacks": "Poručeno: {{count}}",
+      "packSize": "Veličina pakovanja",
+      "netKg": "Neto težina (kg)",
+      "weightHint": "Dozvoljeno: {{min}}–{{max}} kg",
+      "save": "Sačuvaj pakovanje",
+      "saveFailed": "Pakovanje nije sačuvano. Pokušajte ponovo.",
+      "errNotPaid": "Porudžbina još nije plaćena — pripremite je kada uplata bude potvrđena.",
+      "errPacksMin": "Unesite najmanje 1 pakovanje.",
+      "errPacksMax": "Ne više od poručenih {{max}} pakovanja.",
+      "errWeight": "Neto težina mora biti između {{min}} i {{max}} kg.",
+      "packedState": "Spakovano {{packed}} od {{total}} · {{kg}} kg · {{date}}",
+      "notPacked": "Još nije spakovano",
+      "mission": "Transport: {{mission}}",
+      "record": "Upiši pakovanje",
+      "edit": "Ispravi pakovanje",
+      "awaitingPickup": "Spakovano — čeka preuzimanje.",
+      "cardTitle": "Porudžbine za pripremu ({{count}})",
+      "cardToPack": "Još za pakovanje: {{count}}",
+      "cardAllPacked": "Sve je spakovano — čeka se transport.",
+      "cardCta": "Otvori porudžbine",
+      "requestPickup": "Zatraži preuzimanje",
+      "tabPrepare": "Za pripremu",
+      "tabAll": "Sve porudžbine",
+      "empty": "Nema porudžbina za pripremu."
     }
   },
   "buyer": {

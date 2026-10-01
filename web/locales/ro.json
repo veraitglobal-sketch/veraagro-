@@ -1169,7 +1169,11 @@
         "statusCurrent": "Next for you",
         "statusPending": "Waiting on earlier steps",
         "footerNote": "Applying fertiliser or protection products on a parcel is logged in the mobile app (photo + GPS on the plot). Whitelist and suppliers on the web help you choose compliant inputs."
-      }
+      },
+      "ordersToPrepareCardTitle": "Comenzi de pregătit ({{count}})",
+      "ordersToPrepareCardToPack": "De ambalat: {{count}}",
+      "ordersToPrepareCardAllPacked": "Totul este ambalat — se așteaptă transportul.",
+      "ordersToPrepareCardCta": "Deschide comenzile"
     },
     "missionCreate": {
       "submitCta": "Solicita transport",
@@ -2274,7 +2278,9 @@
         "COMPLETED": "Completed",
         "CANCELLED": "Cancelled",
         "REFUNDED": "Refunded"
-      }
+      },
+      "packedState": "Ambalat {{packed}}/{{total}} · {{kg}} kg",
+      "notPackedState": "Neambalat ({{packed}}/{{total}}) — producătorul trebuie să înregistreze ambalarea înainte de transport"
     },
     "supply": {
       "heading": "Grower supply overview",
@@ -3232,7 +3238,26 @@
     "portalPickupProofPending": "Waiting for loading handover (temperature, photos, badge, driver signature).",
     "portalPickupBadge": "Badge photo",
     "portalPickupSignature": "Driver signature",
-    "portalViewImage": "Open image"
+    "portalViewImage": "Open image",
+    "packingPacks": "Ambalaje pregătite",
+    "packingOrderedPacks": "Comandat: {{count}}",
+    "packingPackSize": "Mărimea ambalajului",
+    "packingNetKg": "Greutate netă (kg)",
+    "packingWeightHint": "Permis: {{min}}–{{max}} kg",
+    "packingSave": "Salvează ambalarea",
+    "packingSaving": "Se salvează…",
+    "packingSaveFailed": "Ambalarea nu a putut fi salvată. Încercați din nou.",
+    "packingErrNotPaid": "Comanda nu este încă plătită — pregătiți-o după confirmarea plății.",
+    "packingErrPacksMin": "Introduceți cel puțin 1 ambalaj.",
+    "packingErrPacksMax": "Nu mai mult decât cele {{max}} ambalaje comandate.",
+    "packingErrWeight": "Greutatea netă trebuie să fie între {{min}} și {{max}} kg.",
+    "packingDone": "Ambalat {{packed}} din {{total}} · {{kg}} kg · {{date}}",
+    "packingNotYet": "Încă neambalat",
+    "packingMission": "Transport: {{mission}}",
+    "packingRecord": "Înregistrează ambalarea",
+    "packingEdit": "Corectează ambalarea",
+    "packingQualityLink": "Control de calitate",
+    "packingAwaitingPickup": "Ambalat — în așteptarea ridicării."
   },
   "supplier": {
     "nav": {
@@ -4613,7 +4638,10 @@
     "choose": "Select",
     "link": "Link and save delivery",
     "saved": "Delivery linked:",
-    "error": "Linking failed. Refresh and retry."
+    "error": "Linking failed. Refresh and retry.",
+    "packedShort": "ambalat {{packed}}/{{total}}",
+    "notPackedShort": "neambalat {{packed}}/{{total}}",
+    "notPackedHint": "Producătorul a ambalat {{packed}} din {{total}} ambalaje. Comanda poate fi legată de transport după înregistrarea ambalării."
   },
   "deliveryReview": {
     "startReview": "Start review",

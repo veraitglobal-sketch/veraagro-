@@ -2278,6 +2278,33 @@
       "statusCertified": "Certified",
       "statusActive": "Active",
       "statusPendingSetup": "Not activated yet"
+    },
+    "ordersPrepare": {
+      "packs": "Packs packed",
+      "orderedPacks": "Ordered: {{count}}",
+      "packSize": "Pack size",
+      "netKg": "Net weight (kg)",
+      "weightHint": "Allowed: {{min}}–{{max}} kg",
+      "save": "Save packing",
+      "saveFailed": "Packing could not be saved. Try again.",
+      "errNotPaid": "This order is not paid yet — prepare it after payment is confirmed.",
+      "errPacksMin": "Enter at least 1 pack.",
+      "errPacksMax": "No more than the ordered {{max}} packs.",
+      "errWeight": "Net weight must be between {{min}} and {{max}} kg.",
+      "packedState": "Packed {{packed}} of {{total}} · {{kg}} kg · {{date}}",
+      "notPacked": "Not packed yet",
+      "mission": "Transport: {{mission}}",
+      "record": "Record packing",
+      "edit": "Correct packing",
+      "awaitingPickup": "Packed — waiting for pickup.",
+      "cardTitle": "Orders to prepare ({{count}})",
+      "cardToPack": "Still to pack: {{count}}",
+      "cardAllPacked": "All packed — waiting for transport.",
+      "cardCta": "Open orders",
+      "requestPickup": "Request pickup",
+      "tabPrepare": "To prepare",
+      "tabAll": "All orders",
+      "empty": "No orders awaiting preparation."
     }
   },
   "buyer": {

@@ -33,11 +33,11 @@
   },
   "buyer.paymentReceived": {
     "title": "Pago recibido",
-    "message": "Pago recibido — su pedido {{orderNumber}} se está preparando{{packLine}}."
+    "message": "Pago recibido — su pedido {{orderNumber}} ({{packLine}}) se está preparando."
   },
   "buyer.orderPacked": {
     "title": "Empacado",
-    "message": "Empacado y listo para recogida: {{orderNumber}}{{packLine}}."
+    "message": "Empacado y listo para la recogida: {{orderNumber}} ({{packLine}})."
   },
   "buyer.orderInTransit": {
     "title": "En camino",

@@ -68,7 +68,10 @@
     "choose": "Izaberite",
     "link": "Poveži i sačuvaj dostavu",
     "saved": "Dostava je povezana:",
-    "error": "Povezivanje nije uspelo. Osvežite i pokušajte ponovo."
+    "error": "Povezivanje nije uspelo. Osvežite i pokušajte ponovo.",
+    "packedShort": "spakovano {{packed}}/{{total}}",
+    "notPackedShort": "nije spakovano {{packed}}/{{total}}",
+    "notPackedHint": "Proizvođač je spakovao {{packed}} od {{total}} pakovanja. Porudžbina se može povezati sa transportom kada se upiše pakovanje."
   },
   "deliveryReview": {
     "startReview": "Započni obradu",
@@ -1624,7 +1627,11 @@
         "statusCurrent": "Sledeće za tebe",
         "statusPending": "Čeka prethodne korake",
         "footerNote": "Potrošnja đubriva ili zaštite na parceli se knjiži u mobilnoj aplikaciji (fotografija + GPS na parceli). Beli spisak i dobavljači na webu pomažu da odabereš usklađene inpute."
-      }
+      },
+      "ordersToPrepareCardTitle": "Porudžbine za pripremu ({{count}})",
+      "ordersToPrepareCardToPack": "Još za pakovanje: {{count}}",
+      "ordersToPrepareCardAllPacked": "Sve je spakovano — čeka se transport.",
+      "ordersToPrepareCardCta": "Otvori porudžbine"
     },
     "missionCreate": {
       "submitCta": "Zahtevaj transport",
@@ -2273,7 +2280,9 @@
       "rejectModalTitle": "Odbij porudžbinu",
       "rejectOrder": "Odbij",
       "rejectReasonLabel": "Razlog odbijanja",
-      "rejectReasonPlaceholder": "npr. Nema zalihe za ovaj rok isporuke"
+      "rejectReasonPlaceholder": "npr. Nema zalihe za ovaj rok isporuke",
+      "packedState": "Spakovano {{packed}}/{{total}} · {{kg}} kg",
+      "notPackedState": "Nije spakovano ({{packed}}/{{total}}) — proizvođač mora upisati pakovanje pre transporta"
     },
     "farmDetail": {
       "loadFailed": "Učitavanje detalja farme nije uspelo",
@@ -3635,7 +3644,26 @@
     "ha_COMPLETED": "Završeno",
     "ha_CANCELLED": "Otkazano",
     "ha_REJECTED": "Odbijeno",
-    "ha_STATUS": "{{status}}"
+    "ha_STATUS": "{{status}}",
+    "packingPacks": "Spakovano pakovanja",
+    "packingOrderedPacks": "Poručeno: {{count}}",
+    "packingPackSize": "Veličina pakovanja",
+    "packingNetKg": "Neto težina (kg)",
+    "packingWeightHint": "Dozvoljeno: {{min}}–{{max}} kg",
+    "packingSave": "Sačuvaj pakovanje",
+    "packingSaving": "Čuvanje…",
+    "packingSaveFailed": "Pakovanje nije sačuvano. Pokušajte ponovo.",
+    "packingErrNotPaid": "Porudžbina još nije plaćena — pripremite je kada uplata bude potvrđena.",
+    "packingErrPacksMin": "Unesite najmanje 1 pakovanje.",
+    "packingErrPacksMax": "Ne više od poručenih {{max}} pakovanja.",
+    "packingErrWeight": "Neto težina mora biti između {{min}} i {{max}} kg.",
+    "packingDone": "Spakovano {{packed}} od {{total}} · {{kg}} kg · {{date}}",
+    "packingNotYet": "Još nije spakovano",
+    "packingMission": "Transport: {{mission}}",
+    "packingRecord": "Upiši pakovanje",
+    "packingEdit": "Ispravi pakovanje",
+    "packingQualityLink": "Kontrola kvaliteta",
+    "packingAwaitingPickup": "Spakovano — čeka preuzimanje."
   },
   "supplier": {
     "nav": {

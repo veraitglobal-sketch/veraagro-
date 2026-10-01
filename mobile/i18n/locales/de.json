@@ -2278,6 +2278,33 @@
       "statusCertified": "Certified",
       "statusActive": "Active",
       "statusPendingSetup": "Not activated yet"
+    },
+    "ordersPrepare": {
+      "packs": "Gepackte Verpackungen",
+      "orderedPacks": "Bestellt: {{count}}",
+      "packSize": "Packungsgröße",
+      "netKg": "Nettogewicht (kg)",
+      "weightHint": "Zulässig: {{min}}–{{max}} kg",
+      "save": "Verpackung speichern",
+      "saveFailed": "Die Verpackung konnte nicht gespeichert werden. Bitte erneut versuchen.",
+      "errNotPaid": "Diese Bestellung ist noch nicht bezahlt — bitte nach bestätigter Zahlung vorbereiten.",
+      "errPacksMin": "Mindestens 1 Verpackung eingeben.",
+      "errPacksMax": "Nicht mehr als die bestellten {{max}} Verpackungen.",
+      "errWeight": "Das Nettogewicht muss zwischen {{min}} und {{max}} kg liegen.",
+      "packedState": "Verpackt {{packed}} von {{total}} · {{kg}} kg · {{date}}",
+      "notPacked": "Noch nicht verpackt",
+      "mission": "Transport: {{mission}}",
+      "record": "Verpackung erfassen",
+      "edit": "Verpackung korrigieren",
+      "awaitingPickup": "Verpackt — wartet auf Abholung.",
+      "cardTitle": "Vorzubereitende Bestellungen ({{count}})",
+      "cardToPack": "Noch zu verpacken: {{count}}",
+      "cardAllPacked": "Alles verpackt — wartet auf Transport.",
+      "cardCta": "Bestellungen öffnen",
+      "requestPickup": "Abholung anfordern",
+      "tabPrepare": "Vorzubereiten",
+      "tabAll": "Alle Bestellungen",
+      "empty": "Keine Bestellungen zur Vorbereitung."
     }
   },
   "buyer": {

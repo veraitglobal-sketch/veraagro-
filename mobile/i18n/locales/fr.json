@@ -2278,6 +2278,33 @@
       "statusCertified": "Certified",
       "statusActive": "Active",
       "statusPendingSetup": "Not activated yet"
+    },
+    "ordersPrepare": {
+      "packs": "Colis emballés",
+      "orderedPacks": "Commandé : {{count}}",
+      "packSize": "Taille du colis",
+      "netKg": "Poids net (kg)",
+      "weightHint": "Autorisé : {{min}}–{{max}} kg",
+      "save": "Enregistrer l’emballage",
+      "saveFailed": "L’emballage n’a pas pu être enregistré. Réessayez.",
+      "errNotPaid": "Cette commande n’est pas encore payée — préparez-la après confirmation du paiement.",
+      "errPacksMin": "Saisissez au moins 1 colis.",
+      "errPacksMax": "Pas plus que les {{max}} colis commandés.",
+      "errWeight": "Le poids net doit être compris entre {{min}} et {{max}} kg.",
+      "packedState": "Emballé {{packed}} sur {{total}} · {{kg}} kg · {{date}}",
+      "notPacked": "Pas encore emballé",
+      "mission": "Transport : {{mission}}",
+      "record": "Saisir l’emballage",
+      "edit": "Corriger l’emballage",
+      "awaitingPickup": "Emballé — en attente d’enlèvement.",
+      "cardTitle": "Commandes à préparer ({{count}})",
+      "cardToPack": "Encore à emballer : {{count}}",
+      "cardAllPacked": "Tout est emballé — en attente du transport.",
+      "cardCta": "Ouvrir les commandes",
+      "requestPickup": "Demander l’enlèvement",
+      "tabPrepare": "À préparer",
+      "tabAll": "Toutes les commandes",
+      "empty": "Aucune commande à préparer."
     }
   },
   "buyer": {

@@ -2278,6 +2278,33 @@
       "statusCertified": "Certified",
       "statusActive": "Active",
       "statusPendingSetup": "Not activated yet"
+    },
+    "ordersPrepare": {
+      "packs": "Ambalaje pregătite",
+      "orderedPacks": "Comandat: {{count}}",
+      "packSize": "Mărimea ambalajului",
+      "netKg": "Greutate netă (kg)",
+      "weightHint": "Permis: {{min}}–{{max}} kg",
+      "save": "Salvează ambalarea",
+      "saveFailed": "Ambalarea nu a putut fi salvată. Încercați din nou.",
+      "errNotPaid": "Comanda nu este încă plătită — pregătiți-o după confirmarea plății.",
+      "errPacksMin": "Introduceți cel puțin 1 ambalaj.",
+      "errPacksMax": "Nu mai mult decât cele {{max}} ambalaje comandate.",
+      "errWeight": "Greutatea netă trebuie să fie între {{min}} și {{max}} kg.",
+      "packedState": "Ambalat {{packed}} din {{total}} · {{kg}} kg · {{date}}",
+      "notPacked": "Încă neambalat",
+      "mission": "Transport: {{mission}}",
+      "record": "Înregistrează ambalarea",
+      "edit": "Corectează ambalarea",
+      "awaitingPickup": "Ambalat — în așteptarea ridicării.",
+      "cardTitle": "Comenzi de pregătit ({{count}})",
+      "cardToPack": "De ambalat: {{count}}",
+      "cardAllPacked": "Totul este ambalat — se așteaptă transportul.",
+      "cardCta": "Deschide comenzile",
+      "requestPickup": "Solicită ridicarea",
+      "tabPrepare": "De pregătit",
+      "tabAll": "Toate comenzile",
+      "empty": "Nicio comandă de pregătit."
     }
   },
   "buyer": {

@@ -1169,7 +1169,11 @@
         "statusCurrent": "Next for you",
         "statusPending": "Waiting on earlier steps",
         "footerNote": "Applying fertiliser or protection products on a parcel is logged in the mobile app (photo + GPS on the plot). Whitelist and suppliers on the web help you choose compliant inputs."
-      }
+      },
+      "ordersToPrepareCardTitle": "Commandes à préparer ({{count}})",
+      "ordersToPrepareCardToPack": "Encore à emballer : {{count}}",
+      "ordersToPrepareCardAllPacked": "Tout est emballé — en attente du transport.",
+      "ordersToPrepareCardCta": "Ouvrir les commandes"
     },
     "missionCreate": {
       "submitCta": "Demander un transport",
@@ -2274,7 +2278,9 @@
         "COMPLETED": "Completed",
         "CANCELLED": "Cancelled",
         "REFUNDED": "Refunded"
-      }
+      },
+      "packedState": "Emballé {{packed}}/{{total}} · {{kg}} kg",
+      "notPackedState": "Non emballé ({{packed}}/{{total}}) — le producteur doit saisir l’emballage avant le transport"
     },
     "supply": {
       "heading": "Grower supply overview",
@@ -3232,7 +3238,26 @@
     "portalPickupProofPending": "Waiting for loading handover (temperature, photos, badge, driver signature).",
     "portalPickupBadge": "Badge photo",
     "portalPickupSignature": "Driver signature",
-    "portalViewImage": "Open image"
+    "portalViewImage": "Open image",
+    "packingPacks": "Colis emballés",
+    "packingOrderedPacks": "Commandé : {{count}}",
+    "packingPackSize": "Taille du colis",
+    "packingNetKg": "Poids net (kg)",
+    "packingWeightHint": "Autorisé : {{min}}–{{max}} kg",
+    "packingSave": "Enregistrer l’emballage",
+    "packingSaving": "Enregistrement…",
+    "packingSaveFailed": "L’emballage n’a pas pu être enregistré. Réessayez.",
+    "packingErrNotPaid": "Cette commande n’est pas encore payée — préparez-la après confirmation du paiement.",
+    "packingErrPacksMin": "Saisissez au moins 1 colis.",
+    "packingErrPacksMax": "Pas plus que les {{max}} colis commandés.",
+    "packingErrWeight": "Le poids net doit être compris entre {{min}} et {{max}} kg.",
+    "packingDone": "Emballé {{packed}} sur {{total}} · {{kg}} kg · {{date}}",
+    "packingNotYet": "Pas encore emballé",
+    "packingMission": "Transport : {{mission}}",
+    "packingRecord": "Saisir l’emballage",
+    "packingEdit": "Corriger l’emballage",
+    "packingQualityLink": "Contrôle qualité",
+    "packingAwaitingPickup": "Emballé — en attente d’enlèvement."
   },
   "supplier": {
     "nav": {
@@ -4613,7 +4638,10 @@
     "choose": "Select",
     "link": "Link and save delivery",
     "saved": "Delivery linked:",
-    "error": "Linking failed. Refresh and retry."
+    "error": "Linking failed. Refresh and retry.",
+    "packedShort": "emballé {{packed}}/{{total}}",
+    "notPackedShort": "non emballé {{packed}}/{{total}}",
+    "notPackedHint": "Le producteur a emballé {{packed}} colis sur {{total}}. La commande pourra être liée au transport une fois l’emballage saisi."
   },
   "deliveryReview": {
     "startReview": "Start review",

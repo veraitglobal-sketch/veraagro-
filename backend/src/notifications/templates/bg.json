@@ -33,11 +33,11 @@
   },
   "buyer.paymentReceived": {
     "title": "Плащане получено",
-    "message": "Плащане получено — поръчка {{orderNumber}} се подготвя{{packLine}}."
+    "message": "Плащането е получено — поръчка {{orderNumber}} ({{packLine}}) се подготвя."
   },
   "buyer.orderPacked": {
     "title": "Опаковано",
-    "message": "Опаковано и готово за вземане: {{orderNumber}}{{packLine}}."
+    "message": "Опаковано и готово за вземане: {{orderNumber}} ({{packLine}})."
   },
   "buyer.orderInTransit": {
     "title": "На път",

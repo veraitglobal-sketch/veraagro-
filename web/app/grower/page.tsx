@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
-import { estatesAPI, fieldEntriesAPI, missionsAPI, financialDashboardAPI, farmerProfileAPI } from '@/lib/api';
+import { estatesAPI, fieldEntriesAPI, missionsAPI, financialDashboardAPI, farmerProfileAPI, ordersAPI } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import Link from 'next/link';
@@ -38,6 +38,8 @@ export default function GrowerDashboardPage() {
   const [qrImageUrl, setQrImageUrl] = useState<string | null>(null);
   const [farmerProfileUrl, setFarmerProfileUrl] = useState<string | null>(null);
   const [journalEntryCount, setJournalEntryCount] = useState<number | null>(null);
+  const [ordersToPack, setOrdersToPack] = useState<number | null>(null);
+  const [ordersToPrepare, setOrdersToPrepare] = useState<number | null>(null);
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -77,6 +79,15 @@ export default function GrowerDashboardPage() {
         }
       }
       setJournalEntryCount(journalTotal);
+      try {
+        const prep = await ordersAPI.getForGrower('prepare');
+        const rows = Array.isArray(prep) ? (prep as Array<{ nextAction?: string }>) : [];
+        setOrdersToPrepare(rows.length);
+        setOrdersToPack(rows.filter((r) => r.nextAction === 'PREPARE_AND_PACK').length);
+      } catch {
+        setOrdersToPrepare(null);
+        setOrdersToPack(null);
+      }
       setFinancialData(financialDataResult);
       if (profileData?.farmerQrCode) {
         setFarmerProfileUrl(profileData.farmerProfileUrl || `/farmer/${profileData.farmerQrCode}`);
@@ -223,6 +234,26 @@ export default function GrowerDashboardPage() {
               }
             />
           </div>
+
+          {ordersToPrepare != null && ordersToPrepare > 0 && (
+            <PremiumCard>
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <h2 className="text-lg font-medium tracking-tight text-gray-900">
+                    {t('grower.dashboard.ordersToPrepareCardTitle', { count: ordersToPrepare })}
+                  </h2>
+                  <p className={`text-base font-light mt-1 ${ordersToPack ? 'text-amber-700' : 'text-gray-700'}`}>
+                    {ordersToPack
+                      ? t('grower.dashboard.ordersToPrepareCardToPack', { count: ordersToPack })
+                      : t('grower.dashboard.ordersToPrepareCardAllPacked')}
+                  </p>
+                </div>
+                <PremiumButtonLink href={loc('/grower/orders')} className="shrink-0">
+                  {t('grower.dashboard.ordersToPrepareCardCta')}
+                </PremiumButtonLink>
+              </div>
+            </PremiumCard>
+          )}
 
           <PremiumCard>
             <div className="flex flex-wrap items-start justify-between gap-4">

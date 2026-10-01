@@ -2278,6 +2278,33 @@
       "statusCertified": "Certified",
       "statusActive": "Active",
       "statusPendingSetup": "Not activated yet"
+    },
+    "ordersPrepare": {
+      "packs": "Envases empacados",
+      "orderedPacks": "Pedido: {{count}}",
+      "packSize": "Tamaño del envase",
+      "netKg": "Peso neto (kg)",
+      "weightHint": "Permitido: {{min}}–{{max}} kg",
+      "save": "Guardar empaque",
+      "saveFailed": "No se pudo guardar el empaque. Inténtelo de nuevo.",
+      "errNotPaid": "Este pedido aún no está pagado: prepárelo cuando se confirme el pago.",
+      "errPacksMin": "Introduzca al menos 1 envase.",
+      "errPacksMax": "No más de los {{max}} envases pedidos.",
+      "errWeight": "El peso neto debe estar entre {{min}} y {{max}} kg.",
+      "packedState": "Empacado {{packed}} de {{total}} · {{kg}} kg · {{date}}",
+      "notPacked": "Aún sin empacar",
+      "mission": "Transporte: {{mission}}",
+      "record": "Registrar empaque",
+      "edit": "Corregir empaque",
+      "awaitingPickup": "Empacado: pendiente de recogida.",
+      "cardTitle": "Pedidos por preparar ({{count}})",
+      "cardToPack": "Pendientes de empacar: {{count}}",
+      "cardAllPacked": "Todo empacado: pendiente de transporte.",
+      "cardCta": "Abrir pedidos",
+      "requestPickup": "Solicitar recogida",
+      "tabPrepare": "Por preparar",
+      "tabAll": "Todos los pedidos",
+      "empty": "No hay pedidos pendientes de preparación."
     }
   },
   "buyer": {

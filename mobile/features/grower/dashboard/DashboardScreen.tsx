@@ -11,6 +11,7 @@ import NextStepCard from './NextStepCard';
 import { HomeFarmSnapshot } from './HomeFarmSnapshot';
 import { HomeDashboardHeader } from './HomeDashboardHeader';
 import { HomeKpiStrip } from './HomeKpiStrip';
+import { OrdersToPrepareCard } from './OrdersToPrepareCard';
 import { tString } from '../../../lib/i18n-strings';
 
 function humanizeSyncError(lastError: string | null, pendingCount: number, t: TFunction): string | null {
@@ -66,6 +67,8 @@ export default function DashboardScreen() {
         offlinePending={data.offlinePending}
         ordersFinancial={ordersFinancial}
       />
+
+      <OrdersToPrepareCard />
 
       <NextStepCard
         ready={ps.loaded}

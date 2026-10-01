@@ -1169,7 +1169,11 @@
         "statusCurrent": "Next for you",
         "statusPending": "Waiting on earlier steps",
         "footerNote": "Applying fertiliser or protection products on a parcel is logged in the mobile app (photo + GPS on the plot). Whitelist and suppliers on the web help you choose compliant inputs."
-      }
+      },
+      "ordersToPrepareCardTitle": "Поръчки за подготовка ({{count}})",
+      "ordersToPrepareCardToPack": "Остава за опаковане: {{count}}",
+      "ordersToPrepareCardAllPacked": "Всичко е опаковано — очаква се транспорт.",
+      "ordersToPrepareCardCta": "Отвори поръчките"
     },
     "missionCreate": {
       "submitCta": "Поискайте транспорт",
@@ -2274,7 +2278,9 @@
         "COMPLETED": "Completed",
         "CANCELLED": "Cancelled",
         "REFUNDED": "Refunded"
-      }
+      },
+      "packedState": "Опаковани {{packed}}/{{total}} · {{kg}} кг",
+      "notPackedState": "Не е опаковано ({{packed}}/{{total}}) — производителят трябва да запише опаковането преди транспорта"
     },
     "supply": {
       "heading": "Grower supply overview",
@@ -3232,7 +3238,26 @@
     "portalPickupProofPending": "Waiting for loading handover (temperature, photos, badge, driver signature).",
     "portalPickupBadge": "Badge photo",
     "portalPickupSignature": "Driver signature",
-    "portalViewImage": "Open image"
+    "portalViewImage": "Open image",
+    "packingPacks": "Опаковани пакети",
+    "packingOrderedPacks": "Поръчани: {{count}}",
+    "packingPackSize": "Размер на опаковката",
+    "packingNetKg": "Нетно тегло (кг)",
+    "packingWeightHint": "Допустимо: {{min}}–{{max}} кг",
+    "packingSave": "Запази опаковането",
+    "packingSaving": "Запазване…",
+    "packingSaveFailed": "Опаковането не можа да бъде запазено. Опитайте отново.",
+    "packingErrNotPaid": "Поръчката още не е платена — подгответе я след потвърждаване на плащането.",
+    "packingErrPacksMin": "Въведете поне 1 пакет.",
+    "packingErrPacksMax": "Не повече от поръчаните {{max}} пакета.",
+    "packingErrWeight": "Нетното тегло трябва да е между {{min}} и {{max}} кг.",
+    "packingDone": "Опаковани {{packed}} от {{total}} · {{kg}} кг · {{date}}",
+    "packingNotYet": "Още не е опаковано",
+    "packingMission": "Транспорт: {{mission}}",
+    "packingRecord": "Запиши опаковането",
+    "packingEdit": "Коригирай опаковането",
+    "packingQualityLink": "Контрол на качеството",
+    "packingAwaitingPickup": "Опаковано — очаква вземане."
   },
   "supplier": {
     "nav": {
@@ -4613,7 +4638,10 @@
     "choose": "Select",
     "link": "Link and save delivery",
     "saved": "Delivery linked:",
-    "error": "Linking failed. Refresh and retry."
+    "error": "Linking failed. Refresh and retry.",
+    "packedShort": "опаковани {{packed}}/{{total}}",
+    "notPackedShort": "не е опаковано {{packed}}/{{total}}",
+    "notPackedHint": "Производителят е опаковал {{packed}} от {{total}} пакета. Поръчката може да се свърже с транспорт след записване на опаковането."
   },
   "deliveryReview": {
     "startReview": "Start review",

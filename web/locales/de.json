@@ -1169,7 +1169,11 @@
         "statusCurrent": "Next for you",
         "statusPending": "Waiting on earlier steps",
         "footerNote": "Applying fertiliser or protection products on a parcel is logged in the mobile app (photo + GPS on the plot). Whitelist and suppliers on the web help you choose compliant inputs."
-      }
+      },
+      "ordersToPrepareCardTitle": "Vorzubereitende Bestellungen ({{count}})",
+      "ordersToPrepareCardToPack": "Noch zu verpacken: {{count}}",
+      "ordersToPrepareCardAllPacked": "Alles verpackt — wartet auf Transport.",
+      "ordersToPrepareCardCta": "Bestellungen öffnen"
     },
     "missionCreate": {
       "submitCta": "Transport anfordern",
@@ -2274,7 +2278,9 @@
         "COMPLETED": "Completed",
         "CANCELLED": "Cancelled",
         "REFUNDED": "Refunded"
-      }
+      },
+      "packedState": "Verpackt {{packed}}/{{total}} · {{kg}} kg",
+      "notPackedState": "Nicht verpackt ({{packed}}/{{total}}) — der Erzeuger muss die Verpackung vor dem Transport erfassen"
     },
     "supply": {
       "heading": "Grower supply overview",
@@ -3232,7 +3238,26 @@
     "portalPickupProofPending": "Waiting for loading handover (temperature, photos, badge, driver signature).",
     "portalPickupBadge": "Badge photo",
     "portalPickupSignature": "Driver signature",
-    "portalViewImage": "Open image"
+    "portalViewImage": "Open image",
+    "packingPacks": "Gepackte Verpackungen",
+    "packingOrderedPacks": "Bestellt: {{count}}",
+    "packingPackSize": "Packungsgröße",
+    "packingNetKg": "Nettogewicht (kg)",
+    "packingWeightHint": "Zulässig: {{min}}–{{max}} kg",
+    "packingSave": "Verpackung speichern",
+    "packingSaving": "Wird gespeichert…",
+    "packingSaveFailed": "Die Verpackung konnte nicht gespeichert werden. Bitte erneut versuchen.",
+    "packingErrNotPaid": "Diese Bestellung ist noch nicht bezahlt — bitte nach bestätigter Zahlung vorbereiten.",
+    "packingErrPacksMin": "Mindestens 1 Verpackung eingeben.",
+    "packingErrPacksMax": "Nicht mehr als die bestellten {{max}} Verpackungen.",
+    "packingErrWeight": "Das Nettogewicht muss zwischen {{min}} und {{max}} kg liegen.",
+    "packingDone": "Verpackt {{packed}} von {{total}} · {{kg}} kg · {{date}}",
+    "packingNotYet": "Noch nicht verpackt",
+    "packingMission": "Transport: {{mission}}",
+    "packingRecord": "Verpackung erfassen",
+    "packingEdit": "Verpackung korrigieren",
+    "packingQualityLink": "Qualitätsprüfung",
+    "packingAwaitingPickup": "Verpackt — wartet auf Abholung."
   },
   "supplier": {
     "nav": {
@@ -4887,7 +4912,10 @@
     "choose": "Select",
     "link": "Link and save delivery",
     "saved": "Delivery linked:",
-    "error": "Linking failed. Refresh and retry."
+    "error": "Linking failed. Refresh and retry.",
+    "packedShort": "verpackt {{packed}}/{{total}}",
+    "notPackedShort": "nicht verpackt {{packed}}/{{total}}",
+    "notPackedHint": "Der Erzeuger hat {{packed}} von {{total}} Verpackungen verpackt. Die Bestellung kann nach erfasster Verpackung mit dem Transport verknüpft werden."
   },
   "deliveryReview": {
     "startReview": "Start review",

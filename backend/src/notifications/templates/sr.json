@@ -33,11 +33,11 @@
   },
   "buyer.paymentReceived": {
     "title": "Uplata primljena",
-    "message": "Uplata primljena — porudžbina {{orderNumber}} se priprema{{packLine}}."
+    "message": "Uplata primljena — porudžbina {{orderNumber}} ({{packLine}}) se priprema."
   },
   "buyer.orderPacked": {
     "title": "Spakovano",
-    "message": "Spakovano i spremno za preuzimanje: {{orderNumber}}{{packLine}}."
+    "message": "Spakovano i spremno za preuzimanje: {{orderNumber}} ({{packLine}})."
   },
   "buyer.orderInTransit": {
     "title": "Na putu",

@@ -16,6 +16,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { RejectOrderDto } from './dto/reject-order.dto';
+import { RecordPackingDto } from './dto/record-packing.dto';
 
 @Controller('orders')
 @UseGuards(JwtAuthGuard)
@@ -122,7 +123,7 @@ export class OrdersController {
   @Roles('GROWER', 'FARMER')
   async recordGrowerPacking(
     @Param('id') id: string,
-    @Body() body: { packedPackCount: number; packedKg?: number },
+    @Body() body: RecordPackingDto,
     @Request() req: any,
   ) {
     return this.ordersService.recordGrowerPacking(req.user.id, id, body);

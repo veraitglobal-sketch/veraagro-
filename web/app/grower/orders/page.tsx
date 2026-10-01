@@ -10,6 +10,12 @@ import { ordersAPI } from '@/lib/api';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { formatAppOrderDate } from '@biovera/shared/i18n/buyer-order-format';
 import { orderStatusLabel } from '@biovera/shared/i18n/labels';
+import {
+  canRecordPacking,
+  expectedPackedKg,
+  packedWeightRange,
+  validatePacking,
+} from '@biovera/shared/validation/order-packing';
 import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
 type GrowerOrderRow = {
@@ -18,15 +24,148 @@ type GrowerOrderRow = {
   productName: string;
   status: string;
   packLine?: string;
+  packLabel?: string | null;
+  packSizeKg?: number | null;
   quantity: number;
   unit: string;
   deliveryCity?: string;
   deliveryNotes?: string | null;
   nextAction?: string;
   packedPackCount?: number | null;
+  packedKg?: number | null;
+  packedAt?: string | null;
   packCount?: number | null;
   createdAt: string;
+  missions?: Array<{ id: string; status: string; missionNumber: string }>;
 };
+
+const inputClass =
+  'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2D5A27] focus:border-[#2D5A27] outline-none transition-colors font-light bg-white';
+
+function PackingForm({
+  order,
+  lang,
+  onSaved,
+  onCancel,
+}: {
+  order: GrowerOrderRow;
+  lang: string;
+  onSaved: () => void;
+  onCancel: () => void;
+}) {
+  const { t } = useTranslation();
+  const [packs, setPacks] = useState<string>(String(order.packedPackCount ?? order.packCount ?? 1));
+  const packsNum = Number(packs);
+  const expected = expectedPackedKg(order, packsNum);
+  const [kg, setKg] = useState<string>(order.packedKg != null ? String(order.packedKg) : '');
+  const [kgTouched, setKgTouched] = useState(order.packedKg != null);
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  // Until the grower types a weight, it follows packs × pack size.
+  const shownKg = kgTouched ? kg : expected != null ? String(expected) : kg;
+  const kgNum = shownKg.trim() === '' ? null : Number(shownKg.replace(',', '.'));
+  const range = packedWeightRange(order, packsNum);
+  const problem = validatePacking(order, packsNum, kgNum);
+  const nf = new Intl.NumberFormat(lang, { maximumFractionDigits: 3 });
+
+  const problemText =
+    problem === 'notPaid'
+      ? t('growerPages.packingErrNotPaid')
+      : problem === 'packsMin'
+        ? t('growerPages.packingErrPacksMin')
+        : problem === 'packsMax'
+          ? t('growerPages.packingErrPacksMax', { max: order.packCount })
+          : problem === 'weightRange' && range
+            ? t('growerPages.packingErrWeight', { min: nf.format(range.min), max: nf.format(range.max) })
+            : null;
+
+  const save = async () => {
+    if (problem) return;
+    setSaving(true);
+    setErr(null);
+    try {
+      await ordersAPI.recordPacking(order.id, {
+        packedPackCount: packsNum,
+        ...(kgNum != null ? { packedKg: kgNum } : {}),
+      });
+      onSaved();
+    } catch (e: unknown) {
+      setErr(growerApiErrorOrT(e, t, 'growerPages.packingSaveFailed'));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-4">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <label className="block text-sm font-medium text-gray-900">
+          {t('growerPages.packingPacks')}
+          <input
+            type="number"
+            min={1}
+            max={order.packCount ?? undefined}
+            step={1}
+            inputMode="numeric"
+            value={packs}
+            onChange={(e) => setPacks(e.target.value)}
+            className={`${inputClass} mt-1`}
+          />
+          {order.packCount != null && (
+            <span className="mt-1 block text-xs font-light text-gray-500">
+              {t('growerPages.packingOrderedPacks', { count: order.packCount })}
+            </span>
+          )}
+        </label>
+        <div className="block text-sm font-medium text-gray-900">
+          {t('growerPages.packingPackSize')}
+          <p className="mt-1 px-4 py-2 rounded-lg border border-gray-200 bg-white font-light text-gray-700">
+            {order.packLabel || (order.packSizeKg != null ? `${nf.format(order.packSizeKg)} kg` : '—')}
+          </p>
+        </div>
+        <label className="block text-sm font-medium text-gray-900">
+          {t('growerPages.packingNetKg')}
+          <input
+            type="text"
+            inputMode="decimal"
+            value={shownKg}
+            onChange={(e) => {
+              setKgTouched(true);
+              setKg(e.target.value);
+            }}
+            className={`${inputClass} mt-1`}
+          />
+          {range && (
+            <span className="mt-1 block text-xs font-light text-gray-500">
+              {t('growerPages.packingWeightHint', { min: nf.format(range.min), max: nf.format(range.max) })}
+            </span>
+          )}
+        </label>
+      </div>
+      {(problemText || err) && (
+        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-800">{err || problemText}</p>
+      )}
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => void save()}
+          disabled={saving || !!problem}
+          className="inline-flex min-h-[44px] items-center rounded-lg bg-[#2D5A27] px-4 text-sm font-medium text-white hover:bg-[#23471f] disabled:opacity-50"
+        >
+          {saving ? t('growerPages.packingSaving') : t('growerPages.packingSave')}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="inline-flex min-h-[44px] items-center rounded-lg border border-gray-300 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          {t('common.cancel')}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function GrowerOrdersPage() {
   const { t, i18n } = useTranslation();
@@ -35,6 +174,7 @@ export default function GrowerOrdersPage() {
   const [orders, setOrders] = useState<GrowerOrderRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -54,60 +194,112 @@ export default function GrowerOrdersPage() {
     void load();
   }, [load]);
 
+  const nf = new Intl.NumberFormat(lang, { maximumFractionDigits: 3 });
+
   return (
     <AuthGuard requiredRoles={['GROWER', 'FARMER']}>
-      <SidebarLayout title={t('growerPages.ordersToPrepareTitle', { defaultValue: 'Orders to prepare' })} navItems={nav}>
+      <SidebarLayout title={t('growerPages.ordersToPrepareTitle')} navItems={nav}>
         <GrowerPageShell className="space-y-5">
           <GrowerPageHeader
-            title={t('growerPages.ordersToPrepareTitle', { defaultValue: 'Orders to prepare' })}
-            description={t('growerPages.ordersToPrepareLead', {
-              defaultValue: 'Paid catalogue orders from your farm — pack before pickup.',
-            })}
+            title={t('growerPages.ordersToPrepareTitle')}
+            description={t('growerPages.ordersToPrepareLead')}
           />
           {err && <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800">{err}</div>}
           {loading ? (
             <p className="text-gray-600">{t('common.loading')}</p>
           ) : orders.length === 0 ? (
-            <p className="text-gray-600">{t('growerPages.ordersToPrepareEmpty', { defaultValue: 'No orders awaiting preparation.' })}</p>
+            <p className="text-gray-600">{t('growerPages.ordersToPrepareEmpty')}</p>
           ) : (
             <ul className="space-y-3">
-              {orders.map((o) => (
-                <li key={o.id} className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <p className="font-medium text-gray-900">{o.orderNumber}</p>
-                      <p className="text-sm text-gray-700">{o.productName}</p>
-                      {o.packLine && <p className="text-sm text-[#2D5A27] mt-1">{o.packLine}</p>}
-                      <p className="text-xs text-gray-500 mt-1">
-                        {o.quantity} {o.unit}
-                        {o.deliveryCity ? ` · ${o.deliveryCity}` : ''}
-                      </p>
-                      <p className="text-xs text-gray-500">{formatAppOrderDate(o.createdAt, lang)}</p>
+              {orders.map((o) => {
+                const packed = o.packedAt != null && (o.packedPackCount ?? 0) > 0;
+                const mission = o.missions?.[0];
+                return (
+                  <li key={o.id} className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p className="font-medium text-gray-900">{o.orderNumber}</p>
+                        <p className="text-sm text-gray-700">{o.productName}</p>
+                        {o.packLine && <p className="text-sm text-[#2D5A27] mt-1">{o.packLine}</p>}
+                        <p className="text-xs text-gray-500 mt-1">
+                          {nf.format(o.quantity)} {o.unit}
+                          {o.deliveryCity ? ` · ${o.deliveryCity}` : ''}
+                        </p>
+                        <p className="text-xs text-gray-500">{formatAppOrderDate(o.createdAt, lang)}</p>
+                        <p className={`text-sm mt-2 ${packed ? 'text-[#2D5A27]' : 'text-amber-700'}`}>
+                          {packed
+                            ? t('growerPages.packingDone', {
+                                packed: o.packedPackCount,
+                                total: o.packCount ?? o.packedPackCount,
+                                kg: o.packedKg != null ? nf.format(o.packedKg) : '—',
+                                date: formatAppOrderDate(o.packedAt as string, lang, {
+                                  day: '2-digit',
+                                  month: '2-digit',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                }),
+                              })
+                            : t('growerPages.packingNotYet')}
+                        </p>
+                        {mission && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            {t('growerPages.packingMission', { mission: mission.missionNumber })}
+                          </p>
+                        )}
+                      </div>
+                      <span className="text-xs rounded-full border border-gray-200 px-2 py-1 text-gray-700">
+                        {orderStatusLabel(t, o.status, 'buyer')}
+                      </span>
                     </div>
-                    <span className="text-xs rounded-full border border-gray-200 px-2 py-1 text-gray-700">
-                      {orderStatusLabel(t, o.status, 'buyer')}
-                    </span>
-                  </div>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {o.nextAction === 'PREPARE_AND_PACK' && (
-                      <Link
-                        href="/grower/quality-entry"
-                        className="inline-flex min-h-[44px] items-center rounded-lg bg-[#2D5A27] px-4 text-sm font-medium text-white hover:bg-[#23471f]"
-                      >
-                        {t('growerPages.prepareAndPack', { defaultValue: 'Prepare and pack' })}
-                      </Link>
+                    {editingId === o.id ? (
+                      <PackingForm
+                        order={o}
+                        lang={lang}
+                        onCancel={() => setEditingId(null)}
+                        onSaved={() => {
+                          setEditingId(null);
+                          void load();
+                        }}
+                      />
+                    ) : (
+                      <div className="mt-4 flex flex-wrap items-center gap-2">
+                        {canRecordPacking(o) && o.nextAction !== 'AWAITING_PICKUP' && (
+                          <button
+                            type="button"
+                            onClick={() => setEditingId(o.id)}
+                            className={
+                              o.nextAction === 'PREPARE_AND_PACK'
+                                ? 'inline-flex min-h-[44px] items-center rounded-lg bg-[#2D5A27] px-4 text-sm font-medium text-white hover:bg-[#23471f]'
+                                : 'inline-flex min-h-[44px] items-center rounded-lg border border-gray-300 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50'
+                            }
+                          >
+                            {packed ? t('growerPages.packingEdit') : t('growerPages.packingRecord')}
+                          </button>
+                        )}
+                        {o.nextAction === 'PREPARE_AND_PACK' && (
+                          <Link
+                            href="/grower/quality-entry"
+                            className="inline-flex min-h-[44px] items-center rounded-lg border border-[#2D5A27] px-4 text-sm font-medium text-[#2D5A27] hover:bg-[#2D5A27]/5"
+                          >
+                            {t('growerPages.packingQualityLink')}
+                          </Link>
+                        )}
+                        {o.nextAction === 'REQUEST_PICKUP' && (
+                          <Link
+                            href="/grower/missions/create"
+                            className="inline-flex min-h-[44px] items-center rounded-lg bg-[#2D5A27] px-4 text-sm font-medium text-white hover:bg-[#23471f]"
+                          >
+                            {t('growerPages.requestPickup')}
+                          </Link>
+                        )}
+                        {o.nextAction === 'AWAITING_PICKUP' && (
+                          <p className="text-sm text-gray-600">{t('growerPages.packingAwaitingPickup')}</p>
+                        )}
+                      </div>
                     )}
-                    {o.nextAction === 'REQUEST_PICKUP' && (
-                      <Link
-                        href="/grower/missions/create"
-                        className="inline-flex min-h-[44px] items-center rounded-lg border border-[#2D5A27] px-4 text-sm font-medium text-[#2D5A27] hover:bg-[#2D5A27]/5"
-                      >
-                        {t('growerPages.requestPickup', { defaultValue: 'Request pickup' })}
-                      </Link>
-                    )}
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </GrowerPageShell>

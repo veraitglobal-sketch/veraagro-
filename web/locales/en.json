@@ -68,7 +68,10 @@
     "choose": "Select",
     "link": "Link and save delivery",
     "saved": "Delivery linked:",
-    "error": "Linking failed. Refresh and retry."
+    "error": "Linking failed. Refresh and retry.",
+    "packedShort": "packed {{packed}}/{{total}}",
+    "notPackedShort": "not packed {{packed}}/{{total}}",
+    "notPackedHint": "The grower has packed {{packed}} of {{total}} packs. The order can be linked to transport after packing is recorded."
   },
   "deliveryReview": {
     "startReview": "Start review",
@@ -1624,7 +1627,11 @@
         "statusCurrent": "Next for you",
         "statusPending": "Waiting on earlier steps",
         "footerNote": "Applying fertiliser or protection products on a parcel is logged in the mobile app (photo + GPS on the plot). Whitelist and suppliers on the web help you choose compliant inputs."
-      }
+      },
+      "ordersToPrepareCardTitle": "Orders to prepare ({{count}})",
+      "ordersToPrepareCardToPack": "Still to pack: {{count}}",
+      "ordersToPrepareCardAllPacked": "All packed — waiting for transport.",
+      "ordersToPrepareCardCta": "Open orders"
     },
     "missionCreate": {
       "submitCta": "Request transport",
@@ -2037,8 +2044,14 @@
     }
   },
   "seedProducer": {
-    "header": { "badge": "Seed producer portal", "logOut": "Log out" },
-    "nav": { "runs": "My runs", "profile": "Profile" },
+    "header": {
+      "badge": "Seed producer portal",
+      "logOut": "Log out"
+    },
+    "nav": {
+      "runs": "My runs",
+      "profile": "Profile"
+    },
     "runs": {
       "title": "My production runs",
       "subtitle": "Lots assigned to your factory by Bio Vera.",
@@ -2565,7 +2578,9 @@
         "COMPLETED": "Completed",
         "CANCELLED": "Cancelled",
         "REFUNDED": "Refunded"
-      }
+      },
+      "packedState": "Packed {{packed}}/{{total}} · {{kg}} kg",
+      "notPackedState": "Not packed ({{packed}}/{{total}}) — grower must record packing before transport"
     },
     "farmDetail": {
       "loadFailed": "Failed to load farm detail",
@@ -3971,7 +3986,26 @@
     "ha_COMPLETED": "Completed",
     "ha_CANCELLED": "Cancelled",
     "ha_REJECTED": "Rejected",
-    "ha_STATUS": "{{status}}"
+    "ha_STATUS": "{{status}}",
+    "packingPacks": "Packs packed",
+    "packingOrderedPacks": "Ordered: {{count}}",
+    "packingPackSize": "Pack size",
+    "packingNetKg": "Net weight (kg)",
+    "packingWeightHint": "Allowed: {{min}}–{{max}} kg",
+    "packingSave": "Save packing",
+    "packingSaving": "Saving…",
+    "packingSaveFailed": "Packing could not be saved. Try again.",
+    "packingErrNotPaid": "This order is not paid yet — prepare it after payment is confirmed.",
+    "packingErrPacksMin": "Enter at least 1 pack.",
+    "packingErrPacksMax": "No more than the ordered {{max}} packs.",
+    "packingErrWeight": "Net weight must be between {{min}} and {{max}} kg.",
+    "packingDone": "Packed {{packed}} of {{total}} · {{kg}} kg · {{date}}",
+    "packingNotYet": "Not packed yet",
+    "packingMission": "Transport: {{mission}}",
+    "packingRecord": "Record packing",
+    "packingEdit": "Correct packing",
+    "packingQualityLink": "Quality check",
+    "packingAwaitingPickup": "Packed — waiting for pickup."
   },
   "supplier": {
     "nav": {

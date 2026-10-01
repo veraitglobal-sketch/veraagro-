@@ -1,3 +1,4 @@
+import { orderStatusLabel } from '../../../lib/shared-labels';
 import { useState, useEffect, useCallback } from 'react';
 import { TFunction } from 'i18next';
 import { ordersAPI, Order } from '../../../lib/api';
@@ -50,5 +51,6 @@ export function getOrderStatusColor(status: string): string {
 
 export function getOrderStatusLabel(status: string, t: TFunction): string {
   const key = ORDER_STATUS_KEYS[status];
-  return key ? t(`producer.orders.${key}`) : status;
+  // Statuses without a producer-specific word (PAID, APPROVED, PICKED_UP, …) use the shared glossary like web.
+  return key ? t(`producer.orders.${key}`) : orderStatusLabel((k, o) => String(t(k, o as never)), status, 'buyer');
 }

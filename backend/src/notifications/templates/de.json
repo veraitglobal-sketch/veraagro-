@@ -33,11 +33,11 @@
   },
   "buyer.paymentReceived": {
     "title": "Zahlung eingegangen",
-    "message": "Zahlung eingegangen — Bestellung {{orderNumber}} wird vorbereitet{{packLine}}."
+    "message": "Zahlung eingegangen — Ihre Bestellung {{orderNumber}} ({{packLine}}) wird vorbereitet."
   },
   "buyer.orderPacked": {
     "title": "Verpackt",
-    "message": "Verpackt und abholbereit: {{orderNumber}}{{packLine}}."
+    "message": "Verpackt und abholbereit: {{orderNumber}} ({{packLine}})."
   },
   "buyer.orderInTransit": {
     "title": "Unterwegs",

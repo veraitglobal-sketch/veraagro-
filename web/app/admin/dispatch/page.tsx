@@ -32,7 +32,15 @@ type Order = {
   fulfillingEstateId?: string | null;
   estates?: { ownerId: string; name: string };
   fulfilling_estate?: { id?: string; ownerId: string; name: string };
+  packCount?: number | null;
+  packLabel?: string | null;
+  packedPackCount?: number | null;
+  packedKg?: number | null;
 };
+
+/** Catalogue orders must be packed by the grower before they can be linked to transport. */
+const orderPacked = (o: Order) =>
+  !o.catalogProductId || o.packCount == null || (o.packedPackCount ?? 0) >= o.packCount;
 
 function DispatchContent() {
   const { t } = useTranslation();
@@ -116,10 +124,11 @@ function DispatchContent() {
       ))}
     </select></label>
     <label className="block">{t('dispatchFlow.order')}<select className="block w-full rounded border p-3" disabled={busy || !mission} value={orderId} onChange={(e) => setOrderId(e.target.value)}>
-      <option value="">{t('dispatchFlow.choose')}</option>{orders.map((o) => <option key={o.id} value={o.id}>{o.orderNumber} · {o.productName} · {o.quantity} {o.unit}</option>)}
+      <option value="">{t('dispatchFlow.choose')}</option>{orders.map((o) => <option key={o.id} value={o.id} disabled={!orderPacked(o)}>{o.orderNumber} · {o.productName} · {o.quantity} {o.unit}{o.catalogProductId && o.packCount != null ? ` · ${orderPacked(o) ? t('dispatchFlow.packedShort', { packed: o.packedPackCount, total: o.packCount }) : t('dispatchFlow.notPackedShort', { packed: o.packedPackCount ?? 0, total: o.packCount })}` : ''}</option>)}
     </select></label>
     {mission && order ? <p>{mission.missionNumber} → {order.orderNumber} · {order.productName} · {order.quantity} {order.unit}</p> : null}
-    <button className="rounded bg-green-700 px-4 py-3 text-white disabled:opacity-50" disabled={busy || !mission || !order || !mission.linkable} onClick={() => void link()}>{t('dispatchFlow.link')}</button>
+    <button className="rounded bg-green-700 px-4 py-3 text-white disabled:opacity-50" disabled={busy || !mission || !order || !mission.linkable || !orderPacked(order)} onClick={() => void link()}>{t('dispatchFlow.link')}</button>
+    {order && !orderPacked(order) ? <p className="text-amber-700">{t('dispatchFlow.notPackedHint', { packed: order.packedPackCount ?? 0, total: order.packCount })}</p> : null}
     {error ? <p role="alert" className="text-red-700">{error}</p> : null}
     {saved ? <p role="status">{t('dispatchFlow.saved')} {saved}</p> : null}
     {data.pendingDocuments?.length ? <section className="space-y-3"><h2 className="font-semibold">{t('dispatchFlow.documentsPending')}</h2>

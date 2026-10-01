@@ -11,6 +11,12 @@ import { GeometryUtil } from '../common/utils/geometry.util';
 import { RegisterBuyerDto } from './dto/register-buyer.dto';
 import { RegisterGrowerDto } from './dto/register-grower.dto';
 
+const PASSWORD_RESET_RESEND_MS = 2 * 60 * 1000;
+
+function hashResetToken(token: string): string {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -474,18 +480,29 @@ export class AuthService {
       return generic;
     }
 
+    // At most one reset e-mail per user every 2 minutes (answer stays generic).
+    const previous = await this.prisma.password_reset_tokens.findUnique({
+      where: { userId: user.id },
+      select: { createdAt: true },
+    });
+    if (previous && Date.now() - previous.createdAt.getTime() < PASSWORD_RESET_RESEND_MS) {
+      return generic;
+    }
+
     const token = crypto.randomBytes(32).toString('hex');
+    const tokenHash = hashResetToken(token);
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
 
+    // Only the SHA-256 hash is stored; the raw token exists only in the e-mail link.
     await this.prisma.password_reset_tokens.upsert({
       where: { userId: user.id },
       create: {
         id: crypto.randomUUID(),
         userId: user.id,
-        token,
+        token: tokenHash,
         expiresAt,
       },
-      update: { token, expiresAt },
+      update: { token: tokenHash, expiresAt, createdAt: new Date() },
     });
 
     void this.emailService
@@ -512,7 +529,7 @@ export class AuthService {
 
   async resetPassword(token: string, password: string) {
     const record = await this.prisma.password_reset_tokens.findUnique({
-      where: { token: token.trim() },
+      where: { token: hashResetToken(token.trim()) },
       include: { users: true },
     });
     if (!record) {
