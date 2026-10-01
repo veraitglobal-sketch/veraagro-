@@ -628,7 +628,8 @@
     "noAccount": "Sie haben noch kein Konto?",
     "register": "Registrieren",
     "errorFailed": "Fehler bei der Anmeldung. Bitte überprüfen Sie Ihre Anmeldedaten.",
-    "pendingApproval": "Your account is waiting for approval by Bio Vera."
+    "pendingApproval": "Your account is waiting for approval by Bio Vera.",
+    "emailNotVerified": "Verify your email with the 4-digit code before signing in. Use the buyer registration page to request a new code."
   },
   "buyerRegister": {
     "title": "Registrieren Sie sich als Käufer",

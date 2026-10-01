@@ -44,6 +44,8 @@ function LoginTypePageInner() {
             : undefined;
       if (data?.code === 'ACCOUNT_PENDING_APPROVAL') {
         setError(t('loginPage.pendingApproval'));
+      } else if (data?.code === 'EMAIL_NOT_VERIFIED') {
+        setError(t('loginPage.emailNotVerified'));
       } else {
         setError(msg || t('loginPage.errorFailed'));
       }

@@ -728,6 +728,7 @@
     "partnerCodeLabel": "E-mail or partner code *",
     "partnerCodePlaceholder": "your@email.com or BUYER-…",
     "pendingApproval": "Your account is waiting for approval by Bio Vera.",
+    "emailNotVerified": "Verify your email with the 4-digit code before signing in. Use the buyer registration page to request a new code.",
     "passwordLabel": "Password *",
     "passwordPlaceholder": "Enter your password",
     "signIn": "Sign in",

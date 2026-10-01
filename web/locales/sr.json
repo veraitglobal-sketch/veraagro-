@@ -735,7 +735,8 @@
     "noAccount": "Nemate nalog?",
     "register": "Registracija",
     "errorFailed": "Prijava nije uspela. Proverite podatke.",
-    "pendingApproval": "Vaš nalog čeka odobrenje od strane Bio Vere."
+    "pendingApproval": "Vaš nalog čeka odobrenje od strane Bio Vere.",
+    "emailNotVerified": "Potvrdite e-poštu 4-cifrenim kodom pre prijave. Idite na stranicu registracije kupca ako vam treba novi kod."
   },
   "buyerRegister": {
     "title": "Registracija kupca",
