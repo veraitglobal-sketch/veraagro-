@@ -48,7 +48,7 @@
     "appAndroid": "Android",
     "logoAlt": "Bio Vera",
     "terms": "Termeni",
-    "impressum": "Impressum (date legale)"
+    "impressum": "Impressum"
   },
   "languagePage": {
     "eyebrow": "Setări",
@@ -4528,7 +4528,7 @@
     "termsUpdated": "Ultima actualizare: ianuarie 2026",
     "cookiesTitle": "Politica de cookie-uri",
     "cookiesUpdated": "Ultima actualizare: ianuarie 2026",
-    "impressumTitle": "Impressum (date legale)",
+    "impressumTitle": "Impressum",
     "impressumUpdated": "Ultima actualizare: octombrie 2026"
   },
   "connectedWorkflow": {

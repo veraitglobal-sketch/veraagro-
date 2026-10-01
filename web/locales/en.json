@@ -150,7 +150,7 @@
     "appAndroid": "Android",
     "logoAlt": "Bio Vera",
     "terms": "Terms",
-    "impressum": "Impressum (legal notice)"
+    "impressum": "Impressum"
   },
   "languagePage": {
     "eyebrow": "Settings",
@@ -5938,7 +5938,7 @@
     "termsUpdated": "Last updated: January 2026",
     "cookiesTitle": "Cookie Policy",
     "cookiesUpdated": "Last updated: January 2026",
-    "impressumTitle": "Impressum (legal notice)",
+    "impressumTitle": "Impressum",
     "impressumUpdated": "Last updated: October 2026"
   },
   "refundReconciliation": {

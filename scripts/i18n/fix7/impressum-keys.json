@@ -1,7 +1,47 @@
 {
-"footer.impressum": {"en":"Impressum (legal notice)","sr":"Impressum (pravni podaci)","de":"Impressum","es":"Impressum (aviso legal)","fr":"Impressum (mentions légales)","ro":"Impressum (date legale)","bg":"Impressum (правна информация)"},
-"legalDocsMeta.impressumTitle": {"en":"Impressum (legal notice)","sr":"Impressum (pravni podaci o firmi)","de":"Impressum","es":"Impressum (aviso legal)","fr":"Impressum (mentions légales)","ro":"Impressum (date legale)","bg":"Impressum (правна информация)"},
-"legalDocsMeta.impressumUpdated": {"en":"Last updated: October 2026","sr":"Poslednje ažuriranje: oktobar 2026.","de":"Stand: Oktober 2026","es":"Última actualización: octubre de 2026","fr":"Dernière mise à jour : octobre 2026","ro":"Ultima actualizare: octombrie 2026","bg":"Последна актуализация: октомври 2026 г."},
-"legalPage.cardImpressumTitle": {"en":"Impressum","sr":"Impressum","de":"Impressum","es":"Impressum","fr":"Impressum","ro":"Impressum","bg":"Impressum"},
-"legalPage.cardImpressumDesc": {"en":"Company details: owner, address in Hamburg, VAT ID and contact.","sr":"Podaci o firmi: vlasnik, adresa u Hamburgu, PDV broj i kontakt.","de":"Anbieterkennzeichnung: Inhaber, Anschrift in Hamburg, USt-IdNr. und Kontakt.","es":"Datos de la empresa: titular, dirección en Hamburgo, NIF-IVA y contacto.","fr":"Informations sur l’entreprise : exploitant, adresse à Hambourg, n° de TVA et contact.","ro":"Datele companiei: titular, adresă în Hamburg, cod TVA și contact.","bg":"Данни за компанията: собственик, адрес в Хамбург, ДДС номер и контакт."}
+ "footer.impressum": {
+  "en": "Impressum",
+  "sr": "Impressum",
+  "de": "Impressum",
+  "es": "Impressum",
+  "fr": "Impressum",
+  "ro": "Impressum",
+  "bg": "Impressum"
+ },
+ "legalDocsMeta.impressumTitle": {
+  "en": "Impressum",
+  "sr": "Impressum",
+  "de": "Impressum",
+  "es": "Impressum",
+  "fr": "Impressum",
+  "ro": "Impressum",
+  "bg": "Impressum"
+ },
+ "legalDocsMeta.impressumUpdated": {
+  "en": "Last updated: October 2026",
+  "sr": "Poslednje ažuriranje: oktobar 2026.",
+  "de": "Stand: Oktober 2026",
+  "es": "Última actualización: octubre de 2026",
+  "fr": "Dernière mise à jour : octobre 2026",
+  "ro": "Ultima actualizare: octombrie 2026",
+  "bg": "Последна актуализация: октомври 2026 г."
+ },
+ "legalPage.cardImpressumTitle": {
+  "en": "Impressum",
+  "sr": "Impressum",
+  "de": "Impressum",
+  "es": "Impressum",
+  "fr": "Impressum",
+  "ro": "Impressum",
+  "bg": "Impressum"
+ },
+ "legalPage.cardImpressumDesc": {
+  "en": "Company details: owner, address in Hamburg, VAT ID and contact.",
+  "sr": "Podaci o firmi: vlasnik, adresa u Hamburgu, PDV broj i kontakt.",
+  "de": "Anbieterkennzeichnung: Inhaber, Anschrift in Hamburg, USt-IdNr. und Kontakt.",
+  "es": "Datos de la empresa: titular, dirección en Hamburgo, NIF-IVA y contacto.",
+  "fr": "Informations sur l’entreprise : exploitant, adresse à Hambourg, n° de TVA et contact.",
+  "ro": "Datele companiei: titular, adresă în Hamburg, cod TVA și contact.",
+  "bg": "Данни за компанията: собственик, адрес в Хамбург, ДДС номер и контакт."
+ }
 }
