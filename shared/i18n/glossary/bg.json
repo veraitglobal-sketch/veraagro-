@@ -193,5 +193,56 @@
     "marketplace": "Пазар",
     "catalogue": "Каталог",
     "fieldDiary": "Полеви дневник"
+  },
+  "catalogOrderTimeline": {
+    "submitted": "Изпратено",
+    "accepted": "Прието",
+    "paid": "Платено",
+    "preparing": "В подготовка",
+    "inTransit": "В транзит",
+    "delivered": "Доставено",
+    "receiptConfirmed": "Получаване потвърдено",
+    "rejected": "Отхвърлено"
+  },
+  "buyerTimeline": {
+    "ORDER_RECORDED": "Поръчката е записана",
+    "LINE_OPENED": "Студена верига резервирана за вашата линия",
+    "LINEHAUL_ASSIGNED": "Превозвач назначен за вземане",
+    "LINEHAUL_ACCEPTED": "Превозвачът прие курса",
+    "LOADING_QUALITY_CHECK_COMPLETE": "Проверки при товарене на фермата завършени (температура / товар)",
+    "DEPARTED_FARM": "Тръгване от фермата",
+    "BORDER_STOP_ARRIVAL": "Гранична/регулаторна спирка — пристигане",
+    "BORDER_STOP_DEPARTURE": "Гранична/регулаторна спирка — продължаване",
+    "LINEHAUL_FINISHED": "Основният транспортен участък завършен към дистрибуция",
+    "DELIVERY_BOOKED": "Запис за доставка отворен",
+    "LAST_MILE_DISPATCHED": "Шофьор / бус назначен (последна миля)",
+    "SHIPMENT_COLLECTED": "Стоката е взета за последния участък",
+    "SHIPMENT_ENTRY_TRANSIT_LINE": "По път към адреса за доставка",
+    "SHIPMENT_DROP_OFF_CONFIRMED": "Получаване на място — цифрово предаване с подпис",
+    "SHIPMENT_BUYER_RECEIPT_CONFIRMED": "Вашето получаване е потвърдено — започва срокът за рекламация",
+    "ORDER_PACKED": "Опаковано и готово за вземане",
+    "PAYMENT_RECEIVED": "Плащане получено — поръчката се подготвя"
+  },
+  "paymentMethod": {
+    "BANK_TRANSFER": "Банков превод",
+    "CARD": "Карта",
+    "CASH": "В брой",
+    "ESCROW": "Ескроу"
+  },
+  "paymentStatus": {
+    "buyer": {
+      "PENDING": "Очаква се плащане",
+      "HELD": "Плащане задържано в ескроу",
+      "RELEASED": "Плащане потвърдено",
+      "REFUNDED": "Възстановено",
+      "FAILED": "Неуспешно плащане"
+    },
+    "admin": {
+      "PENDING": "В изчакване",
+      "HELD": "Задържано",
+      "RELEASED": "Изплатено на производителя",
+      "REFUNDED": "Възстановено",
+      "FAILED": "Неуспешно"
+    }
   }
 }

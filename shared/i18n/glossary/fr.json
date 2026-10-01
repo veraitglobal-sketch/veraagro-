@@ -193,5 +193,56 @@
     "marketplace": "Place de marché",
     "catalogue": "Catalogue",
     "fieldDiary": "Journal de parcelle"
+  },
+  "catalogOrderTimeline": {
+    "submitted": "Soumis",
+    "accepted": "Accepté",
+    "paid": "Payé",
+    "preparing": "En préparation",
+    "inTransit": "En transit",
+    "delivered": "Livré",
+    "receiptConfirmed": "Réception confirmée",
+    "rejected": "Rejeté"
+  },
+  "buyerTimeline": {
+    "ORDER_RECORDED": "Commande enregistrée",
+    "LINE_OPENED": "Chaîne du froid réservée pour votre ligne",
+    "LINEHAUL_ASSIGNED": "Transporteur assigné pour l'enlèvement",
+    "LINEHAUL_ACCEPTED": "Transporteur a accepté la course",
+    "LOADING_QUALITY_CHECK_COMPLETE": "Contrôles de chargement à la ferme terminés (température / marchandise)",
+    "DEPARTED_FARM": "Départ de la ferme",
+    "BORDER_STOP_ARRIVAL": "Arrêt frontière/réglementaire — arrivée",
+    "BORDER_STOP_DEPARTURE": "Arrêt frontière/réglementaire — reprise",
+    "LINEHAUL_FINISHED": "Tronçon principal de transport terminé vers la distribution",
+    "DELIVERY_BOOKED": "Dossier de livraison ouvert",
+    "LAST_MILE_DISPATCHED": "Chauffeur / utilitaire assigné (dernier kilomètre)",
+    "SHIPMENT_COLLECTED": "Marchandise collectée pour le dernier tronçon",
+    "SHIPMENT_ENTRY_TRANSIT_LINE": "En route vers l'adresse de livraison",
+    "SHIPMENT_DROP_OFF_CONFIRMED": "Réception sur site — remise numérique avec signature",
+    "SHIPMENT_BUYER_RECEIPT_CONFIRMED": "Votre réception confirmée — début du délai de réclamation",
+    "ORDER_PACKED": "Emballé et prêt pour enlèvement",
+    "PAYMENT_RECEIVED": "Paiement reçu — votre commande est en préparation"
+  },
+  "paymentMethod": {
+    "BANK_TRANSFER": "Virement bancaire",
+    "CARD": "Carte",
+    "CASH": "Espèces",
+    "ESCROW": "Séquestre"
+  },
+  "paymentStatus": {
+    "buyer": {
+      "PENDING": "Paiement en attente",
+      "HELD": "Paiement retenu en séquestre",
+      "RELEASED": "Paiement confirmé",
+      "REFUNDED": "Remboursé",
+      "FAILED": "Paiement échoué"
+    },
+    "admin": {
+      "PENDING": "En attente",
+      "HELD": "Retenu",
+      "RELEASED": "Versé au producteur",
+      "REFUNDED": "Remboursé",
+      "FAILED": "Échoué"
+    }
   }
 }

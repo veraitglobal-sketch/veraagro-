@@ -193,5 +193,56 @@
     "marketplace": "Piață",
     "catalogue": "Catalog",
     "fieldDiary": "Jurnal de câmp"
+  },
+  "catalogOrderTimeline": {
+    "submitted": "Trimis",
+    "accepted": "Acceptat",
+    "paid": "Plătit",
+    "preparing": "În pregătire",
+    "inTransit": "În tranzit",
+    "delivered": "Livrat",
+    "receiptConfirmed": "Recepție confirmată",
+    "rejected": "Respins"
+  },
+  "buyerTimeline": {
+    "ORDER_RECORDED": "Comandă înregistrată",
+    "LINE_OPENED": "Lanț frigorific rezervat pentru linia dvs.",
+    "LINEHAUL_ASSIGNED": "Transportator alocat pentru ridicare",
+    "LINEHAUL_ACCEPTED": "Transportatorul a acceptat cursa",
+    "LOADING_QUALITY_CHECK_COMPLETE": "Verificări de încărcare la fermă finalizate (temperatură / marfă)",
+    "DEPARTED_FARM": "Plecare de la fermă",
+    "BORDER_STOP_ARRIVAL": "Oprire la frontieră/reglementară — sosire",
+    "BORDER_STOP_DEPARTURE": "Oprire la frontieră/reglementară — continuare",
+    "LINEHAUL_FINISHED": "Etapa principală de transport finalizată spre distribuție",
+    "DELIVERY_BOOKED": "Înregistrare livrare deschisă",
+    "LAST_MILE_DISPATCHED": "Șofer / dubă alocat (ultima milă)",
+    "SHIPMENT_COLLECTED": "Marfă colectată pentru ultima etapă",
+    "SHIPMENT_ENTRY_TRANSIT_LINE": "În drum spre adresa de livrare",
+    "SHIPMENT_DROP_OFF_CONFIRMED": "Recepție la destinație — predare digitală cu semnătură",
+    "SHIPMENT_BUYER_RECEIPT_CONFIRMED": "Recepția dvs. confirmată — începe termenul de reclamație",
+    "ORDER_PACKED": "Ambalat și gata de ridicare",
+    "PAYMENT_RECEIVED": "Plată primită — comanda se pregătește"
+  },
+  "paymentMethod": {
+    "BANK_TRANSFER": "Transfer bancar",
+    "CARD": "Card",
+    "CASH": "Numerar",
+    "ESCROW": "Escrow"
+  },
+  "paymentStatus": {
+    "buyer": {
+      "PENDING": "Plată în așteptare",
+      "HELD": "Plată reținută în escrow",
+      "RELEASED": "Plată confirmată",
+      "REFUNDED": "Rambursat",
+      "FAILED": "Plată eșuată"
+    },
+    "admin": {
+      "PENDING": "În așteptare",
+      "HELD": "Reținut",
+      "RELEASED": "Eliberat către producător",
+      "REFUNDED": "Rambursat",
+      "FAILED": "Eșuat"
+    }
   }
 }

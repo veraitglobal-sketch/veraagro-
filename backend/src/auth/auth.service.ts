@@ -524,12 +524,14 @@ export class AuthService {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
+    // Reset link proves email ownership — clear pending 4-digit verification so login is not blocked.
     await this.prisma.$transaction([
       this.prisma.users.update({
         where: { id: record.userId },
         data: { passwordHash, updatedAt: new Date() },
       }),
       this.prisma.password_reset_tokens.delete({ where: { id: record.id } }),
+      this.prisma.email_verification_tokens.deleteMany({ where: { userId: record.userId } }),
     ]);
 
     return {

@@ -193,5 +193,56 @@
     "marketplace": "Mercado",
     "catalogue": "Catálogo",
     "fieldDiary": "Diario de campo"
+  },
+  "catalogOrderTimeline": {
+    "submitted": "Enviado",
+    "accepted": "Aceptado",
+    "paid": "Pagado",
+    "preparing": "En preparación",
+    "inTransit": "En tránsito",
+    "delivered": "Entregado",
+    "receiptConfirmed": "Recepción confirmada",
+    "rejected": "Rechazado"
+  },
+  "buyerTimeline": {
+    "ORDER_RECORDED": "Pedido registrado",
+    "LINE_OPENED": "Cadena de frío reservada para su línea",
+    "LINEHAUL_ASSIGNED": "Transportista asignado para la recogida",
+    "LINEHAUL_ACCEPTED": "Transportista aceptó el viaje",
+    "LOADING_QUALITY_CHECK_COMPLETE": "Controles de carga en la finca completados (temperatura / mercancía)",
+    "DEPARTED_FARM": "Salida de la finca",
+    "BORDER_STOP_ARRIVAL": "Parada fronteriza/regulatoria — llegada",
+    "BORDER_STOP_DEPARTURE": "Parada fronteriza/regulatoria — continuación",
+    "LINEHAUL_FINISHED": "Tramo principal de transporte completado hacia distribución",
+    "DELIVERY_BOOKED": "Registro de entrega abierto",
+    "LAST_MILE_DISPATCHED": "Conductor / furgoneta asignados (última milla)",
+    "SHIPMENT_COLLECTED": "Mercancía recogida para el tramo final",
+    "SHIPMENT_ENTRY_TRANSIT_LINE": "De camino a la dirección de entrega",
+    "SHIPMENT_DROP_OFF_CONFIRMED": "Recepción en destino — entrega digital con firma",
+    "SHIPMENT_BUYER_RECEIPT_CONFIRMED": "Su recepción confirmada — comienza el plazo de reclamación",
+    "ORDER_PACKED": "Empaquetado y listo para recogida",
+    "PAYMENT_RECEIVED": "Pago recibido — su pedido se está preparando"
+  },
+  "paymentMethod": {
+    "BANK_TRANSFER": "Transferencia bancaria",
+    "CARD": "Tarjeta",
+    "CASH": "Efectivo",
+    "ESCROW": "Depósito en garantía"
+  },
+  "paymentStatus": {
+    "buyer": {
+      "PENDING": "Pago pendiente",
+      "HELD": "Pago retenido en depósito",
+      "RELEASED": "Pago confirmado",
+      "REFUNDED": "Reembolsado",
+      "FAILED": "Pago fallido"
+    },
+    "admin": {
+      "PENDING": "Pendiente",
+      "HELD": "Retenido",
+      "RELEASED": "Liberado al productor",
+      "REFUNDED": "Reembolsado",
+      "FAILED": "Fallido"
+    }
   }
 }

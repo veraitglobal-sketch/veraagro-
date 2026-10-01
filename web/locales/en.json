@@ -910,6 +910,7 @@
       "materials": "Materials",
       "suppliersAndOrders": "Suppliers & orders",
       "myBatches": "My lots",
+      "ordersToPrepare": "Orders to prepare",
       "fieldDiary": "Entry log",
       "fieldCapture": "Field capture",
       "qualityEntry": "Quality",
@@ -2963,7 +2964,10 @@
       "delivered": "Delivered",
       "receiptConfirmed": "Receipt confirmed",
       "rejected": "Rejected"
-    }
+    },
+    "unitPrice": "Pricing",
+    "perPack": "/ pack",
+    "perKg": "/ kg"
   },
   "buyerPortalMarketplace": {
     "title": "Marketplace",
@@ -3880,6 +3884,16 @@
     "fieldDiarySyncedTitle": "Synced from the app",
     "fieldDiarySyncedBody": "Same records as in the app once they reach the server.",
     "fieldDiaryMobileEntryHint": "New entries: grower app — parcel, plan, photo & GPS.",
+    "fieldDiaryTabEntries": "Field entries",
+    "fieldDiaryTabGrowth": "Growth photos",
+    "fieldDiaryBags": "Bags / serials",
+    "fieldDiaryArea": "Area",
+    "fieldDiaryNoGrowthLogs": "No growth stage photos yet.",
+    "ordersToPrepareTitle": "Orders to prepare",
+    "ordersToPrepareLead": "Paid catalogue orders from your farm — pack before pickup.",
+    "ordersToPrepareEmpty": "No orders awaiting preparation.",
+    "prepareAndPack": "Prepare and pack",
+    "requestPickup": "Request pickup",
     "loadingFieldDiary": "Loading field log…",
     "portalLoading": "Loading…",
     "portalPageDescription": "Follow transport runs, route, and status for batches you have moved from the farm.",

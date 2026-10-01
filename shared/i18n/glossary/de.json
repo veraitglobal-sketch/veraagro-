@@ -193,5 +193,56 @@
     "marketplace": "Marktplatz",
     "catalogue": "Katalog",
     "fieldDiary": "Feldtagebuch"
+  },
+  "catalogOrderTimeline": {
+    "submitted": "Eingereicht",
+    "accepted": "Angenommen",
+    "paid": "Bezahlt",
+    "preparing": "In Vorbereitung",
+    "inTransit": "Unterwegs",
+    "delivered": "Geliefert",
+    "receiptConfirmed": "Empfang bestätigt",
+    "rejected": "Abgelehnt"
+  },
+  "buyerTimeline": {
+    "ORDER_RECORDED": "Bestellung erfasst",
+    "LINE_OPENED": "Kühlkette für Ihre Linie gebucht",
+    "LINEHAUL_ASSIGNED": "Spediteur für Abholung zugewiesen",
+    "LINEHAUL_ACCEPTED": "Spediteur hat Fahrt angenommen",
+    "LOADING_QUALITY_CHECK_COMPLETE": "Ladekontrollen auf der Farm abgeschlossen (Temperatur / Fracht)",
+    "DEPARTED_FARM": "Abfahrt vom Hof",
+    "BORDER_STOP_ARRIVAL": "Grenz-/Kontrollstopp — angekommen",
+    "BORDER_STOP_DEPARTURE": "Grenz-/Kontrollstopp — weitergefahren",
+    "LINEHAUL_FINISHED": "Haupttransport zur Distribution abgeschlossen",
+    "DELIVERY_BOOKED": "Lieferdatensatz eröffnet",
+    "LAST_MILE_DISPATCHED": "Fahrer / Transporter zugewiesen (letzte Meile)",
+    "SHIPMENT_COLLECTED": "Ware für letzte Etappe abgeholt",
+    "SHIPMENT_ENTRY_TRANSIT_LINE": "Unterwegs zur Lieferadresse",
+    "SHIPMENT_DROP_OFF_CONFIRMED": "Empfang am Zielort — digitale Übergabe mit Unterschrift",
+    "SHIPMENT_BUYER_RECEIPT_CONFIRMED": "Ihr Empfang bestätigt — Reklamationsfrist beginnt",
+    "ORDER_PACKED": "Verpackt und abholbereit",
+    "PAYMENT_RECEIVED": "Zahlung erhalten — Bestellung wird vorbereitet"
+  },
+  "paymentMethod": {
+    "BANK_TRANSFER": "Banküberweisung",
+    "CARD": "Karte",
+    "CASH": "Bar",
+    "ESCROW": "Treuhand"
+  },
+  "paymentStatus": {
+    "buyer": {
+      "PENDING": "Zahlung ausstehend",
+      "HELD": "Zahlung im Treuhandkonto",
+      "RELEASED": "Zahlung bestätigt",
+      "REFUNDED": "Erstattet",
+      "FAILED": "Zahlung fehlgeschlagen"
+    },
+    "admin": {
+      "PENDING": "Ausstehend",
+      "HELD": "Gehalten",
+      "RELEASED": "An Erzeuger ausgezahlt",
+      "REFUNDED": "Erstattet",
+      "FAILED": "Fehlgeschlagen"
+    }
   }
 }
