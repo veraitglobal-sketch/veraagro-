@@ -2109,7 +2109,15 @@
       "confirmDeletePhoto": "Permanently delete this photo?",
       "confirmRejectTransport": "Reject this transport request?",
       "transportApprovedHint": "After approval the mission becomes PENDING — assign a driver in Missions or logistics claims the run.",
-      "planPendingHint": "Confirm harvest plans before transport when the API requires it."
+      "planPendingHint": "Confirm harvest plans before transport when the API requires it.",
+      "tabFieldDiary": "Field diary",
+      "fieldDiaryIntro": "Server-persisted planting, fertilizing, and spraying entries for a grower (same data as the mobile field diary).",
+      "applyFieldDiaryFilter": "Load entries",
+      "emptyFieldDiary": "Enter a partner code to view field diary entries.",
+      "emptyFieldDiaryFiltered": "No field diary entries for this partner code.",
+      "fieldEntryBags": "Bags",
+      "fieldEntryArea": "Area: {{ha}} ha",
+      "fieldEntryParcel": "Parcel"
     },
     "financeOverview": {
       "heading": "Platform finance snapshot",

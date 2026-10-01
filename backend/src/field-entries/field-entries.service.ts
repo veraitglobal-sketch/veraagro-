@@ -351,6 +351,29 @@ export class FieldEntriesService {
     return this.mapRow(row);
   }
 
+  async findAllForAdmin(filters?: { partnerCode?: string; limit?: number; skip?: number }) {
+    const code = filters?.partnerCode?.trim();
+    if (!code) return [];
+
+    const grower = await this.prisma.users.findFirst({
+      where: { partnerCode: code },
+      select: { id: true },
+    });
+    if (!grower) return [];
+
+    const take = Math.min(Math.max(filters?.limit ?? 20, 1), 100);
+    const skip = Math.max(filters?.skip ?? 0, 0);
+
+    const rows = await this.prisma.field_entries.findMany({
+      where: { userId: grower.id },
+      orderBy: { occurredAt: 'desc' },
+      take,
+      skip,
+    });
+
+    return rows.map((r) => this.mapRow(r));
+  }
+
   async findAll(
     userId: string,
     filters?: {
@@ -359,6 +382,8 @@ export class FieldEntriesService {
       type?: string;
       from?: string;
       to?: string;
+      limit?: number;
+      skip?: number;
     },
   ) {
     const farms = await this.prisma.estates.findMany({
@@ -386,10 +411,14 @@ export class FieldEntriesService {
       if (filters.to) where.occurredAt.lte = new Date(filters.to);
     }
 
+    const take = Math.min(Math.max(filters?.limit ?? 20, 1), 100);
+    const skip = Math.max(filters?.skip ?? 0, 0);
+
     const rows = await this.prisma.field_entries.findMany({
       where,
       orderBy: { occurredAt: 'desc' },
-      take: 500,
+      take,
+      skip,
     });
 
     return rows.map((r) => this.mapRow(r));

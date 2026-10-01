@@ -23,7 +23,7 @@ describe('SeedProductionService', () => {
     },
     users: { findMany: jest.fn().mockResolvedValue([]) },
     parcels: { findMany: jest.fn().mockResolvedValue([]) },
-    seed_custody_events: { create: jest.fn() },
+    seed_custody_events: { create: jest.fn(), groupBy: jest.fn().mockResolvedValue([]) },
     $transaction: jest.fn(async (fn: (tx: unknown) => Promise<void>) => fn(prisma)),
     audit_trails: { create: jest.fn() },
   };
@@ -161,6 +161,11 @@ describe('SeedProductionService', () => {
     prisma.seeds.count
       .mockResolvedValueOnce(4)
       .mockResolvedValueOnce(1);
+    prisma.seed_custody_events.groupBy
+      .mockResolvedValueOnce([{ seedId: 's1' }, { seedId: 's2' }, { seedId: 's3' }])
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([{ seedId: 'a1' }, { seedId: 'a2' }]);
     prisma.seeds.findMany.mockResolvedValue([]);
     prisma.users.findMany.mockResolvedValue([]);
 
@@ -175,6 +180,33 @@ describe('SeedProductionService', () => {
     expect(row.sold).toBe(3);
     expect(row.assignedAdmin).toBe(2);
     expect(row.planted).toBe(4);
+  });
+
+  it('getReportsSummary sold is cumulative (ever SOLD_TO_GROWER, not current status)', async () => {
+    prisma.seed_production_runs.findMany.mockResolvedValue([
+      {
+        id: 'run-sold',
+        approvedProductId: 'prod1',
+        seedCropYear: 2026,
+        bagsProduced: 2,
+        approvedProduct: { name: 'Raspberry seed', variety: 'Willamette' },
+        producer: { name: 'NS Seme' },
+      },
+    ]);
+    prisma.seeds.groupBy.mockResolvedValue([
+      { status: 'PLANTED', _count: 1 },
+      { status: 'SOLD', _count: 1 },
+    ]);
+    prisma.seeds.count.mockResolvedValue(0);
+    prisma.seed_custody_events.groupBy
+      .mockResolvedValueOnce([{ seedId: 'bag1' }, { seedId: 'bag2' }])
+      .mockResolvedValueOnce([]);
+    prisma.seeds.findMany.mockResolvedValue([]);
+    prisma.users.findMany.mockResolvedValue([]);
+
+    const summary = await service.getReportsSummary({ year: 2026 });
+    expect(summary.byProductYear[0].sold).toBe(2);
+    expect(summary.byProductYear[0].planted).toBe(1);
   });
 
   it('recall notifies growers and marks bags', async () => {

@@ -6,8 +6,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { Throttle } from '@nestjs/throttler';
 
 @Controller('field-entries')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('FARMER', 'GROWER')
+@UseGuards(JwtAuthGuard)
 export class FieldEntriesController {
   constructor(private readonly fieldEntriesService: FieldEntriesService) {}
 
@@ -17,11 +16,30 @@ export class FieldEntriesController {
    */
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles('FARMER', 'GROWER')
   async create(@Request() req, @Body() body: any) {
     return this.fieldEntriesService.create(req.user.id, body);
   }
 
+  @Get('admin/list')
+  @UseGuards(RolesGuard)
+  @Roles('SUPER_ADMIN', 'ADMIN')
+  adminList(
+    @Query('partnerCode') partnerCode?: string,
+    @Query('limit') limit?: string,
+    @Query('skip') skip?: string,
+  ) {
+    return this.fieldEntriesService.findAllForAdmin({
+      partnerCode,
+      limit: limit ? parseInt(limit, 10) : undefined,
+      skip: skip ? parseInt(skip, 10) : undefined,
+    });
+  }
+
   @Get()
+  @UseGuards(RolesGuard)
+  @Roles('FARMER', 'GROWER')
   async findAll(
     @Request() req,
     @Query('farmId') farmId?: string,
@@ -29,7 +47,17 @@ export class FieldEntriesController {
     @Query('type') type?: string,
     @Query('from') from?: string,
     @Query('to') to?: string,
+    @Query('limit') limit?: string,
+    @Query('skip') skip?: string,
   ) {
-    return this.fieldEntriesService.findAll(req.user.id, { farmId, parcelId, type, from, to });
+    return this.fieldEntriesService.findAll(req.user.id, {
+      farmId,
+      parcelId,
+      type,
+      from,
+      to,
+      limit: limit ? parseInt(limit, 10) : undefined,
+      skip: skip ? parseInt(skip, 10) : undefined,
+    });
   }
 }

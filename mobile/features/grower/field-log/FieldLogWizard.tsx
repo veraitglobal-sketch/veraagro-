@@ -28,9 +28,8 @@ import {
   ACTIVITY_TYPES,
   ActivityType,
   PLANTING_NOTES_MIN,
-  historyActivityLabelKey,
 } from './useFieldLogData';
-import { FieldLogHistoryCollapsible } from './FieldLogHistoryCollapsible';
+import { FieldLogHistoryPanel } from './FieldLogHistoryPanel';
 
 const STEPS = 3;
 
@@ -49,14 +48,16 @@ const MATERIAL_ACTIVITIES = new Set<ActivityType>(['PLANTING', 'FERTILIZING', 'S
 export default function FieldLogWizard({ embedded = false }: { embedded?: boolean }) {
   const { t } = useTranslation();
   const dateLocale = useAppLocaleTag();
+  const data = useFieldLogData();
+  const historyOnly = data.historyOnly;
   const [step, setStep] = useState(1);
+  const [showNewEntry, setShowNewEntry] = useState(!historyOnly);
   const [showOptional, setShowOptional] = useState(false);
   const [plantedBags, setPlantedBags] = useState<{
     count: number;
     totalKg: number;
     lots: string[];
   } | null>(null);
-  const data = useFieldLogData();
 
   const loadPlantedBags = useCallback(async (parcelId: string) => {
     try {
@@ -165,8 +166,11 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
     } as never);
   };
 
-  const headerSubtitle = t('producer.fieldLogForm.wizardStepOf', { step, total: STEPS });
+  const headerSubtitle = historyOnly && !showNewEntry
+    ? t('producer.fieldLogForm.historySubtitle')
+    : t('producer.fieldLogForm.wizardStepOf', { step, total: STEPS });
 
+  const showWizard = !historyOnly || showNewEntry;
 
   return (
     <View style={[growerUi.canvas, embedded && styles.embeddedRoot]}>
@@ -174,6 +178,7 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
         <GrowerStackHeader title={t('producer.tabs.fieldLog')} subtitle={headerSubtitle} />
       ) : null}
 
+      {showWizard ? (
       <View style={styles.progressWrap}>
         <WorkflowSteps current={step - 1} labels={[
           t('workflowSteps.parcel'),
@@ -181,6 +186,7 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
           t('workflowSteps.work'),
         ]} />
       </View>
+      ) : null}
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -199,6 +205,24 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
             />
           }
         >
+          {historyOnly && !showNewEntry ? (
+            <FieldLogHistoryPanel
+              items={data.localHistory}
+              formatWhen={formatHistoryWhen}
+              onDiscard={data.discardQueueItem}
+              collapsible={false}
+              defaultExpanded
+            />
+          ) : null}
+
+          {historyOnly && !showNewEntry ? (
+            <EnterpriseButton
+              label={t('producer.fieldLogForm.newEntry')}
+              onPress={() => setShowNewEntry(true)}
+              style={{ marginBottom: 12 }}
+            />
+          ) : null}
+
           {data.pendingFieldCount > 0 ? (
             <EnterpriseNotice
               title={t('producer.fieldLogForm.queuePill', { count: data.pendingFieldCount })}
@@ -210,7 +234,7 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
             />
           ) : null}
 
-          {step > 1 && selectedParcelOpt ? (
+          {showWizard && step > 1 && selectedParcelOpt ? (
             <View style={[enterpriseUi.inAppPanel, styles.contextChip]}>
               <MapPin size={18} color={enterpriseColors.gray600} strokeWidth={1.5} />
               <Text style={styles.contextText} numberOfLines={1}>
@@ -221,7 +245,7 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
             </View>
           ) : null}
 
-          {step > 2 && selectedPlan ? (
+          {showWizard && step > 2 && selectedPlan ? (
             <View style={[enterpriseUi.inAppPanel, styles.contextChip]}>
               <Sprout size={18} color={enterpriseColors.gray600} strokeWidth={1.5} />
               <Text style={styles.contextText} numberOfLines={1}>
@@ -230,7 +254,7 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
             </View>
           ) : null}
 
-          {step === 1 ? (
+          {showWizard && step === 1 ? (
             <>
               {data.approvedParcelOptions.length === 0 ? (
                 <TouchableOpacity
@@ -269,7 +293,7 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
             </>
           ) : null}
 
-          {step === 2 ? (
+          {showWizard && step === 2 ? (
             <>
               {data.plansLoading ? (
                 <ActivityIndicator color={enterpriseColors.primary} style={{ marginVertical: 24 }} />
@@ -302,7 +326,7 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
             </>
           ) : null}
 
-          {step === 3 ? (
+          {showWizard && step === 3 ? (
             <>
 
               {data.gpsWarning ? (
@@ -408,17 +432,18 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
             </>
           ) : null}
 
-          {data.localHistory.length > 0 ? (
-            <FieldLogHistoryCollapsible
+          {showWizard && data.localHistory.length > 0 ? (
+            <FieldLogHistoryPanel
               items={data.localHistory}
               formatWhen={formatHistoryWhen}
-              activityLabel={(a) => t(`producer.fieldLog.${historyActivityLabelKey(a)}`)}
               onDiscard={data.discardQueueItem}
+              defaultExpanded={false}
             />
           ) : null}
         </ScrollView>
         </TouchableWithoutFeedback>
 
+        {showWizard ? (
         <View style={styles.footer}>
           {step > 1 ? (
             <EnterpriseButton
@@ -448,6 +473,7 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
             <View style={styles.footerSpacer} />
           )}
         </View>
+        ) : null}
       </KeyboardAvoidingView>
     </View>
   );

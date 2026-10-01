@@ -198,6 +198,21 @@ export class SeedProductionService implements OnModuleInit {
     return map;
   }
 
+  /** Distinct bags that ever had a custody event (cumulative — status may have moved on). */
+  private async countDistinctCustodyEventsForRun(
+    runId: string,
+    events: Array<'SOLD_TO_GROWER' | 'ASSIGNED_TO_GROWER'>,
+  ): Promise<number> {
+    const groups = await this.prisma.seed_custody_events.groupBy({
+      by: ['seedId'],
+      where: {
+        event: { in: events },
+        seed: { productionRunId: runId },
+      },
+    });
+    return groups.length;
+  }
+
   async getRun(id: string) {
     const run = await this.prisma.seed_production_runs.findUnique({
       where: { id },
@@ -1497,9 +1512,13 @@ export class SeedProductionService implements OnModuleInit {
   private async bagFunnelForRun(runId: string, run: { bagsProduced: number | null }) {
     const counts = await this.bagCountsForRun(runId);
     const labeled = Object.values(counts).reduce((sum, n) => sum + n, 0);
-    const shipped = await this.prisma.seeds.count({
-      where: { productionRunId: runId, supplierUserId: { not: null } },
-    });
+    const [shipped, soldEver, assignedEver] = await Promise.all([
+      this.prisma.seeds.count({
+        where: { productionRunId: runId, supplierUserId: { not: null } },
+      }),
+      this.countDistinctCustodyEventsForRun(runId, ['SOLD_TO_GROWER']),
+      this.countDistinctCustodyEventsForRun(runId, ['ASSIGNED_TO_GROWER']),
+    ]);
     return {
       labeled,
       produced: run.bagsProduced ?? 0,
@@ -1507,8 +1526,8 @@ export class SeedProductionService implements OnModuleInit {
       atProducer: counts.AVAILABLE ?? 0,
       shipped,
       inSupplierStock: counts.IN_SUPPLIER_STOCK ?? 0,
-      sold: counts.SOLD ?? 0,
-      assignedAdmin: counts.ASSIGNED ?? 0,
+      sold: soldEver,
+      assignedAdmin: assignedEver,
       planted: (counts.PLANTED ?? 0) + (counts.PARTIALLY_USED ?? 0),
       recalled: counts.RECALLED ?? 0,
     };

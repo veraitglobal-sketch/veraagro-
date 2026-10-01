@@ -307,7 +307,16 @@ export default function PlantingEntryScreen() {
             <EnterprisePanel>
               <Text style={styles.summary}>{savedSummary}</Text>
               {offlineQueued ? <Text style={styles.hint}>{t('plantingEntry.willSync')}</Text> : null}
-              <EnterpriseButton label={t('plantingEntry.openFieldDiary')} onPress={() => router.push('/(producer)/(tabs)/field-log')} fullWidth />
+              <EnterpriseButton
+                label={t('plantingEntry.openFieldDiary')}
+                onPress={() =>
+                  router.push({
+                    pathname: '/(producer)/(tabs)/field-log',
+                    params: { view: 'history' },
+                  } as never)
+                }
+                fullWidth
+              />
               <EnterpriseButton variant="secondary" label={t('common.back')} onPress={() => router.back()} fullWidth />
             </EnterprisePanel>
           ) : (

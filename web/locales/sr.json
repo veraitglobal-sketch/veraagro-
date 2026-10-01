@@ -1817,7 +1817,15 @@
       "confirmDeletePhoto": "Trajno obrisati ovu fotografiju?",
       "confirmRejectTransport": "Odbiti zahtev za transport?",
       "transportApprovedHint": "Posle odobrenja misija prelazi u PENDING — dodelite vozača u Misijama ili logistika preuzima vožnju.",
-      "planPendingHint": "Potvrda plana žetve pre transporta (ako je uključeno na API-ju)."
+      "planPendingHint": "Potvrda plana žetve pre transporta (ako je uključeno na API-ju).",
+      "tabFieldDiary": "Poljski dnevnik",
+      "fieldDiaryIntro": "Unosi setve, prihrane i prskanja sačuvani na serveru (isti podaci kao u mobilnom poljskom dnevniku).",
+      "applyFieldDiaryFilter": "Učitaj unose",
+      "emptyFieldDiary": "Unesite partnerski kod da biste videli unose u poljskom dnevniku.",
+      "emptyFieldDiaryFiltered": "Nema unosa u poljskom dnevniku za ovaj partnerski kod.",
+      "fieldEntryBags": "Kese",
+      "fieldEntryArea": "Površina: {{ha}} ha",
+      "fieldEntryParcel": "Parcela"
     },
     "financeOverview": {
       "heading": "Pregled finansija platforme",

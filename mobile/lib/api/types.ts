@@ -122,10 +122,27 @@ export interface FieldEntry {
   id: string;
   type: string;
   farmId: string;
+  parcelId?: string | null;
+  plantingId?: string | null;
+  seedSerialNumber?: string | null;
+  materialName?: string | null;
+  materialQuantity?: number | null;
+  materialUnit?: string | null;
+  areaHa?: number | null;
+  clientReference?: string | null;
+  occurredAt?: string;
   data: {
     date: string;
     location?: { lat: number; lng: number };
     notes?: string;
+    bags?: Array<{ serial: string; quantityKg?: number }>;
+    lot?: string;
+    parcelId?: string;
+    areaHa?: number;
+    materialName?: string;
+    materialQuantity?: number;
+    photos?: string[];
+    [key: string]: unknown;
   };
   createdAt: string;
 }

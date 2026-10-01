@@ -77,7 +77,8 @@ export function historyActivityLabelKey(activity: string): string {
 export function useFieldLogData() {
   const { t } = useTranslation();
   const router = useRouter();
-  const route = useLocalSearchParams<{ parcelId?: string; plantingId?: string }>();
+  const route = useLocalSearchParams<{ parcelId?: string; plantingId?: string; view?: string }>();
+  const historyOnly = route.view === 'history';
   const requestedParcel = typeof route.parcelId === 'string' ? route.parcelId : '';
   const requestedPlan = typeof route.plantingId === 'string' ? route.plantingId : '';
   const plansRequest = useRef(0);
@@ -450,7 +451,8 @@ export function useFieldLogData() {
         .map((r) => pendingPlantingToHistoryItem(r, farmName));
       let apiItems: ReturnType<typeof fieldEntryToHistoryItem>[] = [];
       if (currentEstate?.id && (await isDeviceOnline())) {
-        const rows = await fieldEntriesAPI.getAll(currentEstate.id);
+        const parcelFilter = selectedParcelIdRef.current || undefined;
+        const rows = await fieldEntriesAPI.getAll(currentEstate.id, parcelFilter, 20);
         apiItems = rows.map((e) => fieldEntryToHistoryItem(e as Parameters<typeof fieldEntryToHistoryItem>[0], farmName));
       }
       setLocalHistory(mergeFieldLogHistory(local, apiItems, pendingItems));
@@ -480,8 +482,12 @@ export function useFieldLogData() {
         } catch {}
       };
       void check();
-    }, [getCurrentLocation, refreshPendingFieldCount]),
+    }, [getCurrentLocation, reloadLocalHistory]),
   );
+
+  useEffect(() => {
+    void reloadLocalHistory();
+  }, [reloadLocalHistory, selectedParcelId]);
 
   const pickPhotoFromLibrary = useCallback(async () => {
     const asset = await pickFromGallery({ t, quality: 0.72 });
@@ -799,5 +805,6 @@ export function useFieldLogData() {
     discardQueueItem,
     discardAllUnsentLocal,
     purgeLegacyOnly,
+    historyOnly,
   };
 }

@@ -594,6 +594,14 @@ export const harvestAnnouncementsAPI = {
   },
 };
 
+/** Field diary entries persisted on server (admin view by partner code) */
+export const fieldEntriesAdminAPI = {
+  list: async (params?: { partnerCode?: string; limit?: number; skip?: number }) => {
+    const response = await api.get('/field-entries/admin/list', { params });
+    return response.data || [];
+  },
+};
+
 /** Growth journal entries (read-only on web; create from mobile with photo + GPS) */
 export const growthLogsAPI = {
   listByEstate: async (estateId: string) => {

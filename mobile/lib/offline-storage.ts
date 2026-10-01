@@ -126,6 +126,8 @@ export function shouldRemoveLegacyFieldLogRow(entry: PendingFieldEntry): boolean
 /** Lightweight local history for Field log (survives sync success; device-only). */
 export interface FieldLogHistoryItem {
   id: string;
+  /** Offline idempotency key — dedupes against server rows after sync. */
+  clientReference?: string;
   timestamp: string;
   activityType: FieldActivityType;
   estateId?: string;
@@ -141,6 +143,20 @@ export interface FieldLogHistoryItem {
   catalogMaterialName?: string;
   status: 'pending' | 'syncing' | 'synced' | 'error' | 'unrecoverable';
   error?: string;
+  detailData?: {
+    type?: string;
+    bags?: Array<{ serial: string; quantityKg?: number }>;
+    parcelId?: string;
+    areaHa?: number;
+    date?: string;
+    lat?: number;
+    lng?: number;
+    notes?: string;
+    photos?: string[];
+    materialName?: string;
+    materialQuantity?: number;
+    materialUnit?: string;
+  };
 }
 
 /** Offline product (QR or manual). */

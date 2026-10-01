@@ -42,9 +42,9 @@ export const growerSeedOriginAPI = {
 };
 
 export const fieldEntriesAPI = {
-  getAll: async (farmId?: string, parcelId?: string): Promise<FieldEntry[]> => {
+  getAll: async (farmId?: string, parcelId?: string, limit = 20): Promise<FieldEntry[]> => {
     try {
-      const params: Record<string, string> = {};
+      const params: Record<string, string> = { limit: String(limit) };
       if (farmId) params.farmId = farmId;
       if (parcelId) params.parcelId = parcelId;
       const response = await api.get('/field-entries', { params });

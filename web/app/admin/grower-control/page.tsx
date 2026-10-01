@@ -6,6 +6,7 @@ import Link from 'next/link';
 import AuthGuard from '@/components/AuthGuard';
 import AdminShell from '@/components/AdminShell';
 import {
+  fieldEntriesAdminAPI,
   growthLogsAPI,
   harvestAnnouncementsAPI,
   materialControlAdminAPI,
@@ -26,7 +27,7 @@ import {
   Trash2,
 } from 'lucide-react';
 
-type TabId = 'transport' | 'growth' | 'plantings' | 'plans';
+type TabId = 'transport' | 'growth' | 'plantings' | 'plans' | 'fieldDiary';
 type PhotoStatusFilter = 'ALL' | 'APPROVED' | 'REJECTED';
 
 function mediaSrc(url: string): string {
@@ -47,7 +48,7 @@ function GrowerControlInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = (searchParams.get('tab') || 'transport') as TabId;
-  const tab: TabId = ['transport', 'growth', 'plantings', 'plans'].includes(tabParam)
+  const tab: TabId = ['transport', 'growth', 'plantings', 'plans', 'fieldDiary'].includes(tabParam)
     ? tabParam
     : 'transport';
   const highlightMission = searchParams.get('missionId');
@@ -73,10 +74,19 @@ function GrowerControlInner() {
     partnerCode: searchParams.get('partnerCode') || '',
     photoStatus: ((searchParams.get('photoStatus') as PhotoStatusFilter) || 'ALL') as PhotoStatusFilter,
   });
+  const [fieldDiaryPartnerCode, setFieldDiaryPartnerCode] = useState(searchParams.get('partnerCode') || '');
+  const [fieldDiaryDraft, setFieldDiaryDraft] = useState(searchParams.get('partnerCode') || '');
+  const [fieldDiaryEntries, setFieldDiaryEntries] = useState<any[]>([]);
 
   useEffect(() => {
     setActiveTab(tab);
   }, [tab]);
+
+  useEffect(() => {
+    const code = searchParams.get('partnerCode') || '';
+    setFieldDiaryPartnerCode(code);
+    setFieldDiaryDraft(code);
+  }, [searchParams]);
 
   const setTab = (next: TabId) => {
     setActiveTab(next);
@@ -102,6 +112,16 @@ function GrowerControlInner() {
     };
   }, [growthPartnerCode, growthPhotoStatus]);
 
+  const loadFieldDiary = useCallback(async (code: string) => {
+    const trimmed = code.trim();
+    if (!trimmed) {
+      setFieldDiaryEntries([]);
+      return;
+    }
+    const rows = await fieldEntriesAdminAPI.list({ partnerCode: trimmed, limit: 20 });
+    setFieldDiaryEntries(Array.isArray(rows) ? rows : []);
+  }, []);
+
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -110,6 +130,7 @@ function GrowerControlInner() {
         missionsAPI.getAllAdmin({ status: 'AWAITING_APPROVAL' }),
         loadGrowthPhotos(),
         harvestAnnouncementsAPI.getAll(),
+        loadFieldDiary(fieldDiaryPartnerCode),
       ]);
       setTransport(Array.isArray(missions) ? missions : []);
       setGrowth(photoData.logs);
@@ -122,7 +143,7 @@ function GrowerControlInner() {
     } finally {
       setLoading(false);
     }
-  }, [t, loadGrowthPhotos]);
+  }, [t, loadGrowthPhotos, loadFieldDiary, fieldDiaryPartnerCode]);
 
   useEffect(() => {
     void load();
@@ -135,9 +156,25 @@ function GrowerControlInner() {
         { id: 'growth' as TabId, label: t('adminPages.growerControl.tabGrowth'), icon: Camera, count: growth.length + compliancePhotos.length },
         { id: 'plantings' as TabId, label: t('adminPages.growerControl.tabPlantings'), icon: Sprout, count: plantings.length },
         { id: 'plans' as TabId, label: t('adminPages.growerControl.tabPlans'), icon: CalendarRange, count: plans.length },
+        {
+          id: 'fieldDiary' as TabId,
+          label: t('adminPages.growerControl.tabFieldDiary'),
+          icon: Sprout,
+          count: fieldDiaryEntries.length,
+        },
       ] as const,
-    [t, transport.length, growth.length, compliancePhotos.length, plantings.length, plans.length],
+    [t, transport.length, growth.length, compliancePhotos.length, plantings.length, plans.length, fieldDiaryEntries.length],
   );
+
+  const applyFieldDiaryFilter = () => {
+    const nextCode = fieldDiaryDraft.trim();
+    setFieldDiaryPartnerCode(nextCode);
+    const q = new URLSearchParams(searchParams.toString());
+    q.set('tab', 'fieldDiary');
+    if (nextCode) q.set('partnerCode', nextCode);
+    else q.delete('partnerCode');
+    router.replace(`/admin/grower-control?${q.toString()}`);
+  };
 
   const approveTransport = async (id: string) => {
     setSaving(id);
@@ -572,6 +609,88 @@ function GrowerControlInner() {
             </>
           ) : null}
           </>
+          )}
+        </>
+      ) : activeTab === 'fieldDiary' ? (
+        <>
+          <p className="text-sm text-gray-600 mb-4">{t('adminPages.growerControl.fieldDiaryIntro')}</p>
+          <div className="mb-6 p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+            <div className="flex flex-wrap gap-3 items-end">
+              <label className="flex-1 min-w-[200px] text-sm">
+                <span className="block text-gray-700 mb-1">{t('adminPages.growerControl.partnerCodeFilter')}</span>
+                <input
+                  type="text"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-base min-h-[48px]"
+                  placeholder={t('adminPages.growerControl.partnerCodePlaceholder')}
+                  value={fieldDiaryDraft}
+                  onChange={(e) => setFieldDiaryDraft(e.target.value)}
+                />
+              </label>
+              <button
+                type="button"
+                onClick={() => applyFieldDiaryFilter()}
+                className="min-h-[48px] px-4 rounded-lg bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f]"
+              >
+                {t('adminPages.growerControl.applyFieldDiaryFilter')}
+              </button>
+            </div>
+          </div>
+          {!fieldDiaryPartnerCode.trim() ? (
+            <Empty msg={t('adminPages.growerControl.emptyFieldDiary')} />
+          ) : fieldDiaryEntries.length === 0 ? (
+            <Empty msg={t('adminPages.growerControl.emptyFieldDiaryFiltered')} />
+          ) : (
+            <ul className="space-y-4">
+              {fieldDiaryEntries.map((entry) => {
+                const data = (entry.data || {}) as Record<string, unknown>;
+                const bags = Array.isArray(data.bags) ? data.bags : [];
+                const when = entry.occurredAt || entry.createdAt;
+                return (
+                  <li key={entry.id} className="p-5 bg-white border border-gray-200 rounded-xl shadow-sm">
+                    <p className="text-xs text-gray-500 uppercase tracking-wide">{entry.type}</p>
+                    <p className="font-medium text-gray-900 mt-1">
+                      {entry.materialName || '—'}
+                      {entry.materialQuantity != null ? ` · ${entry.materialQuantity} ${entry.materialUnit || 'kg'}` : ''}
+                    </p>
+                    {bags.length > 0 ? (
+                      <p className="text-sm text-gray-600 mt-2">
+                        {t('adminPages.growerControl.fieldEntryBags')}:{' '}
+                        {bags
+                          .map((b: { serial?: string; quantityKg?: number }) =>
+                            b.quantityKg != null ? `${b.serial} (${b.quantityKg} kg)` : b.serial,
+                          )
+                          .join(', ')}
+                      </p>
+                    ) : entry.seedSerialNumber ? (
+                      <p className="text-sm text-gray-600 mt-2">{entry.seedSerialNumber}</p>
+                    ) : null}
+                    {entry.areaHa != null ? (
+                      <p className="text-sm text-gray-600 mt-1">
+                        {t('adminPages.growerControl.fieldEntryArea', { ha: entry.areaHa })}
+                      </p>
+                    ) : null}
+                    {entry.parcelId ? (
+                      <p className="text-xs text-gray-500 mt-1">
+                        {t('adminPages.growerControl.fieldEntryParcel')}: {entry.parcelId.slice(0, 8)}…
+                      </p>
+                    ) : null}
+                    {data.location && typeof data.location === 'object' ? (
+                      <p className="text-xs text-gray-500 mt-1">
+                        {t('adminPages.growerControl.gps')}:{' '}
+                        {(data.location as { lat?: number; lng?: number }).lat?.toFixed?.(5)},{' '}
+                        {(data.location as { lat?: number; lng?: number }).lng?.toFixed?.(5)}
+                      </p>
+                    ) : null}
+                    {typeof data.notes === 'string' && data.notes ? (
+                      <p className="text-sm text-gray-600 mt-2">
+                        {t('adminPages.growerControl.notes')}: {data.notes}
+                      </p>
+                    ) : null}
+                    <p className="text-xs text-gray-400 mt-2">{when ? formatDateTimeEn(when) : ''}</p>
+                  </li>
+                );
+              })}
+            </ul>
           )}
         </>
       ) : activeTab === 'plantings' ? (
