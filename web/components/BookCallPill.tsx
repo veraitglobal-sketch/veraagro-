@@ -21,8 +21,8 @@ export default function BookCallPill() {
   return (
     <Link
       href={bookCall.href}
-      className="fixed bottom-[4.25rem] right-5 z-[60] flex items-center gap-2 rounded-lg border border-[#2D5A27] bg-[#2D5A27] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#23471f] print:hidden"
-      style={{ boxShadow: '0 2px 12px rgba(45, 90, 39, 0.18)' }}
+      className="fixed bottom-[4.25rem] right-5 z-[60] flex items-center gap-2 rounded-lg border border-[#2D5A27]/30 bg-white px-4 py-2.5 text-sm font-medium text-[#2D5A27] shadow-sm transition hover:bg-[#2D5A27]/5 hover:border-[#2D5A27]/50 print:hidden"
+      style={{ boxShadow: '0 2px 12px rgba(45, 90, 39, 0.12)' }}
     >
       <CalendarDays className="h-5 w-5" aria-hidden />
       <span>{t('bookCall.navCta')}</span>
