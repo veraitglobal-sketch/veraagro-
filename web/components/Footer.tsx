@@ -189,6 +189,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href={loc('/impressum')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
+                  {t('footer.impressum')}
+                </Link>
+              </li>
+              <li>
                 <Link href={loc('/terms')} className="inline-flex items-center min-h-[44px] py-2 hover:text-[#2D5A27] transition-colors">
                   {t('footer.terms')}
                 </Link>

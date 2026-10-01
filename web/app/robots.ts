@@ -21,6 +21,8 @@ export default function robots(): MetadataRoute.Robots {
           '/hub-manager/',
           '/aeo-dashboard/',
           '/operations-center/',
+          // Illustrative network map with placeholder hubs — not real locations, keep out of search/AI answers.
+          '/distributor-network',
         ],
       },
     ],

@@ -21,7 +21,7 @@
     "nameEs": "Español"
   },
   "footer": {
-    "tagline": "Una red agrícola verticalmente integrada para la certificación Bio-Ready y el cumplimiento del mercado de la UE.",
+    "tagline": "Una cadena agroalimentaria gestionada de forma vertical: productores bajo contrato en toda Europa, control de calidad, cadena de frío y venta con la marca Bio Vera, con un expediente Bio‑Ready para cada lote.",
     "columnProduct": "Producto",
     "columnCompany": "Compañía",
     "columnSupport": "Apoyo",
@@ -47,7 +47,8 @@
     "appApple": "Apple",
     "appAndroid": "Androide",
     "logoAlt": "Bio Vera",
-    "terms": "Términos"
+    "terms": "Términos",
+    "impressum": "Impressum (aviso legal)"
   },
   "languagePage": {
     "eyebrow": "Ajustes",
@@ -3549,7 +3550,7 @@
       "grains": "Granos"
     },
     "cta": {
-      "title": "Asóciese con la red",
+      "title": "Cultive para nosotros, transporte para nosotros o compre a nosotros",
       "body": "Trabaje con productores, socios logísticos y compradores bajo un conjunto de estándares: entregas claras, lotes rastreables y términos comerciales predecibles.",
       "becomeProducer": "Conviértete en productor",
       "startShopping": "Empezar a comprar"
@@ -3706,7 +3707,7 @@
     "harvestCalendarLead": ""
   },
   "growersPage": {
-    "metaTitle": "Programa para productores | Bio Vera — Certificación, condiciones garantizadas, acceso al mercado UE",
+    "metaTitle": "Programa para productores | Bio Vera — Certificación, condiciones garantizadas, compradores en toda Europa",
     "metaDescription": "Programa para productores: condiciones garantizadas, certificación grupal GlobalG.A.P. IFA v6 gratuita, pago en 48 h, logística coordinada y acceso al mercado UE. Abierto a productores de la UE y los Europa.",
     "title": "Programa para productores",
     "heroLead": "Únase a una red de productores certificados. Bio Vera garantiza estándares de calidad, certificación grupal GlobalG.A.P., coordinación logística y acceso a compradores europeos — sin coste de certificación para el productor.",
@@ -3757,7 +3758,7 @@
     ],
     "groupCertTitle": "Certificación grupal",
     "groupCertSubtitle": "Opción de certificación grupal 2",
-    "groupCertBody": "Vera Agrar posee la certificación de todos nuestros socios. Cubrimos los costes y el proceso de certificación, mientras tú obtienes acceso directo al mercado alemán.",
+    "groupCertBody": "No paga la certificación usted mismo. Vera Agrar es titular del certificado de grupo GlobalG.A.P. y usted se incorpora como miembro del grupo: Bio Vera cubre los costes de documentación, auditoría y mantenimiento del certificado.",
     "technicalStandardsTitle": "Normas técnicas",
     "tableColCategory": "Categoría",
     "tableColStandard": "Estándar",
@@ -3891,7 +3892,7 @@
       }
     ],
     "heroEyebrow": "Bio Vera · Productores",
-    "heroSubtitle": "Condiciones garantizadas, acceso al mercado UE",
+    "heroSubtitle": "Condiciones garantizadas y compradores en toda Europa: abierto a productores de cualquier país europeo",
     "viewGuideOnline": "Open guide (screenshots)",
     "backToGrowers": "Back to growers"
   },
@@ -4053,7 +4054,9 @@
     "cardCookiesTitle": "Política de cookies",
     "cardCookiesDesc": "Comprenda cómo utilizamos cookies y tecnologías similares en nuestros sitios web y aplicaciones.",
     "sectionTechTitle": "Implementación técnica",
-    "techImplementation": "Implementación técnica / software de <1>Vera IT</1>."
+    "techImplementation": "Implementación técnica / software de <1>Vera IT</1>.",
+    "cardImpressumTitle": "Impressum",
+    "cardImpressumDesc": "Datos de la empresa: titular, dirección en Hamburgo, NIF-IVA y contacto."
   },
   "investorDeckPage": {
     "pageTitle": "Investor materials",
@@ -4093,7 +4096,7 @@
     "featuredAd": {
       "eyebrow": "Vacantes · ventas de campo · Serbia",
       "title": "Buscamos representantes comerciales",
-      "lead": "Únete al programa Vera — visita productores, cierra volúmenes contractuales y construye la red Bio Vera del campo a Hamburgo.",
+      "lead": "Únase al programa de productores de Bio Vera: visite productores, cierre volúmenes bajo contrato y construya la red de productores en su región, dentro de un programa que opera en toda Europa.",
       "regionSouthCentral": "Serbia meridional y central",
       "regionVojvodina": "Voivodina",
       "degreeNote": "Deseable: titulación en Facultad de Agronomía (agronomía, fruticultura, protección de cultivos o similar)."
@@ -4185,7 +4188,7 @@
           "Salario base + comisión por volúmenes contratados",
           "Presupuesto de viajes y campo",
           "Herramientas móviles Bio Vera y formación",
-          "Crecimiento profesional con la expansión del corredor",
+          "Crecimiento profesional a medida que se amplía el programa",
           "Apoyo de QA y operaciones desde Hamburgo"
         ]
       },
@@ -4279,7 +4282,7 @@
     "missionP1": "Bio Vera trabaja para fortalecer las cadenas de suministro agrícola conectando a los productores de todo el mundo directamente con los mercados, garantizando estándares claros, garantía de calidad y una compensación justa en cada paso.",
     "missionP2": "Creemos que la tecnología puede cerrar la brecha entre la agricultura tradicional y las demandas del mercado moderno, creando un ecosistema sostenible donde los agricultores prosperan, los compradores confían y los consumidores se benefician de productos verdaderamente rastreables y de alta calidad.",
     "visionTitle": "Nuestra visión",
-    "visionP1": "Convertirnos en una red agrícola líder integrada verticalmente, estableciendo nuevos estándares de trazabilidad, garantía de calidad y agricultura sostenible.",
+    "visionP1": "Ser la cadena de fruta y verdura fresca verticalmente integrada de referencia en Europa, con un control de calidad que los compradores reconocen en el lineal. Cada producto con su pasaporte digital completo, cada productor pagado de forma justa y cada consumidor con plena confianza en el origen.",
     "visionP2": "Visualizamos un futuro en el que cada producto en el lineal tenga un pasaporte digital completo, en el que los agricultores reciban una compensación justa por su trabajo y en el que los consumidores puedan confiar en el origen y la calidad de lo que compran.",
     "valuesTitle": "Nuestros valores",
     "valueCards": [
@@ -4319,7 +4322,7 @@
         "body": "Gestión automatizada de certificaciones, GlobalG.A.P. Facilitación de la certificación grupal IFA v6 y seguimiento completo del cumplimiento para un acceso fluido a los mercados de todo el mundo."
       }
     ],
-    "ctaTitle": "Únase a nosotros en este viaje",
+    "ctaTitle": "Únase al programa Bio Vera",
     "ctaBody": "Ya sea usted productor, proveedor, socio logístico o comprador, Bio Vera ofrece un lugar en una red agrícola, con procesos claros desde el campo hasta el asentamiento.",
     "ctaProducer": "Conviértete en productor",
     "ctaContact": "Contáctenos",
@@ -4567,7 +4570,9 @@
     "termsTitle": "Términos de servicio",
     "termsUpdated": "Última actualización: enero de 2026",
     "cookiesTitle": "Política de cookies",
-    "cookiesUpdated": "Última actualización: enero de 2026"
+    "cookiesUpdated": "Última actualización: enero de 2026",
+    "impressumTitle": "Impressum (aviso legal)",
+    "impressumUpdated": "Última actualización: octubre de 2026"
   },
   "connectedWorkflow": {
     "openHarvest": "Open harvest plan",

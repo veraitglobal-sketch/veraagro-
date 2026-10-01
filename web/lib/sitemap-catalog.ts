@@ -27,6 +27,7 @@ export const SITEMAP_MARKETING_PAGES: MarketingSitemapEntry[] = [
   { segment: 'investor-deck', changeFrequency: 'monthly', priority: 0.5 },
   { segment: 'language', changeFrequency: 'yearly', priority: 0.3 },
   { segment: 'legal', changeFrequency: 'yearly', priority: 0.3 },
+  { segment: 'impressum', changeFrequency: 'yearly', priority: 0.3 },
   { segment: 'terms', changeFrequency: 'yearly', priority: 0.3 },
   { segment: 'privacy', changeFrequency: 'yearly', priority: 0.3 },
   { segment: 'cookies', changeFrequency: 'yearly', priority: 0.2 },

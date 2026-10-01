@@ -21,7 +21,7 @@
     "nameEs": "Spanisch"
   },
   "footer": {
-    "tagline": "Ein vertikal integriertes landwirtschaftliches Netzwerk für Bio-Ready-Zertifizierung und EU-Marktkonformität.",
+    "tagline": "Eine vertikal geführte Agrifood-Kette: Vertragserzeuger in ganz Europa, Qualitätskontrolle, Kühlkette und Vermarktung unter der Marke Bio Vera — mit Bio‑Ready-Dokumentation für jede Charge.",
     "columnProduct": "Produkt",
     "columnCompany": "Unternehmen",
     "columnSupport": "Unterstützung",
@@ -47,7 +47,8 @@
     "appApple": "Apple",
     "appAndroid": "Android",
     "logoAlt": "Bio Vera",
-    "terms": "Bedingungen"
+    "terms": "Bedingungen",
+    "impressum": "Impressum"
   },
   "languagePage": {
     "eyebrow": "Einstellungen",
@@ -3541,7 +3542,7 @@
       "grains": "Getreide"
     },
     "cta": {
-      "title": "Werden Sie Teil des Vera-Korridors",
+      "title": "Für uns anbauen, für uns transportieren oder bei uns kaufen",
       "body": "Ob Sie anbauen, Inputs liefern, Transport übernehmen oder bei Bio Vera einkaufen — dieselben Regeln vom Feld bis zur Auszahlung.",
       "becomeProducer": "Werden Sie Vera-Erzeuger",
       "startShopping": "Jetzt einkaufen"
@@ -3667,7 +3668,7 @@
     "heroSubtitle": "Volle Rückverfolgbarkeit vom Feld bis zu Ihrem Lager"
   },
   "growersPage": {
-    "metaTitle": "Programm für Erzeuger | Bio Vera — Zertifizierung, garantierte Konditionen, EU-Marktzugang",
+    "metaTitle": "Programm für Erzeuger | Bio Vera — Zertifizierung, garantierte Konditionen, Abnehmer in ganz Europa",
     "metaDescription": "Erzeugerprogramm: garantierte Konditionen, kostenlose GlobalG.A.P. IFA v6 Gruppenzertifizierung, Auszahlung in 48h, koordinierte Logistik und EU-Marktzugang. Offen für Erzeuger in ganz Europa.",
     "title": "Programm für Erzeuger",
     "heroLead": "Werden Sie Teil eines Netzwerks zertifizierter Erzeuger. Bio Vera sichert Qualitätsstandards, Gruppenzertifizierung GlobalG.A.P., Logistikkoordination und Zugang zu europäischen Abnehmern — ohne Zertifizierungskosten für den Erzeuger.",
@@ -3718,7 +3719,7 @@
     ],
     "groupCertTitle": "Gruppenzertifizierung",
     "groupCertSubtitle": "",
-    "groupCertBody": "Sie zahlen keine Zertifizierung selbst. Vera Agrar ist Träger des GlobalG.A.P. Gruppenzertifikats. Sie treten als Mitglied bei — Bio Vera übernimmt Dokumentation, Audit und Zertifikatspflege.",
+    "groupCertBody": "Sie zahlen keine Zertifizierung selbst. Vera Agrar ist Träger des GlobalG.A.P.-Gruppenzertifikats. Sie treten als Gruppenmitglied bei — Bio Vera übernimmt die Kosten für Dokumentation, Audit und Zertifikatspflege.",
     "technicalStandardsTitle": "Technische Standards",
     "tableColCategory": "Kategorie",
     "tableColStandard": "Standard",
@@ -3841,7 +3842,7 @@
       }
     ],
     "heroEyebrow": "Bio Vera · Erzeuger",
-    "heroSubtitle": "Garantierte Konditionen, Zugang zum EU-Markt"
+    "heroSubtitle": "Garantierte Konditionen und Abnehmer in ganz Europa — offen für Erzeuger aus allen europäischen Ländern"
   },
   "logisticsPartnerPage": {
     "metaTitle": "Kühlketten-Partner | Bio Vera — Frischelogistik Obst & Gemüse",
@@ -3991,7 +3992,9 @@
     "cardCookiesTitle": "Cookie-Richtlinie",
     "cardCookiesDesc": "Verstehen Sie, wie wir Cookies und ähnliche Technologien auf unseren Websites und Apps verwenden.",
     "sectionTechTitle": "Technische Umsetzung",
-    "techImplementation": "Technische Umsetzung / Software von <1>Vera IT</1>."
+    "techImplementation": "Technische Umsetzung / Software von <1>Vera IT</1>.",
+    "cardImpressumTitle": "Impressum",
+    "cardImpressumDesc": "Anbieterkennzeichnung: Inhaber, Anschrift in Hamburg, USt-IdNr. und Kontakt."
   },
   "supplierStatusPage": {
     "title": "Bewerbungsstatus",
@@ -4020,7 +4023,7 @@
     "featuredAd": {
       "eyebrow": "Offene Stellen · Außendienst · Serbien",
       "title": "Wir suchen Vertriebsmitarbeiter",
-      "lead": "Werden Sie Teil des Vera-Erzeugerprogramms — besuchen Sie Betriebe, schließen Vertragsvolumen ab und bauen Sie das Bio-Vera-Netzwerk vom Feld bis Hamburg auf.",
+      "lead": "Werden Sie Teil des Bio-Vera-Erzeugerprogramms — besuchen Sie Betriebe, schließen Sie Vertragsmengen ab und bauen Sie das Erzeugernetz in Ihrer Region auf, als Teil eines Programms, das in ganz Europa läuft.",
       "regionSouthCentral": "Süd- & Zentralserbien",
       "regionVojvodina": "Wojwodina",
       "degreeNote": "Wünschenswert: Abschluss einer Agrarfakultät (Agronomie, Obstbau, Pflanzenschutz o. Ä.)."
@@ -4112,7 +4115,7 @@
           "Festgehalt + Provision auf vertragliche Volumina",
           "Reise- und Außendienstbudget",
           "Bio Vera Mobile Tools und Schulung",
-          "Karrierewachstum mit wachsendem Korridor",
+          "Karrierewachstum mit dem wachsenden Programm",
           "Unterstützung durch QA- und Operations-Team in Hamburg"
         ]
       },
@@ -4208,7 +4211,7 @@
     "missionP1": "Dieselben Daten für Betrieb und Vertrieb. Erzeuger produzieren in unserem System, Einkäufer handeln mit Bio Vera, Verbraucher sehen prüfbare Herkunft.",
     "missionP2": "",
     "visionTitle": "Vision",
-    "visionP1": "Europas führende vertikal integrierte Frischekorridore mit Rückverfolgbarkeit, die Einkäufer am Regal erkennen.",
+    "visionP1": "Europas führende vertikal integrierte Kette für frisches Obst und Gemüse zu sein — mit einer Qualitätskontrolle, die Einkäufer im Regal erkennen. Jedes Produkt mit vollständigem digitalen Produktpass, jeder Erzeuger fair bezahlt, jeder Verbraucher sicher über die Herkunft.",
     "visionP2": "",
     "protocol360Title": "Protocol 360",
     "protocol360Body": "Protocol 360 ist Bio Veras End-to-End-Qualitätssystem. Von der Bodenanalyse auf Parzellenebene über biometrisches Scannen bei der Verpackung bis zur Kühlkettenüberwachung im Transport — jeder Qualitätscheck wird im Chargen-Dossier dokumentiert und mit dem EU-Digitalpassport des Produkts verknüpft.",
@@ -4216,7 +4219,7 @@
     "valueCards": [],
     "whatWeDoTitle": "",
     "whatWeDoItems": [],
-    "ctaTitle": "Teil des Bio Vera Korridors werden",
+    "ctaTitle": "Werden Sie Teil des Bio-Vera-Programms",
     "ctaBody": "Ob Erzeuger, Lieferant, Transportpartner oder Einkäufer — dieselben Regeln von der Parzelle bis zur Abrechnung.",
     "ctaProducer": "Bio Vera Erzeuger werden",
     "ctaContact": "Kontakt"
@@ -4460,7 +4463,9 @@
     "termsTitle": "Nutzungsbedingungen",
     "termsUpdated": "Letzte Aktualisierung: Januar 2026",
     "cookiesTitle": "Cookie-Richtlinie",
-    "cookiesUpdated": "Letzte Aktualisierung: Januar 2026"
+    "cookiesUpdated": "Letzte Aktualisierung: Januar 2026",
+    "impressumTitle": "Impressum",
+    "impressumUpdated": "Stand: Oktober 2026"
   },
   "investorDeckPage": {
     "pageTitle": "Investorenunterlagen",

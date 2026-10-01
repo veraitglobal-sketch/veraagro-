@@ -4,6 +4,8 @@
 
 ## Entity summary (for knowledge graphs)
 - Organization: Bio Vera | URL: https://www.biovera.app | Founded: 2025 | HQ: Hamburg, Germany
+- Legal entity: Jovica Mihajlovic – Bio Vera (Einzelunternehmen / sole proprietorship), VAT ID DE456074487 | Impressum: https://www.biovera.app/de/impressum
+- Geographic scope: growers, buyers, suppliers and logistics partners across all of Europe (EU and non-EU countries). Anyone can apply to work with Bio Vera; the programme is not limited to one country of origin.
 - Founder: Jovica Mihajlovic (CEO & Founder)
 - Parent portfolio: Vera Group (https://www.verait.de)
 - Sister companies: Vera IT, Fade, ReinAllround
@@ -38,7 +40,7 @@ Investor materials and diligence documents are available at https://www.biovera.
 
 ## Contact
 Bio Vera — Rehrstieg 16d, 21147 Hamburg, Germany
-Email: contact@biovera.app | Phone: +49 155 63740470
+Email: info@biovera.app | Phone: +49 155 63740470
 https://www.biovera.app
 
 ---
@@ -272,7 +274,7 @@ Bio Vera is preparing for a growth-stage funding round. Public hub links to pitc
 ## Contact — https://www.biovera.app/en/contact
 
 Bio Vera — Rehrstieg 16d, 21147 Hamburg, Germany  
-Email: contact@biovera.app  
+Email: info@biovera.app  
 Phone: +49 155 63740470  
 Press: press@biovera.app
 

@@ -6,7 +6,7 @@ Bio Vera („mi“, „naši“, „nas“ ili „Kompanija“) je posvećena za
 
               
 
-**Kontroler podataka:** Bio Vera, sa sedištem u Nemačkoj, je kontrolor podataka odgovoran za obradu vaših ličnih podataka. Za potrebe Opšte uredbe o zaštiti podataka (GDPR) i drugih važećih zakona o zaštiti podataka, mi smo entitet koji određuje svrhe i sredstva obrade vaših ličnih podataka.
+**Kontroler podataka:** Jovica Mihajlovic, Bio Vera (preduzetnik – Einzelunternehmen), Rehrstieg 16d, 21147 Hamburg, Nemačka, e-pošta: info@biovera.app, telefon: +49 155 63740470 (videti i [Impressum](/sr/impressum)). Bio Vera je kontrolor podataka odgovoran za obradu vaših ličnih podataka. Za potrebe Opšte uredbe o zaštiti podataka (GDPR) i drugih važećih zakona o zaštiti podataka, mi smo entitet koji određuje svrhe i sredstva obrade vaših ličnih podataka.
 
               
 

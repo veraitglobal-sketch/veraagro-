@@ -21,7 +21,7 @@
     "nameEs": "Spaniolă"
   },
   "footer": {
-    "tagline": "O rețea agricolă integrată vertical pentru certificarea Bio-Ready și conformitatea cu piața UE.",
+    "tagline": "Un lanț agroalimentar gestionat vertical: producători sub contract din toată Europa, controlul calității, lanț frigorific și vânzare sub marca Bio Vera — cu dosar Bio‑Ready pentru fiecare lot.",
     "columnProduct": "Produs",
     "columnCompany": "Companie",
     "columnSupport": "Sprijin",
@@ -47,7 +47,8 @@
     "appApple": "Apple",
     "appAndroid": "Android",
     "logoAlt": "Bio Vera",
-    "terms": "Termeni"
+    "terms": "Termeni",
+    "impressum": "Impressum (date legale)"
   },
   "languagePage": {
     "eyebrow": "Setări",
@@ -3549,7 +3550,7 @@
       "grains": "Cereale"
     },
     "cta": {
-      "title": "Partener cu rețeaua",
+      "title": "Cultivați pentru noi, transportați pentru noi sau cumpărați de la noi",
       "body": "Lucrați cu cultivatorii, partenerii logistici și cumpărătorii conform unui singur set de standarde: predari clare, loturi urmăribile și termeni comerciali previzibili.",
       "becomeProducer": "Deveniți producător",
       "startShopping": "Începeți cumpărăturile"
@@ -3706,7 +3707,7 @@
     "harvestCalendarLead": ""
   },
   "growersPage": {
-    "metaTitle": "Program pentru producători | Bio Vera — Certificare, condiții garantate, acces la piața UE",
+    "metaTitle": "Programul pentru producători | Bio Vera — Certificare, condiții garantate, cumpărători din toată Europa",
     "metaDescription": "Program pentru producători: condiții garantate, certificare de grup GlobalG.A.P. IFA v6 gratuită, plată în 48 h, logistică coordonată și acces la piața UE. Deschis producătorilor din UE și Europa.",
     "title": "Program pentru producători",
     "heroLead": "Alăturați-vă unei rețele de producători certificați. Bio Vera asigură standarde de calitate, certificare de grup GlobalG.A.P., coordonare logistică și acces la cumpărători europeni — fără costuri de certificare pentru producător.",
@@ -3757,7 +3758,7 @@
     ],
     "groupCertTitle": "Certificare de grup",
     "groupCertSubtitle": "Certificarea de grup Opțiunea 2",
-    "groupCertBody": "Vera Agrar deține certificarea pentru toți partenerii noștri. Acoperim costurile și procesul de certificare, în timp ce obțineți acces direct pe piața germană.",
+    "groupCertBody": "Nu plătiți singur certificarea. Vera Agrar deține certificatul de grup GlobalG.A.P., iar dumneavoastră vă alăturați ca membru al grupului — Bio Vera acoperă costurile de documentare, audit și menținere a certificatului.",
     "technicalStandardsTitle": "Standarde tehnice",
     "tableColCategory": "Categorie",
     "tableColStandard": "Standard",
@@ -3891,7 +3892,7 @@
       }
     ],
     "heroEyebrow": "Bio Vera · Producători",
-    "heroSubtitle": "Condiții garantate, acces la piața UE",
+    "heroSubtitle": "Condiții garantate și cumpărători din toată Europa — deschis producătorilor din orice țară europeană",
     "viewGuideOnline": "Open guide (screenshots)",
     "backToGrowers": "Back to growers"
   },
@@ -4053,7 +4054,9 @@
     "cardCookiesTitle": "Politica de cookie-uri",
     "cardCookiesDesc": "Înțelegeți cum folosim module cookie și tehnologii similare pe site-urile și aplicațiile noastre.",
     "sectionTechTitle": "Implementare tehnică",
-    "techImplementation": "Implementare tehnică / software de <1>Vera IT</1>."
+    "techImplementation": "Implementare tehnică / software de <1>Vera IT</1>.",
+    "cardImpressumTitle": "Impressum",
+    "cardImpressumDesc": "Datele companiei: titular, adresă în Hamburg, cod TVA și contact."
   },
   "investorDeckPage": {
     "pageTitle": "Investor materials",
@@ -4093,7 +4096,7 @@
     "featuredAd": {
       "eyebrow": "Posturi deschise · teren · Serbia",
       "title": "Căutăm reprezentanți comerciali",
-      "lead": "Alătură-te programului Vera — vizitează producători, încheie volume contractuale și construiește rețeaua Bio Vera de la parcelă la Hamburg.",
+      "lead": "Alăturați-vă programului pentru producători Bio Vera — vizitați producători, încheiați volume contractate și construiți rețeaua de producători din regiunea dumneavoastră, ca parte a unui program care funcționează în toată Europa.",
       "regionSouthCentral": "Serbia de Sud și Centru",
       "regionVojvodina": "Voivodina",
       "degreeNote": "De preferință: diplomă de facultate agricolă (agronomie, pomicultură, protecția plantelor sau similar)."
@@ -4185,7 +4188,7 @@
           "Salariu de bază + comision pe volume contractate",
           "Buget de călătorii și teren",
           "Instrumente mobile Bio Vera și instruire",
-          "Creștere profesională odată cu extinderea coridorului",
+          "Creștere în carieră pe măsură ce programul se extinde",
           "Suport QA și operațiuni din Hamburg"
         ]
       },
@@ -4279,7 +4282,7 @@
     "missionP1": "Bio Vera lucrează pentru a consolida lanțurile de aprovizionare agricole prin conectarea producătorilor din întreaga lume direct cu piețele, asigurând standarde clare, asigurare a calității și compensare echitabilă la fiecare pas.",
     "missionP2": "Credem că tehnologia poate reduce decalajul dintre agricultura tradițională și cerințele pieței moderne, creând un ecosistem durabil în care fermierii prosperă, cumpărătorii au încredere, iar consumatorii beneficiază de produse cu adevărat trasabile și de înaltă calitate.",
     "visionTitle": "Viziunea noastră",
-    "visionP1": "Pentru a deveni o rețea agricolă integrată pe verticală, care stabilește noi standarde pentru trasabilitate, asigurare a calității și agricultură durabilă.",
+    "visionP1": "Să fim lanțul de fructe și legume proaspete integrat vertical de referință în Europa, cu un control al calității pe care cumpărătorii îl recunosc la raft. Fiecare produs cu pașaport digital complet, fiecare producător plătit corect, fiecare consumator sigur de origine.",
     "visionP2": "Ne imaginăm un viitor în care fiecare produs de pe raft are un pașaport digital complet, în care fermierii primesc o compensație echitabilă pentru munca lor și în care consumatorii pot avea încredere în originea și calitatea a ceea ce cumpără.",
     "valuesTitle": "Valorile noastre",
     "valueCards": [
@@ -4319,7 +4322,7 @@
         "body": "Management automatizat al certificării, GlobalG.A.P. Facilitarea certificării de grup IFA v6 și urmărirea completă a conformității pentru acces fără probleme la piețele din întreaga lume."
       }
     ],
-    "ctaTitle": "Alăturați-vă nouă în această călătorie",
+    "ctaTitle": "Alăturați-vă programului Bio Vera",
     "ctaBody": "Indiferent dacă sunteți cultivator, furnizor, partener logistic sau cumpărător, Bio Vera oferă un loc într-o singură rețea agricolă - cu procese clare de la câmp până la așezare.",
     "ctaProducer": "Deveniți producător",
     "ctaContact": "Contactaţi-ne",
@@ -4567,7 +4570,9 @@
     "termsTitle": "Termeni și condiții",
     "termsUpdated": "Ultima actualizare: ianuarie 2026",
     "cookiesTitle": "Politica de cookie-uri",
-    "cookiesUpdated": "Ultima actualizare: ianuarie 2026"
+    "cookiesUpdated": "Ultima actualizare: ianuarie 2026",
+    "impressumTitle": "Impressum (date legale)",
+    "impressumUpdated": "Ultima actualizare: octombrie 2026"
   },
   "connectedWorkflow": {
     "openHarvest": "Open harvest plan",

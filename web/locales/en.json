@@ -123,7 +123,7 @@
     "nameEs": "Español"
   },
   "footer": {
-    "tagline": "Vertically run agrifood supply chain—from grower standards through Bio Vera–branded sales, with Bio‑Ready dossiers for EU corridors.",
+    "tagline": "A vertically run agrifood chain: contracted growers across Europe, quality control, cold chain and Bio Vera–branded sales — with a Bio‑Ready dossier for every batch.",
     "columnProduct": "Product",
     "columnCompany": "Company",
     "columnSupport": "Support",
@@ -149,7 +149,8 @@
     "appApple": "Apple",
     "appAndroid": "Android",
     "logoAlt": "Bio Vera",
-    "terms": "Terms"
+    "terms": "Terms",
+    "impressum": "Impressum (legal notice)"
   },
   "languagePage": {
     "eyebrow": "Settings",
@@ -4289,7 +4290,7 @@
       "grains": "Grains"
     },
     "cta": {
-      "title": "Supply us, haul for us, or buy from us",
+      "title": "Grow for us, haul for us, or buy from us",
       "body": "Contract estates grow to our playbook; refrigerated partners run Vera missions; retail and wholesale buyers trade with Bio Vera directly—every batch ledger lines up financially.",
       "becomeProducer": "Become a Vera grower",
       "startShopping": "Start Shopping"
@@ -4419,7 +4420,7 @@
     "heroSubtitle": "Full traceability from farm to your facility"
   },
   "growersPage": {
-    "metaTitle": "Grower Programme | Bio Vera — Certification, Guaranteed Terms, EU Market Access",
+    "metaTitle": "Grower Programme | Bio Vera — Certification, Guaranteed Terms, Buyers Across Europe",
     "metaDescription": "Grower programme: guaranteed terms, GlobalG.A.P. IFA v6 group certification facilitation, secured settlement after conformity, and export-ready batch passports. Open to producers throughout Europe.",
     "title": "Grower programme",
     "heroLead": "Join a network of certified growers. Bio Vera provides quality standards, group GlobalG.A.P. certification, logistics coordination and access to European buyers — at no certification cost to the grower.",
@@ -4470,7 +4471,7 @@
     ],
     "groupCertTitle": "Group Certification",
     "groupCertSubtitle": "",
-    "groupCertBody": "Vera Agrar holds the GlobalG.A.P. IFA v6 group certification. Bio Vera bears the paperwork and audit expenses while you onboard into structured placements under our corridor.",
+    "groupCertBody": "You don’t pay for certification yourself. Vera Agrar holds the GlobalG.A.P. group certificate and you join as a group member — Bio Vera covers documentation, audit and certificate maintenance costs.",
     "technicalStandardsTitle": "Technical standards",
     "tableColCategory": "Category",
     "tableColStandard": "Standard",
@@ -4606,7 +4607,7 @@
       }
     ],
     "heroEyebrow": "Bio Vera · Growers",
-    "heroSubtitle": "Guaranteed terms, EU market access"
+    "heroSubtitle": "Guaranteed terms and buyers across Europe — open to growers from every European country"
   },
   "logisticsPartnerPage": {
     "metaTitle": "Logistics Partner | Bio Vera — Refrigerated Transport Network",
@@ -4756,7 +4757,9 @@
     "cardCookiesTitle": "Cookie policy",
     "cardCookiesDesc": "Understand how we use cookies and similar technologies on our websites and apps.",
     "sectionTechTitle": "Technical implementation",
-    "techImplementation": "Technical implementation and software by <1>Vera IT</1>."
+    "techImplementation": "Technical implementation and software by <1>Vera IT</1>.",
+    "cardImpressumTitle": "Impressum",
+    "cardImpressumDesc": "Company details: owner, address in Hamburg, VAT ID and contact."
   },
   "supplierStatusPage": {
     "title": "Application status",
@@ -4785,7 +4788,7 @@
     "featuredAd": {
       "eyebrow": "Open roles · field sales · Serbia",
       "title": "We're hiring commercial representatives",
-      "lead": "Join the Vera grower programme — visit producers, close contract volumes, and build the Bio Vera corridor from parcel to Hamburg.",
+      "lead": "Join the Bio Vera grower programme — visit producers, close contract volumes and build the grower network in your region, as part of a programme that runs across Europe.",
       "regionSouthCentral": "South & Central Serbia",
       "regionVojvodina": "Vojvodina",
       "degreeNote": "Preferred: degree from a Faculty of Agriculture (agronomy, pomology, crop protection, or related)."
@@ -4877,7 +4880,7 @@
           "Base salary + commission on contracted volumes",
           "Travel and field budget",
           "Bio Vera mobile tools and training",
-          "Regional career growth as the corridor scales",
+          "Career growth as the programme expands",
           "Direct support from QA and operations teams in Hamburg"
         ]
       },
@@ -5022,7 +5025,7 @@
     "missionP1": "We use technology so the same records serve operations and sales: growers stay producers inside our system, buyers contract with Bio Vera, and end customers see verifiable origin and quality.",
     "missionP2": "",
     "visionTitle": "Our Vision",
-    "visionP1": "To lead Europe's vertically integrated fresh produce corridors with trace-ready QA that buyers recognise on shelf. Every product with a complete digital passport, every farmer fairly compensated, every consumer able to trust the origin.",
+    "visionP1": "To be Europe’s leading vertically integrated fresh produce chain, with quality control that buyers recognise on the shelf. Every product with a complete digital passport, every grower fairly paid, every consumer able to trust the origin.",
     "visionP2": "",
     "valuesTitle": "Our Values",
     "valueCards": [
@@ -5062,7 +5065,7 @@
         "body": "Automated certification management, GlobalG.A.P. IFA v6 group certification facilitation, and complete compliance tracking for EU market access."
       }
     ],
-    "ctaTitle": "Become Part of the Vera Corridor",
+    "ctaTitle": "Join the Bio Vera Programme",
     "ctaBody": "Whether you grow under our programme, supply inputs, move freight for us, or buy from Bio Vera — the playbook from parcel to payout stays the same.",
     "ctaProducer": "Become a Vera grower",
     "ctaContact": "Contact us",
@@ -5932,7 +5935,9 @@
     "termsTitle": "Terms of Service",
     "termsUpdated": "Last updated: January 2026",
     "cookiesTitle": "Cookie Policy",
-    "cookiesUpdated": "Last updated: January 2026"
+    "cookiesUpdated": "Last updated: January 2026",
+    "impressumTitle": "Impressum (legal notice)",
+    "impressumUpdated": "Last updated: October 2026"
   },
   "refundReconciliation": {
     "title": "Financial reconciliation",

@@ -7,8 +7,11 @@ for lang in ['en','sr','de','es','fr','ro','bg']:
     for k,v in keys.items():
         parts=k.split('.'); cur=d
         for x in parts[:-1]:
-            if x not in cur or not isinstance(cur[x],dict): cur[x]=collections.OrderedDict()
+            if isinstance(cur,list): cur=cur[int(x)]; continue
+            if x not in cur or not isinstance(cur[x],(dict,list)): cur[x]=collections.OrderedDict()
             cur=cur[x]
-        cur[parts[-1]]=v[lang]
+        last=parts[-1]
+        if isinstance(cur,list): cur[int(last)]=v[lang]
+        else: cur[last]=v[lang]
     open(p,'w').write(json.dumps(d,ensure_ascii=False,indent=2)+'\n')
 print('ok',len(keys))

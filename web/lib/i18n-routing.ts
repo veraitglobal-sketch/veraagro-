@@ -20,6 +20,7 @@ export const LOCALIZED_FIRST_SEGMENTS = new Set([
   "privacy",
   "terms",
   "legal",
+  "impressum",
   "investors",
   "investor-deck",
   "project-overview",

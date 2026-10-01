@@ -6,7 +6,7 @@ Bio Vera ("we", "our", "us", or "Company") is committed to protecting your priva
 
               
 
-**Data Controller:** Bio Vera, with headquarters in Germany, is the data controller responsible for the processing of your personal data. For the purposes of the General Data Protection Regulation (GDPR) and other applicable data protection laws, we are the entity that determines the purposes and means of processing your personal data.
+**Data Controller:** Jovica Mihajlovic, trading as Bio Vera (sole proprietorship), Rehrstieg 16d, 21147 Hamburg, Germany, email: info@biovera.app, phone: +49 155 63740470 (see also our [Impressum](/en/impressum)). Bio Vera is the data controller responsible for the processing of your personal data. For the purposes of the General Data Protection Regulation (GDPR) and other applicable data protection laws, we are the entity that determines the purposes and means of processing your personal data.
 
               
 
