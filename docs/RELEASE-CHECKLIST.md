@@ -18,7 +18,7 @@ Use this runbook for deploying the seed-production / stored-documents release. *
 
 ## 1. Pending Prisma migrations (production)
 
-Apply **in order** via `railway run npx prisma migrate deploy` (from `backend/` with production `DATABASE_URL` — **never** from a local `.env` pointing at production unless intentionally using Railway CLI).
+Apply **in order** via `cd backend && railway run npx prisma migrate deploy` after linking BioVera and confirming `railway status` (see Step 3). `railway run` injects production `DATABASE_URL` — **never** run migrate against production from a local `.env` unless intentionally using Railway CLI.
 
 | Migration | What it does | Safety |
 |-----------|--------------|--------|
@@ -127,13 +127,19 @@ Add **both** Play App Signing and upload-key fingerprints if Google rotates keys
 2. **Vercel:** Confirm `NEXT_PUBLIC_API_URL` points at the same Railway backend URL.
 3. Redeploy is **not** required yet for env-only changes if you deploy in step 4–5 anyway.
 
-### Step 3 — Run migrations (production DB)
+### Step 3 — Link Railway CLI and run migrations (production DB)
 
-From repo root, with Railway CLI linked to the backend service:
+Run from the **repo root**. The BioVera service has **Root Directory = `backend`** in Railway; `railway run` injects production `DATABASE_URL` from the linked service.
 
 ```bash
+# Repo root — link to backend service (once per shell session)
+railway link --project 68f2001e-878e-4888-9067-552842f58c25 --environment production --service BioVera
+railway status
+# MUST show project "satisfied-dedication" and service "BioVera" — NEVER "content-hope"
+
 cd backend
 railway run npx prisma migrate deploy
+cd ..
 ```
 
 - Expect **4** new migrations (see section 1).
@@ -141,24 +147,27 @@ railway run npx prisma migrate deploy
 
 ### Step 4 — Deploy backend (Railway)
 
-```bash
-cd backend
-railway up
-```
+Run from the **repo root** — not `backend/`. BioVera’s Root Directory setting makes `railway up` from `backend/` deploy the wrong context.
 
-Or push to the branch Railway watches, if CI deploy is configured.
+```bash
+# Repo root — confirm linked service before deploy
+railway status
+# MUST show project "satisfied-dedication" and service "BioVera" — NEVER "content-hope"
+
+railway up --service BioVera --environment production --detach
+```
 
 - Wait for health: `GET https://<backend>/health` (or root) returns 200.
 - Check logs for `SEED_LABEL_SECRET or JWT_SECRET must be set` — must **not** appear.
 
 ### Step 5 — Deploy web (Vercel production)
 
-```bash
-cd web
-vercel deploy --prod
-```
+Run from the **repo root** — not `web/`. Vercel project **bio-vera-9lgm** has **Root Directory = `web`** and is linked at the repo root.
 
-Or merge to production branch if Vercel auto-deploys.
+```bash
+# Repo root
+vercel deploy --prod --yes
+```
 
 - Confirm `.well-known` files are live (section 3 placeholders filled **before** this step if shipping universal links).
 
@@ -237,10 +246,22 @@ cd mobile && npx tsc --noEmit
 
 ## Quick command reference
 
+All deploy commands assume **repo root** as cwd. Railway BioVera and Vercel bio-vera-9lgm use Root Directory (`backend` / `web`) in the dashboard — do not `cd` into those folders for `railway up` or `vercel deploy`.
+
 ```bash
 # Backup: use Railway UI or pg_dump — do not paste production DATABASE_URL into shell history
 
-cd backend && railway run npx prisma migrate deploy
-cd backend && railway up
-cd web && vercel deploy --prod
+# Link + verify (project satisfied-dedication, service BioVera — NEVER content-hope)
+railway link --project 68f2001e-878e-4888-9067-552842f58c25 --environment production --service BioVera
+railway status
+
+# Migrations (railway run injects production DATABASE_URL)
+cd backend && railway run npx prisma migrate deploy && cd ..
+
+# Backend deploy (repo root — BioVera Root Directory = backend)
+railway status
+railway up --service BioVera --environment production --detach
+
+# Web deploy (repo root — bio-vera-9lgm Root Directory = web)
+vercel deploy --prod --yes
 ```

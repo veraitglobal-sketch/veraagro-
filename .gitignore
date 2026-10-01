@@ -18,5 +18,9 @@ __pycache__/
 *.log
 .DS_Store
 
+# Backend local artifacts (generated PDFs, uploads — not for git)
+backend/tmp/
+backend/uploads/
+
 # Accidental placeholder file (breaks EAS ignore — invalid path "...")
 ...
