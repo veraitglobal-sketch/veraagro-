@@ -2976,7 +2976,8 @@
     "successLoginHint": "You will receive an e-mail when your account is active.",
     "successHub": "Registration successful! Your location will appear on the map after admin approval.",
     "successNoHub": "Registration successful! You can add your location in your profile.",
-    "registrationFailed": "Registration failed"
+    "registrationFailed": "Registration failed",
+    "email": "Email"
   },
   "reservationModal": {
     "recovered": "The order from your previous attempt has been opened. Check its quantity, address and status.",
@@ -3243,5 +3244,18 @@
     "title": "Seed producer portal",
     "body": "Production runs and label downloads are managed in the Bio Vera web portal. Open the link below on your computer or tablet browser.",
     "openWeb": "Open web portal"
+  },
+  "buyerVerifyEmail": {
+    "title": "Confirm your email",
+    "subtitle": "Enter the 4-digit code we sent to your email.",
+    "submit": "Verify email",
+    "verifying": "Verifying…",
+    "resend": "Send a new code",
+    "codeRequired": "Enter the 4-digit code from your email.",
+    "successTitle": "Email verified",
+    "successBody": "Bio Vera will review your account and email you when you can sign in.",
+    "failed": "Verification failed",
+    "resendTitle": "Code sent",
+    "resendBody": "Check your email for a new 4-digit code."
   }
 }

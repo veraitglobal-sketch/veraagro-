@@ -6036,5 +6036,19 @@
     "manualCode": "Code (if scanning fails)",
     "handoverStartedHint": "The driver is at your dock. Check the goods, add photos and sign to receive the shipment.",
     "completeReceipt": "Complete receipt (photos + signature)"
+  },
+  "buyerRegisterVerify": {
+    "title": "Confirm your email",
+    "subtitle": "We sent a 4-digit code to your email. Enter it below.",
+    "codeLabel": "4-digit code",
+    "submit": "Verify email",
+    "verifying": "Verifying…",
+    "resend": "Send a new code",
+    "resending": "Sending…",
+    "successTitle": "Email verified",
+    "successBody": "Thank you. Bio Vera will review your buyer account and email you when you can sign in and order.",
+    "goLogin": "Go to sign in",
+    "errCodeFormat": "Enter the 4-digit code from your email.",
+    "errFailed": "Verification failed. Check the code and try again."
   }
 }
