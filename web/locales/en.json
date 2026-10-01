@@ -6100,5 +6100,48 @@
       "CONFIRMED": "Confirmed",
       "DECLINED": "Declined"
     }
+  },
+  "bookCall": {
+    "navCta": "Book a free call",
+    "heroTitle": "Book a free call",
+    "heroSubtitle": "30 minutes, free and in your language — we’ll show you how Bio Vera works for you, whether you grow, buy, supply or transport.",
+    "cardTitle": "Choose a time",
+    "roleQuestion": "I would like to talk as…",
+    "role": {
+      "buyer": "Buyer",
+      "producer": "Producer / grower",
+      "supplier": "Supplier",
+      "logistics": "Logistics partner",
+      "other": "Other"
+    },
+    "roleHint": {
+      "buyer": "Retail, wholesale, food service — fresh produce with a digital passport",
+      "producer": "Fruit and vegetable growers from anywhere in Europe",
+      "supplier": "Seeds, fertiliser, crop protection, packaging",
+      "logistics": "Refrigerated transport and last-mile delivery",
+      "other": "Partnerships, press, investors and everything else"
+    },
+    "talkingAs": "You are booking as:",
+    "changeRole": "Change",
+    "privacyNote": "The calendar is provided by Calendly. Your name and e-mail are used only to arrange and confirm the call.",
+    "loading": "Loading the calendar…",
+    "notConfigured": "Online booking is not available right now. Please write to info@biovera.app.",
+    "fallbackPrefix": "Calendar not loading?",
+    "fallbackLink": "Open it in a new tab",
+    "fallbackOr": "or write to",
+    "thanksTitle": "Thank you — your call is booked",
+    "thanksBody": "You will receive a confirmation e-mail with the details and a calendar invitation.",
+    "backHome": "Back to the home page",
+    "expectTitle": "What to expect",
+    "expectDurationTitle": "30-minute call",
+    "expectDurationBody": "Video or phone — whatever suits you.",
+    "expectLanguagesTitle": "In your language",
+    "expectLanguagesBody": "English, German, Serbian, Spanish, French, Romanian or Bulgarian.",
+    "expectFreeTitle": "Free and without obligation",
+    "expectFreeBody": "No preparation needed — bring your questions.",
+    "expectWhoTitle": "Who you’ll talk to",
+    "expectWhoBody": "The Bio Vera team in Hamburg, responsible for your area.",
+    "contactPromptTitle": "Prefer to talk?",
+    "contactPromptCta": "Book a free call"
   }
 }

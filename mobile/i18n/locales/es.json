@@ -3285,5 +3285,17 @@
     "failed": "Verification failed",
     "resendTitle": "Code sent",
     "resendBody": "Check your email for a new 4-digit code."
+  },
+  "bookCall": {
+    "navCta": "Reserve una llamada gratuita",
+    "heroSubtitle": "30 minutos, gratis y en su idioma: le mostramos cómo funciona Bio Vera para usted, tanto si produce, compra, suministra o transporta.",
+    "role": {
+      "buyer": "Comprador",
+      "producer": "Productor",
+      "supplier": "Proveedor",
+      "logistics": "Socio logístico",
+      "other": "Otro"
+    },
+    "talkingAs": "Reserva como:"
   }
 }

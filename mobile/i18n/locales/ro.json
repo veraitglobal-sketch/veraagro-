@@ -3285,5 +3285,17 @@
     "failed": "Verification failed",
     "resendTitle": "Code sent",
     "resendBody": "Check your email for a new 4-digit code."
+  },
+  "bookCall": {
+    "navCta": "Programați o discuție gratuită",
+    "heroSubtitle": "30 de minute, gratuit și în limba dumneavoastră — vă arătăm cum funcționează Bio Vera pentru dumneavoastră, fie că produceți, cumpărați, furnizați sau transportați.",
+    "role": {
+      "buyer": "Cumpărător",
+      "producer": "Producător",
+      "supplier": "Furnizor",
+      "logistics": "Partener logistic",
+      "other": "Altceva"
+    },
+    "talkingAs": "Programați în calitate de:"
   }
 }

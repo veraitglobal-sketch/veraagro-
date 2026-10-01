@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useBookCallHref } from '@/hooks/useBookCallHref';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -27,6 +28,7 @@ export default function Navigation() {
   const { t, i18n } = useTranslation();
   const { isAuthenticated, user, logout } = useAuth();
   const pathname = usePathname();
+  const bookCall = useBookCallHref();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const loc = useLocalizedHref();
 
@@ -80,6 +82,14 @@ export default function Navigation() {
           {/* Language + login / dashboard (right) */}
           <div className="hidden md:flex flex-shrink-0 items-center gap-3 ml-auto">
             <LanguageSwitcher />
+            {bookCall.enabled && (
+              <Link
+                href={bookCall.href}
+                className="hidden lg:inline-flex px-4 py-2 border border-[#2D5A27] text-[#2D5A27] text-sm font-medium rounded-lg hover:bg-[#2D5A27]/5 transition-colors"
+              >
+                {t('bookCall.navCta')}
+              </Link>
+            )}
             {isAuthenticated ? (
               <>
                 {(() => {
@@ -161,6 +171,15 @@ export default function Navigation() {
                 {link.label}
               </Link>
             ))}
+            {bookCall.enabled && (
+              <Link
+                href={bookCall.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center min-h-[44px] px-4 py-3 border border-[#2D5A27] text-[#2D5A27] text-sm font-medium rounded-lg hover:bg-[#2D5A27]/5 mt-2"
+              >
+                {t('bookCall.navCta')}
+              </Link>
+            )}
             {!isAuthenticated && (
               <Link
                 href={loc('/login')}

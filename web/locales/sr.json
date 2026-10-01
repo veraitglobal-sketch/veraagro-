@@ -6083,5 +6083,48 @@
       "CONFIRMED": "Potvrđena",
       "DECLINED": "Odbijena"
     }
+  },
+  "bookCall": {
+    "navCta": "Zakažite besplatan razgovor",
+    "heroTitle": "Zakažite besplatan razgovor",
+    "heroSubtitle": "30 minuta, besplatno i na vašem jeziku — pokazaćemo vam kako Bio Vera radi za vas, bilo da proizvodite, kupujete, isporučujete inpute ili prevozite.",
+    "cardTitle": "Izaberite termin",
+    "roleQuestion": "Želim da razgovaram kao…",
+    "role": {
+      "buyer": "Kupac",
+      "producer": "Proizvođač",
+      "supplier": "Dobavljač",
+      "logistics": "Logistički partner",
+      "other": "Drugo"
+    },
+    "roleHint": {
+      "buyer": "Maloprodaja, veleprodaja, ugostiteljstvo — sveži proizvodi sa digitalnim pasošem",
+      "producer": "Proizvođači voća i povrća iz bilo koje evropske zemlje",
+      "supplier": "Seme, đubrivo, zaštita bilja, ambalaža",
+      "logistics": "Hladni transport i dostava do kupca",
+      "other": "Partnerstva, mediji, investitori i sve ostalo"
+    },
+    "talkingAs": "Zakazujete kao:",
+    "changeRole": "Promeni",
+    "privacyNote": "Kalendar obezbeđuje Calendly. Vaše ime i e-pošta koriste se samo za dogovor i potvrdu razgovora.",
+    "loading": "Učitavanje kalendara…",
+    "notConfigured": "Online zakazivanje trenutno nije dostupno. Pišite nam na info@biovera.app.",
+    "fallbackPrefix": "Kalendar se ne učitava?",
+    "fallbackLink": "Otvorite ga u novoj kartici",
+    "fallbackOr": "ili pišite na",
+    "thanksTitle": "Hvala — razgovor je zakazan",
+    "thanksBody": "Dobićete potvrdu e-poštom sa detaljima i pozivnicom za kalendar.",
+    "backHome": "Nazad na početnu",
+    "expectTitle": "Šta vas očekuje",
+    "expectDurationTitle": "Razgovor od 30 minuta",
+    "expectDurationBody": "Video ili telefonom — kako vam odgovara.",
+    "expectLanguagesTitle": "Na vašem jeziku",
+    "expectLanguagesBody": "Engleski, nemački, srpski, španski, francuski, rumunski ili bugarski.",
+    "expectFreeTitle": "Besplatno i bez obaveza",
+    "expectFreeBody": "Nije potrebna priprema — ponesite svoja pitanja.",
+    "expectWhoTitle": "Sa kim razgovarate",
+    "expectWhoBody": "Bio Vera tim iz Hamburga zadužen za vašu oblast.",
+    "contactPromptTitle": "Radije biste razgovarali?",
+    "contactPromptCta": "Zakažite besplatan razgovor"
   }
 }

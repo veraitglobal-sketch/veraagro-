@@ -18,6 +18,7 @@ export const SITEMAP_MARKETING_PAGES: MarketingSitemapEntry[] = [
   { segment: 'faq', changeFrequency: 'weekly', priority: 0.8 },
   { segment: 'protocol-360', changeFrequency: 'monthly', priority: 0.8 },
   { segment: 'contact', changeFrequency: 'monthly', priority: 0.7 },
+  { segment: 'book-a-call', changeFrequency: 'monthly', priority: 0.7 },
   { segment: 'security', changeFrequency: 'monthly', priority: 0.7 },
   { segment: 'press', changeFrequency: 'monthly', priority: 0.6 },
   { segment: 'fresh-concept', changeFrequency: 'monthly', priority: 0.7 },

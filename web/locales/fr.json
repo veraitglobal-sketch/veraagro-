@@ -6145,5 +6145,48 @@
       "CONFIRMED": "Confirmée",
       "DECLINED": "Refusée"
     }
+  },
+  "bookCall": {
+    "navCta": "Réservez un appel gratuit",
+    "heroTitle": "Réservez un appel gratuit",
+    "heroSubtitle": "30 minutes, gratuitement et dans votre langue — nous vous montrons comment Bio Vera fonctionne pour vous, que vous produisiez, achetiez, fournissiez ou transportiez.",
+    "cardTitle": "Choisissez un créneau",
+    "roleQuestion": "Je souhaite échanger en tant que…",
+    "role": {
+      "buyer": "Acheteur",
+      "producer": "Producteur",
+      "supplier": "Fournisseur",
+      "logistics": "Partenaire logistique",
+      "other": "Autre"
+    },
+    "roleHint": {
+      "buyer": "Distribution, grossistes, restauration — produits frais avec passeport numérique",
+      "producer": "Producteurs de fruits et légumes de toute l’Europe",
+      "supplier": "Semences, engrais, protection des cultures, emballages",
+      "logistics": "Transport frigorifique et livraison du dernier kilomètre",
+      "other": "Partenariats, presse, investisseurs et tout le reste"
+    },
+    "talkingAs": "Vous réservez en tant que :",
+    "changeRole": "Modifier",
+    "privacyNote": "Le calendrier est fourni par Calendly. Votre nom et votre e-mail servent uniquement à organiser et confirmer l’appel.",
+    "loading": "Chargement du calendrier…",
+    "notConfigured": "La réservation en ligne n’est pas disponible pour le moment. Écrivez-nous à info@biovera.app.",
+    "fallbackPrefix": "Le calendrier ne s’affiche pas ?",
+    "fallbackLink": "Ouvrez-le dans un nouvel onglet",
+    "fallbackOr": "ou écrivez à",
+    "thanksTitle": "Merci — votre appel est réservé",
+    "thanksBody": "Vous recevrez un e-mail de confirmation avec les détails et une invitation d’agenda.",
+    "backHome": "Retour à l’accueil",
+    "expectTitle": "À quoi vous attendre",
+    "expectDurationTitle": "Appel de 30 minutes",
+    "expectDurationBody": "En visio ou par téléphone — comme vous préférez.",
+    "expectLanguagesTitle": "Dans votre langue",
+    "expectLanguagesBody": "Anglais, allemand, serbe, espagnol, français, roumain ou bulgare.",
+    "expectFreeTitle": "Gratuit et sans engagement",
+    "expectFreeBody": "Aucune préparation nécessaire — venez avec vos questions.",
+    "expectWhoTitle": "Votre interlocuteur",
+    "expectWhoBody": "L’équipe Bio Vera à Hambourg en charge de votre domaine.",
+    "contactPromptTitle": "Vous préférez en parler ?",
+    "contactPromptCta": "Réservez un appel gratuit"
   }
 }

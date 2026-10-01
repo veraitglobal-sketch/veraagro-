@@ -6145,5 +6145,48 @@
       "CONFIRMED": "Confirmată",
       "DECLINED": "Respinsă"
     }
+  },
+  "bookCall": {
+    "navCta": "Programați o discuție gratuită",
+    "heroTitle": "Programați o discuție gratuită",
+    "heroSubtitle": "30 de minute, gratuit și în limba dumneavoastră — vă arătăm cum funcționează Bio Vera pentru dumneavoastră, fie că produceți, cumpărați, furnizați sau transportați.",
+    "cardTitle": "Alegeți o oră",
+    "roleQuestion": "Doresc să discut în calitate de…",
+    "role": {
+      "buyer": "Cumpărător",
+      "producer": "Producător",
+      "supplier": "Furnizor",
+      "logistics": "Partener logistic",
+      "other": "Altceva"
+    },
+    "roleHint": {
+      "buyer": "Retail, en-gros, HoReCa — produse proaspete cu pașaport digital",
+      "producer": "Producători de fructe și legume din orice țară europeană",
+      "supplier": "Semințe, îngrășăminte, protecția plantelor, ambalaje",
+      "logistics": "Transport frigorific și livrare pe ultimul kilometru",
+      "other": "Parteneriate, presă, investitori și orice altceva"
+    },
+    "talkingAs": "Programați în calitate de:",
+    "changeRole": "Schimbă",
+    "privacyNote": "Calendarul este furnizat de Calendly. Numele și e-mailul dumneavoastră sunt folosite doar pentru stabilirea și confirmarea discuției.",
+    "loading": "Se încarcă calendarul…",
+    "notConfigured": "Programarea online nu este disponibilă momentan. Scrieți-ne la info@biovera.app.",
+    "fallbackPrefix": "Calendarul nu se încarcă?",
+    "fallbackLink": "Deschideți-l într-o filă nouă",
+    "fallbackOr": "sau scrieți la",
+    "thanksTitle": "Mulțumim — discuția este programată",
+    "thanksBody": "Veți primi un e-mail de confirmare cu detaliile și o invitație în calendar.",
+    "backHome": "Înapoi la pagina principală",
+    "expectTitle": "La ce să vă așteptați",
+    "expectDurationTitle": "Discuție de 30 de minute",
+    "expectDurationBody": "Video sau telefonic — cum vă convine.",
+    "expectLanguagesTitle": "În limba dumneavoastră",
+    "expectLanguagesBody": "Engleză, germană, sârbă, spaniolă, franceză, română sau bulgară.",
+    "expectFreeTitle": "Gratuit și fără obligații",
+    "expectFreeBody": "Nu este nevoie de pregătire — veniți cu întrebările dumneavoastră.",
+    "expectWhoTitle": "Cu cine veți vorbi",
+    "expectWhoBody": "Echipa Bio Vera din Hamburg responsabilă de domeniul dumneavoastră.",
+    "contactPromptTitle": "Preferați să discutăm?",
+    "contactPromptCta": "Programați o discuție gratuită"
   }
 }

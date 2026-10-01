@@ -5848,5 +5848,48 @@
       "CONFIRMED": "Bestätigt",
       "DECLINED": "Abgelehnt"
     }
+  },
+  "bookCall": {
+    "navCta": "Kostenfreies Erstgespräch",
+    "heroTitle": "Kostenfreies Erstgespräch",
+    "heroSubtitle": "30 Minuten, kostenlos und in Ihrer Sprache — wir zeigen Ihnen, wie Bio Vera für Sie funktioniert, ob Sie anbauen, einkaufen, liefern oder transportieren.",
+    "cardTitle": "Termin wählen",
+    "roleQuestion": "Ich möchte sprechen als…",
+    "role": {
+      "buyer": "Einkäufer",
+      "producer": "Erzeuger",
+      "supplier": "Lieferant",
+      "logistics": "Logistikpartner",
+      "other": "Sonstiges"
+    },
+    "roleHint": {
+      "buyer": "Handel, Großhandel, Gastronomie — Frischware mit digitalem Produktpass",
+      "producer": "Obst- und Gemüseerzeuger aus ganz Europa",
+      "supplier": "Saatgut, Dünger, Pflanzenschutz, Verpackung",
+      "logistics": "Kühltransport und Zustellung auf der letzten Meile",
+      "other": "Partnerschaften, Presse, Investoren und alles andere"
+    },
+    "talkingAs": "Sie buchen als:",
+    "changeRole": "Ändern",
+    "privacyNote": "Der Kalender wird von Calendly bereitgestellt. Ihr Name und Ihre E-Mail-Adresse werden nur zur Terminvereinbarung und -bestätigung verwendet.",
+    "loading": "Kalender wird geladen…",
+    "notConfigured": "Die Online-Terminbuchung ist gerade nicht verfügbar. Bitte schreiben Sie an info@biovera.app.",
+    "fallbackPrefix": "Kalender lädt nicht?",
+    "fallbackLink": "In neuem Tab öffnen",
+    "fallbackOr": "oder schreiben Sie an",
+    "thanksTitle": "Vielen Dank — Ihr Termin ist gebucht",
+    "thanksBody": "Sie erhalten eine Bestätigung per E-Mail mit allen Details und einer Kalendereinladung.",
+    "backHome": "Zur Startseite",
+    "expectTitle": "Was Sie erwartet",
+    "expectDurationTitle": "30-minütiges Gespräch",
+    "expectDurationBody": "Per Video oder Telefon — wie es Ihnen passt.",
+    "expectLanguagesTitle": "In Ihrer Sprache",
+    "expectLanguagesBody": "Englisch, Deutsch, Serbisch, Spanisch, Französisch, Rumänisch oder Bulgarisch.",
+    "expectFreeTitle": "Kostenlos und unverbindlich",
+    "expectFreeBody": "Keine Vorbereitung nötig — bringen Sie Ihre Fragen mit.",
+    "expectWhoTitle": "Ihr Gesprächspartner",
+    "expectWhoBody": "Das für Ihren Bereich zuständige Bio-Vera-Team in Hamburg.",
+    "contactPromptTitle": "Lieber persönlich sprechen?",
+    "contactPromptCta": "Kostenfreies Erstgespräch buchen"
   }
 }

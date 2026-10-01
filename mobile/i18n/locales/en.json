@@ -3285,5 +3285,17 @@
     "title": "Seed producer portal",
     "body": "Production runs and label downloads are managed in the Bio Vera web portal. Open the link below on your computer or tablet browser.",
     "openWeb": "Open web portal"
+  },
+  "bookCall": {
+    "navCta": "Book a free call",
+    "heroSubtitle": "30 minutes, free and in your language — we’ll show you how Bio Vera works for you, whether you grow, buy, supply or transport.",
+    "role": {
+      "buyer": "Buyer",
+      "producer": "Producer / grower",
+      "supplier": "Supplier",
+      "logistics": "Logistics partner",
+      "other": "Other"
+    },
+    "talkingAs": "You are booking as:"
   }
 }

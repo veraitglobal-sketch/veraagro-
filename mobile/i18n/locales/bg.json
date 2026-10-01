@@ -3285,5 +3285,17 @@
     "failed": "Verification failed",
     "resendTitle": "Code sent",
     "resendBody": "Check your email for a new 4-digit code."
+  },
+  "bookCall": {
+    "navCta": "Запазете безплатен разговор",
+    "heroSubtitle": "30 минути, безплатно и на вашия език — ще ви покажем как Bio Vera работи за вас, независимо дали произвеждате, купувате, доставяте или превозвате.",
+    "role": {
+      "buyer": "Купувач",
+      "producer": "Производител",
+      "supplier": "Доставчик",
+      "logistics": "Логистичен партньор",
+      "other": "Друго"
+    },
+    "talkingAs": "Записвате се като:"
   }
 }

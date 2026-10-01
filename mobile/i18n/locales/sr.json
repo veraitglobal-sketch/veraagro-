@@ -3285,5 +3285,17 @@
     "plantedBagsSummary": "{{count}} vreć(a) · {{kg}} kg · lotovi: {{lots}}",
     "plantedBagsTitle": "Bio Vera seme na ovoj parceli",
     "verifySerial": "Proveri serijski broj"
+  },
+  "bookCall": {
+    "navCta": "Zakažite besplatan razgovor",
+    "heroSubtitle": "30 minuta, besplatno i na vašem jeziku — pokazaćemo vam kako Bio Vera radi za vas, bilo da proizvodite, kupujete, isporučujete inpute ili prevozite.",
+    "role": {
+      "buyer": "Kupac",
+      "producer": "Proizvođač",
+      "supplier": "Dobavljač",
+      "logistics": "Logistički partner",
+      "other": "Drugo"
+    },
+    "talkingAs": "Zakazujete kao:"
   }
 }

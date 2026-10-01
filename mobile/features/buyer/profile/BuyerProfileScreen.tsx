@@ -5,6 +5,7 @@ import { LogOut, Building2, Truck, Users, Bell } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { bioVeraScrollProps, TAB_SCROLL_PADDING_BOTTOM } from '../../../lib/scroll-view-props';
+import { BookCallBlock } from '../../../components/BookCallBlock';
 import { LanguageSettingsBlock } from '../../../components/LanguageSettingsBlock';
 import { useProfileData } from './useProfileData';
 import { GeneralTab } from './GeneralTab';
@@ -53,6 +54,7 @@ export default function BuyerProfileScreen() {
           </Text>
 
           <LanguageSettingsBlock />
+        <BookCallBlock />
 
           <TouchableOpacity
             onPress={() => router.push('/(buyer)/notifications')}

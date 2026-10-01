@@ -5,6 +5,7 @@ export const LOCALIZED_FIRST_SEGMENTS = new Set([
   "about",
   "careers",
   "contact",
+  "book-a-call",
   "cookies",
   "data-consent-declaration",
   "faq",

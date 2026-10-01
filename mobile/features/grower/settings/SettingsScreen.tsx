@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bell, RefreshCw, Shield, Info, Wifi } from 'lucide-react-native';
 import Constants from 'expo-constants';
+import { BookCallBlock } from '../../../components/BookCallBlock';
 import { LanguageSettingsBlock } from '../../../components/LanguageSettingsBlock';
 import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
 import {
@@ -231,6 +232,7 @@ export default function SettingsScreen() {
     >
       <View style={[growerUi.scrollContent, { paddingTop: 12 }]}>
         <LanguageSettingsBlock />
+        <BookCallBlock />
 
         <EnterpriseSettingsGroup
           title={t('producer.settings.connectionTitle')}
