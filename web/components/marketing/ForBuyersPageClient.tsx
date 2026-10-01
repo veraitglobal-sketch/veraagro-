@@ -1,5 +1,6 @@
 'use client';
 
+import BookCallButton from '@/components/BookCallButton';
 import { PRE_ORDER_SEASON } from '@biovera/shared/preorder';
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
@@ -161,6 +162,7 @@ export default function ForBuyersPageClient() {
                 <CalendarCheck className="h-4 w-4" />
                 {t('forBuyersPage.preOrder2026', { year: PRE_ORDER_SEASON })}
               </Link>
+              <BookCallButton role="buyer" from="/for-buyers" className="px-5 py-2.5" />
             </div>
           </section>
 
@@ -300,6 +302,7 @@ export default function ForBuyersPageClient() {
                 <CalendarCheck className="h-4 w-4" />
                 {t('forBuyersPage.preOrder2026', { year: PRE_ORDER_SEASON })}
               </Link>
+              <BookCallButton role="buyer" from="/for-buyers" className="px-5 py-2.5" />
             </div>
           </section>
 

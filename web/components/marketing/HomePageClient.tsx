@@ -1,5 +1,6 @@
 'use client';
 
+import BookCallButton from '@/components/BookCallButton';
 import { PRE_ORDER_SEASON } from '@biovera/shared/preorder';
 import Link from 'next/link';
 import { useCallback, useLayoutEffect, useMemo, useState, useRef, useEffect } from 'react';
@@ -489,6 +490,7 @@ export default function HomePageClient({
               >
                 {t('home.cta.startShopping')}
               </Link>
+              <BookCallButton from="/home-cta" />
             </div>
           </motion.div>
         </div>

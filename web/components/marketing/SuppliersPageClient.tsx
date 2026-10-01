@@ -1,5 +1,6 @@
 'use client';
 
+import BookCallButton from '@/components/BookCallButton';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Building2, Hash, Tag, Award, Warehouse, QrCode, Users, AlertTriangle, Download } from 'lucide-react';
@@ -158,6 +159,7 @@ export default function SuppliersPageClient() {
         lead={t('suppliersPage.hero.subtitle')}
         sectionClassName="pb-20"
       >
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <button
             type="button"
             onClick={async () => {
@@ -173,6 +175,8 @@ export default function SuppliersPageClient() {
             <Download className="w-4 h-4" />
             {t('suppliersPage.hero.downloadPdf')}
           </button>
+            <BookCallButton role="supplier" from="/for-suppliers" />
+          </div>
       </MarketingHero>
 
       <section className="py-16 px-6 lg:px-8 border-t border-gray-200 bg-gray-50/50">

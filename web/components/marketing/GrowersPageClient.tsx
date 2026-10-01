@@ -1,5 +1,6 @@
 'use client';
 
+import BookCallButton from '@/components/BookCallButton';
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Download } from 'lucide-react';
@@ -249,6 +250,7 @@ export default function GrowersPageClient() {
         lead={t('growersPage.heroLead')}
         sectionClassName="pb-20"
       >
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <button
             type="button"
             onClick={async () => {
@@ -264,6 +266,8 @@ export default function GrowersPageClient() {
             <Download className="w-4 h-4" />
             {t('growersPage.downloadProspectCta')}
           </button>
+            <BookCallButton role="producer" from="/for-growers" />
+          </div>
       </MarketingHero>
 
       <section className="py-12 px-6 lg:px-8 border-t border-gray-200">
