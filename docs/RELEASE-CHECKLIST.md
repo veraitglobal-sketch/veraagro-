@@ -123,7 +123,7 @@ Add **both** Play App Signing and upload-key fingerprints if Google rotates keys
 
 ### Step 2 — Set environment variables
 
-1. **Railway:** Set `SEED_LABEL_SECRET` (new dedicated value, ≥32 chars). Set `API_PUBLIC_URL` to public backend URL (e.g. `https://biovera-production.up.railway.app`). Confirm `FRONTEND_URL=https://biovera.app`.
+1. **Railway:** Set `SEED_LABEL_SECRET` (new dedicated value, ≥32 chars). Set `API_PUBLIC_URL` to public backend URL (e.g. `https://api.biovera.app`). Confirm `FRONTEND_URL=https://biovera.app`. **If startup logs show `assert-local-db` refusing `*.rlwy.net`**, set `ALLOW_REMOTE_DB=1` once (or redeploy after the Railway auto-detect fix in `assert-local-db.cjs`).
 2. **Vercel:** Confirm `NEXT_PUBLIC_API_URL` points at the same Railway backend URL.
 3. Redeploy is **not** required yet for env-only changes if you deploy in step 4–5 anyway.
 

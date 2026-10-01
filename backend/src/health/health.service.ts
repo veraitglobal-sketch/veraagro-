@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { shouldLogThrottled } from '../common/utils/log-throttle';
+import { getEmailEnvDiagnostics } from '../email/email.service';
 
 export interface HealthStatus {
   status: 'healthy' | 'degraded' | 'unhealthy';
@@ -20,6 +21,7 @@ export interface HealthStatus {
         percentage: number;
       };
     };
+    email: ReturnType<typeof getEmailEnvDiagnostics>;
   };
 }
 
@@ -61,6 +63,7 @@ export class HealthService {
     const services: HealthStatus['services'] = {
       database: await this.checkDatabase(),
       server: this.checkServer(),
+      email: getEmailEnvDiagnostics(),
     };
 
     // Determine overall status

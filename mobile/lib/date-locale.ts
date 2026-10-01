@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { intlLocaleFor } from '../../shared/i18n/format';
 
-export type AppLocaleTag = 'sr-Latn' | 'en-US';
+/** BCP 47 tag aligned with web (en-GB, sr-Latn-RS, de-DE, …). */
+export type AppLocaleTag = string;
 
 /** Resolve BCP 47 tag from i18n language (usable outside React hooks). */
 export function resolveAppLocaleTag(language?: string): AppLocaleTag {
-  return typeof language === 'string' && language.toLowerCase().startsWith('sr') ? 'sr-Latn' : 'en-US';
+  return intlLocaleFor(language);
 }
 
 /** BCP 47 tag for dates, times, and EUR formatting (matches other grower screens). */

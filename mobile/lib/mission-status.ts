@@ -1,4 +1,5 @@
 import type { TFunction } from 'i18next';
+import { missionStatusLabel } from '../../shared/i18n/labels';
 import { enterpriseColors } from './enterprise-ui';
 
 /**
@@ -42,12 +43,9 @@ export function getMissionStatusLabelEn(status: string): string {
   return status.replace(/_/g, ' ');
 }
 
-/** Prefer `producer.missions.status.<code>`; fallback to EN label / raw code formatting. */
+/** Shared glossary label — same words as web logistics. */
 export function getMissionStatusLabelLocalized(status: string, t: TFunction): string {
-  const key = `producer.missions.status.${status}`;
-  const translated = t(key);
-  if (translated === key) return getMissionStatusLabelEn(status);
-  return translated;
+  return missionStatusLabel(t, status, 'logistics');
 }
 
 /** Enterprise grower palette only — no amber/blue status rainbows. */

@@ -189,7 +189,20 @@ export default function LogisticsMissionsScreen() {
             const c = getMissionStatusColor(mission.status);
             const lotCode = mission.batch?.batchId?.trim();
             const product = mission.batch?.productName?.trim();
-            const pickup = (mission as { pickupAddress?: string | null }).pickupAddress?.trim();
+            const cropHint = (mission as { harvest_announcement?: { cropType?: string } }).harvest_announcement?.cropType?.trim();
+            const pickup = (mission as { pickupAddress?: string | null }).pickupAddress?.trim() || t('logistics.fromUnknown', { defaultValue: 'Pickup TBD' });
+            const destRaw = (mission as { destinationAddress?: string | null }).destinationAddress?.trim();
+            const destCity = (mission as { destinationCity?: string | null }).destinationCity?.trim();
+            const destination =
+              destRaw && !/^\{\s*\}$/.test(destRaw) && destRaw !== '—'
+                ? destRaw
+                : destCity || t('logistics.deliveryAddressNotSet', { defaultValue: 'Delivery address not set — confirm with the grower.' });
+            const title = product
+              ? product
+              : t('logistics.preHarvestRun', {
+                  defaultValue: 'Pre-harvest run{{crop}}',
+                  crop: cropHint ? ` · ${cropHint}` : '',
+                });
             const claimable = canClaimLogisticsMission(mission);
             return (
               <View key={mission.id} style={styles.card}>
@@ -204,10 +217,11 @@ export default function LogisticsMissionsScreen() {
                     </View>
                     <View style={{ flex: 1, minWidth: 0 }}>
                       <Text style={styles.title} numberOfLines={1}>
-                        {product || mission.missionNumber || t('producer.missions.missionPrefix', { id: mission.id.slice(0, 8) })}
+                        {title}
                       </Text>
-                      <Text style={styles.code} numberOfLines={1}>
-                        {[mission.missionNumber, lotCode].filter(Boolean).join(' · ')}
+                      <Text style={styles.code} numberOfLines={2}>
+                        {`${pickup} → ${destination}`}
+                        {lotCode ? `\n${mission.missionNumber} · ${lotCode}` : `\n${mission.missionNumber}`}
                       </Text>
                     </View>
                     <View style={[styles.pill, { backgroundColor: `${c}18` }]}>

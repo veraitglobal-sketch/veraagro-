@@ -17,7 +17,16 @@ import {
   formatPackLine,
   CATALOG_ORDER_TIMELINE,
   getCatalogTimelineStepIndex,
+  getCatalogTimelineStepLabel,
+  formatCatalogOrderListLine,
+  formatCatalogOrderDetailPricing,
+  formatAppOrderDate,
 } from '@/lib/buyer-order-status';
+import {
+  buyerTimelineLabel,
+  paymentMethodLabel,
+  paymentStatusLabel,
+} from '@biovera/shared/i18n/labels';
 import { getBuyerOrderFarmLabel } from '@/lib/buyer-order-farm-label';
 import Link from 'next/link';
 import { ShoppingCart, Package, MapPin, Calendar, Search, Filter, Eye, Truck, X, CheckCircle, Clock, AlertCircle, FileText } from 'lucide-react';
@@ -25,7 +34,8 @@ import { useBuyerPortalNavItems } from '@/lib/buyer-portal-nav';
 import { PaymentInstructionsPanel } from '@/components/PaymentInstructionsPanel';
 
 export default function OrdersPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language?.split('-')[0] || 'en';
   const orderStatusFilters = getAllOrderStatusFilters(t);
   const buyerPortalNavItems = useBuyerPortalNavItems();
   const [orders, setOrders] = useState<any[]>([]);
@@ -481,7 +491,7 @@ export default function OrdersPage() {
                             const done = currentIdx >= idx;
                             const active = currentIdx === idx;
                             return (
-                              <li key={step.labelKey} className="flex items-center gap-3 text-sm">
+                              <li key={step.stepKey} className="flex items-center gap-3 text-sm">
                                 <span
                                   className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
                                     done ? 'bg-[#2D5A27]' : 'bg-gray-300'
@@ -493,7 +503,7 @@ export default function OrdersPage() {
                                     done ? 'text-gray-900' : 'text-gray-400'
                                   } ${active ? 'font-medium' : ''}`}
                                 >
-                                  {t(step.labelKey)}
+                                  {getCatalogTimelineStepLabel(t, step.stepKey)}
                                 </span>
                               </li>
                             );
@@ -501,7 +511,7 @@ export default function OrdersPage() {
                           {selectedOrder.status === 'CANCELLED' && (
                             <li className="flex items-center gap-3 text-sm text-red-700 font-light">
                               <span className="w-2.5 h-2.5 rounded-full bg-red-500 flex-shrink-0" aria-hidden />
-                              {t('buyerPortalOrders.catalogTimeline.rejected')}
+                              {getCatalogTimelineStepLabel(t, 'rejected')}
                             </li>
                           )}
                         </ol>
@@ -563,8 +573,7 @@ export default function OrdersPage() {
                         <ol className="space-y-3 border-l border-[#2D5A27]/30 pl-4 ml-1.5">
                           {selectedOrder.shipmentTracking.events.map(
                             (ev: { code: string; at: string }, idx: number) => {
-                              const labelKey = `buyerPortalOrders.tracking.${ev.code}`;
-                              const label = t(labelKey, { defaultValue: ev.code.replace(/_/g, ' ') });
+                              const label = buyerTimelineLabel(t, ev.code);
                               return (
                                 <li key={`${ev.code}-${ev.at}-${idx}`} className="relative">
                                   <span
@@ -573,7 +582,13 @@ export default function OrdersPage() {
                                   />
                                   <p className="text-sm text-gray-900 font-light leading-snug">{label}</p>
                                   <p className="text-xs text-gray-500 font-light mt-0.5 tabular-nums">
-                                    {new Date(ev.at).toLocaleString()}
+                                    {formatAppOrderDate(ev.at, lang, {
+                                      day: '2-digit',
+                                      month: '2-digit',
+                                      year: 'numeric',
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                    })}
                                   </p>
                                 </li>
                               );
@@ -584,66 +599,6 @@ export default function OrdersPage() {
                     ) : (
                       <p className="text-xs text-gray-500 font-light mb-4">{t('buyerPortalOrders.shipmentTimelineEmpty')}</p>
                     )}
-                    <h3 className="text-sm font-light text-gray-500 mb-4 mt-2">Progress</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 text-sm">
-                        <div className="w-2 h-2 bg-[#2D5A27]/60 rounded-full"></div>
-                        <div className="flex-1">
-                          <p className="font-light text-gray-900">Order created</p>
-                          <p className="text-xs text-gray-500 font-light">
-                            {new Date(selectedOrder.createdAt).toLocaleString()}
-                          </p>
-                        </div>
-                      </div>
-                      {selectedOrder.delivery && (
-                        <>
-                          {selectedOrder.delivery.assignedAt && (
-                            <div className="flex items-center gap-3 text-sm">
-                              <div className="w-2 h-2 bg-blue-600/60 rounded-full"></div>
-                              <div className="flex-1">
-                                <p className="font-light text-gray-900">Delivery Assigned</p>
-                                <p className="text-xs text-gray-500 font-light">
-                                  {new Date(selectedOrder.delivery.assignedAt).toLocaleString()}
-                                </p>
-                              </div>
-                            </div>
-                          )}
-                          {selectedOrder.delivery.pickedUpAt && (
-                            <div className="flex items-center gap-3 text-sm">
-                              <div className="w-2 h-2 bg-yellow-600/60 rounded-full"></div>
-                              <div className="flex-1">
-                                <p className="font-light text-gray-900">Picked Up</p>
-                                <p className="text-xs text-gray-500 font-light">
-                                  {new Date(selectedOrder.delivery.pickedUpAt).toLocaleString()}
-                                </p>
-                              </div>
-                            </div>
-                          )}
-                          {selectedOrder.delivery.inTransitAt && (
-                            <div className="flex items-center gap-3 text-sm">
-                              <div className="w-2 h-2 bg-yellow-600/60 rounded-full"></div>
-                              <div className="flex-1">
-                                <p className="font-light text-gray-900">In Transit</p>
-                                <p className="text-xs text-gray-500 font-light">
-                                  {new Date(selectedOrder.delivery.inTransitAt).toLocaleString()}
-                                </p>
-                              </div>
-                            </div>
-                          )}
-                          {selectedOrder.delivery.deliveredAt && (
-                            <div className="flex items-center gap-3 text-sm">
-                              <div className="w-2 h-2 bg-[#2D5A27]/60 rounded-full"></div>
-                              <div className="flex-1">
-                                <p className="font-light text-gray-900">Delivered</p>
-                                <p className="text-xs text-gray-500 font-light">
-                                  {new Date(selectedOrder.delivery.deliveredAt).toLocaleString()}
-                                </p>
-                              </div>
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </div>
                   </div>
 
                   {/* Order Information */}
@@ -668,9 +623,14 @@ export default function OrdersPage() {
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600 font-light">Unit Price:</span>
-                          <span className="font-light text-gray-900">
-                            €{selectedOrder.unitPrice?.toFixed(2) || '0.00'} / {selectedOrder.unit}
+                          <span className="text-gray-600 font-light">{t('buyerPortalOrders.unitPrice', { defaultValue: 'Pricing' })}:</span>
+                          <span className="font-light text-gray-900 text-right">
+                            {isCatalogOrder(selectedOrder)
+                              ? formatCatalogOrderDetailPricing(selectedOrder, lang, {
+                                  perPack: t('buyerPortalOrders.perPack', { defaultValue: '/ pack' }),
+                                  perKg: t('buyerPortalOrders.perKg', { defaultValue: '/ kg' }),
+                                })
+                              : `€${selectedOrder.unitPrice?.toFixed(2) || '0.00'} / ${selectedOrder.unit}`}
                           </span>
                         </div>
                         <div className="flex justify-between pt-2 border-t border-gray-200/50">
@@ -730,13 +690,14 @@ export default function OrdersPage() {
                         <div className="flex justify-between">
                           <span className="text-gray-600 font-light">Payment Method:</span>
                           <span className="font-light text-gray-900">
-                            {selectedOrder.payments.paymentMethod || 'N/A'}
+                            {paymentMethodLabel(t, selectedOrder.payments.paymentMethod) || 'N/A'}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600 font-light">Payment status:</span>
                           <span className="font-light text-gray-900">
-                            {String(selectedOrder.payments.status).replace(
+                            {paymentStatusLabel(t, selectedOrder.payments.status, 'buyer') ||
+                              String(selectedOrder.payments.status).replace(
                               /_/g,
                               ' ',
                             )}

@@ -161,8 +161,13 @@ export class AuthService {
     }
 
     // Validate location data if provided
-    if (data.location && (!data.address || !data.city)) {
-      throw new BadRequestException('Address and city are required when location is provided');
+    if (data.location) {
+      if (!data.address?.trim() || !data.city?.trim()) {
+        throw new BadRequestException('Address and city are required when location is provided');
+      }
+      if (!data.postalCode?.trim() || !data.country?.trim()) {
+        throw new BadRequestException('Postal code and country are required when location is provided');
+      }
     }
 
     // Hash password
@@ -452,6 +457,84 @@ export class AuthService {
         lastName: user!.lastName,
       },
       message: 'Email verified. Account activated. You can now add your fields and continue.',
+    };
+  }
+
+  /** Self-service password reset — always returns generic success (no email enumeration). */
+  async requestPasswordReset(email: string) {
+    const generic = {
+      success: true,
+      message: 'If an account exists for this email, we sent a password reset link.',
+    };
+
+    const user = await this.prisma.users.findFirst({
+      where: { email: { equals: email.trim(), mode: 'insensitive' } },
+    });
+    if (!user?.email?.trim()) {
+      return generic;
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+    await this.prisma.password_reset_tokens.upsert({
+      where: { userId: user.id },
+      create: {
+        id: crypto.randomUUID(),
+        userId: user.id,
+        token,
+        expiresAt,
+      },
+      update: { token, expiresAt },
+    });
+
+    void this.emailService
+      .sendPasswordResetEmail({
+        email: user.email,
+        firstName: user.firstName,
+        resetToken: token,
+        preferredLanguage: user.preferredLanguage,
+        expiresInMinutes: 60,
+      })
+      .then((ok) => {
+        if (!ok) {
+          this.logger.error(`password reset email NOT sent user=${user.email} — check RESEND_API_KEY`);
+        }
+      })
+      .catch((e) =>
+        this.logger.error(
+          `password reset email failed user=${user.email}: ${e instanceof Error ? e.message : e}`,
+        ),
+      );
+
+    return generic;
+  }
+
+  async resetPassword(token: string, password: string) {
+    const record = await this.prisma.password_reset_tokens.findUnique({
+      where: { token: token.trim() },
+      include: { users: true },
+    });
+    if (!record) {
+      throw new BadRequestException('Invalid or expired reset link. Request a new one.');
+    }
+    if (record.expiresAt < new Date()) {
+      await this.prisma.password_reset_tokens.delete({ where: { id: record.id } });
+      throw new BadRequestException('Reset link expired. Request a new one.');
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    await this.prisma.$transaction([
+      this.prisma.users.update({
+        where: { id: record.userId },
+        data: { passwordHash, updatedAt: new Date() },
+      }),
+      this.prisma.password_reset_tokens.delete({ where: { id: record.id } }),
+    ]);
+
+    return {
+      success: true,
+      message: 'Password updated. You can sign in with your new password.',
     };
   }
 

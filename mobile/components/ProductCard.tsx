@@ -8,6 +8,7 @@ import Card from './ui/Card';
 import Button from './ui/Button';
 import { CheckCircle, MapPin, Star, Calendar, Package } from 'lucide-react-native';
 import { productEmoji } from '../lib/product-emoji';
+import { formatCatalogProductCardPricing } from '../lib/marketplace-format';
 
 interface ProductCardProps {
   product: Product;
@@ -19,7 +20,15 @@ export default function ProductCard({ product, onPress, showActions = true }: Pr
   const { t } = useTranslation();
   const router = useRouter();
   const priceLocale = useAppLocaleTag();
+  const lang = priceLocale.toLowerCase().startsWith('sr') ? 'sr' : 'en';
   const isCatalog = product.catalogProduct === true;
+  const packPricing =
+    isCatalog && product.packOptions?.length
+      ? formatCatalogProductCardPricing(product.packOptions, lang, {
+          fromPerKg: t('buyer.shop.fromPerKg', { defaultValue: 'from {{price}} / kg' }),
+          perKg: '/ kg',
+        })
+      : null;
   const availableKg = product.availableKg ?? product.quantity;
   const sourceLabel = isCatalog
     ? t('buyer.shop.marketplacePacks')
@@ -61,9 +70,39 @@ export default function ProductCard({ product, onPress, showActions = true }: Pr
           >
             {product.productName}
           </Text>
+          <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginBottom: theme.spacing.xs }}>
+            {product.estate?.name}
+            {product.category ? ` · ${product.category}` : ''}
+          </Text>
           <Text style={{ fontSize: 12, color: theme.colors.primary, marginBottom: theme.spacing.xs }}>
             {sourceLabel}
           </Text>
+          {packPricing && packPricing.packChips.length > 0 ? (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: theme.spacing.sm }}>
+              {packPricing.packChips.map((chip) => (
+                <Text
+                  key={chip}
+                  style={{
+                    fontSize: 12,
+                    color: theme.colors.text.primary,
+                    backgroundColor: theme.colors.surface,
+                    borderWidth: 0.5,
+                    borderColor: theme.colors.borderLight,
+                    borderRadius: 12,
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                  }}
+                >
+                  {chip}
+                </Text>
+              ))}
+            </View>
+          ) : null}
+          {packPricing?.fromPerKg ? (
+            <Text style={{ ...theme.typography.caption, color: theme.colors.text.secondary, marginBottom: theme.spacing.xs }}>
+              {packPricing.fromPerKg}
+            </Text>
+          ) : null}
           {availableKg != null && (
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.xs, gap: 4 }}>
               <Package size={12} color={theme.colors.text.secondary} strokeWidth={2} />
@@ -177,8 +216,8 @@ export default function ProductCard({ product, onPress, showActions = true }: Pr
             )}
           </View>
 
-          {/* Price */}
-          {product.price && (
+          {/* Price — inventory-only cards; catalogue uses pack chips above */}
+          {product.price && !isCatalog && (
             <View style={{
               backgroundColor: theme.colors.primary,
               padding: theme.spacing.md,

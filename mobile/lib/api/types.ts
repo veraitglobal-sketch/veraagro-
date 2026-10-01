@@ -18,6 +18,7 @@ export interface Product {
   availableKg?: number;
   availableUntil?: string | null;
   packOptions?: CatalogPackOption[];
+  category?: string | null;
   selectedPackOptionId?: string;
   pricePerPack?: number;
   estate: {
@@ -176,11 +177,19 @@ export interface GrowthLog {
 
 
 export interface Order {
-  deliveries?: { id: string; deliveryNumber: string; status: string; buyerPickupConfirmedAt?: string | null; confirmedAt?: string | null } | null;
+  deliveries?: {
+    id: string;
+    deliveryNumber: string;
+    status: string;
+    buyerPickupConfirmedAt?: string | null;
+    confirmedAt?: string | null;
+    users?: { firstName?: string; lastName?: string; companyName?: string; phone?: string };
+  } | null;
   clientRequestId?: string | null;
   checkoutReplay?: boolean;
   stockReservation?: { status: string; quantity: number; unit: string } | null;
-  payments?: { status: string } | null;
+  payments?: { status: string; paymentMethod?: string } | null;
+  invoices?: { id: string; invoiceNumber: string } | null;
   shipmentTracking?: { missionNumber: string | null; missionStatus: string | null; events: Array<{ code: string; at: string }> };
   id: string;
   orderNumber: string;

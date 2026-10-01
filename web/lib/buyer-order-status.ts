@@ -61,34 +61,21 @@ export function getBuyerStatusBadgeClass(status: string | undefined | null): str
   }
 }
 
-/** Plain-word timeline for catalogue (marketplace) orders */
-export const CATALOG_ORDER_TIMELINE = [
-  { statuses: ['PENDING'], labelKey: 'buyerPortalOrders.catalogTimeline.submitted' },
-  { statuses: ['APPROVED'], labelKey: 'buyerPortalOrders.catalogTimeline.accepted' },
-  { statuses: ['PAID'], labelKey: 'buyerPortalOrders.catalogTimeline.paid' },
-  { statuses: ['CONFIRMED'], labelKey: 'buyerPortalOrders.catalogTimeline.preparing' },
-  { statuses: ['PICKED_UP', 'IN_TRANSIT'], labelKey: 'buyerPortalOrders.catalogTimeline.inTransit' },
-  { statuses: ['DELIVERED'], labelKey: 'buyerPortalOrders.catalogTimeline.delivered' },
-  { statuses: ['COMPLETED'], labelKey: 'buyerPortalOrders.catalogTimeline.receiptConfirmed' },
-] as const;
+export {
+  CATALOG_ORDER_TIMELINE,
+  isCatalogOrder,
+  getCatalogTimelineStepIndex,
+  formatPackLine,
+  formatCatalogOrderListLine,
+  formatCatalogOrderDetailPricing,
+  formatAppOrderDate,
+} from '@biovera/shared/i18n/buyer-order-format';
 
-export function isCatalogOrder(order: { catalogProductId?: string | null } | null | undefined): boolean {
-  return !!order?.catalogProductId;
-}
+import { catalogOrderTimelineLabel } from '@biovera/shared/i18n/labels';
 
-export function getCatalogTimelineStepIndex(status: string | undefined | null): number {
-  if (!status) return 0;
-  if (status === 'CANCELLED' || status === 'REFUNDED') return -1;
-  const idx = CATALOG_ORDER_TIMELINE.findIndex((step) => step.statuses.includes(status as never));
-  return idx >= 0 ? idx : 0;
-}
-
-export function formatPackLine(order: {
-  packCount?: number | null;
-  packLabel?: string | null;
-}): string | null {
-  if (!order.packCount || !order.packLabel) return null;
-  return `${order.packCount} × ${order.packLabel}`;
+/** Legacy web label keys — prefer catalogOrderTimelineLabel from glossary. */
+export function getCatalogTimelineStepLabel(t: TFunction, stepKey: string): string {
+  return catalogOrderTimelineLabel(t, stepKey);
 }
 
 export function getAllOrderStatusFilters(t: TFunction) {

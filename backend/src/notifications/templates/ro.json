@@ -30,5 +30,29 @@
   "buyer.registrationPending": {
     "title": "Înregistrare primită",
     "message": "Vă mulțumim pentru înregistrare. Bio Vera va examina contul dvs. de cumpărător în curând."
+  },
+  "buyer.paymentReceived": {
+    "title": "Plată primită",
+    "message": "Plată primită — comanda {{orderNumber}} se pregătește{{packLine}}."
+  },
+  "buyer.orderPacked": {
+    "title": "Ambalat",
+    "message": "Ambalat și gata de ridicare: {{orderNumber}}{{packLine}}."
+  },
+  "buyer.orderInTransit": {
+    "title": "În drum",
+    "message": "Comanda {{orderNumber}} este în drum."
+  },
+  "grower.orderToPrepare": {
+    "title": "Comandă nouă de pregătit",
+    "message": "Comandă nouă: {{packLine}} {{productName}} ({{orderNumber}})."
+  },
+  "logistics.missionAvailable": {
+    "title": "Ridicare disponibilă",
+    "message": "Misiunea {{missionNumber}} disponibilă: {{pickupCity}} → {{destinationCity}}."
+  },
+  "logistics.missionAssigned": {
+    "title": "Misiune atribuită",
+    "message": "Misiunea {{missionNumber}} v-a fost atribuită."
   }
 }

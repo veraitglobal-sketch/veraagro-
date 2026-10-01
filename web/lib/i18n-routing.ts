@@ -64,6 +64,8 @@ export const LOCALE_FREE_FIRST_SEGMENTS = new Set([
   "operations-center",
   "distributor-network",
   "login",
+  "forgot-password",
+  "reset-password",
   "coordinator",
 ]);
 

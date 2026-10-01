@@ -66,6 +66,7 @@ export default function ShopScreen() {
         availableUntil: c.availableUntil,
         catalogProduct: true,
         packOptions: c.packOptions,
+        category: c.category ?? null,
         price: c.packOptions[0]?.pricePerKg,
         estate: c.estate ?? { id: 'unknown', name: 'Farm' },
       }));

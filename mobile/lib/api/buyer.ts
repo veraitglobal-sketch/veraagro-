@@ -1,4 +1,6 @@
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from 'expo-file-system/legacy';
 import api from './client';
 import { API_URL } from '../api-url';
 import { axiosResponseStatus, isLikelyNetworkError } from '../api-error';
@@ -266,6 +268,19 @@ export type BuyerCompanyProfile = {
   };
   deliveryLocations: unknown[];
   authorizedPersonnel: unknown[];
+};
+
+export const invoicesAPI = {
+  downloadToCache: async (invoiceId: string, filename: string): Promise<string> => {
+    const token = await AsyncStorage.getItem('auth_token');
+    const uri = `${API_URL}/invoices/${encodeURIComponent(invoiceId)}/download`;
+    const dest = `${FileSystem.cacheDirectory}${filename.replace(/[^\w.-]+/g, '_')}.pdf`;
+    const result = await FileSystem.downloadAsync(uri, dest, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (result.status !== 200) throw new Error(`Invoice download failed (${result.status})`);
+    return result.uri;
+  },
 };
 
 /** Buyer company document (company data, delivery locations, staff) — stored on the user row. */

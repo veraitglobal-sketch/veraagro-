@@ -8,8 +8,16 @@ import {
   IsNumber,
   IsNotEmpty,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import { PASSWORD_REQUIREMENTS } from '../../common/constants';
+
+/** ValidationPipe may receive explicit null from JSON — treat like omitted optional field. */
+function optionalTrimmedString({ value }: { value: unknown }): string | undefined {
+  if (value === null || value === undefined) return undefined;
+  if (typeof value !== 'string') return value as string;
+  const trimmed = value.trim();
+  return trimmed === '' ? undefined : trimmed;
+}
 
 class LocationDto {
   @IsNumber()
@@ -63,18 +71,22 @@ export class RegisterBuyerDto {
   location?: LocationDto;
 
   @IsOptional()
+  @Transform(optionalTrimmedString)
   @IsString()
   address?: string;
 
   @IsOptional()
+  @Transform(optionalTrimmedString)
   @IsString()
   city?: string;
 
   @IsOptional()
+  @Transform(optionalTrimmedString)
   @IsString()
   postalCode?: string;
 
   @IsOptional()
+  @Transform(optionalTrimmedString)
   @IsString()
   country?: string;
 

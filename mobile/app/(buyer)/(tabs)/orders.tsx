@@ -8,6 +8,8 @@ import { theme } from '../../../lib/theme';
 import { useBioVeraScreenPadding } from '../../../lib/screen-insets';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 import { tBuyerOrderStatus } from '../../../lib/buyer-order-status';
+import { formatCatalogOrderListLine } from '../../../lib/buyer-order-pack';
+import { formatAppOrderDate } from '../../../lib/buyer-order-format';
 import { buyerOrderNextStep } from '../../../lib/buyer-order-next-step';
 import { apiErrorMessage } from '../../../lib/api-error';
 import { bioVeraScrollProps, TAB_SCROLL_PADDING_BOTTOM } from '../../../lib/scroll-view-props';
@@ -23,6 +25,7 @@ export default function OrdersScreen() {
   const router = useRouter();
   const insets = useBioVeraScreenPadding();
   const locale = useAppLocaleTag();
+  const lang = locale.toLowerCase().startsWith('sr') ? 'sr' : 'en';
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -52,8 +55,8 @@ export default function OrdersScreen() {
     return <View style={{ backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, padding: theme.spacing.lg, borderWidth: 0.5, borderColor: 'rgba(0,0,0,0.1)', gap: 10 }}>
       <TouchableOpacity accessibilityRole="button" accessibilityLabel={t('buyerOrderActions.openOrder', { number: order.orderNumber })} onPress={() => router.push({ pathname: '/(buyer)/order/[id]', params: { id: order.id } })} style={{ gap: 6 }}>
         <Text style={{ fontSize: 16, color: theme.colors.text.primary }}>{order.productName}</Text>
-        <Text style={{ color: theme.colors.text.secondary }}>{order.orderNumber} · {new Date(order.createdAt).toLocaleDateString(locale)}</Text>
-        <Text>{order.quantity} {order.unit} · {order.totalAmount.toLocaleString(locale, { style: 'currency', currency: 'EUR' })}</Text>
+        <Text style={{ color: theme.colors.text.secondary }}>{order.orderNumber} · {formatAppOrderDate(order.createdAt, lang)}</Text>
+        <Text>{order.catalogProductId ? formatCatalogOrderListLine(order, lang) : `${order.quantity} ${order.unit} · ${order.totalAmount.toLocaleString(locale, { style: 'currency', currency: 'EUR' })}`}</Text>
         <Text style={{ color: theme.colors.primary }}>{tBuyerOrderStatus(t, order.status, order)}</Text>
       </TouchableOpacity>
       {order.catalogProductId ? (

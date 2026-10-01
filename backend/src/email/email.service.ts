@@ -3,6 +3,43 @@ import * as nodemailer from 'nodemailer';
 import { Resend } from 'resend';
 import { NotificationTemplateService } from '../notifications/notification-template.service';
 
+/** Non-secret email delivery diagnostics for logs and GET /health/detailed. */
+export function getEmailEnvDiagnostics() {
+  const key = (
+    process.env.RESEND_API_KEY ||
+    process.env.SMTP_PASS ||
+    process.env.SMTP_PASSWORD ||
+    ''
+  ).trim();
+  const sandbox = process.env.RESEND_SANDBOX === '1' || process.env.RESEND_SANDBOX === 'true';
+  const emailFrom = (process.env.EMAIL_FROM || process.env.RESEND_FROM || '').trim();
+  const resendConfigured = key.startsWith('re_');
+  let fromAddress = emailFrom || 'info@biovera.app';
+  if (resendConfigured) {
+    fromAddress = sandbox || !emailFrom ? 'onboarding@resend.dev' : emailFrom;
+  } else if (!emailFrom) {
+    fromAddress = process.env.SMTP_USER || 'info@biovera.app';
+  }
+  let hint: string | undefined;
+  if (!resendConfigured) {
+    hint =
+      'Set RESEND_API_KEY=re_... on Railway (use Resend REST API — SMTP port 587 is blocked on Railway).';
+  } else if (!sandbox && emailFrom.includes('biovera.app')) {
+    hint =
+      'biovera.app must be Verified in Resend → Domains. Until then set RESEND_SANDBOX=1 and EMAIL_FROM=onboarding@resend.dev.';
+  } else if (key.includes('your_resend') || key.length < 32) {
+    hint = 'RESEND_API_KEY looks like a placeholder — paste the real key from Resend → API Keys.';
+  }
+  return {
+    resendKeyConfigured: resendConfigured,
+    transport: resendConfigured ? 'resend-rest' : key ? 'smtp' : 'none',
+    fromAddress,
+    sandboxMode: sandbox,
+    adminEmail: (process.env.ADMIN_EMAIL || emailFrom || 'info@biovera.app').trim(),
+    ...(hint ? { hint } : {}),
+  };
+}
+
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
@@ -67,6 +104,20 @@ export class EmailService {
       );
       this.testConnection().catch(() => {});
     }
+
+    const diag = getEmailEnvDiagnostics();
+    this.logger.log(`Email delivery: transport=${diag.transport}, from=${diag.fromAddress}`);
+    if (diag.hint) {
+      this.logger.warn(`Email delivery hint: ${diag.hint}`);
+    }
+  }
+
+  private resolveFromAddress(): string {
+    return getEmailEnvDiagnostics().fromAddress;
+  }
+
+  private formatFrom(displayName: string): string {
+    return `"${displayName}" <${this.resolveFromAddress()}>`;
   }
 
   /**
@@ -209,12 +260,7 @@ Bio Vera Team
 
     try {
       const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM || 'info@biovera.app';
-      const customFrom = process.env.EMAIL_FROM;
-      const fromAddr = this.resend
-        ? customFrom && customFrom.includes('@')
-          ? customFrom
-          : 'onboarding@resend.dev'
-        : customFrom || process.env.SMTP_USER || 'info@biovera.app';
+      const fromAddr = this.resolveFromAddress();
 
       const emailSubject = `[Bio Vera] Contact: ${data.subject}`;
 
@@ -379,12 +425,7 @@ Reply to: ${data.email}
 
     try {
       const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM || 'info@biovera.app';
-      const customFrom = process.env.EMAIL_FROM;
-      const fromAddr = this.resend
-        ? customFrom && customFrom.includes('@')
-          ? customFrom
-          : 'onboarding@resend.dev'
-        : customFrom || process.env.SMTP_USER || 'info@biovera.app';
+      const fromAddr = this.resolveFromAddress();
 
       const attachment = data.resumeAttachment;
       const emailSubject = `[Bio Vera] Careers: ${data.appliedRoleTitle}`;
@@ -557,12 +598,7 @@ Reply to: ${data.email}
     try {
       const toAddr =
         process.env.ORDERS_NOTIFY_EMAIL || process.env.ADMIN_EMAIL || 'info@biovera.app';
-      const customFrom = process.env.EMAIL_FROM;
-      const fromAddr = this.resend
-        ? customFrom && customFrom.includes('@')
-          ? customFrom
-          : 'onboarding@resend.dev'
-        : customFrom || process.env.SMTP_USER || 'info@biovera.app';
+      const fromAddr = this.resolveFromAddress();
 
       const h = (v: string | undefined | null) => this.escapeForEmail(v);
       const subj = data.isPreOrder
@@ -767,7 +803,7 @@ Bio Vera Team
       this.logger.warn('Email not configured, skipping invoice email');
       return false;
     }
-    const fromAddr = process.env.EMAIL_FROM || process.env.SMTP_USER || 'info@biovera.app';
+    const fromAddr = this.resolveFromAddress();
     const name = `${data.firstName} ${data.lastName}`.trim() || 'Customer';
     const subj = `Invoice ${data.invoiceNumber} — order ${data.orderNumber}`;
     const filename = `invoice-${data.invoiceNumber.replace(/[^a-zA-Z0-9._-]+/g, '_')}.pdf`;
@@ -825,6 +861,59 @@ Bio Vera Team
       return false;
     }
     return false;
+  }
+
+  /** Password reset link — self-service forgot password on web. */
+  async sendPasswordResetEmail(data: {
+    email: string;
+    firstName: string;
+    resetToken: string;
+    preferredLanguage?: string | null;
+    expiresInMinutes?: number;
+  }): Promise<boolean> {
+    const lang = data.preferredLanguage?.split('-')[0]?.toLowerCase() ?? 'en';
+    const expires = data.expiresInMinutes ?? 60;
+    const webUrl = (process.env.FRONTEND_URL || process.env.WEB_URL || 'https://biovera.app').replace(
+      /\/$/,
+      '',
+    );
+    const resetUrl = `${webUrl}/reset-password?token=${encodeURIComponent(data.resetToken)}`;
+    const copy: Record<string, { subject: string; intro: string; cta: string; expiry: string }> = {
+      en: {
+        subject: 'Reset your Bio Vera password',
+        intro: 'We received a request to reset your password. Click the button below to choose a new one:',
+        cta: 'Reset password',
+        expiry: `This link expires in ${expires} minutes. If you did not request this, you can ignore this email.`,
+      },
+      sr: {
+        subject: 'Bio Vera — reset lozinke',
+        intro: 'Primili smo zahtev za reset lozinke. Kliknite na dugme ispod da postavite novu:',
+        cta: 'Resetuj lozinku',
+        expiry: `Link važi ${expires} minuta. Ako niste vi tražili reset, ignorišite ovu poruku.`,
+      },
+      de: {
+        subject: 'Bio Vera — Passwort zurücksetzen',
+        intro: 'Wir haben eine Anfrage zum Zurücksetzen Ihres Passworts erhalten:',
+        cta: 'Passwort zurücksetzen',
+        expiry: `Der Link läuft in ${expires} Minuten ab.`,
+      },
+    };
+    const t = copy[lang] ?? copy.en;
+    const html = `
+      <!DOCTYPE html><html><head><meta charset="utf-8" /></head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
+        <p><strong>${data.firstName}</strong>,</p>
+        <p>${t.intro}</p>
+        <p><a href="${resetUrl}" style="display:inline-block;background:#2D5A27;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;">${t.cta}</a></p>
+        <p style="color:#666;font-size:13px;">${t.expiry}</p>
+        <p style="color:#999;font-size:11px;word-break:break-all;">${resetUrl}</p>
+      </body></html>`;
+    const text = `${data.firstName},\n\n${t.intro}\n\n${resetUrl}\n\n${t.expiry}\n\n— Bio Vera`;
+    const ok = await this.sendSimpleEmail({ to: data.email, subject: t.subject, html, text });
+    if (ok) {
+      this.logger.log(`Password reset email queued to ${data.email}`);
+    }
+    return ok;
   }
 
   /** Send 4-digit email verification code after buyer self-registration. */
@@ -978,11 +1067,11 @@ Please change your password after first sign-in.
     html: string;
     text: string;
   }): Promise<boolean> {
-    const fromAddr = process.env.EMAIL_FROM || process.env.SMTP_USER || 'info@biovera.app';
+    const fromAddr = this.resolveFromAddress();
     try {
       if (this.resend) {
         const { error } = await this.resend.emails.send({
-          from: `"Bio Vera" <${fromAddr}>`,
+          from: this.formatFrom('Bio Vera'),
           to: data.to,
           subject: data.subject,
           html: data.html,
@@ -999,7 +1088,7 @@ Please change your password after first sign-in.
       }
       if (this.transporter) {
         await this.transporter.sendMail({
-          from: `"Bio Vera" <${fromAddr}>`,
+          from: this.formatFrom('Bio Vera'),
           to: data.to,
           subject: data.subject,
           html: data.html,
@@ -1007,7 +1096,7 @@ Please change your password after first sign-in.
         });
         return true;
       }
-      this.logger.warn('Email not configured, skipping send');
+      this.logger.warn('Email not configured (no RESEND_API_KEY), skipping send');
       return false;
     } catch (e: unknown) {
       this.logger.error(`sendSimpleEmail failed: ${e instanceof Error ? e.message : e}`);

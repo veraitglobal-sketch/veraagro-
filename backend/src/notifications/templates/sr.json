@@ -30,5 +30,29 @@
   "buyer.registrationPending": {
     "title": "Registracija primljena",
     "message": "Hvala na registraciji. Bio Vera će uskoro pregledati vaš kupčev nalog."
+  },
+  "buyer.paymentReceived": {
+    "title": "Uplata primljena",
+    "message": "Uplata primljena — porudžbina {{orderNumber}} se priprema{{packLine}}."
+  },
+  "buyer.orderPacked": {
+    "title": "Spakovano",
+    "message": "Spakovano i spremno za preuzimanje: {{orderNumber}}{{packLine}}."
+  },
+  "buyer.orderInTransit": {
+    "title": "Na putu",
+    "message": "Vaša porudžbina {{orderNumber}} je na putu."
+  },
+  "grower.orderToPrepare": {
+    "title": "Nova porudžbina za pripremu",
+    "message": "Nova porudžbina za pripremu: {{packLine}} {{productName}} ({{orderNumber}})."
+  },
+  "logistics.missionAvailable": {
+    "title": "Dostupan pickup",
+    "message": "Misija {{missionNumber}} dostupna: {{pickupCity}} → {{destinationCity}}."
+  },
+  "logistics.missionAssigned": {
+    "title": "Misija dodeljena",
+    "message": "Misija {{missionNumber}} vam je dodeljena od strane operativa."
   }
 }

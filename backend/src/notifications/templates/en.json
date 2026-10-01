@@ -30,5 +30,29 @@
   "buyer.registrationPending": {
     "title": "Registration received",
     "message": "Thank you for registering. Bio Vera will review your buyer account shortly."
+  },
+  "buyer.paymentReceived": {
+    "title": "Payment received",
+    "message": "Payment received — your order {{orderNumber}} is being prepared{{packLine}}."
+  },
+  "buyer.orderPacked": {
+    "title": "Packed and ready",
+    "message": "Packed and ready for pickup: {{orderNumber}}{{packLine}}."
+  },
+  "buyer.orderInTransit": {
+    "title": "On the way",
+    "message": "Your order {{orderNumber}} is on the way."
+  },
+  "grower.orderToPrepare": {
+    "title": "New order to prepare",
+    "message": "New order to prepare: {{packLine}} {{productName}} ({{orderNumber}})."
+  },
+  "logistics.missionAvailable": {
+    "title": "Pickup available",
+    "message": "Mission {{missionNumber}} is available near {{pickupCity}} → {{destinationCity}}."
+  },
+  "logistics.missionAssigned": {
+    "title": "Mission assigned",
+    "message": "Mission {{missionNumber}} was assigned to you by operations."
   }
 }

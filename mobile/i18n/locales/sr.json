@@ -2970,6 +2970,7 @@
     "fillFields": "Unesi e-poštu, ime i lozinku",
     "passwordMin": "Lozinka mora imati bar 6 znakova",
     "addressWithLocation": "Adresa i grad su obavezni kada je lokacija uključena",
+    "postalCountryWithLocation": "Poštanski broj i država su obavezni kada je lokacija uključena",
     "successTitle": "Uspešno",
     "successHub": "Registracija uspešna! Lokacija će se pojaviti na mapi posle odobrenja admina.",
     "successNoHub": "Registracija uspešna! Adresu možeš dodati u profilu.",

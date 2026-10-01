@@ -5,6 +5,8 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterBuyerDto } from './dto/register-buyer.dto';
 import { RegisterGrowerDto } from './dto/register-grower.dto';
 import { ResendVerificationCodeDto, VerifyEmailCodeDto } from './dto/verify-email-code.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { UsersService } from '../users/users.service';
 
 @Controller('auth')
@@ -41,6 +43,16 @@ export class AuthController {
   @Post('resend-verification-code')
   async resendVerificationCode(@Body() dto: ResendVerificationCodeDto) {
     return this.authService.resendBuyerVerificationCode(dto.email);
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.requestPasswordReset(dto.email);
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto.token, dto.password);
   }
 
   @Get('verify-email')

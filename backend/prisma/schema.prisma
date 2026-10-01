@@ -924,6 +924,9 @@ model orders {
   packLabel            String?
   packSizeKg           Float?
   packCount            Int?
+  packedPackCount      Int?
+  packedKg             Float?
+  packedAt             DateTime?
   status               OrderStatus            @default(PENDING)
   createdAt            DateTime               @default(now())
   updatedAt            DateTime
@@ -995,6 +998,8 @@ model harvest_announcements {
   parcelId            String
   userId              String
   announcementType    String
+  /// NEW_PLANTING | EXISTING_ORCHARD — translated in UI; legacy rows may be null.
+  plantingKind        String?
   cropType            String
   estimatedDate       DateTime
   estimatedQuantity   Float?
@@ -1429,6 +1434,7 @@ model users {
   discount_quota_usage                         discount_quota_usage[]
   distributor_arrivals                         distributor_arrivals[]
   email_verification_token                     email_verification_tokens?
+  password_reset_token                         password_reset_tokens?
   kyc_documents                                kyc_documents[]
   treatment_logs                               treatment_logs[]
   estates                                      estates[]
@@ -1665,6 +1671,18 @@ model supplier_material_barcodes {
 }
 
 model email_verification_tokens {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([expiresAt])
+}
+
+model password_reset_tokens {
   id        String   @id @default(uuid())
   userId    String   @unique
   token     String   @unique

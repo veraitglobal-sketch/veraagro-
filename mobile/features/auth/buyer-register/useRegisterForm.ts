@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import * as Location from 'expo-location';
+import { isBuyerDeliveryAddressComplete } from '../../../../shared/validation/buyer-address';
 import api from '../../../lib/api';
 import { apiErrorMessage } from '../../../lib/api-error';
 
@@ -72,26 +73,44 @@ export function useRegisterForm() {
       Alert.alert(t('common.error'), t('buyerRegisterScreen.passwordMin'));
       return;
     }
-    if (location && (!address || !city)) {
+    const trimmedAddress = address.trim();
+    const trimmedCity = city.trim();
+    const trimmedPostal = postalCode.trim();
+    const trimmedCountry = country.trim();
+
+    if (location && (!trimmedAddress || !trimmedCity)) {
       Alert.alert(t('common.error'), t('buyerRegisterScreen.addressWithLocation'));
+      return;
+    }
+
+    if (
+      location &&
+      !isBuyerDeliveryAddressComplete({
+        street: trimmedAddress,
+        city: trimmedCity,
+        postalCode: trimmedPostal,
+        country: trimmedCountry,
+      })
+    ) {
+      Alert.alert(t('common.error'), t('buyerRegisterScreen.postalCountryWithLocation'));
       return;
     }
 
     try {
       setLoading(true);
       const response = await api.post('/auth/register/buyer', {
-        email,
-        phone: phone || undefined,
-        firstName,
-        lastName,
+        email: email.trim(),
+        phone: phone.trim() || undefined,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
         password,
-        businessName: businessName || undefined,
-        companyPosition: companyPosition || undefined,
+        businessName: businessName.trim() || undefined,
+        companyPosition: companyPosition.trim() || undefined,
         location: location || undefined,
-        address: address || undefined,
-        city: city || undefined,
-        postalCode: postalCode || undefined,
-        country: country || undefined,
+        address: trimmedAddress || undefined,
+        city: trimmedCity || undefined,
+        postalCode: trimmedPostal || undefined,
+        country: trimmedCountry || undefined,
       });
 
       if (response.data?.requiresEmailVerification) {

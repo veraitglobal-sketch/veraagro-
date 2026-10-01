@@ -1242,6 +1242,26 @@ export class MissionsService {
 
 
 
+    if (updated.orderId && step === 'DEPART_FARM') {
+      try {
+        const order = await this.prisma.orders.findUnique({
+          where: { id: updated.orderId },
+          select: { buyerId: true, orderNumber: true },
+        });
+        if (order?.buyerId) {
+          await this.notificationsService.createLocalized({
+            userId: order.buyerId,
+            type: 'SYSTEM',
+            templateKey: 'buyer.orderInTransit',
+            templateParams: { orderNumber: order.orderNumber },
+            actionUrl: '/buyer-portal/orders',
+          });
+        }
+      } catch (e) {
+        this.logger.warn(`buyer.orderInTransit notify failed: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+
     if (updated.orderId && step === 'COMPLETE_DELIVERY') {
       void this.notifyLinkedBuyerShipmentMilestone(
         updated.orderId,
@@ -1565,6 +1585,40 @@ export class MissionsService {
     }
 
     return updated;
+  }
+
+  /** Broadcast to active logistics partners when a mission enters the open pool. */
+  private async notifyLogisticsPartnersMissionAvailable(mission: {
+    missionNumber: string;
+    pickupAddress?: string | null;
+    destinationCity?: string | null;
+  }): Promise<void> {
+    try {
+      const partners = await this.prisma.users.findMany({
+        where: { roles: { has: 'LOGISTICS_PARTNER' }, status: 'ACTIVE' },
+        select: { id: true },
+        take: 100,
+      });
+      await Promise.all(
+        partners.map((p) =>
+          this.notificationsService.createLocalized({
+            userId: p.id,
+            type: 'ACTION_REQUIRED',
+            templateKey: 'logistics.missionAvailable',
+            templateParams: {
+              missionNumber: mission.missionNumber,
+              pickupCity: (mission.pickupAddress ?? '').slice(0, 120),
+              destinationCity: (mission.destinationCity ?? '').slice(0, 120),
+            },
+            actionUrl: '/logistics-partner/missions',
+          }),
+        ),
+      );
+    } catch (e) {
+      this.logger.warn(
+        `notifyLogisticsPartnersMissionAvailable failed: ${e instanceof Error ? e.message : e}`,
+      );
+    }
   }
 
   /** Logistics partners (for admin dispatch dropdown). */
@@ -2006,6 +2060,11 @@ export class MissionsService {
         'Set a fulfilling farm on the order first (Fulfilling farm in Orders admin), then create the mission.',
       );
     }
+    if (order.packCount != null && (order.packedPackCount ?? 0) < order.packCount) {
+      throw new BadRequestException(
+        `Packed ${order.packedPackCount ?? 0} of ${order.packCount} ordered packs. Record packing on the order before pickup.`,
+      );
+    }
 
     const existingOpen = await this.prisma.missions.findFirst({
       where: {
@@ -2146,6 +2205,7 @@ export class MissionsService {
           `adminCreateMissionFromOrder notify admins: ${e instanceof Error ? e.message : String(e)}`,
         );
       }
+      void this.notifyLogisticsPartnersMissionAvailable(mission);
     }
 
     return mission;

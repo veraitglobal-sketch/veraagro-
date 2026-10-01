@@ -139,7 +139,7 @@ export function BatchesScreen() {
 
 type BatchCardProps = {
   batch: BatchListItem;
-  dateLocale: 'sr-Latn' | 'en-US';
+  dateLocale: string;
   getStatusLabel: (status: string | null | undefined) => string;
   getStatusColor: (status: string | null | undefined) => { background: string; text: string };
   onPress: () => void;

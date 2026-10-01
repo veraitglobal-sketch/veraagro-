@@ -193,5 +193,56 @@
     "marketplace": "Marketplace",
     "catalogue": "Catalogue",
     "fieldDiary": "Field diary"
+  },
+  "catalogOrderTimeline": {
+    "submitted": "Submitted",
+    "accepted": "Accepted",
+    "paid": "Paid",
+    "preparing": "Preparing",
+    "inTransit": "In transit",
+    "delivered": "Delivered",
+    "receiptConfirmed": "Receipt confirmed",
+    "rejected": "Rejected"
+  },
+  "buyerTimeline": {
+    "ORDER_RECORDED": "Order recorded",
+    "LINE_OPENED": "Cold-chain transport booked for your line",
+    "LINEHAUL_ASSIGNED": "Carrier assigned to the pickup run",
+    "LINEHAUL_ACCEPTED": "Carrier accepted the run",
+    "LOADING_QUALITY_CHECK_COMPLETE": "Farm loading checks completed (temperature / cargo evidence)",
+    "DEPARTED_FARM": "Departed farm gate",
+    "BORDER_STOP_ARRIVAL": "Border / regulatory stop — arrived",
+    "BORDER_STOP_DEPARTURE": "Border / regulatory stop — continued",
+    "LINEHAUL_FINISHED": "Main transport leg completed toward distribution",
+    "DELIVERY_BOOKED": "Delivery record opened",
+    "LAST_MILE_DISPATCHED": "Driver / van assigned (last mile)",
+    "SHIPMENT_COLLECTED": "Goods collected for final leg",
+    "SHIPMENT_ENTRY_TRANSIT_LINE": "On the way to delivery address",
+    "SHIPMENT_DROP_OFF_CONFIRMED": "Receiving location recorded dock handover / digital intake with signature",
+    "SHIPMENT_BUYER_RECEIPT_CONFIRMED": "Your takeover acknowledged — complaint window countdown starts here",
+    "ORDER_PACKED": "Packed and ready for pickup",
+    "PAYMENT_RECEIVED": "Payment received — your order is being prepared"
+  },
+  "paymentMethod": {
+    "BANK_TRANSFER": "Bank transfer",
+    "CARD": "Card",
+    "CASH": "Cash",
+    "ESCROW": "Escrow"
+  },
+  "paymentStatus": {
+    "buyer": {
+      "PENDING": "Awaiting payment",
+      "HELD": "Payment held in escrow",
+      "RELEASED": "Payment confirmed",
+      "REFUNDED": "Refunded",
+      "FAILED": "Payment failed"
+    },
+    "admin": {
+      "PENDING": "Pending",
+      "HELD": "Held",
+      "RELEASED": "Released to grower",
+      "REFUNDED": "Refunded",
+      "FAILED": "Failed"
+    }
   }
 }

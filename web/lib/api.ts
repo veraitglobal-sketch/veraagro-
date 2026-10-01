@@ -88,6 +88,14 @@ export const authAPI = {
     const response = await api.post('/auth/resend-verification-code', { email });
     return response.data;
   },
+  forgotPassword: async (email: string) => {
+    const response = await api.post('/auth/forgot-password', { email });
+    return response.data;
+  },
+  resetPassword: async (token: string, password: string) => {
+    const response = await api.post('/auth/reset-password', { token, password });
+    return response.data;
+  },
   registerBuyer: async (data: {
     email: string;
     partnerCode?: string;
@@ -177,6 +185,14 @@ export const ordersAPI = {
   },
   getAll: async () => {
     const response = await api.get('/orders');
+    return response.data;
+  },
+  getForGrower: async (queue?: 'prepare') => {
+    const response = await api.get('/orders/grower', { params: queue ? { queue } : undefined });
+    return response.data;
+  },
+  recordPacking: async (orderId: string, body: { packedPackCount: number; packedKg?: number }) => {
+    const response = await api.patch(`/orders/grower/${orderId}/packing`, body);
     return response.data;
   },
   getAllAdmin: async (filters?: { status?: string; buyerId?: string; estateId?: string }) => {
@@ -601,6 +617,20 @@ export const harvestAnnouncementsAPI = {
   }) => {
     const response = await api.post('/harvest-announcements', body);
     return response.data;
+  },
+};
+
+/** Field diary entries (grower mobile + web read) */
+export const fieldEntriesAPI = {
+  list: async (params?: {
+    farmId?: string;
+    parcelId?: string;
+    type?: string;
+    limit?: number;
+    skip?: number;
+  }) => {
+    const response = await api.get('/field-entries', { params });
+    return response.data || [];
   },
 };
 

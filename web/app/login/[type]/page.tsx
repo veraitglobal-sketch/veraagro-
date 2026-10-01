@@ -87,9 +87,17 @@ function LoginTypePageInner() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('loginPage.passwordLabel')}
-                </label>
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                    {t('loginPage.passwordLabel')}
+                  </label>
+                  <Link
+                    href="/forgot-password"
+                    className="text-sm text-[#2D5A27] hover:text-[#23471f] hover:underline"
+                  >
+                    {t('loginPage.forgotPassword')}
+                  </Link>
+                </div>
                 <input
                   id="password"
                   type="password"

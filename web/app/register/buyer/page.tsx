@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { isBuyerDeliveryAddressComplete } from '@biovera/shared/validation/buyer-address';
 import { authAPI } from '@/lib/api';
 import Footer from '@/components/Footer';
 export default function BuyerRegisterPage() {
@@ -101,8 +102,21 @@ export default function BuyerRegisterPage() {
       return;
     }
 
-    if (location && (!formData.address || !formData.city)) {
+    const address = formData.address.trim();
+    const city = formData.city.trim();
+    const postalCode = formData.postalCode.trim();
+    const country = formData.country.trim();
+
+    if (location && (!address || !city)) {
       setError(t('buyerRegister.errLocationNeedsAddress'));
+      return;
+    }
+
+    if (
+      location &&
+      !isBuyerDeliveryAddressComplete({ street: address, city, postalCode, country })
+    ) {
+      setError(t('buyerRegister.errLocationNeedsPostalCountry'));
       return;
     }
 
@@ -110,18 +124,18 @@ export default function BuyerRegisterPage() {
       setLoading(true);
 
       const result = await authAPI.registerBuyer({
-        email: formData.email,
-        phone: formData.phone || undefined,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+        email: formData.email.trim(),
+        phone: formData.phone.trim() || undefined,
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
         password: formData.password,
-        businessName: formData.businessName || undefined,
-        companyPosition: formData.companyPosition || undefined,
+        businessName: formData.businessName.trim() || undefined,
+        companyPosition: formData.companyPosition.trim() || undefined,
         location: location || undefined,
-        address: formData.address || undefined,
-        city: formData.city || undefined,
-        postalCode: formData.postalCode || undefined,
-        country: formData.country || undefined,
+        address: address || undefined,
+        city: city || undefined,
+        postalCode: postalCode || undefined,
+        country: country || undefined,
       });
 
       if (result?.requiresEmailVerification && formData.email) {

@@ -2970,6 +2970,7 @@
     "fillFields": "Please fill in email, name and password",
     "passwordMin": "Password must be at least 6 characters",
     "addressWithLocation": "Address and city are required when location is provided",
+    "postalCountryWithLocation": "Postal code and country are required when location is provided",
     "successTitle": "Thanks — registration received",
     "successPending": "Your account is waiting for approval by Bio Vera. We will e-mail you when it is active.",
     "successPartnerCode": "Your partner code: {{code}} — you can also sign in with your e-mail once approved.",

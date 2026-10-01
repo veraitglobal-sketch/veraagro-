@@ -11,8 +11,9 @@ import { useAuth } from '@/lib/auth';
 import { missionsAPI, logisticsDriversAPI, digitalHandoverAPI } from '@/lib/api';
 import { apiErrorOrT } from '@/lib/api-error';
 import { useLogisticsPartnerNavItems } from '@/lib/logistics-nav';
+import { missionStatusLabel } from '@biovera/shared/i18n/labels';
 
-const LOADING_STATUSES = ['READY_FOR_LOADING', 'ACCEPTED', 'IN_PROGRESS', 'ASSIGNED'];
+const LOADING_STATUSES = ['READY_FOR_LOADING', 'ACCEPTED', 'IN_PROGRESS'];
 const ACTIVE_STATUSES = ['ASSIGNED', 'ACCEPTED', 'IN_PROGRESS', 'PICKED_UP', 'IN_TRANSIT', 'READY_FOR_LOADING'];
 
 interface MissionBatch {
@@ -126,11 +127,22 @@ function destinationLine(m: Mission, t: TFunction): string {
   return t('logisticsPages.missionsDestFallback');
 }
 
+const SAME_CITY_ACTIVE = new Set([
+  'PENDING',
+  'ASSIGNED',
+  'ACCEPTED',
+  'IN_PROGRESS',
+  'READY_FOR_LOADING',
+]);
+
 function siblingsByCity(all: Mission[], m: Mission): Mission[] {
   const c = m.destinationCity?.trim().toLowerCase();
   if (!c) return [];
   return all.filter(
-    (x) => x.id !== m.id && (x.destinationCity?.trim().toLowerCase() ?? '') === c,
+    (x) =>
+      x.id !== m.id &&
+      (x.destinationCity?.trim().toLowerCase() ?? '') === c &&
+      SAME_CITY_ACTIVE.has(x.status),
   );
 }
 
@@ -397,15 +409,9 @@ export default function LogisticsMissionsPage() {
                         <span
                           className={`px-2 py-1 text-xs font-medium rounded-full ${logisticsStatusBadgeClass(mission.status)}`}
                         >
-                          {mission.status === 'COMPLETED'
-                            ? t('logisticsPages.missionBadgeDone')
-                            : mission.status === 'IN_TRANSIT'
-                              ? t('logisticsPages.missionBadgeInTransit')
-                              : mission.status === 'PICKED_UP'
-                                ? t('logisticsPages.missionBadgePickedUp')
-                                : isLoadingStatus(mission.status)
-                                  ? t('logisticsPages.missionBadgeLoading')
-                                  : mission.status}
+                          {isLoadingStatus(mission.status)
+                            ? t('logisticsPages.missionBadgeLoading')
+                            : missionStatusLabel(t, mission.status, 'logistics')}
                         </span>
                       </div>
                       <p className="text-sm text-gray-700">
@@ -589,7 +595,7 @@ export default function LogisticsMissionsPage() {
                                 {o.batches
                                   ? ` · ${o.batches.productName} ${o.batches.quantity} ${o.batches.unit}`
                                   : ''}{' '}
-                                <span className="text-gray-400">({o.status})</span>
+                                <span className="text-gray-400">({missionStatusLabel(t, o.status, 'logistics')})</span>
                               </li>
                             ))}
                           </ul>

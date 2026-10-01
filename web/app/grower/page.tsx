@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
-import { estatesAPI, growthLogsAPI, missionsAPI, financialDashboardAPI, farmerProfileAPI } from '@/lib/api';
+import { estatesAPI, fieldEntriesAPI, missionsAPI, financialDashboardAPI, farmerProfileAPI } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import Link from 'next/link';
@@ -65,7 +65,7 @@ export default function GrowerDashboardPage() {
         try {
           const lists = await Promise.all(
             estatesList.map((e: { id: string }) =>
-              growthLogsAPI.listByEstate(e.id).catch(() => []),
+              fieldEntriesAPI.list({ farmId: e.id, limit: 500 }).catch(() => []),
             ),
           );
           journalTotal = lists.reduce(

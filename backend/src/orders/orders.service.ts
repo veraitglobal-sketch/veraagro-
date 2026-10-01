@@ -20,6 +20,14 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { resolveOrderPrice } from './order-pricing';
 import { enrichOrdersWithCatalogReserve } from './order-catalog-enrich';
 
+function orderPackLine(order: {
+  packCount?: number | null;
+  packLabel?: string | null;
+}): string {
+  if (order.packCount && order.packLabel) return `${order.packCount} × ${order.packLabel}`;
+  return '';
+}
+
 @Injectable()
 export class OrdersService {
   private readonly logger = new Logger(OrdersService.name);
@@ -44,6 +52,13 @@ export class OrdersService {
     };
 
     try {
+      const orderMeta = await this.prisma.orders.findUnique({
+        where: { id: orderId },
+        select: {
+          packedAt: true,
+          payments: { select: { createdAt: true, status: true } },
+        },
+      });
       const linkedDelivery = await this.prisma.deliveries.findUnique({ where: { orderId }, select: { missionId: true } });
       const [mission, delivery] = await Promise.all([
         this.prisma.missions.findFirst({
@@ -95,6 +110,13 @@ export class OrdersService {
       }
 
       add('ORDER_RECORDED', orderCreatedAt);
+      if (
+        orderMeta?.payments &&
+        ['IN_ESCROW', 'RELEASED'].includes(orderMeta.payments.status)
+      ) {
+        add('PAYMENT_RECEIVED', orderMeta.payments.createdAt ?? undefined);
+      }
+      add('ORDER_PACKED', orderMeta?.packedAt ?? undefined);
 
       const seen = new Set<string>();
       const dedup = events.filter((e) => {
@@ -362,9 +384,18 @@ export class OrdersService {
    * Grower view: orders fulfilled from estates this user owns. Buyer identity stays private
    * (city only) — the grower needs volumes, status and delivery progress, not contact data.
    */
-  async findAllForGrower(growerId: string) {
+  async findAllForGrower(growerId: string, queue?: string) {
+    const prepareQueue = queue?.trim().toLowerCase() === 'prepare';
     const rows = await this.prisma.orders.findMany({
-      where: { fulfilling_estate: { ownerId: growerId } },
+      where: {
+        fulfilling_estate: { ownerId: growerId },
+        ...(prepareQueue
+          ? {
+              catalogProductId: { not: null },
+              status: { in: ['PAID', 'CONFIRMED'] },
+            }
+          : {}),
+      },
       select: {
         id: true,
         orderNumber: true,
@@ -377,22 +408,103 @@ export class OrdersService {
         createdAt: true,
         updatedAt: true,
         deliveryAddress: true,
+        deliveryNotes: true,
         packLabel: true,
         packSizeKg: true,
         packCount: true,
+        packedPackCount: true,
+        packedKg: true,
+        packedAt: true,
+        catalogProductId: true,
         catalogProduct: { select: { id: true, name: true } },
         fulfilling_estate: { select: { id: true, name: true } },
         deliveries: { select: { id: true, status: true, deliveryNumber: true } },
+        missions: {
+          where: { status: { not: 'CANCELLED' } },
+          select: { id: true, status: true, missionNumber: true },
+          take: 1,
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
-    return rows.map(({ deliveryAddress, ...row }) => ({
-      ...row,
-      deliveryCity:
-        deliveryAddress && typeof deliveryAddress === 'object' && !Array.isArray(deliveryAddress)
-          ? String((deliveryAddress as Record<string, unknown>).city ?? '')
-          : '',
-    }));
+    return rows.map(({ deliveryAddress, ...row }) => {
+      const packLine = orderPackLine(row);
+      const requiredPacks = row.packCount ?? 0;
+      const packedPacks = row.packedPackCount ?? 0;
+      let nextAction: 'PREPARE_AND_PACK' | 'REQUEST_PICKUP' | 'AWAITING_PICKUP' | 'IN_FULFILLMENT' =
+        'IN_FULFILLMENT';
+      if (prepareQueue || row.catalogProductId) {
+        if (requiredPacks > 0 && packedPacks < requiredPacks) nextAction = 'PREPARE_AND_PACK';
+        else if (!row.missions?.length) nextAction = 'REQUEST_PICKUP';
+        else nextAction = 'AWAITING_PICKUP';
+      }
+      return {
+        ...row,
+        packLine,
+        nextAction,
+        deliveryCity:
+          deliveryAddress && typeof deliveryAddress === 'object' && !Array.isArray(deliveryAddress)
+            ? String((deliveryAddress as Record<string, unknown>).city ?? '')
+            : '',
+      };
+    });
+  }
+
+  async recordGrowerPacking(
+    growerId: string,
+    orderId: string,
+    body: { packedPackCount: number; packedKg?: number },
+  ) {
+    const packedPackCount = Math.floor(Number(body.packedPackCount));
+    if (!Number.isFinite(packedPackCount) || packedPackCount < 1) {
+      throw new BadRequestException('packedPackCount must be at least 1');
+    }
+    const order = await this.prisma.orders.findFirst({
+      where: { id: orderId, fulfilling_estate: { ownerId: growerId } },
+      include: { users: { select: { id: true } } },
+    });
+    if (!order) throw new NotFoundException('Order not found');
+    if (!order.catalogProductId) {
+      throw new BadRequestException('Packing records apply to catalogue orders only');
+    }
+    if (order.packCount != null && packedPackCount > order.packCount) {
+      throw new BadRequestException(
+        `Packed quantity exceeds ordered packs (${order.packCount} max)`,
+      );
+    }
+    const packedKg =
+      body.packedKg != null
+        ? Number(body.packedKg)
+        : order.packSizeKg != null
+          ? packedPackCount * order.packSizeKg
+          : null;
+    const wasPacked = Boolean(order.packedAt);
+    const updated = await this.prisma.orders.update({
+      where: { id: orderId },
+      data: {
+        packedPackCount,
+        packedKg: packedKg ?? undefined,
+        packedAt: order.packedAt ?? new Date(),
+        updatedAt: new Date(),
+      },
+    });
+    if (!wasPacked && order.buyerId) {
+      try {
+        await this.notificationsService.createLocalized({
+          userId: order.buyerId,
+          type: 'SYSTEM',
+          templateKey: 'buyer.orderPacked',
+          templateParams: {
+            orderNumber: order.orderNumber,
+            packLine: orderPackLine(order),
+          },
+          actionUrl: `/buyer-portal/orders`,
+        });
+      } catch (e) {
+        this.logger.warn(`buyer.orderPacked notify failed: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+    return updated;
   }
 
   // Admin methods
@@ -504,6 +616,47 @@ export class OrdersService {
       } catch (e: unknown) {
         const detail = e instanceof Error ? e.message : String(e);
         this.logger.error(`generateInvoice after bank payment failed for ${orderId}: ${detail}`);
+      }
+      try {
+        const paidOrder = await this.prisma.orders.findUnique({
+          where: { id: orderId },
+          select: {
+            orderNumber: true,
+            productName: true,
+            packCount: true,
+            packLabel: true,
+            buyerId: true,
+            fulfilling_estate: { select: { ownerId: true } },
+          },
+        });
+        if (paidOrder?.buyerId) {
+          const packLine = orderPackLine(paidOrder);
+          await this.notificationsService.createLocalized({
+            userId: paidOrder.buyerId,
+            type: 'SYSTEM',
+            templateKey: 'buyer.paymentReceived',
+            templateParams: { orderNumber: paidOrder.orderNumber, packLine },
+            actionUrl: '/buyer-portal/orders',
+          });
+        }
+        const growerId = paidOrder?.fulfilling_estate?.ownerId;
+        if (growerId) {
+          await this.notificationsService.createLocalized({
+            userId: growerId,
+            type: 'ACTION_REQUIRED',
+            templateKey: 'grower.orderToPrepare',
+            templateParams: {
+              orderNumber: paidOrder?.orderNumber ?? orderId,
+              packLine: orderPackLine(paidOrder ?? {}),
+              productName: paidOrder?.productName ?? '',
+            },
+            actionUrl: '/grower/orders',
+          });
+        }
+      } catch (e) {
+        this.logger.warn(
+          `Payment confirmation notifications failed for ${orderId}: ${e instanceof Error ? e.message : e}`,
+        );
       }
     }
     const withRelations = await this.prisma.orders.findUnique({

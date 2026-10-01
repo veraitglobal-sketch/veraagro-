@@ -27,7 +27,19 @@ import {
 import { getExpoPublicPaymentConfig, hasExpoPaymentConfig } from '../../../lib/biovera-payment-public';
 import { useAppLocaleTag } from '../../../lib/date-locale';
 import { buyerOrderNextStep, buyerOrderPermissions } from '../../../lib/buyer-order-next-step';
-import { formatCatalogOrderLine } from '../../../lib/buyer-order-pack';
+import {
+  formatCatalogOrderDetailPricing,
+  formatCatalogOrderListLine,
+} from '../../../lib/buyer-order-pack';
+import { formatAppOrderDate } from '../../../lib/buyer-order-format';
+import {
+  buyerTimelineLabel,
+  missionStatusLabel,
+  paymentMethodLabel,
+  paymentStatusLabel,
+} from '../../../lib/shared-labels';
+import { invoicesAPI } from '../../../lib/api';
+import * as Sharing from 'expo-sharing';
 import { axiosResponseStatus } from '../../../lib/api-error';
 import ErrorMessage from '../../../components/ErrorMessage';
 
@@ -83,6 +95,7 @@ function OrderTrackingContent({ id }: { id: string }) {
   const { t } = useTranslation();
   const p = useBioVeraScreenPadding();
   const priceLocale = useAppLocaleTag();
+  const lang = priceLocale.toLowerCase().startsWith('sr') ? 'sr' : 'en';
   const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
@@ -311,7 +324,12 @@ function OrderTrackingContent({ id }: { id: string }) {
               color: theme.colors.text.secondary,
               letterSpacing: 0.2,
             }}>
-              {formatCatalogOrderLine(order, priceLocale)}
+              {order.catalogProductId
+                ? formatCatalogOrderDetailPricing(order, lang, {
+                    perPack: t('buyer.orders.perPack', { defaultValue: '/ pack' }),
+                    perKg: t('buyer.orders.perKg', { defaultValue: '/ kg' }),
+                  })
+                : formatCatalogOrderListLine(order, lang)}
             </Text>
             {effectiveStatus === 'REJECTED' && order.rejectionReason ? (
               <Text style={{ fontSize: 13, color: theme.colors.error, marginTop: theme.spacing.sm }}>
@@ -541,10 +559,72 @@ function OrderTrackingContent({ id }: { id: string }) {
             </View>
           )}
         </View>
-        {order.shipmentTracking?.missionNumber ? <Text>{order.shipmentTracking.missionNumber} · {order.shipmentTracking.missionStatus}</Text> : null}
-        {order.shipmentTracking?.events.map((event) => <Text key={`${event.code}-${event.at}`}>
-          {t(`deliveryFlow.events.${event.code}`, { defaultValue: event.code })} · {new Date(event.at).toLocaleString(priceLocale)}
-        </Text>)}
+          {order.payments ? (
+            <View style={{ marginBottom: theme.spacing.lg, padding: theme.spacing.lg, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, gap: 8 }}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.text.primary }}>{t('buyer.orders.paymentInfo', { defaultValue: 'Payment' })}</Text>
+              <Text style={{ fontSize: 13, color: theme.colors.text.secondary }}>
+                {paymentMethodLabel(t, (order.payments as { paymentMethod?: string }).paymentMethod)} · {paymentStatusLabel(t, order.payments.status, 'buyer')}
+              </Text>
+            </View>
+          ) : null}
+          {(order as { invoices?: { id: string; invoiceNumber: string } }).invoices ? (
+            <View style={{ marginBottom: theme.spacing.lg, padding: theme.spacing.lg, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, gap: 8 }}>
+              <Text style={{ fontSize: 13, color: theme.colors.text.primary }}>
+                {t('buyer.orders.invoice', { defaultValue: 'Invoice' })} {(order as { invoices: { invoiceNumber: string } }).invoices.invoiceNumber}
+              </Text>
+              <TouchableOpacity
+                accessibilityRole="button"
+                onPress={() => void (async () => {
+                  try {
+                    const inv = (order as { invoices: { id: string; invoiceNumber: string } }).invoices;
+                    const path = await invoicesAPI.downloadToCache(inv.id, inv.invoiceNumber);
+                    if (await Sharing.isAvailableAsync()) await Sharing.shareAsync(path);
+                    else await Linking.openURL(path);
+                  } catch {
+                    Alert.alert(t('buyer.orders.invoiceDownloadFailed', { defaultValue: 'Could not download invoice.' }));
+                  }
+                })()}
+              >
+                <Text style={{ color: theme.colors.primary }}>{t('buyer.orders.downloadPdf', { defaultValue: 'Download PDF' })}</Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+          {order.shipmentTracking?.events?.length ? (
+            <View style={{ marginBottom: theme.spacing.lg, padding: theme.spacing.lg, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md }}>
+              <Text style={{ fontSize: 14, fontWeight: '500', marginBottom: theme.spacing.sm, color: theme.colors.text.primary }}>
+                {t('buyer.orders.shipmentTimeline', { defaultValue: 'Shipment timeline' })}
+              </Text>
+              {order.shipmentTracking.missionNumber ? (
+                <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginBottom: theme.spacing.sm }}>
+                  {order.shipmentTracking.missionNumber}
+                  {order.shipmentTracking.missionStatus
+                    ? ` · ${missionStatusLabel(t, order.shipmentTracking.missionStatus, 'logistics')}`
+                    : ''}
+                </Text>
+              ) : null}
+              {order.shipmentTracking.events.map((event) => (
+                <Text key={`${event.code}-${event.at}`} style={{ fontSize: 13, color: theme.colors.text.primary, marginBottom: 6 }}>
+                  {buyerTimelineLabel(t, event.code)} · {formatAppOrderDate(event.at, lang, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                </Text>
+              ))}
+            </View>
+          ) : null}
+          {order.deliveries?.deliveryNumber ? (
+            <View style={{ marginBottom: theme.spacing.lg, padding: theme.spacing.lg, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, gap: 4 }}>
+              <Text style={{ fontSize: 13, color: theme.colors.text.secondary }}>
+                {t('buyer.orders.deliveryNumber', { defaultValue: 'Delivery number' })}: {order.deliveries.deliveryNumber}
+              </Text>
+              {order.deliveries?.users ? (
+                <Text style={{ fontSize: 13, color: theme.colors.text.primary }}>
+                  {t('buyer.orders.driver', { defaultValue: 'Driver' })}:{' '}
+                  {[
+                    order.deliveries.users.companyName,
+                    [order.deliveries.users.firstName, order.deliveries.users.lastName].filter(Boolean).join(' '),
+                  ].filter(Boolean).join(' · ') || '—'}
+                </Text>
+              ) : null}
+            </View>
+          ) : null}
         <BuyerDeliveryPanel key={order.id} orderId={order.id} onChanged={() => void loadOrder({ background: true })} />
       </ScrollView>
     </View>

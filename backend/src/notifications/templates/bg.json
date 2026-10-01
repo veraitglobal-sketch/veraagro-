@@ -30,5 +30,29 @@
   "buyer.registrationPending": {
     "title": "Регистрацията е получена",
     "message": "Благодарим за регистрацията. Bio Vera ще прегледа вашия акаунт на купувач скоро."
+  },
+  "buyer.paymentReceived": {
+    "title": "Плащане получено",
+    "message": "Плащане получено — поръчка {{orderNumber}} се подготвя{{packLine}}."
+  },
+  "buyer.orderPacked": {
+    "title": "Опаковано",
+    "message": "Опаковано и готово за вземане: {{orderNumber}}{{packLine}}."
+  },
+  "buyer.orderInTransit": {
+    "title": "На път",
+    "message": "Поръчката {{orderNumber}} е на път."
+  },
+  "grower.orderToPrepare": {
+    "title": "Нова поръчка за подготовка",
+    "message": "Нова поръчка: {{packLine}} {{productName}} ({{orderNumber}})."
+  },
+  "logistics.missionAvailable": {
+    "title": "Налично вземане",
+    "message": "Мисия {{missionNumber}}: {{pickupCity}} → {{destinationCity}}."
+  },
+  "logistics.missionAssigned": {
+    "title": "Мисия възложена",
+    "message": "Мисия {{missionNumber}} беше възложена на вас."
   }
 }

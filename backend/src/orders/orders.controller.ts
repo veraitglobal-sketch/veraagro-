@@ -113,8 +113,19 @@ export class OrdersController {
   @Get('grower')
   @UseGuards(RolesGuard)
   @Roles('GROWER', 'FARMER')
-  async findForGrower(@Request() req: any) {
-    return this.ordersService.findAllForGrower(req.user.id);
+  async findForGrower(@Request() req: any, @Query('queue') queue?: string) {
+    return this.ordersService.findAllForGrower(req.user.id, queue);
+  }
+
+  @Patch('grower/:id/packing')
+  @UseGuards(RolesGuard)
+  @Roles('GROWER', 'FARMER')
+  async recordGrowerPacking(
+    @Param('id') id: string,
+    @Body() body: { packedPackCount: number; packedKg?: number },
+    @Request() req: any,
+  ) {
+    return this.ordersService.recordGrowerPacking(req.user.id, id, body);
   }
 
   @Get('checkout/:requestId')

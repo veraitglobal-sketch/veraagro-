@@ -30,5 +30,29 @@
   "buyer.registrationPending": {
     "title": "Inscription reçue",
     "message": "Merci pour votre inscription. Bio Vera examinera votre compte acheteur sous peu."
+  },
+  "buyer.paymentReceived": {
+    "title": "Paiement reçu",
+    "message": "Paiement reçu — votre commande {{orderNumber}} est en préparation{{packLine}}."
+  },
+  "buyer.orderPacked": {
+    "title": "Emballé",
+    "message": "Emballé et prêt pour enlèvement : {{orderNumber}}{{packLine}}."
+  },
+  "buyer.orderInTransit": {
+    "title": "En route",
+    "message": "Votre commande {{orderNumber}} est en route."
+  },
+  "grower.orderToPrepare": {
+    "title": "Nouvelle commande à préparer",
+    "message": "Nouvelle commande : {{packLine}} {{productName}} ({{orderNumber}})."
+  },
+  "logistics.missionAvailable": {
+    "title": "Enlèvement disponible",
+    "message": "Mission {{missionNumber}} disponible : {{pickupCity}} → {{destinationCity}}."
+  },
+  "logistics.missionAssigned": {
+    "title": "Mission assignée",
+    "message": "La mission {{missionNumber}} vous a été assignée."
   }
 }

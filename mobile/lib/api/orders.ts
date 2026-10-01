@@ -31,9 +31,11 @@ export const ordersAPI = {
     return response.data || [];
   },
   /** Producer: orders fulfilled from the caller's estates (GET /orders is buyer-only). */
-  getForGrower: async (): Promise<Order[]> => {
+  getForGrower: async (queue?: 'prepare'): Promise<Order[]> => {
     try {
-      const response = await api.get('/orders/grower');
+      const response = await api.get('/orders/grower', {
+        params: queue ? { queue } : undefined,
+      });
       return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       // Older API without the grower route: no producer orders to show yet.

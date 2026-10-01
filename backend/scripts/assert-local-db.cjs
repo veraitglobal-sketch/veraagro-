@@ -1,10 +1,16 @@
 #!/usr/bin/env node
 /**
- * Refuses to run when DATABASE_URL points at a non-local host unless ALLOW_REMOTE_DB=1.
+ * Refuses to run when DATABASE_URL points at a non-local host unless:
+ * - ALLOW_REMOTE_DB=1 (explicit override), or
+ * - the process runs inside Railway (production start must migrate remote Postgres).
  * Use: node scripts/assert-local-db.cjs && …
  */
 const url = process.env.DATABASE_URL || '';
 if (process.env.ALLOW_REMOTE_DB === '1') {
+  process.exit(0);
+}
+/** Railway injects these at runtime; local laptops must not use production DATABASE_URL. */
+if (process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID) {
   process.exit(0);
 }
 if (!url.trim()) {

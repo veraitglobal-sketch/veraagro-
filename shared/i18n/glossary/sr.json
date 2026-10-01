@@ -193,5 +193,56 @@
     "marketplace": "Tržište",
     "catalogue": "Katalog",
     "fieldDiary": "Poljski dnevnik"
+  },
+  "catalogOrderTimeline": {
+    "submitted": "Poslato",
+    "accepted": "Prihvaćeno",
+    "paid": "Plaćeno",
+    "preparing": "Priprema",
+    "inTransit": "U transportu",
+    "delivered": "Isporučeno",
+    "receiptConfirmed": "Prijem potvrđen",
+    "rejected": "Odbijeno"
+  },
+  "buyerTimeline": {
+    "ORDER_RECORDED": "Porudžbina zabeležena",
+    "LINE_OPENED": "Hladni lanac rezervisan za vašu liniju",
+    "LINEHAUL_ASSIGNED": "Prevoznik dodeljen za preuzimanje",
+    "LINEHAUL_ACCEPTED": "Prevoznik prihvatio vožnju",
+    "LOADING_QUALITY_CHECK_COMPLETE": "Provera utovara na farmi završena (temperatura / teret)",
+    "DEPARTED_FARM": "Polazak sa farme",
+    "BORDER_STOP_ARRIVAL": "Granična/regulatorna stanica — dolazak",
+    "BORDER_STOP_DEPARTURE": "Granična/regulatorna stanica — nastavak",
+    "LINEHAUL_FINISHED": "Glavni transport završen ka distribuciji",
+    "DELIVERY_BOOKED": "Zapis isporuke otvoren",
+    "LAST_MILE_DISPATCHED": "Vozač / kombi dodeljen (poslednja milja)",
+    "SHIPMENT_COLLECTED": "Roba preuzeta za poslednju etapu",
+    "SHIPMENT_ENTRY_TRANSIT_LINE": "Na putu ka adresi isporuke",
+    "SHIPMENT_DROP_OFF_CONFIRMED": "Primljeno na lokaciji — digitalni prijem sa potpisom",
+    "SHIPMENT_BUYER_RECEIPT_CONFIRMED": "Vaš prijem potvrđen — počinje rok za reklamaciju",
+    "ORDER_PACKED": "Spakovano i spremno za preuzimanje",
+    "PAYMENT_RECEIVED": "Uplata primljena — porudžbina se priprema"
+  },
+  "paymentMethod": {
+    "BANK_TRANSFER": "Bankovni transfer",
+    "CARD": "Kartica",
+    "CASH": "Gotovina",
+    "ESCROW": "Escrow"
+  },
+  "paymentStatus": {
+    "buyer": {
+      "PENDING": "Čeka uplatu",
+      "HELD": "Uplata u escrow-u",
+      "RELEASED": "Uplata potvrđena",
+      "REFUNDED": "Refundirano",
+      "FAILED": "Uplata nije uspela"
+    },
+    "admin": {
+      "PENDING": "Na čekanju",
+      "HELD": "Zadržano",
+      "RELEASED": "Isplaćeno proizvođaču",
+      "REFUNDED": "Refundirano",
+      "FAILED": "Neuspešno"
+    }
   }
 }
