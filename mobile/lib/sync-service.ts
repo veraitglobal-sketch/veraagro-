@@ -1,25 +1,24 @@
 import { productOwnerId } from './offline-storage';
 import {
-  offlineStorage,
+  offlineStorageForOwner, currentStorageOwner,
   PendingFieldEntry,
   isLegacyFieldLogEntry,
   isLegacyFieldLogErrorMessage,
   shouldRemoveLegacyFieldLogRow,
 } from './offline-storage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import DeviceStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API_URL } from './api-url';
-import { growthLogsAPI, seedsAPI, type Estate } from './api';
+import type { Estate } from './api';
 import { imageUriToJpegDataUrl, assertDataUrlWithinSize } from './image-data-url';
 import { sha256HexFromImageUri } from './image-hash';
 import { getOrCreateDeviceId } from './device-id';
 import i18n from '../i18n/config';
-import { growerOfflineCache } from './grower-offline-cache';
 import { apiErrorMessage, axiosResponseStatus } from './api-error';
 import { tString } from './i18n-strings';
 
 // Create API instance for sync
-const syncApi = axios.create({
+const transportApi = axios.create({
   baseURL: API_URL,
   timeout: 10000,
 });
@@ -28,8 +27,8 @@ const SYNC_STATUS_KEY = 'sync_status';
 const MAX_FIELD_LOG_PHOTO_BYTES = 8 * 1024 * 1024;
 /** Prevent sync storms (socket reconnect + 30s timer) from hitting API rate limits. */
 const SYNC_COOLDOWN_MS = 45_000;
-let lastSyncAllAt = 0;
-let legacyReconcileDone = false;
+const lastSyncAllAt = new Map<string, number>();
+const legacyReconcileDone = new Set<string>();
 
 function buildFieldLogGrowthNotes(entry: PendingFieldEntry): string {
   const lines: string[] = [];
@@ -70,7 +69,7 @@ function isUnrecoverableFieldEntry(entry: PendingFieldEntry): boolean {
   return shouldRemoveLegacyFieldLogRow(entry);
 }
 
-async function reconcileLegacyQueueOnce(): Promise<number> {
+async function reconcileLegacyQueueOnce(offlineStorage: ReturnType<typeof offlineStorageForOwner>): Promise<number> {
   const removed = await offlineStorage.reconcileLegacyFieldLogQueue();
   if (removed > 0 && __DEV__) {
     console.log(`[field-entry sync] removed ${removed} legacy local row(s) (missing parcel/plan)`);
@@ -78,7 +77,7 @@ async function reconcileLegacyQueueOnce(): Promise<number> {
   return removed;
 }
 
-async function peekFirstRecordedQueueError(): Promise<string | null> {
+async function peekFirstRecordedQueueError(offlineStorage: ReturnType<typeof offlineStorageForOwner>): Promise<string | null> {
   try {
     const [entries, products, costs, certPhotos, harvests] = await Promise.all([
       offlineStorage.getPendingEntries(),
@@ -132,7 +131,28 @@ export interface SyncStatus {
  * Offline Sync Service
  * Handles syncing pending field entries to backend when online
  */
-export const syncService = {
+function syncServiceForSession(owner: string, token: string | null) {
+  const offlineStorage = offlineStorageForOwner(owner);
+  const AsyncStorage = {
+    getItem: (key: string) => DeviceStorage.getItem(key === SYNC_STATUS_KEY ? `${key}:${owner}` : key),
+    setItem: (key: string, value: string) => DeviceStorage.setItem(key === SYNC_STATUS_KEY ? `${key}:${owner}` : key, value),
+  };
+  const assertSession = async () => {
+    if (!owner || !token || await currentStorageOwner() !== owner || await DeviceStorage.getItem('auth_token') !== token) {
+      throw new Error('Account changed; sync paused.');
+    }
+  };
+  const syncApi = {
+    post: async (path: string, body: unknown, _config?: unknown) => {
+      await assertSession();
+      return transportApi.post(path, body, { headers: { Authorization: `Bearer ${token}` } });
+    },
+    get: async (path: string) => {
+      await assertSession();
+      return transportApi.get(path, { headers: { Authorization: `Bearer ${token}` } });
+    },
+  };
+  return {
   /**
    * Get current sync status (field entries + products + costs)
    */
@@ -153,7 +173,7 @@ export const syncService = {
       const pendingCount =
         pendingEntries + pendingProducts + pendingCosts + pendingCertPhotos + pendingHarvests;
       const legacyFieldLogCount = await offlineStorage.countLegacyFieldLogEntries();
-      const firstQueueError = await peekFirstRecordedQueueError();
+      const firstQueueError = await peekFirstRecordedQueueError(offlineStorage);
 
       const statusData = await AsyncStorage.getItem(SYNC_STATUS_KEY);
       const status = statusData ? JSON.parse(statusData) : {};
@@ -198,13 +218,13 @@ export const syncService = {
    * @param updateGlobalLedger when false (`syncAll` path), avoids writing SYNC_STATUS halfway through a multi-queue flush
    */
   async reconcileLegacyFieldLogQueueOnStartup(): Promise<number> {
-    if (legacyReconcileDone) return 0;
-    legacyReconcileDone = true;
-    return reconcileLegacyQueueOnce();
+    if (legacyReconcileDone.has(owner)) return 0;
+    legacyReconcileDone.add(owner);
+    return reconcileLegacyQueueOnce(offlineStorage);
   },
 
   async syncPendingEntries(updateGlobalLedger = true): Promise<{ success: number; failed: number }> {
-    await reconcileLegacyQueueOnce();
+    await reconcileLegacyQueueOnce(offlineStorage);
 
     const pending = await offlineStorage.getPendingEntries();
     const pendingEntries = pending.filter(
@@ -227,7 +247,7 @@ export const syncService = {
         const msg = tString(i18n.t, 'producer.sync.fieldEntryNeedsParcelPlan');
         entry.status = 'unrecoverable';
         entry.error = msg;
-        await this.updateEntryStatus(entry.id, 'unrecoverable', msg);
+        await offlineStorage.updateEntryStatus(entry.id, 'unrecoverable', msg);
         await offlineStorage.patchFieldLogHistory(entry.id, { status: 'unrecoverable', error: msg });
         continue;
       }
@@ -235,34 +255,27 @@ export const syncService = {
       try {
         // Mark as syncing
         entry.status = 'syncing';
-        await this.updateEntryStatus(entry.id, 'syncing');
+        await offlineStorage.updateEntryStatus(entry.id, 'syncing');
         await offlineStorage.patchFieldLogHistory(entry.id, { status: 'syncing' });
 
         if (!entry.parcelId?.trim() || !entry.harvestAnnouncementId?.trim()) {
           const msg = tString(i18n.t, 'producer.sync.fieldEntryNeedsParcelPlan');
           entry.status = 'unrecoverable';
           entry.error = msg;
-          await this.updateEntryStatus(entry.id, 'unrecoverable', msg);
+          await offlineStorage.updateEntryStatus(entry.id, 'unrecoverable', msg);
           await offlineStorage.patchFieldLogHistory(entry.id, { status: 'unrecoverable', error: msg });
           continue;
         }
 
         // Prefer estate recorded at save time; use live list or last cached copy when offline.
-        const { estatesAPI } = await import('./api');
-        let list: Estate[] = [];
-        try {
-          const estates = await estatesAPI.getAll();
-          list = Array.isArray(estates) ? estates : [];
-          await growerOfflineCache.saveEstates(list);
-        } catch {
-          const cached = await growerOfflineCache.loadEstates();
-          list = cached ?? [];
-        }
+        // Keep requests on the captured token, including after slow photo processing.
+        const response = await syncApi.get('/estates');
+        const list: Estate[] = Array.isArray(response.data) ? response.data : [];
         // Avoid `estateId && find`: empty string `""` would short-circuit to `""` and poison the union type.
         const preferred: Estate | undefined = entry.estateId
           ? list.find((e) => e.id === entry.estateId)
           : undefined;
-        const estateId = preferred?.id ?? list[0]?.id;
+        const estateId = entry.estateId ? preferred?.id : list[0]?.id;
 
         if (!estateId) {
           throw new Error('No estate found. Please create an estate first.');
@@ -291,7 +304,7 @@ export const syncService = {
         const materialBarcode = entry.materialID?.trim() ?? '';
         const materialKind = entry.materialKind;
 
-        await growthLogsAPI.create({
+        await syncApi.post('/growth-logs', {
           estateId,
           parcelId: entry.parcelId.trim(),
           harvestAnnouncementId: entry.harvestAnnouncementId.trim(),
@@ -328,14 +341,14 @@ export const syncService = {
         }
         if (msg.includes('429') || msg.toLowerCase().includes('too many')) {
           entry.status = 'pending';
-          await this.updateEntryStatus(entry.id, 'pending', msg);
+          await offlineStorage.updateEntryStatus(entry.id, 'pending', msg);
           await offlineStorage.patchFieldLogHistory(entry.id, { status: 'pending', error: msg });
           break;
         }
         console.warn(`[field-entry sync] ${entry.id}: ${msg}`);
         entry.status = 'error';
         entry.error = msg;
-        await this.updateEntryStatus(entry.id, 'error', msg);
+        await offlineStorage.updateEntryStatus(entry.id, 'error', msg);
         await offlineStorage.patchFieldLogHistory(entry.id, { status: 'error', error: msg });
         failed++;
       }
@@ -370,7 +383,6 @@ export const syncService = {
    * Sync pending products to backend (when endpoint exists)
    */
   async syncPendingProducts(): Promise<{ success: number; failed: number }> {
-    const owner = await productOwnerId();
     const token = await AsyncStorage.getItem('auth_token');
     if (!owner || !token) return { success: 0, failed: 0 };
     const pending = await offlineStorage.getPendingProducts(owner);
@@ -547,7 +559,7 @@ export const syncService = {
     let failed = 0;
     for (const row of toSync) {
       try {
-        await seedsAPI.validate(row.serialInput);
+        await syncApi.get(`/seeds/validate/${encodeURIComponent(row.serialInput)}`);
         await offlineStorage.updatePendingSeedScan(row.id, { status: 'synced', error: undefined });
         success++;
       } catch (err: unknown) {
@@ -562,13 +574,12 @@ export const syncService = {
   },
 
   async syncPendingPlantingEntries(): Promise<{ success: number; failed: number }> {
-    const { fieldEntriesAPI } = await import('./api/grower');
     const pending = await offlineStorage.getPendingPlantingEntries();
     let success = 0;
     let failed = 0;
     for (const row of pending.filter((r) => r.status === 'pending' || r.status === 'error')) {
       try {
-        await fieldEntriesAPI.create(row.payload);
+        await syncApi.post('/field-entries', row.payload);
         await offlineStorage.removePendingPlantingEntry(row.id);
         success++;
       } catch (e: unknown) {
@@ -591,7 +602,7 @@ export const syncService = {
     seedScans: { success: number; failed: number };
   }> {
     const now = Date.now();
-    if (now - lastSyncAllAt < SYNC_COOLDOWN_MS) {
+    if (now - (lastSyncAllAt.get(owner) ?? 0) < SYNC_COOLDOWN_MS) {
       return {
         entries: { success: 0, failed: 0 },
         products: { success: 0, failed: 0 },
@@ -601,9 +612,9 @@ export const syncService = {
         seedScans: { success: 0, failed: 0 },
       };
     }
-    lastSyncAllAt = now;
+    lastSyncAllAt.set(owner, now);
 
-    await reconcileLegacyQueueOnce();
+    await reconcileLegacyQueueOnce(offlineStorage);
     await offlineStorage.resetStuckSyncingQueues();
     await AsyncStorage.setItem(SYNC_STATUS_KEY, JSON.stringify({ syncing: true, lastError: null }));
 
@@ -642,7 +653,7 @@ export const syncService = {
       certificatePhotos.failed +
       harvestPlans.failed +
       seedScans.failed;
-    const detail = totalFailed > 0 ? await peekFirstRecordedQueueError() : null;
+    const detail = totalFailed > 0 ? await peekFirstRecordedQueueError(offlineStorage) : null;
     await AsyncStorage.setItem(
       SYNC_STATUS_KEY,
       JSON.stringify({
@@ -714,3 +725,17 @@ export const syncService = {
     }
   },
 };
+}
+
+type SyncService = ReturnType<typeof syncServiceForSession>;
+export const syncService = new Proxy({} as SyncService, {
+  get(_target, property: keyof SyncService) {
+    return async (...args: unknown[]) => {
+      const owner = await currentStorageOwner();
+      const token = await DeviceStorage.getItem('auth_token');
+      if (await currentStorageOwner() !== owner) throw new Error('Account changed; sync paused.');
+      const service = syncServiceForSession(owner, token);
+      return (service[property] as (...values: unknown[]) => unknown).apply(service, args);
+    };
+  },
+});

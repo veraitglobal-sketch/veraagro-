@@ -51,25 +51,13 @@ async function quarantineLegacyUnscopedKey(baseKey: string): Promise<void> {
     if (existing == null) {
       await AsyncStorage.setItem(legacyKey, raw);
     }
-    await AsyncStorage.removeItem(baseKey);
+    // Never discard a second legacy payload when a quarantine already exists.
+    if (existing == null || existing === raw) await AsyncStorage.removeItem(baseKey);
   } catch (e) {
     console.warn(`[offlineStorage] legacy quarantine failed for ${baseKey}:`, e);
   }
 }
 
-async function scopedGetItem(baseKey: string): Promise<string | null> {
-  const owner = await currentStorageOwner();
-  if (!owner) return null;
-  await quarantineLegacyUnscopedKey(baseKey);
-  return AsyncStorage.getItem(scopedStorageKey(baseKey, owner));
-}
-
-async function scopedSetItem(baseKey: string, value: string): Promise<void> {
-  const owner = await currentStorageOwner();
-  if (!owner) throw new Error('Sign in before saving offline data');
-  await quarantineLegacyUnscopedKey(baseKey);
-  await AsyncStorage.setItem(scopedStorageKey(baseKey, owner), value);
-}
 const PENDING_COSTS_KEY = 'pending_costs';
 const PENDING_CERTIFICATE_PHOTOS_KEY = 'pending_certificate_photos';
 const PENDING_PLANTING_ENTRIES_KEY = 'pending_planting_entries_v1';
@@ -289,7 +277,21 @@ function normalizeFieldActivity(raw: string): FieldActivityType {
   return 'Spraying';
 }
 
-export const offlineStorage = {
+/** A complete operation (including nested reads/writes) keeps its original owner. */
+function createOfflineStorage(owner: string) {
+  const productOwnerId = async () => owner;
+async function scopedGetItem(baseKey: string): Promise<string | null> {
+  if (!owner) return null;
+  await quarantineLegacyUnscopedKey(baseKey);
+  return AsyncStorage.getItem(scopedStorageKey(baseKey, owner));
+}
+
+async function scopedSetItem(baseKey: string, value: string): Promise<void> {
+  if (!owner) throw new Error('Sign in before saving offline data');
+  await quarantineLegacyUnscopedKey(baseKey);
+  await AsyncStorage.setItem(scopedStorageKey(baseKey, owner), value);
+}
+return {
   // Get all pending entries
   async getPendingEntries(): Promise<PendingFieldEntry[]> {
     try {
@@ -858,20 +860,20 @@ export const offlineStorage = {
       timestamp: new Date().toISOString(),
       status: 'pending',
     };
-    const raw = await AsyncStorage.getItem(PENDING_SEED_SCANS_KEY);
+    const raw = await scopedGetItem(PENDING_SEED_SCANS_KEY);
     const list: PendingSeedScan[] = raw ? JSON.parse(raw) : [];
     list.push(row);
-    await AsyncStorage.setItem(PENDING_SEED_SCANS_KEY, JSON.stringify(list));
+    await scopedSetItem(PENDING_SEED_SCANS_KEY, JSON.stringify(list));
     return row;
   },
 
   async getPendingSeedScans(): Promise<PendingSeedScan[]> {
-    const raw = await AsyncStorage.getItem(PENDING_SEED_SCANS_KEY);
+    const raw = await scopedGetItem(PENDING_SEED_SCANS_KEY);
     return raw ? JSON.parse(raw) : [];
   },
 
   async savePendingSeedScans(rows: PendingSeedScan[]): Promise<void> {
-    await AsyncStorage.setItem(PENDING_SEED_SCANS_KEY, JSON.stringify(rows));
+    await scopedSetItem(PENDING_SEED_SCANS_KEY, JSON.stringify(rows));
   },
 
   async updatePendingSeedScan(
@@ -913,3 +915,36 @@ export const offlineStorage = {
     await scopedSetItem(PENDING_ENTRIES_KEY, JSON.stringify(entries));
   },
 };
+}
+
+type OfflineStorage = ReturnType<typeof createOfflineStorage>;
+const ownerOperations = new Map<string, Promise<unknown>>();
+
+/** Serialize read/modify/write operations, while nested calls use the same raw store. */
+export function offlineStorageForOwner(owner: string): OfflineStorage {
+  const store = createOfflineStorage(owner);
+  return new Proxy(store, {
+    get(target, property: keyof OfflineStorage) {
+      return (...args: unknown[]) => {
+        const previous = ownerOperations.get(owner) ?? Promise.resolve();
+        const operation = previous.catch(() => {}).then(() =>
+          (target[property] as (...values: unknown[]) => unknown).apply(target, args));
+        ownerOperations.set(owner, operation);
+        void operation.finally(() => {
+          if (ownerOperations.get(owner) === operation) ownerOperations.delete(owner);
+        }).catch(() => {});
+        return operation;
+      };
+    },
+  });
+}
+
+// Resolve the owner once at the public boundary, never again between read and write.
+export const offlineStorage = new Proxy({} as OfflineStorage, {
+  get(_target, property: keyof OfflineStorage) {
+    return async (...args: unknown[]) => {
+      const store = offlineStorageForOwner(await currentStorageOwner());
+      return (store[property] as (...values: unknown[]) => unknown).apply(store, args);
+    };
+  },
+});

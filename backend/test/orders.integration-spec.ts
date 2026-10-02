@@ -1,3 +1,5 @@
+import { saveWorkflowMission } from '../src/missions/save-workflow-mission';
+import { NotificationTemplateService } from '../src/notifications/notification-template.service';
 import { randomUUID } from 'crypto';
 import { receivingCodeFor } from '../src/digital-handover/receiving-code';
 import { ReturnDispositionService } from '../src/deliveries/return-disposition.service';
@@ -1504,6 +1506,57 @@ describe('Orders, payments and delivery — real PostgreSQL + HTTP', () => {
         quantityKg: 60,
       }).expect(201);
       await post(`/catalog/admin/products/${productId}/publish`, 'admin').expect(201);
+    });
+
+    async function packingFixture() {
+      const order = (await post('/orders').send({ clientRequestId: randomUUID(), productId,
+        productName: 'Raspberry', quantity: 10, unit: 'kg', unitPrice: 3.8,
+        packOptionId: pack5kgId, packCount: 2, deliveryAddress: address }).expect(201)).body;
+      await post(`/orders/admin/${order.id}/approve`, 'admin').expect(201);
+      await post(`/orders/admin/${order.id}/confirm-bank-payment`, 'admin').send({ transactionId: `bank-${order.id}` }).expect(201);
+      await prisma.batches.create({ data: { id: 'packing-lot', batchId: 'PACKING-LOT', estateId: 'farm', productName: 'Raspberry', quantity: 10,
+        unit: 'kg', harvestDate: new Date(), locationHistory: [], updatedAt: new Date() } });
+      await prisma.quality_entries.create({ data: { id: 'packing-quality', batchId: 'packing-lot', weatherAtHarvest: {},
+        preCoolingStartTime: new Date(), visualGradePhotos: [], standardConfirmation: true, confirmedBy: 'farmer', status: 'VERIFIED', updatedAt: new Date() } });
+      const notifications = new NotificationsService(prisma, { sendToUser: async () => undefined } as any, new NotificationTemplateService());
+      const service = new OrdersService(prisma, payments, {} as any, notifications, {} as any);
+      return { order, service, notifications };
+    }
+
+    it('stores exactly one full-packing notification under concurrent saves', async () => {
+      const { order, service } = await packingFixture();
+      await service.recordGrowerPacking('farmer', order.id, { packedPackCount: 1, batchId: 'packing-lot' });
+      expect(await prisma.notifications.count({ where: { templateKey: 'buyer.orderPacked' } })).toBe(0);
+      await Promise.all([1, 2, 3].map(() => service.recordGrowerPacking('farmer', order.id, { packedPackCount: 2, batchId: 'packing-lot' })));
+      expect(await prisma.notifications.count({ where: { templateKey: 'buyer.orderPacked' } })).toBe(1);
+      expect((await prisma.orders.findUniqueOrThrow({ where: { id: order.id } })).buyerPackedNotifiedAt).not.toBeNull();
+    });
+
+    it('rolls packing back on notification failure and safely retries', async () => {
+      const { order, service, notifications } = await packingFixture();
+      jest.spyOn(notifications, 'createLocalized').mockRejectedValueOnce(new Error('injected notification failure'));
+      await expect(service.recordGrowerPacking('farmer', order.id, { packedPackCount: 2, batchId: 'packing-lot' })).rejects.toThrow('injected');
+      const row = await prisma.orders.findUniqueOrThrow({ where: { id: order.id } });
+      expect(row.packedBatchId).toBeNull();
+      expect(row.buyerPackedNotifiedAt).toBeNull();
+      await service.recordGrowerPacking('farmer', order.id, { packedPackCount: 2, batchId: 'packing-lot' });
+      expect(await prisma.notifications.count({ where: { templateKey: 'buyer.orderPacked' } })).toBe(1);
+    });
+
+    it('concurrent transport requests attach the existing lot mission and allow delivery linking', async () => {
+      const { order, service } = await packingFixture();
+      await service.recordGrowerPacking('farmer', order.id, { packedPackCount: 2, batchId: 'packing-lot' });
+      await dispatchMission('existing-lot-mission', { batchId: 'packing-lot', orderId: null, status: 'PENDING', logisticsPartnerId: null });
+      const data = { id: 'unused-new-mission', missionNumber: 'UNUSED', growerId: 'farmer', batchId: 'packing-lot', orderId: order.id,
+        pickupLocation: { lat: 45, lng: 20 }, pickupAddress: 'Test farm', destinationAddress: 'Buyer address', destinationCity: 'Test City', updatedAt: new Date() };
+      const results = await Promise.all([1, 2].map(() => saveWorkflowMission(prisma, data)));
+      expect(results.map(r => r.mission.id)).toEqual(['existing-lot-mission', 'existing-lot-mission']);
+      expect(await prisma.missions.count({ where: { orderId: order.id } })).toBe(1);
+      expect(results[0].mission).toMatchObject({ orderId: order.id, destinationAddress: 'Buyer address' });
+      await prisma.missions.update({ where: { id: 'existing-lot-mission' }, data: { status: 'READY_FOR_LOADING', logisticsPartnerId: 'logistics' } });
+      const linked = await post('/deliveries/admin/link-mission', 'admin').send({ missionId: 'existing-lot-mission', orderId: order.id }).expect(201);
+      expect(linked.body.orderId).toBe(order.id);
+      expect(await prisma.order_items.count({ where: { orderId: order.id, batchId: 'packing-lot' } })).toBe(1);
     });
 
     it('creates a pack order with ORDER_RESERVE and lowers available kg', async () => {

@@ -38,26 +38,18 @@ function orderPackLine(order: {
 /** Grower-safe payment summary — no buyer payment records or invoice details. */
 export function growerPaymentSummaryFromOrder(order: {
   status: OrderStatus;
+  payments?: { status: string } | null;
 }): 'AWAITING_PAYMENT' | 'PAID_IN_ESCROW' | 'SETTLED' | 'REFUNDED' | 'CANCELLED' | 'UNKNOWN' {
-  switch (order.status) {
-    case 'PENDING':
-    case 'APPROVED':
-      return 'AWAITING_PAYMENT';
-    case 'PAID':
-    case 'CONFIRMED':
-    case 'PICKED_UP':
-    case 'IN_TRANSIT':
-      return 'PAID_IN_ESCROW';
-    case 'DELIVERED':
-    case 'COMPLETED':
-      return 'SETTLED';
-    case 'REFUNDED':
-      return 'REFUNDED';
-    case 'CANCELLED':
-      return 'CANCELLED';
-    default:
-      return 'UNKNOWN';
+  // Delivery and money release are separate workflows. Only the payment record
+  // proves escrow/release; an order status alone must never imply settlement.
+  if (order.payments?.status === 'REFUNDED') return 'REFUNDED';
+  if (order.payments?.status === 'RELEASED') return 'SETTLED';
+  if (order.payments?.status === 'IN_ESCROW') return 'PAID_IN_ESCROW';
+  if (order.status === 'CANCELLED') return 'CANCELLED';
+  if (order.payments?.status === 'PENDING' || ['PENDING', 'APPROVED'].includes(order.status)) {
+    return 'AWAITING_PAYMENT';
   }
+  return 'UNKNOWN';
 }
 
 @Injectable()
@@ -500,119 +492,100 @@ export class OrdersService {
     orderId: string,
     body: { packedPackCount: number; packedKg?: number; batchId?: string },
   ) {
-    const packedPackCount = Math.floor(Number(body.packedPackCount));
-    if (!Number.isFinite(packedPackCount) || packedPackCount < 1) {
-      throw new BadRequestException('packedPackCount must be at least 1');
-    }
-    const order = await this.prisma.orders.findFirst({
-      where: { id: orderId, fulfilling_estate: { ownerId: growerId } },
-      include: {
-        missions: {
-          where: { status: { not: 'CANCELLED' } },
-          select: { status: true },
+    const result = await this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM orders WHERE id = ${orderId} FOR UPDATE`;
+      const packedPackCount = Math.floor(Number(body.packedPackCount));
+      if (!Number.isFinite(packedPackCount) || packedPackCount < 1) {
+        throw new BadRequestException('packedPackCount must be at least 1');
+      }
+      const order = await tx.orders.findFirst({
+        where: { id: orderId, fulfilling_estate: { ownerId: growerId } },
+        include: {
+          missions: {
+            where: { status: { not: 'CANCELLED' } },
+            select: { status: true },
+          },
         },
-      },
-    });
-    // Explicit fields used below (findFirst returns full row)
-    if (!order) throw new NotFoundException('Order not found');
-    if (!order.catalogProductId) {
-      throw new BadRequestException('Packing records apply to catalogue orders only');
-    }
-    // Same set as the "orders to prepare" queue: nothing is packed before payment is confirmed.
-    if (!GROWER_PACKABLE_ORDER_STATUSES.includes(order.status)) {
-      throw new BadRequestException(
-        order.status === 'PENDING' || order.status === 'APPROVED'
-          ? 'This order is not paid yet — prepare it after payment is confirmed.'
-          : `Packing can no longer be changed for an order with status ${order.status}.`,
-      );
-    }
-    const departed = order.missions.some((m) =>
-      ['PICKED_UP', 'IN_TRANSIT', 'DELIVERED', 'COMPLETED'].includes(m.status),
-    );
-    if (departed) {
-      throw new BadRequestException('The goods have already left the farm — packing can no longer be changed.');
-    }
-    if (order.packCount != null && packedPackCount > order.packCount) {
-      throw new BadRequestException(
-        `Packed quantity exceeds ordered packs (${order.packCount} max)`,
-      );
-    }
-    const expectedKg = order.packSizeKg != null ? packedPackCount * order.packSizeKg : null;
-    let packedKg: number | null = expectedKg;
-    if (body.packedKg != null) {
-      packedKg = Number(body.packedKg);
-      if (
-        expectedKg != null &&
-        Math.abs(packedKg - expectedKg) > expectedKg * PACKED_WEIGHT_TOLERANCE + 1e-9
-      ) {
+      });
+      // Explicit fields used below (findFirst returns full row)
+      if (!order) throw new NotFoundException('Order not found');
+      if (!order.catalogProductId) {
+        throw new BadRequestException('Packing records apply to catalogue orders only');
+      }
+      // Same set as the "orders to prepare" queue: nothing is packed before payment is confirmed.
+      if (!GROWER_PACKABLE_ORDER_STATUSES.includes(order.status)) {
         throw new BadRequestException(
-          `Packed weight must be within ±5 % of ${expectedKg} kg (${packedPackCount} × ${order.packSizeKg} kg).`,
+          order.status === 'PENDING' || order.status === 'APPROVED'
+            ? 'This order is not paid yet — prepare it after payment is confirmed.'
+            : `Packing can no longer be changed for an order with status ${order.status}.`,
         );
       }
-    }
-    let packedBatchId = order.packedBatchId;
-    if (body.batchId?.trim()) {
-      const batch = await assertBatchFitsOrder(this.prisma, growerId, {
-        orderId: order.id,
-        fulfillingEstateId: order.fulfillingEstateId!,
-        catalogProductId: order.catalogProductId,
-        productName: order.productName,
-      }, body.batchId.trim());
-      packedBatchId = batch.id;
-    } else if (!packedBatchId && order.catalogProductId) {
-      throw new BadRequestException(
-        'Select the lot (batch) you packed for this order. Create a lot and complete quality entry first if needed.',
+      const departed = order.missions.some((m) =>
+        ['PICKED_UP', 'IN_TRANSIT', 'DELIVERED', 'COMPLETED'].includes(m.status),
       );
-    }
-
-    const priorSnapshot = {
-      status: order.status,
-      packedPackCount: order.packedPackCount ?? 0,
-      packCount: order.packCount,
-    };
-    const wasFullyPacked = isFullyPacked(priorSnapshot);
-
-    const updated = await this.prisma.orders.update({
-      where: { id: orderId },
-      data: {
-        packedPackCount,
-        packedKg: packedKg ?? undefined,
-        packedAt: order.packedAt ?? new Date(),
-        packedBatchId: packedBatchId ?? undefined,
-        updatedAt: new Date(),
-      },
-    });
-
-    const nowFullyPacked = isFullyPacked(updated);
-    if (!wasFullyPacked && nowFullyPacked && order.buyerId && !order.buyerPackedNotifiedAt) {
-      const claimed = await this.prisma.orders.updateMany({
-        where: { id: orderId, buyerPackedNotifiedAt: null },
-        data: { buyerPackedNotifiedAt: new Date() },
-      });
-      if (claimed.count === 1) {
-        try {
-          await this.notificationsService.createLocalized({
-            userId: order.buyerId,
-            type: 'SYSTEM',
-            templateKey: 'buyer.orderPacked',
-            templateParams: {
-              orderNumber: order.orderNumber,
-              packLine:
-                orderPackLine(updated) ||
-                `${updated.packedPackCount ?? packedPackCount} × ${order.packLabel ?? order.unit}`,
-            },
-            actionUrl: `/buyer-portal/orders`,
-          });
-        } catch (e) {
-          await this.prisma.orders.update({
-            where: { id: orderId },
-            data: { buyerPackedNotifiedAt: null },
-          });
-          this.logger.warn(`buyer.orderPacked notify failed: ${e instanceof Error ? e.message : e}`);
+      if (departed) {
+        throw new BadRequestException('The goods have already left the farm — packing can no longer be changed.');
+      }
+      if (order.packCount != null && packedPackCount > order.packCount) {
+        throw new BadRequestException(
+          `Packed quantity exceeds ordered packs (${order.packCount} max)`,
+        );
+      }
+      const expectedKg = order.packSizeKg != null ? packedPackCount * order.packSizeKg : null;
+      let packedKg: number | null = expectedKg;
+      if (body.packedKg != null) {
+        packedKg = Number(body.packedKg);
+        if (
+          expectedKg != null &&
+          Math.abs(packedKg - expectedKg) > expectedKg * PACKED_WEIGHT_TOLERANCE + 1e-9
+        ) {
+          throw new BadRequestException(
+            `Packed weight must be within ±5 % of ${expectedKg} kg (${packedPackCount} × ${order.packSizeKg} kg).`,
+          );
         }
       }
-    }
-    return updated;
+      let packedBatchId = order.packedBatchId;
+      const batchRef = body.batchId?.trim() || packedBatchId;
+      if (batchRef) {
+        const batch = await assertBatchFitsOrder(tx, growerId, {
+          orderId: order.id,
+          fulfillingEstateId: order.fulfillingEstateId!,
+          catalogProductId: order.catalogProductId,
+          productName: order.productName,
+          quantity: order.quantity, unit: order.unit,
+        }, batchRef, true);
+        packedBatchId = batch.id;
+      } else if (!packedBatchId && order.catalogProductId) {
+        throw new BadRequestException(
+          'Select the lot (batch) you packed for this order. Create a lot and complete quality entry first if needed.',
+        );
+      }
+
+      const updated = await tx.orders.update({
+        where: { id: orderId },
+        data: {
+          packedPackCount,
+          packedKg: packedKg ?? undefined,
+          packedAt: order.packedAt ?? new Date(),
+          packedBatchId: packedBatchId ?? undefined,
+          updatedAt: new Date(),
+        },
+      });
+
+      let notification = null;
+      if (isFullyPacked(updated) && order.buyerId && !order.buyerPackedNotifiedAt) {
+        notification = await this.notificationsService.createLocalized({
+          userId: order.buyerId, type: 'SYSTEM', templateKey: 'buyer.orderPacked',
+          templateParams: { orderNumber: order.orderNumber,
+            packLine: orderPackLine(updated) || `${updated.packedPackCount ?? packedPackCount} × ${order.packLabel ?? order.unit}` },
+          actionUrl: '/buyer-portal/orders',
+        }, tx);
+        await tx.orders.update({ where: { id: orderId }, data: { buyerPackedNotifiedAt: new Date() } });
+      }
+      return { updated, notification };
+    });
+    if (result.notification) await this.notificationsService.pushCreatedNotification(result.notification);
+    return result.updated;
   }
 
   // Admin methods

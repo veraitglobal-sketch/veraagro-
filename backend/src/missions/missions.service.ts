@@ -450,6 +450,7 @@ export class MissionsService {
           fulfillingEstateId: linkedOrder.fulfillingEstateId,
           catalogProductId: linkedOrder.catalogProductId,
           productName: linkedOrder.productName,
+          quantity: linkedOrder.quantity, unit: linkedOrder.unit,
         }, batchRef);
       } else {
         batch = await this.prisma.batches.findFirst({
@@ -2172,6 +2173,10 @@ export class MissionsService {
       );
     }
 
+    await this.materialControlService.validateBatchForShipment(packedBatch.id, order.fulfilling_estate.ownerId, {
+      requireCrateBalance: false,
+    });
+
     const estate = order.fulfilling_estate;
     const growerId = estate.ownerId;
     const c = MissionsService.estatePolygonCentroid(estate.polygonCoordinates);
@@ -2219,8 +2224,7 @@ export class MissionsService {
 
     const missionNumber = await this.generateMissionNumber();
 
-    const mission = await this.prisma.missions.create({
-      data: {
+    const saved = await saveWorkflowMission(this.prisma, {
         id: crypto.randomUUID(),
         missionNumber,
         growerId,
@@ -2239,15 +2243,9 @@ export class MissionsService {
         status: logisticsPartner ? 'ASSIGNED' : 'PENDING',
         assignedAt: logisticsPartner ? new Date() : null,
         updatedAt: new Date(),
-      },
-      include: {
-        users_missions_growerIdTousers: true,
-        users_missions_logisticsPartnerIdTousers: true,
-        vehicles: true,
-        batches: true,
-        orders: { select: { id: true, orderNumber: true, productName: true, quantity: true, unit: true } },
-      },
+
     });
+    const mission = saved.mission;
 
     try {
       await this.auditTrailService.createAuditTrail({

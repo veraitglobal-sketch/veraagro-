@@ -931,7 +931,7 @@ model orders {
   /// Lot (batch) the grower selected when recording packing — used for admin mission + dispatch link.
   packedBatchId        String?
   /// Set once when buyer is notified that the full order is packed (idempotent guard).
-  buyerPackedNotifiedAt DateTime?
+  buyerPackedNotifiedAt DateTime? @db.Timestamptz(6)
   status               OrderStatus            @default(PENDING)
   createdAt            DateTime               @default(now())
   updatedAt            DateTime

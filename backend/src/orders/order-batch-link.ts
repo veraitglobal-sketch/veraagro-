@@ -1,4 +1,5 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 const READY_BATCH_STATUSES = ['PACKED', 'QUALITY_VERIFIED'] as const;
@@ -8,10 +9,12 @@ export type OrderBatchContext = {
   fulfillingEstateId: string;
   catalogProductId: string | null;
   productName: string;
+  quantity: number;
+  unit: string;
 };
 
 /** Resolve internal batch UUID from public code or id. */
-export async function resolveBatchRef(prisma: PrismaService, ref: string) {
+export async function resolveBatchRef(prisma: PrismaService | Prisma.TransactionClient, ref: string) {
   const trimmed = ref.trim();
   if (!trimmed) return null;
   return prisma.batches.findFirst({
@@ -19,18 +22,24 @@ export async function resolveBatchRef(prisma: PrismaService, ref: string) {
     include: {
       estates: { select: { id: true, ownerId: true, name: true } },
       quality_entries: { select: { status: true } },
+      harvest_announcement: { select: { sourcePlantingId: true } },
     },
   });
 }
 
 /** Grower must own the fulfilling estate; lot must be ready with quality done. */
 export async function assertBatchFitsOrder(
-  prisma: PrismaService,
+  prisma: PrismaService | Prisma.TransactionClient,
   growerId: string,
   order: OrderBatchContext,
   batchRef: string,
+  lock = false,
 ) {
-  const batch = await resolveBatchRef(prisma, batchRef);
+  let batch = await resolveBatchRef(prisma, batchRef);
+  if (batch && lock) {
+    await prisma.$queryRaw`SELECT id FROM batches WHERE id = ${batch.id} FOR UPDATE`;
+    batch = await resolveBatchRef(prisma, batchRef);
+  }
   if (!batch) throw new NotFoundException('Lot not found');
   if (batch.estates.ownerId !== growerId) {
     throw new BadRequestException('This lot belongs to another grower.');
@@ -49,11 +58,30 @@ export async function assertBatchFitsOrder(
       'Complete the quality entry for this lot before packing or transport (Quality entry → verify).',
     );
   }
+  if (batch.productName.trim().toLocaleLowerCase() !== order.productName.trim().toLocaleLowerCase() || batch.unit !== order.unit) {
+    throw new BadRequestException('Choose a lot with the same product and unit as the order.');
+  }
+  const product = order.catalogProductId ? await prisma.catalog_products.findUnique({
+    where: { id: order.catalogProductId }, select: { sourcePlantingId: true },
+  }) : null;
+  if (product?.sourcePlantingId && batch.harvest_announcement?.sourcePlantingId !== product.sourcePlantingId && batch.harvestAnnouncementId !== product.sourcePlantingId) {
+    throw new BadRequestException('This lot does not originate from the planting sold by this catalogue product.');
+  }
+  // Count each other order once, whether it is linked through packing or a legacy line.
+  const allocations = await prisma.orders.findMany({
+    where: { id: { not: order.orderId }, status: { notIn: ['CANCELLED', 'REFUNDED'] },
+      OR: [{ packedBatchId: batch.id }, { order_items: { some: { batchId: batch.id } } }] },
+    select: { quantity: true },
+  });
+  const allocated = allocations.reduce((sum, row) => sum + row.quantity, 0);
+  if (!Number.isFinite(order.quantity) || order.quantity <= 0 || batch.quantity - allocated + 1e-9 < order.quantity) {
+    throw new BadRequestException('The lot has insufficient unallocated quantity for this order.');
+  }
   return batch;
 }
 
 export async function listCompatibleBatchesForOrder(
-  prisma: PrismaService,
+  prisma: PrismaService | Prisma.TransactionClient,
   growerId: string,
   orderId: string,
 ) {
@@ -65,6 +93,7 @@ export async function listCompatibleBatchesForOrder(
       catalogProductId: true,
       productName: true,
       packedBatchId: true,
+      quantity: true, unit: true,
     },
   });
   if (!order?.fulfillingEstateId) return [];
@@ -81,11 +110,15 @@ export async function listCompatibleBatchesForOrder(
     take: 50,
   });
 
-  return batches
-    .filter((b) => {
-      const q = b.quality_entries?.status;
-      return q && ['COMPLETED', 'VERIFIED'].includes(q);
-    })
+  const compatible = [];
+  for (const batch of batches) {
+    try {
+      compatible.push(await assertBatchFitsOrder(prisma, growerId, { ...order, orderId: order.id }, batch.id));
+    } catch (e) {
+      if (!(e instanceof BadRequestException)) throw e;
+    }
+  }
+  return compatible
     .map((b) => ({
       id: b.id,
       batchId: b.batchId,

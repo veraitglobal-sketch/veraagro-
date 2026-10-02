@@ -29,13 +29,15 @@ describe('Grower order packing', () => {
   function setup(overrides: Partial<typeof baseOrder> = {}) {
     const row = { ...baseOrder, ...overrides };
     const prisma = {
+      $queryRaw: jest.fn(),
+      $transaction: async (fn: any) => fn(prisma),
       orders: {
         findFirst: jest.fn().mockResolvedValue(row),
         update: jest.fn().mockImplementation(({ data }) => Promise.resolve({ ...row, ...data })),
         updateMany: jest.fn().mockResolvedValue({ count: 1 }),
       },
     };
-    const notifications = { createLocalized: jest.fn().mockResolvedValue({}) };
+    const notifications = { pushCreatedNotification: jest.fn(), createLocalized: jest.fn().mockResolvedValue({}) };
     const service = new OrdersService(prisma as any, {} as any, {} as any, notifications as any, {} as any);
     return { service, prisma, notifications, row };
   }

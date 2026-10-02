@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
-import { NotificationTrigger, UserRole } from '@prisma/client';
+import { Prisma, NotificationTrigger, UserRole } from '@prisma/client';
 import { PushNotificationService } from './push-notification.service';
 import { NotificationTemplateService } from './notification-template.service';
 
@@ -67,8 +67,9 @@ export class NotificationsService {
     templateKey: string;
     templateParams?: Record<string, string | number | undefined>;
     actionUrl?: string;
-  }) {
-    const user = await this.prisma.users.findUnique({
+  }, tx?: Prisma.TransactionClient) {
+    const db = tx ?? this.prisma;
+    const user = await db.users.findUnique({
       where: { id: data.userId },
       select: { preferredLanguage: true },
     });
@@ -77,7 +78,7 @@ export class NotificationsService {
       data.templateParams ?? {},
       user?.preferredLanguage,
     );
-    return this.create({
+    const notification = {
       userId: data.userId,
       type: data.type,
       title: rendered.title,
@@ -85,7 +86,25 @@ export class NotificationsService {
       actionUrl: data.actionUrl,
       templateKey: data.templateKey,
       templateParams: data.templateParams,
-    });
+    };
+    if (tx) {
+      return tx.notifications.create({ data: {
+        ...notification, id: crypto.randomUUID(), status: 'UNREAD',
+        templateParams: data.templateParams as Prisma.InputJsonObject,
+      } });
+    }
+    return this.create(notification);
+  }
+
+  async pushCreatedNotification(row: { id: string; userId: string; title: string; message: string; type: string; actionUrl: string | null }) {
+    try {
+      await this.pushNotificationService.sendToUser(row.userId, {
+        title: row.title, body: row.message, actionUrl: row.actionUrl ?? undefined,
+        notificationId: row.id, type: row.type,
+      });
+    } catch (e) {
+      this.logger.warn(`push failed for stored notification ${row.id}: ${String(e)}`);
+    }
   }
 
   /**
