@@ -25,6 +25,11 @@ class LocationDto {
 }
 
 export class CreateMissionDto {
+  /** When set, links transport to a fully packed catalogue order on the grower's fulfilling farm. */
+  @IsOptional()
+  @IsString()
+  orderId?: string;
+
   @IsOptional()
   @IsString()
   batchId?: string;

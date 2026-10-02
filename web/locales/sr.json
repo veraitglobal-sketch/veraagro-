@@ -1639,6 +1639,8 @@
       "creating": "Kreiranje…",
       "headerDescSuccess": "Zahtev je poslat. Praćenje je u Praćenju misija.",
       "headerDescForm": "Izaberite spremnu seriju i preuzimanje na farmi. Uslov: unos kvaliteta i kompletna usklađenost. Operativa dodeljuje prevoznika i unosi odredište — ne vidite adresu kupca.",
+      "headerDescOrderLinked": "Zatražite preuzimanje za spakovanu katalošku porudžbinu — lot je unapred izabran iz evidencije pakovanja.",
+      "orderLinkedBanner": "Ovaj zahtev za transport vezan je za porudžbinu kupca. Koristite lot koji ste evidentirali pri pakovanju.",
       "successTitle": "Zahtev za transport je primljen",
       "successBody": "Zahtev je u redu za dodelu. Operativa dodeljuje logističkog partnera u admin panelu; praćenje preuzimanja i predaje je moguće čim prevoznik bude dodeljen.",
       "successRedirect": "Preusmeravanje na <0>Praćenje misija</0>…",
@@ -2527,6 +2529,18 @@
     "timeHoursMinutes": "{{hours}}h {{minutes}}m",
     "alertTitle": "Kamion uskoro stiže",
     "alertBody": "Imajte kombije spremne na rampi za utovar."
+  },
+  "internalDemo": {
+    "fleetEmptyTitle": "Fleet kontrolna tabla još nije povezana",
+    "fleetEmptyBody": "Aktivne lokalne misije i zarada pojaviće se kada bude uključeno rutiranje preko čvora. Za aktivan transport koristite logistics partner portal.",
+    "fleetCtaLogistics": "Otvori logistics partner portal",
+    "hubEmptyTitle": "Hub operacije nisu dostupne",
+    "hubEmptyBody": "Cross-docking i hub inventar nisu povezani sa stvarnim podacima u ovom okruženju.",
+    "hubCtaLogistics": "Otvori logistics partner portal",
+    "opsEmptyTitle": "Operations center — pregled",
+    "opsEmptyBody": "Globalni SKU, distributeri i ledger nisu povezani sa produkcionim podacima. Za operativu koristite admin ili logistics alate.",
+    "opsCtaAdmin": "Admin panel",
+    "opsCtaLogistics": "Logistics partner portal"
   },
   "internalShell": {
     "titles": {
@@ -3666,7 +3680,15 @@
     "packingRecord": "Upiši pakovanje",
     "packingEdit": "Ispravi pakovanje",
     "packingQualityLink": "Kontrola kvaliteta",
-    "packingAwaitingPickup": "Spakovano — čeka preuzimanje."
+    "packingAwaitingPickup": "Spakovano — čeka preuzimanje.",
+    "packingSelectLot": "Lot spakovan za ovu porudžbinu *",
+    "packingSelectLotPlaceholder": "— Izaberite lot —",
+    "packingSelectLotRequired": "Izaberite lot koji ste spakovali za ovu porudžbinu.",
+    "packingLoadingLots": "Učitavanje spremnih lotova…",
+    "packingNoLots": "Nema spremnih lotova. Prvo završite unos kvaliteta:",
+    "packingNoLotsLink": "Kvalitet i lotovi",
+    "selectLotMessage": "Pakovanje je evidentirano — povežite lot pre nego što zatražite preuzimanje.",
+    "selectLotLink": "Kvalitet i lotovi"
   },
   "supplier": {
     "nav": {

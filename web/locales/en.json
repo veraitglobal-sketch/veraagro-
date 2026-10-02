@@ -1639,6 +1639,8 @@
       "creating": "Creating...",
       "headerDescSuccess": "Your request was sent. You can follow the run in Mission tracker.",
       "headerDescForm": "Pick a ready batch and farm pickup. Prerequisites: quality entry and compliance complete for the lot. Operations assigns the carrier and sets delivery — you do not see the buyer destination.",
+      "headerDescOrderLinked": "Request pickup for a packed catalogue order — the lot is pre-selected from your packing record.",
+      "orderLinkedBanner": "This transport request is linked to a buyer order. Use the lot you recorded when packing.",
       "successTitle": "Transport request received",
       "successBody": "Your request is queued for dispatch. Operations assigns cold-chain logistics in the admin panel; you can track pickup and handover as soon as a carrier is assigned.",
       "successRedirect": "Redirecting to <0>Mission tracker</0>…",
@@ -2826,6 +2828,18 @@
     "alertTitle": "Truck arriving soon",
     "alertBody": "Have your vans ready at the loading dock."
   },
+  "internalDemo": {
+    "fleetEmptyTitle": "Fleet dashboard not connected yet",
+    "fleetEmptyBody": "Live local-drop missions and earnings will appear here when hub routing is enabled. Use the logistics partner portal for active transport today.",
+    "fleetCtaLogistics": "Open logistics partner portal",
+    "hubEmptyTitle": "Hub operations not available",
+    "hubEmptyBody": "Cross-docking and hub inventory are not wired to live data in this environment.",
+    "hubCtaLogistics": "Open logistics partner portal",
+    "opsEmptyTitle": "Operations center preview",
+    "opsEmptyBody": "Global SKU, distributor, and ledger views are not connected to production data. Use admin or logistics tools for live operations.",
+    "opsCtaAdmin": "Admin panel",
+    "opsCtaLogistics": "Logistics partner portal"
+  },
   "internalShell": {
     "titles": {
       "fleetDashboard": "Fleet partner dashboard",
@@ -4008,7 +4022,15 @@
     "packingRecord": "Record packing",
     "packingEdit": "Correct packing",
     "packingQualityLink": "Quality check",
-    "packingAwaitingPickup": "Packed — waiting for pickup."
+    "packingAwaitingPickup": "Packed — waiting for pickup.",
+    "packingSelectLot": "Lot packed for this order *",
+    "packingSelectLotPlaceholder": "— Select lot —",
+    "packingSelectLotRequired": "Choose the lot you packed for this order.",
+    "packingLoadingLots": "Loading ready lots…",
+    "packingNoLots": "No ready lots yet. Complete quality entry first:",
+    "packingNoLotsLink": "Quality entry & lots",
+    "selectLotMessage": "Packing is recorded — link the lot you used before requesting pickup.",
+    "selectLotLink": "Quality entry & lots"
   },
   "supplier": {
     "nav": {

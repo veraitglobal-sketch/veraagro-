@@ -1328,6 +1328,14 @@
       "paid": "Pagado",
       "pending": "Pendiente",
       "paymentStatus": "Pago status",
+      "growerPaymentSummary": {
+        "awaiting_payment": "Awaiting payment",
+        "paid_in_escrow": "Paid — held in escrow",
+        "settled": "Settled",
+        "refunded": "Refunded",
+        "cancelled": "Cancelled",
+        "unknown": "Unknown"
+      },
       "statusPending": "Pendiente",
       "statusConfirmed": "Confirmado",
       "statusPreparing": "En preparación",
@@ -2109,6 +2117,8 @@
       "historyToggleShort": "Guardado entradas ({{count}})",
       "historyTitle": "Diario de campo ({{count}})",
       "historySubtitle": "Guardado entradas desde the server",
+      "historySyncError": "No se pudo actualizar el historial del servidor",
+      "historySyncErrorTitle": "Historial del servidor no disponible",
       "newEntry": "Nuevo registro",
       "historyDetailTitle": "Entry detalles",
       "historyBags": "Semilla bags",
@@ -2304,7 +2314,12 @@
       "requestPickup": "Solicitar recogida",
       "tabPrepare": "Por preparar",
       "tabAll": "Todos los pedidos",
-      "empty": "No hay pedidos pendientes de preparación."
+      "empty": "No hay pedidos pendientes de preparación.",
+      "selectLot": "Lote empaquetado para este pedido *",
+      "selectLotRequired": "Elija el lote que empaquetó para este pedido.",
+      "noLots": "No hay lotes listos. Complete primero la entrada de calidad.",
+      "selectLotMessage": "El empaquetado está registrado — vincule el lote antes de solicitar la recogida.",
+      "selectLotLink": "Calidad y lotes"
     }
   },
   "buyer": {

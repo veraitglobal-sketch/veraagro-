@@ -1328,6 +1328,14 @@
       "paid": "Bezahlt",
       "pending": "Ausstehend",
       "paymentStatus": "Zahlungsstatus",
+      "growerPaymentSummary": {
+        "awaiting_payment": "Awaiting payment",
+        "paid_in_escrow": "Paid — held in escrow",
+        "settled": "Settled",
+        "refunded": "Refunded",
+        "cancelled": "Cancelled",
+        "unknown": "Unknown"
+      },
       "statusPending": "Ausstehend",
       "statusConfirmed": "Bestätigt",
       "statusPreparing": "In Vorbereitung",
@@ -2109,6 +2117,8 @@
       "historyToggleShort": "Gespeicherte Einträge ({{count}})",
       "historyTitle": "Feldtagebuch ({{count}})",
       "historySubtitle": "Gespeicherte Einträge vom Server",
+      "historySyncError": "Server-Verlauf konnte nicht aktualisiert werden",
+      "historySyncErrorTitle": "Server-Verlauf nicht verfügbar",
       "newEntry": "Neuer Eintrag",
       "historyDetailTitle": "Eintragsdetails",
       "historyBags": "Saatgutsäcke",
@@ -2304,7 +2314,12 @@
       "requestPickup": "Abholung anfordern",
       "tabPrepare": "Vorzubereiten",
       "tabAll": "Alle Bestellungen",
-      "empty": "Keine Bestellungen zur Vorbereitung."
+      "empty": "Keine Bestellungen zur Vorbereitung.",
+      "selectLot": "Für diese Bestellung verpacktes Los *",
+      "selectLotRequired": "Wählen Sie das Los, das Sie für diese Bestellung verpackt haben.",
+      "noLots": "Keine bereiten Lose. Zuerst Qualitätseintrag abschließen.",
+      "selectLotMessage": "Verpackung ist erfasst — verknüpfen Sie das Los vor der Abholanfrage.",
+      "selectLotLink": "Qualität & Lose"
     }
   },
   "buyer": {

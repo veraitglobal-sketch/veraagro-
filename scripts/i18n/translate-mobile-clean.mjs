@@ -217,16 +217,6 @@ async function processLang(lang) {
   }
   console.log(`[${lang}] Done: ${Object.keys(enFlat).length - identical} translated, ${identical} identical (${((identical / Object.keys(enFlat).length) * 100).toFixed(2)}%)`);
 
-  for (const pattern of MOBILE_EXTRA) {
-    await processFile(
-      path.join(ROOT, 'mobile', pattern.replace('{lang}', 'en')),
-      path.join(ROOT, 'mobile', pattern.replace('{lang}', lang)),
-      lang,
-      allowlist,
-      phrases,
-    );
-  }
-
   return { lang, translated: Object.keys(enFlat).length - identical, identical, total: Object.keys(enFlat).length };
 }
 

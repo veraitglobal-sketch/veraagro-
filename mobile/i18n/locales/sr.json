@@ -1328,6 +1328,14 @@
       "paid": "Plaćeno",
       "pending": "Na čekanju",
       "paymentStatus": "Status plaćanja",
+      "growerPaymentSummary": {
+        "awaiting_payment": "Čeka se uplata",
+        "paid_in_escrow": "Plaćeno — u depozitu",
+        "settled": "Isplaćeno",
+        "refunded": "Refundirano",
+        "cancelled": "Otkazano",
+        "unknown": "Nepoznato"
+      },
       "statusPending": "Na čekanju",
       "statusConfirmed": "Potvrđeno",
       "statusPreparing": "Priprema",
@@ -2109,6 +2117,8 @@
       "historyToggleShort": "Sačuvani unosi ({{count}})",
       "historyTitle": "Poljski dnevnik ({{count}})",
       "historySubtitle": "Sačuvani unosi sa servera",
+      "historySyncError": "Nije moguće osvežiti istoriju sa servera",
+      "historySyncErrorTitle": "Istorija sa servera nije dostupna",
       "newEntry": "Novi unos",
       "historyDetailTitle": "Detalji unosa",
       "historyBags": "Kese semena",
@@ -2304,7 +2314,12 @@
       "requestPickup": "Zatraži preuzimanje",
       "tabPrepare": "Za pripremu",
       "tabAll": "Sve porudžbine",
-      "empty": "Nema porudžbina za pripremu."
+      "empty": "Nema porudžbina za pripremu.",
+      "selectLot": "Lot spakovan za ovu porudžbinu *",
+      "selectLotRequired": "Izaberite lot koji ste spakovali za ovu porudžbinu.",
+      "noLots": "Nema spremnih lotova. Prvo završite unos kvaliteta.",
+      "selectLotMessage": "Pakovanje je evidentirano — povežite lot pre nego što zatražite preuzimanje.",
+      "selectLotLink": "Kvalitet i lotovi"
     }
   },
   "buyer": {

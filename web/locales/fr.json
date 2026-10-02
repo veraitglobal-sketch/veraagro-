@@ -1187,6 +1187,8 @@
       "emptyBatchLinkCompliance": "Photos conformité",
       "headerDescSuccess": "Your request was sent. You can follow the Course in Mission tracker.",
       "headerDescForm": "Pick a ready Lot de production and Exploitation pickup. Prerequisites: qualité entry and conformité complete for the Lot. Operations assigns the transporteur and sets Livraison — you do not see the acheteur destination.",
+      "headerDescOrderLinked": "Demandez l’enlèvement pour une commande catalogue emballée — le lot est présélectionné depuis votre enregistrement d’emballage.",
+      "orderLinkedBanner": "Cette demande de transport est liée à une commande acheteur. Utilisez le lot enregistré lors de l’emballage.",
       "successTitle": "Transport request reçu",
       "successBody": "Your request is queued for dispatch. Operations assigns cold-chain logistics in the admin panel; you can track pickup and Remise as soon as a transporteur is assigned.",
       "successRedirect": "Redirecting to <0>Mission traceur</0>…",
@@ -2375,6 +2377,18 @@
       "emptyCtaResetFilters": "Reset filters"
     }
   },
+  "internalDemo": {
+    "fleetEmptyTitle": "Tableau de bord flotte non connecté",
+    "fleetEmptyBody": "Les missions locales et gains apparaîtront ici lorsque le routage hub sera activé. Utilisez le portail partenaire logistique pour le transport actif.",
+    "fleetCtaLogistics": "Ouvrir le portail partenaire logistique",
+    "hubEmptyTitle": "Opérations hub indisponibles",
+    "hubEmptyBody": "Cross-docking et inventaire hub ne sont pas connectés aux données en direct dans cet environnement.",
+    "hubCtaLogistics": "Ouvrir le portail partenaire logistique",
+    "opsEmptyTitle": "Centre des opérations — aperçu",
+    "opsEmptyBody": "Les vues SKU, distributeurs et ledger globaux ne sont pas connectées aux données de production.",
+    "opsCtaAdmin": "Panneau admin",
+    "opsCtaLogistics": "Portail partenaire logistique"
+  },
   "internalShell": {
     "titles": {
       "fleetDashboard": "Tableau de bord des partenaires de flotte",
@@ -3260,7 +3274,15 @@
     "packingRecord": "Saisir l’emballage",
     "packingEdit": "Corriger l’emballage",
     "packingQualityLink": "Contrôle qualité",
-    "packingAwaitingPickup": "Emballé — en attente d’enlèvement."
+    "packingAwaitingPickup": "Emballé — en attente d’enlèvement.",
+    "packingSelectLot": "Lot emballé pour cette commande *",
+    "packingSelectLotPlaceholder": "— Sélectionner un lot —",
+    "packingSelectLotRequired": "Choisissez le lot que vous avez emballé pour cette commande.",
+    "packingLoadingLots": "Chargement des lots prêts…",
+    "packingNoLots": "Aucun lot prêt. Terminez d’abord la saisie qualité :",
+    "packingNoLotsLink": "Qualité et lots",
+    "selectLotMessage": "L’emballage est enregistré — liez le lot avant de demander l’enlèvement.",
+    "selectLotLink": "Qualité et lots"
   },
   "supplier": {
     "nav": {

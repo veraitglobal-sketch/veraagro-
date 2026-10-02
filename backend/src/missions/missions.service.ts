@@ -27,6 +27,8 @@ import { NotificationsGateway } from '../notifications/notifications.gateway';
 import { NotificationsService } from '../notifications/notifications.service';
 import { saveWorkflowMission } from './save-workflow-mission';
 import { BatchesService } from '../batches/batches.service';
+import { assertBatchFitsOrder } from '../orders/order-batch-link';
+import { isFullyPacked } from '../../../shared/validation/order-packing';
 
 @Injectable()
 export class MissionsService {
@@ -385,22 +387,78 @@ export class MissionsService {
       throw new BadRequestException('Only growers (farmers) can create transport missions');
     }
 
-    // Get batch if provided (internal UUID or public batchId e.g. BATCH-2026-0001)
-    let batch = null;
-    if (dto.batchId) {
-      const ref = dto.batchId.trim();
-      batch = await this.prisma.batches.findFirst({
-        where: { OR: [{ id: ref }, { batchId: ref }] },
-        include: {
-          estates: true,
+    let linkedOrder: {
+      id: string;
+      orderNumber: string;
+      productName: string;
+      quantity: number;
+      unit: string;
+      deliveryAddress: unknown;
+      deliveryNotes: string | null;
+      fulfillingEstateId: string | null;
+      packedBatchId: string | null;
+      packCount: number | null;
+      packedPackCount: number | null;
+      catalogProductId: string | null;
+    } | null = null;
+
+    if (dto.orderId?.trim()) {
+      const order = await this.prisma.orders.findFirst({
+        where: { id: dto.orderId.trim(), fulfilling_estate: { ownerId: growerId } },
+        select: {
+          id: true,
+          orderNumber: true,
+          productName: true,
+          quantity: true,
+          unit: true,
+          deliveryAddress: true,
+          deliveryNotes: true,
+          fulfillingEstateId: true,
+          packedBatchId: true,
+          packCount: true,
+          packedPackCount: true,
+          catalogProductId: true,
         },
       });
-      if (!batch) {
-        throw new NotFoundException(`Batch not found`);
+      if (!order?.catalogProductId) {
+        throw new BadRequestException('Transport from an order applies to catalogue orders only.');
+      }
+      if (!isFullyPacked({ status: 'PAID', packCount: order.packCount, packedPackCount: order.packedPackCount })) {
+        throw new BadRequestException('Record full packing on the order before requesting pickup.');
+      }
+      const openMission = await this.prisma.missions.findFirst({
+        where: { orderId: order.id, status: { notIn: ['COMPLETED', 'CANCELLED'] } },
+      });
+      if (openMission) {
+        throw new BadRequestException(
+          `An open mission already exists for this order (${openMission.missionNumber}).`,
+        );
+      }
+      linkedOrder = order;
+      if (!dto.batchId?.trim() && !order.packedBatchId) {
+        throw new BadRequestException('Select the lot linked to this order when requesting pickup.');
+      }
+    }
+
+    // Get batch if provided (internal UUID or public batchId e.g. BATCH-2026-0001)
+    let batch = null;
+    const batchRef = dto.batchId?.trim() || linkedOrder?.packedBatchId || '';
+    if (batchRef) {
+      if (linkedOrder?.fulfillingEstateId) {
+        batch = await assertBatchFitsOrder(this.prisma, growerId, {
+          orderId: linkedOrder.id,
+          fulfillingEstateId: linkedOrder.fulfillingEstateId,
+          catalogProductId: linkedOrder.catalogProductId,
+          productName: linkedOrder.productName,
+        }, batchRef);
+      } else {
+        batch = await this.prisma.batches.findFirst({
+          where: { OR: [{ id: batchRef }, { batchId: batchRef }] },
+          include: { estates: true },
+        });
+        if (!batch) throw new NotFoundException('Batch not found');
       }
 
-      // Compliance + ownership only (do not block on virtual crate stock — that was stopping valid requests).
-      // Material deduction can be tied to pickup/handover later; see deductMaterialsOnShipment for admin/logistics flows.
       try {
         await this.materialControlService.validateBatchForShipment(batch.id, growerId, {
           requireCrateBalance: false,
@@ -416,6 +474,11 @@ export class MissionsService {
           error instanceof Error ? error.message : 'Batch validation failed. Cannot create shipment.';
         throw new BadRequestException(msg);
       }
+      if (linkedOrder?.packedBatchId && batch.id !== linkedOrder.packedBatchId) {
+        throw new BadRequestException('Use the same lot you recorded when packing this order.');
+      }
+    } else if (linkedOrder) {
+      throw new BadRequestException('A lot is required when requesting pickup for an order.');
     }
 
     let mission;
@@ -445,17 +508,29 @@ export class MissionsService {
         dto,
       );
       const missionNumber = await this.generateMissionNumber();
+      let destinationAddress = dto.destinationAddress?.trim() || null;
+      let destinationCity = dto.destinationCity?.trim() || null;
+      let loadInstructions = dto.loadInstructions?.trim() || null;
+      if (linkedOrder) {
+        const { full, city } = MissionsService.formatOrderDestination(linkedOrder.deliveryAddress);
+        destinationAddress = destinationAddress || full;
+        destinationCity = destinationCity || city;
+        loadInstructions =
+          loadInstructions ||
+          `[Order ${linkedOrder.orderNumber} — ${linkedOrder.productName}, ${linkedOrder.quantity} ${linkedOrder.unit}]\n${(linkedOrder.deliveryNotes || '').slice(0, 1500)}`;
+      }
       const saved = await saveWorkflowMission(this.prisma, {
         id: crypto.randomUUID(),
         missionNumber,
         growerId,
+        orderId: linkedOrder?.id ?? null,
         batchId: batch?.id ?? null,
         harvestAnnouncementId: linkedHarvestId,
         pickupLocation: pickupLocation as any,
         pickupAddress: (dto.pickupAddress || '').trim() || '—',
-        destinationAddress: dto.destinationAddress?.trim() || null,
-        destinationCity: dto.destinationCity?.trim() || null,
-        loadInstructions: dto.loadInstructions?.trim() || null,
+        destinationAddress,
+        destinationCity,
+        loadInstructions,
         optimalRoute: routeWithDest,
         estimatedPickupTime: MissionsService.toSafeDateTime(routeCalc.estimatedArrival),
         status: needsApproval
@@ -2052,6 +2127,7 @@ export class MissionsService {
         users: { select: { firstName: true, lastName: true, email: true } },
       },
     });
+    // packedBatchId is on the order row (see schema)
     if (!order) {
       throw new NotFoundException('Order not found');
     }
@@ -2063,6 +2139,24 @@ export class MissionsService {
     if (order.packCount != null && (order.packedPackCount ?? 0) < order.packCount) {
       throw new BadRequestException(
         `Packed ${order.packedPackCount ?? 0} of ${order.packCount} ordered packs. Record packing on the order before pickup.`,
+      );
+    }
+    if (!order.packedBatchId) {
+      throw new BadRequestException(
+        'The grower must select a lot and record packing on the order before admin can create transport.',
+      );
+    }
+    const packedBatch = await this.prisma.batches.findUnique({
+      where: { id: order.packedBatchId },
+      include: { quality_entries: { select: { status: true } } },
+    });
+    if (!packedBatch) {
+      throw new BadRequestException('Packed lot no longer exists — ask the grower to re-record packing.');
+    }
+    const qStatus = packedBatch.quality_entries?.status;
+    if (!qStatus || !['COMPLETED', 'VERIFIED'].includes(qStatus)) {
+      throw new BadRequestException(
+        'Quality entry on the packed lot must be completed before creating transport.',
       );
     }
 
@@ -2131,8 +2225,8 @@ export class MissionsService {
         missionNumber,
         growerId,
         orderId: order.id,
-        batchId: null,
-        harvestAnnouncementId: null,
+        batchId: order.packedBatchId,
+        harvestAnnouncementId: packedBatch.harvestAnnouncementId ?? null,
         pickupLocation: { lat: pickupLocation.lat, lng: pickupLocation.lng } as any,
         pickupAddress: `${estate.name} (farm)`,
         destinationAddress: destFull,

@@ -43,10 +43,15 @@ export const ordersAPI = {
       throw error;
     }
   },
+  /** Lots on the fulfilling farm ready for packing / transport for this order. */
+  getCompatibleBatches: async (orderId: string) => {
+    const response = await api.get(`/orders/grower/${encodeURIComponent(orderId)}/compatible-batches`);
+    return Array.isArray(response.data) ? response.data : [];
+  },
   /** Producer: record what was packed for a paid catalogue order. */
   recordPacking: async (
     orderId: string,
-    body: { packedPackCount: number; packedKg?: number },
+    body: { packedPackCount: number; packedKg?: number; batchId?: string },
   ): Promise<Order> => {
     const response = await api.patch(`/orders/grower/${encodeURIComponent(orderId)}/packing`, body);
     return response.data;
@@ -79,6 +84,7 @@ export const missionsAPI = {
   },
   create: async (data: {
     batchId: string;
+    orderId?: string;
     pickupLocation: { lat: number; lng: number; address?: string };
     pickupAddress: string;
     destinationAddress?: string;

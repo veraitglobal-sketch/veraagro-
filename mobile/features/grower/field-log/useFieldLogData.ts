@@ -107,6 +107,7 @@ export function useFieldLogData() {
   const [materialQuantity, setMaterialQuantity] = useState('');
 
   const [localHistory, setLocalHistory] = useState<FieldLogHistoryItem[]>([]);
+  const [historySyncError, setHistorySyncError] = useState<string | null>(null);
   const [pendingFieldCount, setPendingFieldCount] = useState(0);
   const [legacyFieldCount, setLegacyFieldCount] = useState(0);
   const [queueSyncBusy, setQueueSyncBusy] = useState(false);
@@ -442,25 +443,44 @@ export function useFieldLogData() {
   }, []);
 
   const reloadLocalHistory = useCallback(async () => {
+    let local: FieldLogHistoryItem[] = [];
     try {
-      const local = await offlineStorage.getFieldLogHistory();
+      local = await offlineStorage.getFieldLogHistory();
+    } catch {
+      await refreshPendingFieldCount();
+      return;
+    }
+
+    const farmName = currentEstate?.name;
+    let pendingItems: ReturnType<typeof pendingPlantingToHistoryItem>[] = [];
+    try {
       const pendingPlanting = await offlineStorage.getPendingPlantingEntries();
-      const farmName = currentEstate?.name;
-      const pendingItems = pendingPlanting
+      pendingItems = pendingPlanting
         .filter((r) => r.status !== 'synced')
         .map((r) => pendingPlantingToHistoryItem(r, farmName));
-      let apiItems: ReturnType<typeof fieldEntryToHistoryItem>[] = [];
-      if (currentEstate?.id && (await isDeviceOnline())) {
+    } catch {
+      pendingItems = [];
+    }
+
+    let apiItems: ReturnType<typeof fieldEntryToHistoryItem>[] = [];
+    if (currentEstate?.id && (await isDeviceOnline())) {
+      try {
         const parcelFilter = selectedParcelIdRef.current || undefined;
         const rows = await fieldEntriesAPI.getAll(currentEstate.id, parcelFilter, 20);
-        apiItems = rows.map((e) => fieldEntryToHistoryItem(e as Parameters<typeof fieldEntryToHistoryItem>[0], farmName));
+        apiItems = rows.map((e) =>
+          fieldEntryToHistoryItem(e as Parameters<typeof fieldEntryToHistoryItem>[0], farmName),
+        );
+        setHistorySyncError(null);
+      } catch (err) {
+        setHistorySyncError(apiErrorMessage(err, t('producer.fieldLogForm.historySyncError')));
       }
-      setLocalHistory(mergeFieldLogHistory(local, apiItems, pendingItems));
-    } catch {
-      setLocalHistory([]);
+    } else {
+      setHistorySyncError(null);
     }
+
+    setLocalHistory(mergeFieldLogHistory(local, apiItems, pendingItems));
     await refreshPendingFieldCount();
-  }, [refreshPendingFieldCount, currentEstate?.id, currentEstate?.name]);
+  }, [refreshPendingFieldCount, currentEstate?.id, currentEstate?.name, t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -797,6 +817,7 @@ export function useFieldLogData() {
     referenceRefreshing,
     refreshReferenceData,
     localHistory,
+    historySyncError,
     reloadLocalHistory,
     pendingFieldCount,
     legacyFieldCount,

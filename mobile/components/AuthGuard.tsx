@@ -33,9 +33,10 @@ export function AuthGuard({ children, requiredRole, redirectTo = '/' }: AuthGuar
       const isProducerRoute = path[0] === '(producer)';
       const isLogisticsRoute = path[0] === '(logistics)';
       const isSupplierRoute = path[0] === '(supplier)';
+      const isSeedProducerRoute = path[0] === '(seed-producer)';
       const isBuyerRoute = path[0] === '(buyer)';
 
-      if (isProducerRoute || isLogisticsRoute || isSupplierRoute) {
+      if (isProducerRoute || isLogisticsRoute || isSupplierRoute || isSeedProducerRoute) {
         router.replace(partnerSignInHref() as any);
       } else if (isBuyerRoute) {
         router.replace('/buyer-login');
@@ -54,7 +55,8 @@ export function AuthGuard({ children, requiredRole, redirectTo = '/' }: AuthGuar
         const isProducerRoute2 = path[0] === '(producer)';
         const isLogisticsRoute2 = path[0] === '(logistics)';
         const isSupplierRoute2 = path[0] === '(supplier)';
-        if (isProducerRoute2 || isLogisticsRoute2 || isSupplierRoute2) {
+        const isSeedProducerRoute2 = path[0] === '(seed-producer)';
+        if (isProducerRoute2 || isLogisticsRoute2 || isSupplierRoute2 || isSeedProducerRoute2) {
           router.replace(partnerSignInHref() as any);
         } else {
           router.replace('/buyer-login');

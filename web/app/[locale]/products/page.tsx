@@ -18,7 +18,8 @@ export default function ProductsPage() {
 
   useEffect(() => {
     if (isLoading) return;
-    const hasBuyerAccess = isAuthenticated && user?.roles?.includes?.('buyer');
+    const roles = user?.roles && user.roles.length > 0 ? user.roles : [];
+    const hasBuyerAccess = isAuthenticated && roles.includes('BUYER');
     if (hasBuyerAccess) {
       router.replace('/buyer-portal/trade-panel');
     } else {

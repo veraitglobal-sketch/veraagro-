@@ -191,7 +191,14 @@ export const ordersAPI = {
     const response = await api.get('/orders/grower', { params: queue ? { queue } : undefined });
     return response.data;
   },
-  recordPacking: async (orderId: string, body: { packedPackCount: number; packedKg?: number }) => {
+  getCompatibleBatches: async (orderId: string) => {
+    const response = await api.get(`/orders/grower/${encodeURIComponent(orderId)}/compatible-batches`);
+    return response.data;
+  },
+  recordPacking: async (
+    orderId: string,
+    body: { packedPackCount: number; packedKg?: number; batchId?: string },
+  ) => {
     const response = await api.patch(`/orders/grower/${orderId}/packing`, body);
     return response.data;
   },
@@ -270,6 +277,7 @@ export const missionsAPI = {
   },
   create: async (data: {
     batchId?: string;
+    orderId?: string;
     pickupLocation: { lat: number; lng: number; address?: string };
     pickupAddress: string;
     destinationAddress?: string;

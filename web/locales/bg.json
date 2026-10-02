@@ -1187,6 +1187,8 @@
       "emptyBatchLinkCompliance": "Снимки за съответствие",
       "headerDescSuccess": "Your request was sent. You can follow the Курс in Мисия tracker.",
       "headerDescForm": "Pick a ready Производствена партида and Ферма pickup. Prerequisites: качество entry and съответствие complete for the Партида. Operations assigns the превозвач and sets Доставка — you do not see the купувач destination.",
+      "headerDescOrderLinked": "Поискайте вземане за опакована каталожна поръчка — партидата е предварително избрана от записа за опаковане.",
+      "orderLinkedBanner": "Тази заявка за транспорт е свързана с поръчка на купувач. Използвайте партидата, записана при опаковане.",
       "successTitle": "Транспорт request received",
       "successBody": "Your request is queued for dispatch. Operations assigns cold-chain logistics in the admin panel; you can track pickup and Предаване as soon as a превозвач is assigned.",
       "successRedirect": "Redirecting to <0>Мисия трекер</0>…",
@@ -2375,6 +2377,18 @@
       "emptyCtaResetFilters": "Reset filters"
     }
   },
+  "internalDemo": {
+    "fleetEmptyTitle": "Таблото на флота все още не е свързано",
+    "fleetEmptyBody": "Активните локални мисии и приходи ще се появят тук, когато маршрутизацията през хъба е активна. Използвайте логистичния партньорски портал за активен транспорт.",
+    "fleetCtaLogistics": "Отвори логистичния партньорски портал",
+    "hubEmptyTitle": "Hub операциите не са налични",
+    "hubEmptyBody": "Cross-docking и hub инвентарът не са свързани с реални данни в тази среда.",
+    "hubCtaLogistics": "Отвори логистичния партньорски портал",
+    "opsEmptyTitle": "Operations center — преглед",
+    "opsEmptyBody": "Глобалните SKU, дистрибуторски и ledger изгледи не са свързани с производствени данни.",
+    "opsCtaAdmin": "Admin панел",
+    "opsCtaLogistics": "Логистичен партньорски портал"
+  },
   "internalShell": {
     "titles": {
       "fleetDashboard": "Табло за управление на партньор на флота",
@@ -3260,7 +3274,15 @@
     "packingRecord": "Запиши опаковането",
     "packingEdit": "Коригирай опаковането",
     "packingQualityLink": "Контрол на качеството",
-    "packingAwaitingPickup": "Опаковано — очаква вземане."
+    "packingAwaitingPickup": "Опаковано — очаква вземане.",
+    "packingSelectLot": "Партида, опакована за тази поръчка *",
+    "packingSelectLotPlaceholder": "— Изберете партида —",
+    "packingSelectLotRequired": "Изберете партидата, която сте опаковали за тази поръчка.",
+    "packingLoadingLots": "Зареждане на готови партиди…",
+    "packingNoLots": "Няма готови партиди. Първо завършете въвеждането на качество:",
+    "packingNoLotsLink": "Качество и партиди",
+    "selectLotMessage": "Опаковането е записано — свържете партидата преди да поискате вземане.",
+    "selectLotLink": "Качество и партиди"
   },
   "supplier": {
     "nav": {

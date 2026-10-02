@@ -69,6 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.warn('[Auth] push cleanup failed', error);
       } finally {
         try {
+          // Session only — offline queues stay on device (scoped per userId).
           await AsyncStorage.multiRemove(['auth_token', 'auth_user']);
         } finally {
           delete axios.defaults.headers.common['Authorization'];

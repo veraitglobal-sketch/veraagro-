@@ -91,6 +91,7 @@ model batches {
   quality_entries                            quality_entries?
   temperature_logs                           temperature_logs[]
   package_badges                             package_badges[]
+  orders_packed_as                           orders[]               @relation("OrderPackedBatch")
 
   @@index([harvestAnnouncementId])
   @@index([batchId])
@@ -927,6 +928,10 @@ model orders {
   packedPackCount      Int?
   packedKg             Float?
   packedAt             DateTime?
+  /// Lot (batch) the grower selected when recording packing — used for admin mission + dispatch link.
+  packedBatchId        String?
+  /// Set once when buyer is notified that the full order is packed (idempotent guard).
+  buyerPackedNotifiedAt DateTime?
   status               OrderStatus            @default(PENDING)
   createdAt            DateTime               @default(now())
   updatedAt            DateTime
@@ -944,8 +949,10 @@ model orders {
   payments             payments?
   ratings              ratings[]
   missions             missions[]
+  packed_batch         batches?               @relation("OrderPackedBatch", fields: [packedBatchId], references: [id])
 
   @@index([buyerId])
+  @@index([packedBatchId])
   @@index([estateId])
   @@index([fulfillingEstateId])
   @@index([catalogProductId])

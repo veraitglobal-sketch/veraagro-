@@ -90,6 +90,10 @@ export default function RootLayout() {
           name="(logistics)"
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="(seed-producer)"
+          options={{ headerShown: false }}
+        />
       </Stack>
     </CartProvider>
     </BioVeraBoot>

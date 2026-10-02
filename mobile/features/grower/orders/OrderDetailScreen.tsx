@@ -46,9 +46,8 @@ export default function OrderDetailScreen({ orderId }: OrderDetailScreenProps) {
     );
   }
 
-  const orderAny = order as Order & { buyer?: any; buyerInfo?: any; paymentStatus?: string };
+  const orderAny = order as Order & { buyer?: any; buyerInfo?: any };
   const buyerInfo = orderAny.buyer || orderAny.buyerInfo || null;
-  const paymentStatus = orderAny.paymentStatus || 'PENDING';
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
@@ -62,7 +61,7 @@ export default function OrderDetailScreen({ orderId }: OrderDetailScreenProps) {
           <OrderLinesBlock order={order} />
           <BuyerBlock buyer={buyerInfo} />
           <DeliveryBlock order={order} />
-          <PaymentStatusBlock paymentStatus={paymentStatus} />
+          <PaymentStatusBlock growerPaymentSummary={order.growerPaymentSummary} />
           {order.deliveryNotes && (
             <View
               style={{

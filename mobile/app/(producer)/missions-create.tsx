@@ -51,8 +51,11 @@ function readyForTransport(b: BatchRow) {
 export default function MissionsCreateScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const params = useLocalSearchParams<{ batchId?: string | string[] }>();
+  const params = useLocalSearchParams<{ batchId?: string | string[]; orderId?: string | string[] }>();
   const requestedBatch = normalizeBatchReference(params.batchId);
+  const orderIdParam = params.orderId;
+  const orderIdFromUrl =
+    typeof orderIdParam === 'string' ? orderIdParam.trim() : Array.isArray(orderIdParam) ? orderIdParam[0]?.trim() ?? '' : '';
   const p = useBioVeraScreenPadding();
   const scrollRef = useRef<ScrollView>(null);
   const [batches, setBatches] = useState<BatchRow[]>([]);
@@ -64,7 +67,16 @@ export default function MissionsCreateScreen() {
   const [locationHint, setLocationHint] = useState<string | null>(null);
   const [showManualGps, setShowManualGps] = useState(false);
   const { selectedBatch, selectedBatchId: batchId, setSelectedBatchId: setBatchId, missingRequestedBatch } = useWorkflowBatchSelection(batches, false);
-  const visibleBatches = requestedBatch ? (selectedBatch ? [selectedBatch] : []) : batches;
+  const visibleBatches =
+    orderIdFromUrl && requestedBatch
+      ? selectedBatch
+        ? [selectedBatch]
+        : []
+      : requestedBatch
+        ? selectedBatch
+          ? [selectedBatch]
+          : []
+        : batches;
   const [pickupAddress, setPickupAddress] = useState('');
   const [pickupLat, setPickupLat] = useState('');
   const [pickupLng, setPickupLng] = useState('');
@@ -107,8 +119,11 @@ export default function MissionsCreateScreen() {
     try {
       const all = await batchesAPI.getAll();
       setBatchLoadError(false);
-      const arr = Array.isArray(all) ? all : [];
-      setBatches(arr.filter(readyForTransport) as BatchRow[]);
+      let arr = (Array.isArray(all) ? all : []).filter(readyForTransport) as BatchRow[];
+      if (orderIdFromUrl && requestedBatch) {
+        arr = arr.filter((b) => b.id === requestedBatch || b.batchId === requestedBatch);
+      }
+      setBatches(arr);
     } catch {
       setBatchLoadError(true);
       setBatches([]);
@@ -116,7 +131,7 @@ export default function MissionsCreateScreen() {
       if (mode === 'refresh') setListRefreshing(false);
       else setInitialBatchesLoading(false);
     }
-  }, []);
+  }, [orderIdFromUrl, requestedBatch]);
 
   useEffect(() => {
     void loadBatches('initial');
@@ -203,6 +218,7 @@ export default function MissionsCreateScreen() {
     try {
       const mission = await missionsAPI.create({
         batchId,
+        ...(orderIdFromUrl ? { orderId: orderIdFromUrl } : {}),
         pickupLocation: { lat, lng, address: pickupAddress.trim() },
         pickupAddress: pickupAddress.trim(),
       });

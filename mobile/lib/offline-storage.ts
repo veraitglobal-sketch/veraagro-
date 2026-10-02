@@ -14,17 +14,61 @@ const FIELD_LOG_HISTORY_KEY = 'field_log_history_v1';
 const FIELD_LOG_HISTORY_MAX = 100;
 const PENDING_HARVEST_KEY = 'pending_harvest_plans';
 const PENDING_PRODUCTS_KEY = 'pending_products';
+const LEGACY_OWNER_SLOT = '__legacy__';
+
+/** Per-user AsyncStorage slot, e.g. `pending_field_entries:{userId}`. */
+export function scopedStorageKey(base: string, ownerId: string): string {
+  return `${base}:${ownerId}`;
+}
+
+export async function currentStorageOwner(): Promise<string> {
+  const raw = await AsyncStorage.getItem('auth_user');
+  try {
+    const user = raw ? JSON.parse(raw) : null;
+    return typeof user?.id === 'string' ? user.id : '';
+  } catch {
+    return '';
+  }
+}
 
 export async function productOwnerId(): Promise<string> {
-  const raw = await AsyncStorage.getItem('auth_user');
-  try { const user = raw ? JSON.parse(raw) : null; return typeof user?.id === 'string' ? user.id : ''; }
-  catch { return ''; }
+  return currentStorageOwner();
 }
 
 function productStorageKey(owner: string): string {
   if (!owner) throw new Error('Sign in before saving products');
   // Legacy unowned entries are left intact, never silently assigned to a different account.
-  return `${PENDING_PRODUCTS_KEY}:${owner}`;
+  return scopedStorageKey(PENDING_PRODUCTS_KEY, owner);
+}
+
+/** Move a legacy unscoped key to `{base}:__legacy__` — never attach to the signed-in user. */
+async function quarantineLegacyUnscopedKey(baseKey: string): Promise<void> {
+  try {
+    const raw = await AsyncStorage.getItem(baseKey);
+    if (raw == null) return;
+    const legacyKey = scopedStorageKey(baseKey, LEGACY_OWNER_SLOT);
+    const existing = await AsyncStorage.getItem(legacyKey);
+    if (existing == null) {
+      await AsyncStorage.setItem(legacyKey, raw);
+    }
+    await AsyncStorage.removeItem(baseKey);
+  } catch (e) {
+    console.warn(`[offlineStorage] legacy quarantine failed for ${baseKey}:`, e);
+  }
+}
+
+async function scopedGetItem(baseKey: string): Promise<string | null> {
+  const owner = await currentStorageOwner();
+  if (!owner) return null;
+  await quarantineLegacyUnscopedKey(baseKey);
+  return AsyncStorage.getItem(scopedStorageKey(baseKey, owner));
+}
+
+async function scopedSetItem(baseKey: string, value: string): Promise<void> {
+  const owner = await currentStorageOwner();
+  if (!owner) throw new Error('Sign in before saving offline data');
+  await quarantineLegacyUnscopedKey(baseKey);
+  await AsyncStorage.setItem(scopedStorageKey(baseKey, owner), value);
 }
 const PENDING_COSTS_KEY = 'pending_costs';
 const PENDING_CERTIFICATE_PHOTOS_KEY = 'pending_certificate_photos';
@@ -249,7 +293,7 @@ export const offlineStorage = {
   // Get all pending entries
   async getPendingEntries(): Promise<PendingFieldEntry[]> {
     try {
-      const data = await AsyncStorage.getItem(PENDING_ENTRIES_KEY);
+      const data = await scopedGetItem(PENDING_ENTRIES_KEY);
       if (!data) return [];
       const parsed: PendingFieldEntry[] = JSON.parse(data);
       let dirty = false;
@@ -273,7 +317,7 @@ export const offlineStorage = {
         return row;
       });
       if (dirty) {
-        await AsyncStorage.setItem(PENDING_ENTRIES_KEY, JSON.stringify(next));
+        await scopedSetItem(PENDING_ENTRIES_KEY, JSON.stringify(next));
         for (const row of next) {
           if (row.status === 'unrecoverable') {
             await this.patchFieldLogHistory(row.id, {
@@ -317,11 +361,11 @@ export const offlineStorage = {
     if (legacyIds.size === 0) return 0;
 
     const kept = entries.filter((e) => !legacyIds.has(e.id));
-    await AsyncStorage.setItem(PENDING_ENTRIES_KEY, JSON.stringify(kept));
+    await scopedSetItem(PENDING_ENTRIES_KEY, JSON.stringify(kept));
 
     const history = await this.getFieldLogHistory();
     const historyNext = history.filter((h) => !legacyIds.has(h.id));
-    await AsyncStorage.setItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(historyNext));
+      await scopedSetItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(historyNext));
 
     return legacyIds.size;
   },
@@ -337,7 +381,7 @@ export const offlineStorage = {
         status: 'pending',
       };
       entries.push(newEntry);
-      await AsyncStorage.setItem(PENDING_ENTRIES_KEY, JSON.stringify(entries));
+      await scopedSetItem(PENDING_ENTRIES_KEY, JSON.stringify(entries));
       await this.upsertFieldLogHistoryFromPending(newEntry);
       return newEntry.id;
     } catch (error) {
@@ -351,7 +395,7 @@ export const offlineStorage = {
     try {
       const entries = await this.getPendingEntries();
       const filtered = entries.filter(e => e.id !== id);
-      await AsyncStorage.setItem(PENDING_ENTRIES_KEY, JSON.stringify(filtered));
+      await scopedSetItem(PENDING_ENTRIES_KEY, JSON.stringify(filtered));
     } catch (error) {
       console.error('Error removing entry:', error);
       throw error;
@@ -364,7 +408,7 @@ export const offlineStorage = {
     try {
       const list = await this.getFieldLogHistory();
       const next = list.filter((h) => h.id !== id);
-      await AsyncStorage.setItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(next));
+      await scopedSetItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(next));
     } catch (e) {
       console.error('Error discarding field log history row:', e);
     }
@@ -377,12 +421,12 @@ export const offlineStorage = {
   async purgeUnsentFieldLogLocal(): Promise<{ queueRemoved: number; historyRemoved: number }> {
     const entries = await this.getPendingEntries();
     const queueRemoved = entries.length;
-    await AsyncStorage.setItem(PENDING_ENTRIES_KEY, JSON.stringify([]));
+    await scopedSetItem(PENDING_ENTRIES_KEY, JSON.stringify([]));
 
     const history = await this.getFieldLogHistory();
     const kept = history.filter((h) => h.status === 'synced');
     const historyRemoved = history.length - kept.length;
-    await AsyncStorage.setItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(kept));
+    await scopedSetItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(kept));
 
     return { queueRemoved, historyRemoved };
   },
@@ -413,7 +457,7 @@ export const offlineStorage = {
     const harvests = await this.getPendingHarvestPlans();
     const harvestKept = harvests.filter((h) => !unsent(h.status));
     const harvestPlans = harvests.length - harvestKept.length;
-    await AsyncStorage.setItem(PENDING_HARVEST_KEY, JSON.stringify(harvestKept));
+    await scopedSetItem(PENDING_HARVEST_KEY, JSON.stringify(harvestKept));
 
     const productsOwner = await productOwnerId();
     const products = await this.getPendingProducts(productsOwner);
@@ -424,12 +468,12 @@ export const offlineStorage = {
     const costs = await this.getPendingCosts();
     const costsKept = costs.filter((c) => !unsent(c.status));
     const costsRemoved = costs.length - costsKept.length;
-    await AsyncStorage.setItem(PENDING_COSTS_KEY, JSON.stringify(costsKept));
+    await scopedSetItem(PENDING_COSTS_KEY, JSON.stringify(costsKept));
 
     const certs = await this.getPendingCertificatePhotos();
     const certsKept = certs.filter((c) => !unsent(c.status));
     const certificatePhotos = certs.length - certsKept.length;
-    await AsyncStorage.setItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(certsKept));
+    await scopedSetItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(certsKept));
 
     return {
       fieldLogQueue: field.queueRemoved,
@@ -443,7 +487,7 @@ export const offlineStorage = {
 
   async getFieldLogHistory(): Promise<FieldLogHistoryItem[]> {
     try {
-      const data = await AsyncStorage.getItem(FIELD_LOG_HISTORY_KEY);
+      const data = await scopedGetItem(FIELD_LOG_HISTORY_KEY);
       if (!data) return [];
       const parsed: FieldLogHistoryItem[] = JSON.parse(data);
       return parsed.map((h) => ({
@@ -479,7 +523,7 @@ export const offlineStorage = {
       const prev = await this.getFieldLogHistory();
       const without = prev.filter((h) => h.id !== item.id);
       const next = [item, ...without].slice(0, FIELD_LOG_HISTORY_MAX);
-      await AsyncStorage.setItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(next));
+      await scopedSetItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(next));
     } catch (e) {
       console.error('Error writing field log history:', e);
     }
@@ -494,7 +538,7 @@ export const offlineStorage = {
       const idx = list.findIndex((h) => h.id === entryId);
       if (idx === -1) return;
       list[idx] = { ...list[idx], ...patch };
-      await AsyncStorage.setItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(list));
+      await scopedSetItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(list));
     } catch (e) {
       console.error('Error patching field log history:', e);
     }
@@ -583,7 +627,7 @@ export const offlineStorage = {
   // --- Pending costs (cost calculator) ---
   async getPendingCosts(): Promise<PendingCost[]> {
     try {
-      const data = await AsyncStorage.getItem(PENDING_COSTS_KEY);
+      const data = await scopedGetItem(PENDING_COSTS_KEY);
       return data ? JSON.parse(data) : [];
     } catch (error) {
       console.error('Error getting pending costs:', error);
@@ -601,7 +645,7 @@ export const offlineStorage = {
         status: 'pending',
       };
       list.push(newEntry);
-      await AsyncStorage.setItem(PENDING_COSTS_KEY, JSON.stringify(list));
+      await scopedSetItem(PENDING_COSTS_KEY, JSON.stringify(list));
       return newEntry.id;
     } catch (error) {
       console.error('Error saving pending cost:', error);
@@ -613,7 +657,7 @@ export const offlineStorage = {
     try {
       const list = await this.getPendingCosts();
       const filtered = list.filter((c) => c.id !== id);
-      await AsyncStorage.setItem(PENDING_COSTS_KEY, JSON.stringify(filtered));
+      await scopedSetItem(PENDING_COSTS_KEY, JSON.stringify(filtered));
     } catch (error) {
       console.error('Error removing cost:', error);
       throw error;
@@ -627,7 +671,7 @@ export const offlineStorage = {
       if (item) {
         item.status = status;
         if (error) item.error = error;
-        await AsyncStorage.setItem(PENDING_COSTS_KEY, JSON.stringify(list));
+        await scopedSetItem(PENDING_COSTS_KEY, JSON.stringify(list));
       }
     } catch (e) {
       console.error('Error updating cost status:', e);
@@ -637,7 +681,7 @@ export const offlineStorage = {
   // --- Pending certificate photos (certifications) ---
   async getPendingCertificatePhotos(): Promise<PendingCertificatePhoto[]> {
     try {
-      const data = await AsyncStorage.getItem(PENDING_CERTIFICATE_PHOTOS_KEY);
+      const data = await scopedGetItem(PENDING_CERTIFICATE_PHOTOS_KEY);
       return data ? JSON.parse(data) : [];
     } catch (error) {
       console.error('Error getting pending certificate photos:', error);
@@ -655,7 +699,7 @@ export const offlineStorage = {
         status: 'pending',
       };
       list.push(newEntry);
-      await AsyncStorage.setItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(list));
+      await scopedSetItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(list));
       return newEntry.id;
     } catch (error) {
       console.error('Error saving pending certificate photo:', error);
@@ -667,7 +711,7 @@ export const offlineStorage = {
     try {
       const list = await this.getPendingCertificatePhotos();
       const filtered = list.filter((p) => p.id !== id);
-      await AsyncStorage.setItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(filtered));
+      await scopedSetItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(filtered));
     } catch (error) {
       console.error('Error removing certificate photo:', error);
       throw error;
@@ -681,7 +725,7 @@ export const offlineStorage = {
       if (item) {
         item.status = status;
         if (error) item.error = error;
-        await AsyncStorage.setItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(list));
+        await scopedSetItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(list));
       }
     } catch (e) {
       console.error('Error updating certificate photo status:', e);
@@ -690,7 +734,7 @@ export const offlineStorage = {
 
   async getPendingHarvestPlans(): Promise<PendingHarvestPlan[]> {
     try {
-      const data = await AsyncStorage.getItem(PENDING_HARVEST_KEY);
+      const data = await scopedGetItem(PENDING_HARVEST_KEY);
       return data ? JSON.parse(data) : [];
     } catch {
       return [];
@@ -708,16 +752,13 @@ export const offlineStorage = {
       status: 'pending',
     };
     list.push(newEntry);
-    await AsyncStorage.setItem(PENDING_HARVEST_KEY, JSON.stringify(list));
+    await scopedSetItem(PENDING_HARVEST_KEY, JSON.stringify(list));
     return newEntry.id;
   },
 
   async removeHarvestPlan(id: string): Promise<void> {
     const list = await this.getPendingHarvestPlans();
-    await AsyncStorage.setItem(
-      PENDING_HARVEST_KEY,
-      JSON.stringify(list.filter((h) => h.id !== id)),
-    );
+    await scopedSetItem(PENDING_HARVEST_KEY, JSON.stringify(list.filter((h) => h.id !== id)));
   },
 
   async updateHarvestPlanStatus(
@@ -730,7 +771,7 @@ export const offlineStorage = {
     if (item) {
       item.status = status;
       if (error !== undefined) item.error = error;
-      await AsyncStorage.setItem(PENDING_HARVEST_KEY, JSON.stringify(list));
+      await scopedSetItem(PENDING_HARVEST_KEY, JSON.stringify(list));
     }
   },
 
@@ -749,7 +790,7 @@ export const offlineStorage = {
         }
         return e;
       });
-      if (dirty) await AsyncStorage.setItem(PENDING_ENTRIES_KEY, JSON.stringify(entriesNext));
+      if (dirty) await scopedSetItem(PENDING_ENTRIES_KEY, JSON.stringify(entriesNext));
 
       const productsOwner = await productOwnerId();
       const products = await this.getPendingProducts(productsOwner);
@@ -772,7 +813,7 @@ export const offlineStorage = {
         }
         return c;
       });
-      if (dirty) await AsyncStorage.setItem(PENDING_COSTS_KEY, JSON.stringify(costsNext));
+      if (dirty) await scopedSetItem(PENDING_COSTS_KEY, JSON.stringify(costsNext));
 
       const certs = await this.getPendingCertificatePhotos();
       dirty = false;
@@ -783,7 +824,7 @@ export const offlineStorage = {
         }
         return c;
       });
-      if (dirty) await AsyncStorage.setItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(certsNext));
+      if (dirty) await scopedSetItem(PENDING_CERTIFICATE_PHOTOS_KEY, JSON.stringify(certsNext));
 
       const harvests = await this.getPendingHarvestPlans();
       dirty = false;
@@ -794,7 +835,7 @@ export const offlineStorage = {
         }
         return h;
       });
-      if (dirty) await AsyncStorage.setItem(PENDING_HARVEST_KEY, JSON.stringify(harvestsNext));
+      if (dirty) await scopedSetItem(PENDING_HARVEST_KEY, JSON.stringify(harvestsNext));
     } catch (e) {
       console.warn('[offlineStorage] resetStuckSyncingQueues:', e);
     }
@@ -843,22 +884,32 @@ export const offlineStorage = {
   },
 
   async savePendingPlantingEntry(row: Omit<PendingPlantingEntry, 'status'>): Promise<void> {
-    const raw = await AsyncStorage.getItem(PENDING_PLANTING_ENTRIES_KEY);
+    const raw = await scopedGetItem(PENDING_PLANTING_ENTRIES_KEY);
     const list: PendingPlantingEntry[] = raw ? JSON.parse(raw) : [];
     list.push({ ...row, status: 'pending' });
-    await AsyncStorage.setItem(PENDING_PLANTING_ENTRIES_KEY, JSON.stringify(list));
+    await scopedSetItem(PENDING_PLANTING_ENTRIES_KEY, JSON.stringify(list));
   },
 
   async getPendingPlantingEntries(): Promise<PendingPlantingEntry[]> {
-    const raw = await AsyncStorage.getItem(PENDING_PLANTING_ENTRIES_KEY);
+    const raw = await scopedGetItem(PENDING_PLANTING_ENTRIES_KEY);
     return raw ? JSON.parse(raw) : [];
   },
 
   async removePendingPlantingEntry(id: string): Promise<void> {
     const list = await this.getPendingPlantingEntries();
-    await AsyncStorage.setItem(
-      PENDING_PLANTING_ENTRIES_KEY,
-      JSON.stringify(list.filter((r) => r.id !== id)),
-    );
+    await scopedSetItem(PENDING_PLANTING_ENTRIES_KEY, JSON.stringify(list.filter((r) => r.id !== id)));
+  },
+
+  async updateEntryStatus(
+    id: string,
+    status: PendingFieldEntry['status'],
+    error?: string,
+  ): Promise<void> {
+    const entries = await this.getPendingEntries();
+    const entry = entries.find((e) => e.id === id);
+    if (!entry) return;
+    entry.status = status;
+    if (error) entry.error = error;
+    await scopedSetItem(PENDING_ENTRIES_KEY, JSON.stringify(entries));
   },
 };

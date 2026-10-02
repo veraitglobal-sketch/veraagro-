@@ -102,8 +102,9 @@ export default function Navigation() {
                     if (userRoles.includes('BUYER')) return '/buyer-portal';
                     if (userRoles.includes('LOGISTICS_PARTNER')) return '/logistics-partner/dashboard';
                     if (userRoles.includes('MATERIAL_SUPPLIER')) return '/supplier/dashboard';
-                    if (userRoles.includes('COORDINATOR')) return '/coordinator';
+                    if (userRoles.includes('SEED_PRODUCER')) return '/seed-producer';
                     if (userRoles.includes('SUPER_ADMIN') || userRoles.includes('ADMIN')) return '/admin';
+                    if (userRoles.includes('COORDINATOR')) return '/operations-center';
                     return loc('/');
                   };
                   
@@ -192,8 +193,9 @@ export default function Navigation() {
                     if (userRoles.includes('BUYER')) return '/buyer-portal';
                     if (userRoles.includes('LOGISTICS_PARTNER')) return '/logistics-partner/dashboard';
                     if (userRoles.includes('MATERIAL_SUPPLIER')) return '/supplier/dashboard';
-                    if (userRoles.includes('COORDINATOR')) return '/coordinator';
+                    if (userRoles.includes('SEED_PRODUCER')) return '/seed-producer';
                     if (userRoles.includes('SUPER_ADMIN') || userRoles.includes('ADMIN')) return '/admin';
+                    if (userRoles.includes('COORDINATOR')) return '/operations-center';
                     return loc('/');
                   };
                   

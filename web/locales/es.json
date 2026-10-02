@@ -1187,6 +1187,8 @@
       "emptyBatchLinkCompliance": "Fotos de cumplimiento",
       "headerDescSuccess": "Your request was sent. You can follow the Viaje in Misión tracker.",
       "headerDescForm": "Pick a ready Lote de producción and Finca pickup. Prerequisites: calidad entry and conformidad complete for the Lote. Operations assigns the transportista and sets Entrega — you do not see the comprador destination.",
+      "headerDescOrderLinked": "Solicite recogida para un pedido de catálogo empaquetado — el lote está preseleccionado desde su registro de empaquetado.",
+      "orderLinkedBanner": "Esta solicitud de transporte está vinculada a un pedido del comprador. Use el lote registrado al empaquetar.",
       "successTitle": "Transporte request received",
       "successBody": "Your request is queued for dispatch. Operations assigns cold-chain logistics in the admin panel; you can track pickup and Entrega as soon as a transportista is assigned.",
       "successRedirect": "Redirigiendo a <0>Mission tracker</0>…",
@@ -2375,6 +2377,18 @@
       "emptyCtaResetFilters": "Restablecer filtros"
     }
   },
+  "internalDemo": {
+    "fleetEmptyTitle": "Panel de flota aún no conectado",
+    "fleetEmptyBody": "Las misiones locales y ganancias aparecerán aquí cuando el enrutamiento del hub esté activo. Use el portal de socios logísticos para transporte activo.",
+    "fleetCtaLogistics": "Abrir portal de socios logísticos",
+    "hubEmptyTitle": "Operaciones de hub no disponibles",
+    "hubEmptyBody": "Cross-docking e inventario del hub no están conectados a datos en vivo en este entorno.",
+    "hubCtaLogistics": "Abrir portal de socios logísticos",
+    "opsEmptyTitle": "Centro de operaciones — vista previa",
+    "opsEmptyBody": "Las vistas globales de SKU, distribuidores y ledger no están conectadas a datos de producción.",
+    "opsCtaAdmin": "Panel de administración",
+    "opsCtaLogistics": "Portal de socios logísticos"
+  },
   "internalShell": {
     "titles": {
       "fleetDashboard": "Panel de control de socios de flota",
@@ -3260,7 +3274,15 @@
     "packingRecord": "Registrar empaque",
     "packingEdit": "Corregir empaque",
     "packingQualityLink": "Control de calidad",
-    "packingAwaitingPickup": "Empacado: pendiente de recogida."
+    "packingAwaitingPickup": "Empacado: pendiente de recogida.",
+    "packingSelectLot": "Lote empaquetado para este pedido *",
+    "packingSelectLotPlaceholder": "— Seleccionar lote —",
+    "packingSelectLotRequired": "Elija el lote que empaquetó para este pedido.",
+    "packingLoadingLots": "Cargando lotes listos…",
+    "packingNoLots": "Aún no hay lotes listos. Complete primero la entrada de calidad:",
+    "packingNoLotsLink": "Calidad y lotes",
+    "selectLotMessage": "El empaquetado está registrado — vincule el lote antes de solicitar la recogida.",
+    "selectLotLink": "Calidad y lotes"
   },
   "supplier": {
     "nav": {

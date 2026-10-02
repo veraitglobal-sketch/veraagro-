@@ -129,6 +129,14 @@ export class OrdersController {
     return this.ordersService.recordGrowerPacking(req.user.id, id, body);
   }
 
+  /** Lots on the fulfilling farm that are ready for packing / transport for this order. */
+  @Get('grower/:id/compatible-batches')
+  @UseGuards(RolesGuard)
+  @Roles('GROWER', 'FARMER')
+  async compatibleBatches(@Param('id') id: string, @Request() req: any) {
+    return this.ordersService.listCompatibleBatches(req.user.id, id);
+  }
+
   @Get('checkout/:requestId')
   findByCheckout(@Param('requestId') requestId: string, @Request() req: any) {
     return this.ordersService.findByCheckoutRequest(requestId, req.user.id);

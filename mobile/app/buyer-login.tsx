@@ -57,10 +57,6 @@ export default function BuyerLoginScreen() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    Alert.alert(t('info'), t('buyerLogin.googleComingSoon'));
-  };
-
   const handleGuestAccess = () => {
     router.replace('/(buyer)/shop');
   };
@@ -209,30 +205,6 @@ export default function BuyerLoginScreen() {
         </Text>
         <View style={{ flex: 1, height: 0.5, backgroundColor: 'rgba(0, 0, 0, 0.1)' }} />
       </View>
-
-      {/* Google Login */}
-      <TouchableOpacity
-        onPress={handleGoogleLogin}
-        style={{
-          backgroundColor: theme.colors.surface,
-          borderWidth: 0.5,
-          borderColor: 'rgba(0, 0, 0, 0.1)',
-          paddingVertical: theme.spacing.md,
-          paddingHorizontal: theme.spacing.lg,
-          borderRadius: theme.borderRadius.md,
-          alignItems: 'center',
-          marginBottom: theme.spacing.md,
-        }}
-      >
-        <Text style={{
-          fontSize: 14,
-          fontWeight: '400',
-          color: theme.colors.text.primary,
-          letterSpacing: 0.5,
-        }}>
-          {t('buyerLogin.googleLogin')}
-        </Text>
-      </TouchableOpacity>
 
       {/* Guest Access */}
       <TouchableOpacity

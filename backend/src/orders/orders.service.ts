@@ -19,6 +19,8 @@ import { InvoicesService } from '../invoices/invoices.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { resolveOrderPrice } from './order-pricing';
 import { enrichOrdersWithCatalogReserve } from './order-catalog-enrich';
+import { assertBatchFitsOrder, listCompatibleBatchesForOrder } from './order-batch-link';
+import { isFullyPacked } from '../../../shared/validation/order-packing';
 
 /** Statuses in which a grower may record packing (matches GET /orders/grower?queue=prepare). */
 export const GROWER_PACKABLE_ORDER_STATUSES: OrderStatus[] = ['PAID', 'CONFIRMED'];
@@ -31,6 +33,31 @@ function orderPackLine(order: {
 }): string {
   if (order.packCount && order.packLabel) return `${order.packCount} × ${order.packLabel}`;
   return '';
+}
+
+/** Grower-safe payment summary — no buyer payment records or invoice details. */
+export function growerPaymentSummaryFromOrder(order: {
+  status: OrderStatus;
+}): 'AWAITING_PAYMENT' | 'PAID_IN_ESCROW' | 'SETTLED' | 'REFUNDED' | 'CANCELLED' | 'UNKNOWN' {
+  switch (order.status) {
+    case 'PENDING':
+    case 'APPROVED':
+      return 'AWAITING_PAYMENT';
+    case 'PAID':
+    case 'CONFIRMED':
+    case 'PICKED_UP':
+    case 'IN_TRANSIT':
+      return 'PAID_IN_ESCROW';
+    case 'DELIVERED':
+    case 'COMPLETED':
+      return 'SETTLED';
+    case 'REFUNDED':
+      return 'REFUNDED';
+    case 'CANCELLED':
+      return 'CANCELLED';
+    default:
+      return 'UNKNOWN';
+  }
 }
 
 @Injectable()
@@ -420,9 +447,13 @@ export class OrdersService {
         packedPackCount: true,
         packedKg: true,
         packedAt: true,
+        packedBatchId: true,
         catalogProductId: true,
         catalogProduct: { select: { id: true, name: true } },
         fulfilling_estate: { select: { id: true, name: true } },
+        packed_batch: {
+          select: { id: true, batchId: true, productName: true, status: true },
+        },
         deliveries: { select: { id: true, status: true, deliveryNumber: true } },
         missions: {
           where: { status: { not: 'CANCELLED' } },
@@ -436,10 +467,15 @@ export class OrdersService {
       const packLine = orderPackLine(row);
       const requiredPacks = row.packCount ?? 0;
       const packedPacks = row.packedPackCount ?? 0;
-      let nextAction: 'PREPARE_AND_PACK' | 'REQUEST_PICKUP' | 'AWAITING_PICKUP' | 'IN_FULFILLMENT' =
-        'IN_FULFILLMENT';
+      let nextAction:
+        | 'PREPARE_AND_PACK'
+        | 'SELECT_LOT'
+        | 'REQUEST_PICKUP'
+        | 'AWAITING_PICKUP'
+        | 'IN_FULFILLMENT' = 'IN_FULFILLMENT';
       if (prepareQueue || row.catalogProductId) {
         if (requiredPacks > 0 && packedPacks < requiredPacks) nextAction = 'PREPARE_AND_PACK';
+        else if (!row.packedBatchId) nextAction = 'SELECT_LOT';
         else if (!row.missions?.length) nextAction = 'REQUEST_PICKUP';
         else nextAction = 'AWAITING_PICKUP';
       }
@@ -455,10 +491,14 @@ export class OrdersService {
     });
   }
 
+  async listCompatibleBatches(growerId: string, orderId: string) {
+    return listCompatibleBatchesForOrder(this.prisma, growerId, orderId);
+  }
+
   async recordGrowerPacking(
     growerId: string,
     orderId: string,
-    body: { packedPackCount: number; packedKg?: number },
+    body: { packedPackCount: number; packedKg?: number; batchId?: string },
   ) {
     const packedPackCount = Math.floor(Number(body.packedPackCount));
     if (!Number.isFinite(packedPackCount) || packedPackCount < 1) {
@@ -473,6 +513,7 @@ export class OrdersService {
         },
       },
     });
+    // Explicit fields used below (findFirst returns full row)
     if (!order) throw new NotFoundException('Order not found');
     if (!order.catalogProductId) {
       throw new BadRequestException('Packing records apply to catalogue orders only');
@@ -509,30 +550,66 @@ export class OrdersService {
         );
       }
     }
-    const wasPacked = Boolean(order.packedAt);
+    let packedBatchId = order.packedBatchId;
+    if (body.batchId?.trim()) {
+      const batch = await assertBatchFitsOrder(this.prisma, growerId, {
+        orderId: order.id,
+        fulfillingEstateId: order.fulfillingEstateId!,
+        catalogProductId: order.catalogProductId,
+        productName: order.productName,
+      }, body.batchId.trim());
+      packedBatchId = batch.id;
+    } else if (!packedBatchId && order.catalogProductId) {
+      throw new BadRequestException(
+        'Select the lot (batch) you packed for this order. Create a lot and complete quality entry first if needed.',
+      );
+    }
+
+    const priorSnapshot = {
+      status: order.status,
+      packedPackCount: order.packedPackCount ?? 0,
+      packCount: order.packCount,
+    };
+    const wasFullyPacked = isFullyPacked(priorSnapshot);
+
     const updated = await this.prisma.orders.update({
       where: { id: orderId },
       data: {
         packedPackCount,
         packedKg: packedKg ?? undefined,
         packedAt: order.packedAt ?? new Date(),
+        packedBatchId: packedBatchId ?? undefined,
         updatedAt: new Date(),
       },
     });
-    if (!wasPacked && order.buyerId) {
-      try {
-        await this.notificationsService.createLocalized({
-          userId: order.buyerId,
-          type: 'SYSTEM',
-          templateKey: 'buyer.orderPacked',
-          templateParams: {
-            orderNumber: order.orderNumber,
-            packLine: orderPackLine(order) || `${order.quantity} ${order.unit}`,
-          },
-          actionUrl: `/buyer-portal/orders`,
-        });
-      } catch (e) {
-        this.logger.warn(`buyer.orderPacked notify failed: ${e instanceof Error ? e.message : e}`);
+
+    const nowFullyPacked = isFullyPacked(updated);
+    if (!wasFullyPacked && nowFullyPacked && order.buyerId && !order.buyerPackedNotifiedAt) {
+      const claimed = await this.prisma.orders.updateMany({
+        where: { id: orderId, buyerPackedNotifiedAt: null },
+        data: { buyerPackedNotifiedAt: new Date() },
+      });
+      if (claimed.count === 1) {
+        try {
+          await this.notificationsService.createLocalized({
+            userId: order.buyerId,
+            type: 'SYSTEM',
+            templateKey: 'buyer.orderPacked',
+            templateParams: {
+              orderNumber: order.orderNumber,
+              packLine:
+                orderPackLine(updated) ||
+                `${updated.packedPackCount ?? packedPackCount} × ${order.packLabel ?? order.unit}`,
+            },
+            actionUrl: `/buyer-portal/orders`,
+          });
+        } catch (e) {
+          await this.prisma.orders.update({
+            where: { id: orderId },
+            data: { buyerPackedNotifiedAt: null },
+          });
+          this.logger.warn(`buyer.orderPacked notify failed: ${e instanceof Error ? e.message : e}`);
+        }
       }
     }
     return updated;
@@ -836,7 +913,13 @@ export class OrdersService {
     if (isGrowerOwner && order.buyerId !== userId) {
       // Growers see fulfilment data, not the buyer's payment/invoice records.
       const { payments: _p, invoices: _i, ratings: _r, ...rest } = order;
-      return { ...rest, payments: [], invoices: [], ratings: [] };
+      return {
+        ...rest,
+        payments: [],
+        invoices: [],
+        ratings: [],
+        growerPaymentSummary: growerPaymentSummaryFromOrder(order),
+      };
     }
 
     const shipmentTracking = await this.buildBuyerShipmentTracking(order.id, order.createdAt);

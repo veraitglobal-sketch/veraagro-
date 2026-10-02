@@ -360,15 +360,7 @@ export const syncService = {
    */
   async updateEntryStatus(id: string, status: PendingFieldEntry['status'], error?: string): Promise<void> {
     try {
-      const entries = await offlineStorage.getPendingEntries();
-      const entry = entries.find(e => e.id === id);
-      if (entry) {
-        entry.status = status;
-        if (error) {
-          entry.error = error;
-        }
-        await AsyncStorage.setItem('pending_field_entries', JSON.stringify(entries));
-      }
+      await offlineStorage.updateEntryStatus(id, status, error);
     } catch (error) {
       console.error('Error updating entry status:', error);
     }

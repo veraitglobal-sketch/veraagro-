@@ -176,6 +176,14 @@ export interface GrowthLog {
 
 
 
+export type GrowerPaymentSummary =
+  | 'AWAITING_PAYMENT'
+  | 'PAID_IN_ESCROW'
+  | 'SETTLED'
+  | 'REFUNDED'
+  | 'CANCELLED'
+  | 'UNKNOWN';
+
 export interface Order {
   deliveries?: {
     id: string;
@@ -199,6 +207,8 @@ export interface Order {
   unitPrice: number;
   totalAmount: number;
   status: string;
+  /** Grower-safe payment summary from GET /orders/grower — no buyer payment records. */
+  growerPaymentSummary?: GrowerPaymentSummary;
   deliveryAddress: any;
   deliveryNotes?: string;
   packLabel?: string | null;
@@ -209,7 +219,9 @@ export interface Order {
   packedPackCount?: number | null;
   packedKg?: number | null;
   packedAt?: string | null;
-  nextAction?: 'PREPARE_AND_PACK' | 'REQUEST_PICKUP' | 'AWAITING_PICKUP' | 'IN_FULFILLMENT';
+  nextAction?: 'PREPARE_AND_PACK' | 'SELECT_LOT' | 'REQUEST_PICKUP' | 'AWAITING_PICKUP' | 'IN_FULFILLMENT';
+  packedBatchId?: string | null;
+  packed_batch?: { id: string; batchId: string; productName: string; status: string } | null;
   deliveryCity?: string;
   missions?: Array<{ id: string; status: string; missionNumber: string }>;
   rejectionReason?: string | null;

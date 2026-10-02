@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTranslation, Trans } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import SidebarLayout from '@/components/SidebarLayout';
@@ -50,6 +51,9 @@ const inputFocus = 'focus:ring-2 focus:ring-[#2D5A27]/50 focus:border-[#2D5A27]'
 
 export default function CreateMissionPage() {
   const { t } = useTranslation();
+  const searchParams = useSearchParams();
+  const orderIdFromUrl = searchParams.get('orderId')?.trim() || '';
+  const batchIdFromUrl = searchParams.get('batchId')?.trim() || '';
   const growerHref = useGrowerHref();
   const navItems = useGrowerNavItems();
   const [batchesLoading, setBatchesLoading] = useState(true);
@@ -80,9 +84,40 @@ export default function CreateMissionPage() {
   }>({ coordFrom: 'none', addressFrom: 'none' });
   const [addressMissingHouseNo, setAddressMissingHouseNo] = useState(false);
 
+  const loadBatches = useCallback(async () => {
+    try {
+      setBatchLoadError(null);
+      setBatchesLoading(true);
+      const allBatches = await batchesAPI.getMyBatches();
+      let readyBatches = allBatches.filter(
+        (b: { status?: string }) => b.status === 'PACKED' || b.status === 'QUALITY_VERIFIED',
+      );
+      if (orderIdFromUrl && batchIdFromUrl) {
+        readyBatches = readyBatches.filter(
+          (b: { id?: string; batchId?: string }) => b.id === batchIdFromUrl || b.batchId === batchIdFromUrl,
+        );
+      }
+      setBatches(readyBatches);
+      if (batchIdFromUrl && readyBatches.length === 1) {
+        setFormData((prev) => ({ ...prev, batchId: readyBatches[0].id }));
+      }
+    } catch (error: unknown) {
+      console.error('Error loading batches:', error);
+      setBatchLoadError(growerApiErrorOrT(error, t, 'grower.missionCreate.errLoadBatches'));
+      setBatches([]);
+    } finally {
+      setBatchesLoading(false);
+    }
+  }, [batchIdFromUrl, orderIdFromUrl, t]);
+
   useEffect(() => {
     void loadBatches();
-  }, []);
+  }, [loadBatches]);
+
+  useEffect(() => {
+    if (!batchIdFromUrl) return;
+    setFormData((prev) => ({ ...prev, batchId: batchIdFromUrl }));
+  }, [batchIdFromUrl]);
 
   useEffect(() => {
     setFormData((prev) => {
@@ -125,24 +160,6 @@ export default function CreateMissionPage() {
       cancelled = true;
     };
   }, [formData.batchId]);
-
-  const loadBatches = async () => {
-    try {
-      setBatchLoadError(null);
-      setBatchesLoading(true);
-      const allBatches = await batchesAPI.getMyBatches();
-      const readyBatches = allBatches.filter(
-        (b: { status?: string }) => b.status === 'PACKED' || b.status === 'QUALITY_VERIFIED'
-      );
-      setBatches(readyBatches);
-    } catch (error: unknown) {
-      console.error('Error loading batches:', error);
-      setBatchLoadError(growerApiErrorOrT(error, t, 'grower.missionCreate.errLoadBatches'));
-      setBatches([]);
-    } finally {
-      setBatchesLoading(false);
-    }
-  };
 
   const getCurrentLocation = () => {
     if (typeof window === 'undefined' || !navigator.geolocation) {
@@ -278,6 +295,7 @@ export default function CreateMissionPage() {
 
       const missionData = {
         batchId: formData.batchId || undefined,
+        ...(orderIdFromUrl ? { orderId: orderIdFromUrl } : {}),
         pickupLocation: {
           lat: parseFloat(formData.pickupLat),
           lng: parseFloat(formData.pickupLng),
@@ -351,8 +369,17 @@ export default function CreateMissionPage() {
       <GrowerPageShell className="space-y-6">
         <GrowerPageHeader
           title={t('growerPages.requestTransport')}
-          description={t('grower.missionCreate.headerDescForm')}
+          description={
+            orderIdFromUrl
+              ? t('grower.missionCreate.headerDescOrderLinked')
+              : t('grower.missionCreate.headerDescForm')
+          }
         />
+        {orderIdFromUrl && (
+          <div className="rounded-lg border border-[#2D5A27]/25 bg-[#f7faf6] px-4 py-3 text-sm text-gray-800">
+            {t('grower.missionCreate.orderLinkedBanner')}
+          </div>
+        )}
         {batchLoadError && (
           <div
             className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-base text-amber-950"

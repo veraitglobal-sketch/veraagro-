@@ -1187,6 +1187,8 @@
       "emptyBatchLinkCompliance": "Fotografii conformitate",
       "headerDescSuccess": "Your request was sent. You can follow the Cursă in Misiune tracker.",
       "headerDescForm": "Pick a ready Lot de producție and Fermă pickup. Prerequisites: calitate entry and conformitate complete for the Lot. Operations assigns the transportator and sets Livrare — you do not see the cumpărător destination.",
+      "headerDescOrderLinked": "Solicitați ridicarea pentru o comandă de catalog ambalată — lotul este preselectat din înregistrarea ambalării.",
+      "orderLinkedBanner": "Această cerere de transport este legată de o comandă cumpărător. Folosiți lotul înregistrat la ambalare.",
       "successTitle": "Transport request primit",
       "successBody": "Your request is queued for dispatch. Operations assigns cold-chain logistics in the admin panel; you can track pickup and Predare as soon as a transportator is assigned.",
       "successRedirect": "Redirecting to <0>Misie tracker</0>…",
@@ -2375,6 +2377,18 @@
       "emptyCtaResetFilters": "Reset filters"
     }
   },
+  "internalDemo": {
+    "fleetEmptyTitle": "Panoul flotei nu este încă conectat",
+    "fleetEmptyBody": "Misiunile locale și câștigurile vor apărea aici când rutarea hub este activă. Folosiți portalul partener logistic pentru transport activ.",
+    "fleetCtaLogistics": "Deschide portalul partener logistic",
+    "hubEmptyTitle": "Operațiuni hub indisponibile",
+    "hubEmptyBody": "Cross-docking și inventarul hub nu sunt conectate la date live în acest mediu.",
+    "hubCtaLogistics": "Deschide portalul partener logistic",
+    "opsEmptyTitle": "Centrul de operațiuni — previzualizare",
+    "opsEmptyBody": "Vizualizările globale SKU, distribuitori și ledger nu sunt conectate la datele de producție.",
+    "opsCtaAdmin": "Panou admin",
+    "opsCtaLogistics": "Portal partener logistic"
+  },
   "internalShell": {
     "titles": {
       "fleetDashboard": "Tabloul de bord partener al flotei",
@@ -3260,7 +3274,15 @@
     "packingRecord": "Înregistrează ambalarea",
     "packingEdit": "Corectează ambalarea",
     "packingQualityLink": "Control de calitate",
-    "packingAwaitingPickup": "Ambalat — în așteptarea ridicării."
+    "packingAwaitingPickup": "Ambalat — în așteptarea ridicării.",
+    "packingSelectLot": "Lot ambalat pentru această comandă *",
+    "packingSelectLotPlaceholder": "— Selectați lotul —",
+    "packingSelectLotRequired": "Alegeți lotul pe care l-ați ambalat pentru această comandă.",
+    "packingLoadingLots": "Se încarcă loturile pregătite…",
+    "packingNoLots": "Nu există loturi pregătite. Finalizați mai întâi intrarea de calitate:",
+    "packingNoLotsLink": "Calitate și loturi",
+    "selectLotMessage": "Ambalarea este înregistrată — legați lotul înainte de a solicita ridicarea.",
+    "selectLotLink": "Calitate și loturi"
   },
   "supplier": {
     "nav": {

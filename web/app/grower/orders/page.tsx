@@ -18,6 +18,16 @@ import {
 } from '@biovera/shared/validation/order-packing';
 import { growerApiErrorOrT } from '@/lib/grower-api-error';
 
+type CompatibleBatch = {
+  id: string;
+  batchId: string;
+  productName: string;
+  quantity: number;
+  unit: string;
+  status: string;
+  selected?: boolean;
+};
+
 type GrowerOrderRow = {
   id: string;
   orderNumber: string;
@@ -34,6 +44,8 @@ type GrowerOrderRow = {
   packedPackCount?: number | null;
   packedKg?: number | null;
   packedAt?: string | null;
+  packedBatchId?: string | null;
+  packed_batch?: { id: string; batchId: string } | null;
   packCount?: number | null;
   createdAt: string;
   missions?: Array<{ id: string; status: string; missionNumber: string }>;
@@ -55,12 +67,37 @@ function PackingForm({
 }) {
   const { t } = useTranslation();
   const [packs, setPacks] = useState<string>(String(order.packedPackCount ?? order.packCount ?? 1));
+  const [batchId, setBatchId] = useState<string>(order.packedBatchId ?? '');
+  const [lots, setLots] = useState<CompatibleBatch[]>([]);
+  const [lotsLoading, setLotsLoading] = useState(true);
   const packsNum = Number(packs);
   const expected = expectedPackedKg(order, packsNum);
   const [kg, setKg] = useState<string>(order.packedKg != null ? String(order.packedKg) : '');
   const [kgTouched, setKgTouched] = useState(order.packedKg != null);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      setLotsLoading(true);
+      try {
+        const data = await ordersAPI.getCompatibleBatches(order.id);
+        if (cancelled) return;
+        const rows = Array.isArray(data) ? (data as CompatibleBatch[]) : [];
+        setLots(rows);
+        const pre = order.packedBatchId ?? rows.find((b) => b.selected)?.id ?? rows[0]?.id ?? '';
+        setBatchId(pre);
+      } catch {
+        if (!cancelled) setLots([]);
+      } finally {
+        if (!cancelled) setLotsLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [order.id, order.packedBatchId]);
 
   // Until the grower types a weight, it follows packs × pack size.
   const shownKg = kgTouched ? kg : expected != null ? String(expected) : kg;
@@ -80,13 +117,16 @@ function PackingForm({
             ? t('growerPages.packingErrWeight', { min: nf.format(range.min), max: nf.format(range.max) })
             : null;
 
+  const lotMissing = !batchId.trim();
+
   const save = async () => {
-    if (problem) return;
+    if (problem || lotMissing) return;
     setSaving(true);
     setErr(null);
     try {
       await ordersAPI.recordPacking(order.id, {
         packedPackCount: packsNum,
+        batchId: batchId.trim(),
         ...(kgNum != null ? { packedKg: kgNum } : {}),
       });
       onSaved();
@@ -99,6 +139,36 @@ function PackingForm({
 
   return (
     <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-4">
+      <label className="block text-sm font-medium text-gray-900">
+        {t('growerPages.packingSelectLot')}
+        <select
+          value={batchId}
+          onChange={(e) => setBatchId(e.target.value)}
+          disabled={lotsLoading || lots.length === 0}
+          className={`${inputClass} mt-1`}
+          required
+        >
+          <option value="">{t('growerPages.packingSelectLotPlaceholder')}</option>
+          {lots.map((b) => (
+            <option key={b.id} value={b.id}>
+              {b.batchId} — {b.productName} ({nf.format(b.quantity)} {b.unit})
+            </option>
+          ))}
+        </select>
+        {lotsLoading ? (
+          <span className="mt-1 block text-xs font-light text-gray-500">{t('growerPages.packingLoadingLots')}</span>
+        ) : lots.length === 0 ? (
+          <span className="mt-1 block text-xs text-amber-800">
+            {t('growerPages.packingNoLots')}{' '}
+            <Link href="/grower/quality-entry" className="font-medium text-[#2D5A27] underline">
+              {t('growerPages.packingNoLotsLink')}
+            </Link>
+          </span>
+        ) : null}
+        {lotMissing && !lotsLoading && lots.length > 0 && (
+          <span className="mt-1 block text-xs text-red-700">{t('growerPages.packingSelectLotRequired')}</span>
+        )}
+      </label>
       <div className="grid gap-4 sm:grid-cols-3">
         <label className="block text-sm font-medium text-gray-900">
           {t('growerPages.packingPacks')}
@@ -150,7 +220,7 @@ function PackingForm({
         <button
           type="button"
           onClick={() => void save()}
-          disabled={saving || !!problem}
+          disabled={saving || !!problem || lotMissing || lots.length === 0}
           className="inline-flex min-h-[44px] items-center rounded-lg bg-[#2D5A27] px-4 text-sm font-medium text-white hover:bg-[#23471f] disabled:opacity-50"
         >
           {saving ? t('growerPages.packingSaving') : t('growerPages.packingSave')}
@@ -284,9 +354,20 @@ export default function GrowerOrdersPage() {
                             {t('growerPages.packingQualityLink')}
                           </Link>
                         )}
+                        {o.nextAction === 'SELECT_LOT' && (
+                          <div className="space-y-2">
+                            <p className="text-sm text-amber-800">{t('growerPages.selectLotMessage')}</p>
+                            <Link
+                              href="/grower/quality-entry"
+                              className="inline-flex min-h-[44px] items-center rounded-lg border border-[#2D5A27] px-4 text-sm font-medium text-[#2D5A27] hover:bg-[#2D5A27]/5"
+                            >
+                              {t('growerPages.selectLotLink')}
+                            </Link>
+                          </div>
+                        )}
                         {o.nextAction === 'REQUEST_PICKUP' && (
                           <Link
-                            href="/grower/missions/create"
+                            href={`/grower/missions/create?orderId=${encodeURIComponent(o.id)}&batchId=${encodeURIComponent(o.packedBatchId ?? o.packed_batch?.id ?? '')}`}
                             className="inline-flex min-h-[44px] items-center rounded-lg bg-[#2D5A27] px-4 text-sm font-medium text-white hover:bg-[#23471f]"
                           >
                             {t('growerPages.requestPickup')}

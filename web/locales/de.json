@@ -1187,6 +1187,8 @@
       "emptyBatchLinkCompliance": "Compliance-Fotos",
       "headerDescSuccess": "Your request was sent. You can follow the Lauf in Mission Tracker.",
       "headerDescForm": "Pick a ready Charge and Betrieb pickup. Prerequisites: Qualität entry and Konformität complete for the Los. Operations assigns the Spediteur and sets Lieferung — you do not see the Käufer destination.",
+      "headerDescOrderLinked": "Abholung für eine verpackte Katalogbestellung anfordern — das Los ist aus Ihrer Verpackungserfassung vorausgewählt.",
+      "orderLinkedBanner": "Diese Transportanfrage ist mit einer Käuferbestellung verknüpft. Verwenden Sie das Los aus der Verpackungserfassung.",
       "successTitle": "Transport request empfangen",
       "successBody": "Your request is queued for dispatch. Operations assigns cold-chain logistics in the admin panel; you can track pickup and Übergabe as soon as a Spediteur is Zugewiesen.",
       "successRedirect": "Redirecting to <0>Mission Tracker</0>…",
@@ -2375,6 +2377,18 @@
       "emptyCtaResetFilters": "Filter zurücksetzen"
     }
   },
+  "internalDemo": {
+    "fleetEmptyTitle": "Flotten-Dashboard noch nicht verbunden",
+    "fleetEmptyBody": "Live-Missionen und Einnahmen erscheinen hier, wenn Hub-Routing aktiviert ist. Nutzen Sie das Logistikpartner-Portal für aktiven Transport.",
+    "fleetCtaLogistics": "Logistikpartner-Portal öffnen",
+    "hubEmptyTitle": "Hub-Betrieb nicht verfügbar",
+    "hubEmptyBody": "Cross-Docking und Hub-Inventar sind in dieser Umgebung nicht mit Live-Daten verbunden.",
+    "hubCtaLogistics": "Logistikpartner-Portal öffnen",
+    "opsEmptyTitle": "Operations Center — Vorschau",
+    "opsEmptyBody": "Globale SKU-, Distributor- und Ledger-Ansichten sind nicht mit Produktionsdaten verbunden.",
+    "opsCtaAdmin": "Admin-Panel",
+    "opsCtaLogistics": "Logistikpartner-Portal"
+  },
   "internalShell": {
     "titles": {
       "fleetDashboard": "Dashboard für Flottenpartner",
@@ -3260,7 +3274,15 @@
     "packingRecord": "Verpackung erfassen",
     "packingEdit": "Verpackung korrigieren",
     "packingQualityLink": "Qualitätsprüfung",
-    "packingAwaitingPickup": "Verpackt — wartet auf Abholung."
+    "packingAwaitingPickup": "Verpackt — wartet auf Abholung.",
+    "packingSelectLot": "Für diese Bestellung verpacktes Los *",
+    "packingSelectLotPlaceholder": "— Los wählen —",
+    "packingSelectLotRequired": "Wählen Sie das Los, das Sie für diese Bestellung verpackt haben.",
+    "packingLoadingLots": "Bereite Lose werden geladen…",
+    "packingNoLots": "Noch keine bereiten Lose. Zuerst Qualitätseintrag abschließen:",
+    "packingNoLotsLink": "Qualität & Lose",
+    "selectLotMessage": "Verpackung ist erfasst — verknüpfen Sie das Los, bevor Sie die Abholung anfordern.",
+    "selectLotLink": "Qualität & Lose"
   },
   "supplier": {
     "nav": {

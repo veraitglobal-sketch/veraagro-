@@ -1328,6 +1328,14 @@
       "paid": "Paid",
       "pending": "Pending",
       "paymentStatus": "Payment status",
+      "growerPaymentSummary": {
+        "awaiting_payment": "Awaiting payment",
+        "paid_in_escrow": "Paid — held in escrow",
+        "settled": "Settled",
+        "refunded": "Refunded",
+        "cancelled": "Cancelled",
+        "unknown": "Unknown"
+      },
       "statusPending": "Pending",
       "statusConfirmed": "Confirmed",
       "statusPreparing": "Preparing",
@@ -2109,6 +2117,8 @@
       "historyToggleShort": "Saved entries ({{count}})",
       "historyTitle": "Field diary ({{count}})",
       "historySubtitle": "Saved entries from the server",
+      "historySyncError": "Could not refresh server history",
+      "historySyncErrorTitle": "Server history unavailable",
       "newEntry": "New entry",
       "historyDetailTitle": "Entry details",
       "historyBags": "Seed bags",
@@ -2304,7 +2314,12 @@
       "requestPickup": "Request pickup",
       "tabPrepare": "To prepare",
       "tabAll": "All orders",
-      "empty": "No orders awaiting preparation."
+      "empty": "No orders awaiting preparation.",
+      "selectLot": "Lot packed for this order *",
+      "selectLotRequired": "Choose the lot you packed for this order.",
+      "noLots": "No ready lots. Complete quality entry first.",
+      "selectLotMessage": "Packing is recorded — link the lot before requesting pickup.",
+      "selectLotLink": "Quality entry & lots"
     }
   },
   "buyer": {

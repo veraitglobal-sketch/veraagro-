@@ -205,6 +205,13 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
             />
           }
         >
+          {data.historySyncError ? (
+            <EnterpriseNotice
+              title={t('producer.fieldLogForm.historySyncErrorTitle')}
+              body={data.historySyncError}
+            />
+          ) : null}
+
           {historyOnly && !showNewEntry ? (
             <FieldLogHistoryPanel
               items={data.localHistory}
