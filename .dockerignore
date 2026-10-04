@@ -1,0 +1,13 @@
+**/.git
+**/.env
+**/.env.*
+**/node_modules
+**/dist
+**/coverage
+**/.DS_Store
+mobile
+web
+docs
+blockchain
+*.md
+!backend/README.md

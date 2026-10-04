@@ -1,10 +1,11 @@
+# Build context MUST be the monorepo root (veraagrar/), not backend/ alone.
+# Railway: Root Directory = empty; Dockerfile path = backend/Dockerfile
+# CLI: cd veraagrar && railway up
+
 FROM node:20-slim
 
-WORKDIR /app
+WORKDIR /repo
 
-# Install OpenSSL 3.0 for Prisma compatibility
-# Debian Bookworm (12) uses OpenSSL 3.0
-# Prisma binaryTargets configured for OpenSSL 3.0.x
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         openssl \
@@ -12,27 +13,20 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
-# Copy package files
-COPY package*.json ./
-COPY prisma ./prisma/
+# backend/src imports ../../../shared — shared must sit beside backend in /repo
+COPY shared ./shared
 
-# Install dependencies
-RUN npm ci --only=production=false
+COPY backend/package*.json ./backend/
+COPY backend/prisma ./backend/prisma/
 
-# Generate Prisma Client
-RUN npx prisma generate
+WORKDIR /repo/backend
 
-# Copy source code
-COPY . .
+RUN npm ci --only=production=false && npx prisma generate
 
-# Copy public assets (images for PDF generation)
-COPY public ./public
+COPY backend/ ./
 
-# Build the application
 RUN npm run build
 
-# Expose port
 EXPOSE 3000
 
-# Must match `startCommand` in railway.json: migrate then Nest (avoid schema drift in prod)
 CMD ["npm", "run", "start:release"]
