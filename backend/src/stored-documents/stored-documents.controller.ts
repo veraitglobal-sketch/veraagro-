@@ -1,4 +1,5 @@
-import { Controller, Get, NotFoundException, Param, Res } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param, Res, Request, UseGuards } from '@nestjs/common';
+import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
 import type { Response } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -9,9 +10,11 @@ export class StoredDocumentsController {
   constructor(private readonly documents: StoredDocumentsService) {}
 
   @Get('documents/:id')
-  async serve(@Param('id') id: string, @Res() res: Response) {
+  @UseGuards(OptionalJwtAuthGuard)
+  async serve(@Param('id') id: string, @Res() res: Response, @Request() req: { user?: { id: string; roles: string[] } }) {
     try {
-      const doc = await this.documents.get(id);
+      const doc = await this.documents.get(id, req.user);
+      res.setHeader('Cache-Control', 'private, no-store');
       res.setHeader('Content-Type', doc.mimeType);
       if (doc.fileName) {
         res.setHeader('Content-Disposition', `inline; filename="${doc.fileName.replace(/"/g, '')}"`);

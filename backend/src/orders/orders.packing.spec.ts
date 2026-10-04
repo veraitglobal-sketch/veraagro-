@@ -36,6 +36,11 @@ describe('Grower order packing', () => {
         update: jest.fn().mockImplementation(({ data }) => Promise.resolve({ ...row, ...data })),
         updateMany: jest.fn().mockResolvedValue({ count: 1 }),
       },
+      batches: {
+        findUniqueOrThrow: jest.fn().mockResolvedValue({ id: 'batch-internal', actualPackDate: null, passportProductSnapshot: null }),
+        update: jest.fn().mockResolvedValue({ id: 'batch-internal' }),
+      },
+      catalog_products: { findUnique: jest.fn().mockResolvedValue({ id: 'product', name: 'Apple', variety: null, description: null, storageConditions: 'Cool', imageUrl: null }) },
     };
     const notifications = { pushCreatedNotification: jest.fn(), createLocalized: jest.fn().mockResolvedValue({}) };
     const service = new OrdersService(prisma as any, {} as any, {} as any, notifications as any, {} as any);
@@ -62,6 +67,24 @@ describe('Grower order packing', () => {
     const { service, notifications } = setup();
     await service.recordGrowerPacking('grower', 'order', { packedPackCount: 1, batchId: 'BATCH-1' });
     expect(notifications.createLocalized).not.toHaveBeenCalled();
+  });
+
+  it('preserves product metadata and packing date already captured for a lot', async () => {
+    const { service, prisma } = setup();
+    const firstDate = new Date('2026-01-01');
+    prisma.batches.findUniqueOrThrow.mockResolvedValue({ id: 'batch-internal', actualPackDate: firstDate,
+      passportProductSnapshot: { name: 'Original' } } as any);
+    await service.recordGrowerPacking('grower', 'order', { packedPackCount: 1, batchId: 'BATCH-1' });
+    expect(prisma.catalog_products.findUnique).not.toHaveBeenCalled();
+    expect(prisma.batches.update.mock.calls[0][0].data.actualPackDate).toEqual(firstDate);
+    expect(prisma.batches.update.mock.calls[0][0].data).not.toHaveProperty('passportProductSnapshot');
+  });
+
+  it('does not overwrite an existing packaging declaration', async () => {
+    const { service } = setup({ packedAt: new Date(), declaredShelfLifeHours: 48 } as any);
+    await expect(service.recordGrowerPacking('grower', 'order', {
+      packedPackCount: 1, batchId: 'BATCH-1', declaredShelfLifeHours: 72,
+    })).rejects.toThrow('cannot be changed');
   });
 
   it('notifies buyer once when order becomes fully packed', async () => {

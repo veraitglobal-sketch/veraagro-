@@ -1,3 +1,4 @@
+import { parseFieldOperation } from '../../../shared/passport/field-operation';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as QRCode from 'qrcode';
@@ -5,13 +6,33 @@ import * as PDFDocument from 'pdfkit';
 import * as fs from 'fs';
 import * as path from 'path';
 import { QualityControlLevelsService } from '../quality-control-levels/quality-control-levels.service';
+import { PassportDocumentsService } from '../passport-documents/passport-documents.service';
 import { formatOptimalRoute } from '../common/format-route';
+import { historyDate, sortProductionHistory, ProductionEvent, HistoryDate } from '../../../shared/passport/production-history';
+import { parseWeatherObservation } from '../../../shared/passport/weather-observation';
+import { historyFactLabel } from '../../../shared/passport/history-labels';
+import * as englishGlossary from '../../../shared/i18n/glossary/en.json';
+import { readOriginCandidate } from '../../../shared/passport/origin-candidate';
+import {
+  buildFreshnessEstimate,
+  buildLotPackagingFormats,
+  buildPassportSummary,
+  buildPassportWarnings,
+  buildPlatformStandard,
+  coldChainPresentation,
+  isLinkedFieldEntry,
+  isLinkedGrowthLog,
+  isLinkedSeed,
+  readingsWithinRange,
+  resolvePlantingChain,
+} from './passport-lot-scope';
 
 @Injectable()
 export class QrService {
   constructor(
     private prisma: PrismaService,
     private qualityControlLevelsService: QualityControlLevelsService,
+    private passportDocumentsService: PassportDocumentsService,
   ) {}
 
   /**
@@ -68,7 +89,7 @@ export class QrService {
   /**
    * Get certificate data by QR ID
    */
-  async getCertificateData(qrId: string) {
+  async getCertificateData(qrId: string, opts?: { packageBadgeSerial?: string }) {
     // QR ID format: BIO-VERA-BATCH-2026-001 (public batch code) or BIO-VERA-<cuid> (internal id)
     const key = String(qrId).replace(/^BIO-VERA-/, '').trim();
     if (!key) {
@@ -84,21 +105,8 @@ export class QrService {
             users: true,
           },
         },
-        parcels: {
-          include: {
-            seeds: {
-              select: {
-                serialNumber: true,
-                name: true,
-                batchNumber: true,
-                type: true,
-              },
-            },
-            treatment_logs: { orderBy: { appliedAt: 'asc' } },
-            growth_logs: { orderBy: { networkTimestamp: 'asc' } },
-            harvest_announcements: { orderBy: { estimatedDate: 'asc' } },
-          },
-        },
+        parcels: true,
+        package_badges: { where: { lifecycle: 'ACTIVE' }, orderBy: { createdAt: 'asc' }, take: 20 },
         compliance_photos: {
           orderBy: { uploadedAt: 'desc' },
         },
@@ -143,34 +151,123 @@ export class QrService {
       );
     }
 
-    const relatedBatchMaterials = await this.prisma.compliance_logs.findMany({
-      where: { relatedBatchId: batch.id },
-      orderBy: { networkTimestamp: 'asc' },
-      take: 120,
-    });
-    const harvestAnchor = batch.harvestDate ? new Date(batch.harvestDate) : new Date();
-    const parcelWindowStart = new Date(harvestAnchor.getTime() - 60 * 86_400_000);
-    const parcelWindowEnd = new Date(harvestAnchor.getTime() + 14 * 86_400_000);
-    const parcelWindowMaterials =
-      batch.parcelId != null
-        ? await this.prisma.compliance_logs.findMany({
-            where: {
-              parcelId: batch.parcelId,
-              estateId: batch.estateId,
-              relatedBatchId: { not: batch.id },
-              networkTimestamp: { gte: parcelWindowStart, lte: parcelWindowEnd },
+    const harvestRow = batch.harvestAnnouncementId
+      ? await this.prisma.harvest_announcements.findUnique({
+          where: { id: batch.harvestAnnouncementId },
+          select: {
+            id: true,
+            sourcePlantingId: true,
+            status: true,
+            announcementType: true,
+            cropType: true,
+            estimatedDate: true,
+            actualDate: true,
+            actualQuantity: true,
+            estimatedQuantity: true,
+            notes: true,
+            sortingSpec: true,
+          },
+        })
+      : null;
+
+    const chain = resolvePlantingChain(batch.harvestAnnouncementId, harvestRow);
+
+    const plantingRow =
+      chain.plantingId != null
+        ? await this.prisma.harvest_announcements.findUnique({
+            where: { id: chain.plantingId },
+            select: {
+              id: true,
+              cropType: true,
+              estimatedDate: true,
+              actualDate: true,
+              status: true,
+              announcementType: true,
+              notes: true,
             },
-            orderBy: { networkTimestamp: 'asc' },
-            take: 80,
           })
-        : [];
-    const materialMerged = new Map<string, (typeof relatedBatchMaterials)[0]>();
-    for (const row of [...relatedBatchMaterials, ...parcelWindowMaterials]) {
-      materialMerged.set(row.id, row);
-    }
-    const complianceMaterialLogs = [...materialMerged.values()].sort(
-      (a, b) => a.networkTimestamp.getTime() - b.networkTimestamp.getTime(),
-    );
+        : null;
+
+    const [scopedGrowthLogs, scopedFieldEntries, complianceMaterialLogs, linkedSeeds, packedOrders, catalogProduct, bioStandard] =
+      await Promise.all([
+        chain.announcementIds.length
+          ? this.prisma.growth_logs.findMany({
+              where: {
+                harvestAnnouncementId: { in: chain.announcementIds },
+                moderationStatus: { not: 'REJECTED' },
+              },
+              orderBy: { networkTimestamp: 'asc' },
+            })
+          : Promise.resolve([]),
+        chain.announcementIds.length
+          ? this.prisma.field_entries.findMany({
+              where: { plantingId: { in: chain.announcementIds } },
+              orderBy: { occurredAt: 'asc' },
+            })
+          : Promise.resolve([]),
+        this.prisma.compliance_logs.findMany({
+          where: { relatedBatchId: batch.id },
+          orderBy: { networkTimestamp: 'asc' },
+        }),
+        chain.announcementIds.length
+          ? this.prisma.seeds.findMany({
+              where: { plantingId: { in: chain.announcementIds } },
+              include: {
+                productionRun: { include: { approvedProduct: true, producer: true } },
+              },
+              orderBy: { plantedAt: 'asc' },
+            })
+          : Promise.resolve([]),
+        this.prisma.orders.findMany({
+          where: { packedBatchId: batch.id },
+          select: {
+            packLabel: true,
+            packSizeKg: true,
+            packedPackCount: true,
+            packedKg: true,
+            packedAt: true,
+            packagingType: true,
+            declaredShelfLifeHours: true,
+            declaredExpiresAt: true,
+            packedByUserId: true,
+          },
+          orderBy: { packedAt: 'asc' },
+        }),
+        batch.catalogProductId
+          ? this.prisma.catalog_products.findUnique({
+              where: { id: batch.catalogProductId },
+              select: {
+                id: true,
+                name: true,
+                variety: true,
+                description: true,
+                storageConditions: true,
+                imageUrl: true,
+                category: true,
+                sourcePlantingId: true,
+              },
+            })
+          : chain.plantingId
+            ? this.prisma.catalog_products.findFirst({
+                where: { sourcePlantingId: chain.plantingId, status: { not: 'ARCHIVED' } },
+                select: {
+                  id: true,
+                  name: true,
+                  variety: true,
+                  description: true,
+                  storageConditions: true,
+                  imageUrl: true,
+                  category: true,
+                  sourcePlantingId: true,
+                },
+                orderBy: { updatedAt: 'desc' },
+              })
+            : Promise.resolve(null),
+        this.prisma.bio_vera_standards.findFirst({
+          where: { isActive: true },
+          orderBy: { updatedAt: 'desc' },
+        }),
+      ]);
 
     // Calculate timeline
     const timeline = {
@@ -196,6 +293,14 @@ export class QrService {
       timeline.verified = verificationAudit.timestamp;
     }
 
+    const originCandidateAudit = await this.prisma.audit_trails.findFirst({
+      where: { entityType: 'PassportOriginCandidate', entityId: batch.id, batchId: batch.id,
+        eventType: 'STATUS_CHANGE' },
+      orderBy: [{ timestamp: 'desc' }, { id: 'desc' }],
+    });
+    const originCandidate = originCandidateAudit
+      ? readOriginCandidate(originCandidateAudit.newValue, originCandidateAudit.timestamp) : null;
+
     // Find loaded time (mission picked up)
     const mission = batch.missions?.[0];
     if (mission?.pickedUpAt) {
@@ -205,9 +310,6 @@ export class QrService {
     // Find arrived time (mission delivered)
     if (mission?.completedAt) {
       timeline.arrived = mission.completedAt;
-    } else if (mission?.status === 'COMPLETED') {
-      // If status is delivered but no timestamp, use current time as fallback
-      timeline.arrived = new Date();
     }
 
     // Calculate total distance traveled
@@ -268,8 +370,288 @@ export class QrService {
     const country = batch.estates.users.productionCountry ?? null;
     const regionLabel = [regionName, country].filter(Boolean).join(' · ');
 
+    const platformStandard =
+      bioStandard != null
+        ? buildPlatformStandard(bioStandard.requiredTemperatureMin, bioStandard.requiredTemperatureMax)
+        : null;
+    const withinCriteria =
+      platformStandard != null && numericsOk
+        ? readingsWithinRange(temps, platformStandard.minC, platformStandard.maxC)
+        : null;
+    const coldChainMeta = coldChainPresentation(temps.length, withinCriteria, platformStandard);
+
+    const growthLogsLinked = scopedGrowthLogs.filter((g) => isLinkedGrowthLog(g, chain));
+    const fieldWorkEntries = scopedFieldEntries.filter((e) => isLinkedFieldEntry(e, chain));
+    const seedsLinked = linkedSeeds.filter((s) => isLinkedSeed(s, chain));
+
+    const seedVariety =
+      seedsLinked.find((s) => s.productionRun?.approvedProduct?.variety)?.productionRun?.approvedProduct
+        ?.variety ?? null;
+    const frozen = batch.passportProductSnapshot && typeof batch.passportProductSnapshot === 'object'
+      && !Array.isArray(batch.passportProductSnapshot)
+      ? batch.passportProductSnapshot as Record<string, unknown> : null;
+    const productValue = (key: 'name' | 'variety' | 'description' | 'storageConditions' | 'imageUrl') => {
+      const value = frozen ? frozen[key] : catalogProduct?.[key];
+      return typeof value === 'string' ? value.trim() || null : null;
+    };
+    const catalogVariety = productValue('variety');
+    const variety = catalogVariety ?? seedVariety;
+    const varietyLinkage = catalogVariety
+      ? ('confirmed' as const)
+      : seedVariety
+        ? ('confirmed' as const)
+        : ('notRecorded' as const);
+    const productDescription = productValue('description');
+    const storageConditions = productValue('storageConditions');
+    const storageLinkage = storageConditions ? ('confirmed' as const) : ('notRecorded' as const);
+
+    const productPhotoUrl =
+      productValue('imageUrl') ??
+      batch.compliance_photos?.find((p) => p.photoType === 'PRODUCT')?.photoUrl ??
+      batch.compliance_photos?.[0]?.photoUrl ??
+      growthLogsLinked.filter((g) => g.imageUrl).slice(-1)[0]?.imageUrl ??
+      null;
+    const photoLinkage = productPhotoUrl
+      ? catalogProduct?.imageUrl
+        ? ('confirmed' as const)
+        : ('confirmed' as const)
+      : ('notRecorded' as const);
+
+    const lotPackagingFormats = buildLotPackagingFormats(packedOrders);
+
+    let identifiedPackaging: { badgeSerial: string; badgeType: string; linkage: 'confirmed' } | null =
+      null;
+    const badgeSerial = opts?.packageBadgeSerial?.trim();
+    if (badgeSerial) {
+      const badge = await this.prisma.package_badges.findUnique({
+        where: { serial: badgeSerial },
+        select: { serial: true, type: true, batchId: true, lifecycle: true },
+      });
+      if (badge?.batchId === batch.id && badge.lifecycle === 'ACTIVE') {
+        identifiedPackaging = {
+          badgeSerial: badge.serial,
+          badgeType: badge.type,
+          linkage: 'confirmed',
+        };
+      }
+    }
+
+    const freshnessEstimate = buildFreshnessEstimate(
+      batch.freshness_trackers
+        ? {
+            remainingShelfLifeHours: batch.freshness_trackers.remainingShelfLifeHours,
+            expiresAt: batch.freshness_trackers.expiresAt,
+            shelfLifeHours: batch.freshness_trackers.shelfLifeHours,
+          }
+        : null,
+    );
+
+    const seedOriginRows = this.buildSeedOriginFromLinked(seedsLinked);
+    const seedRecalled = seedOriginRows.some((s) => s.recalled);
+
+    const summary = buildPassportSummary({
+      productName: productValue('name') || batch.productName,
+      variety,
+      varietyLinkage,
+      productPhotoUrl,
+      photoLinkage,
+      producerName: batch.estates.name,
+      regionLabel: regionLabel || regionName,
+      productionCountry: country,
+      actualHarvestDate: batch.harvestDate,
+      harvestDateLinkage: batch.harvestDate ? 'confirmed' : 'notRecorded',
+      lotBatchId: batch.batchId,
+      lotQuantity: batch.quantity,
+      lotUnit: batch.unit,
+      identifiedPackaging,
+      platformStandard,
+      productStorageConditions: storageConditions,
+      productStorageLinkage: storageLinkage,
+      // A badge identifies the lot/package, not its order. Keep declarations on
+      // packingRecords until a physical package has an explicit order association.
+      declaredShelfLifeHours: null,
+      declaredExpiresAt: null,
+      freshnessEstimate,
+    });
+
+    const publicDocs = catalogProduct?.id
+      ? await this.passportDocumentsService.listPublicForCatalogProduct(catalogProduct.id)
+      : [];
+    const lotPublicDocs = await this.passportDocumentsService.listPublicForBatch(batch.id);
+    const passportDocuments = [...publicDocs, ...lotPublicDocs]
+      .filter((d, i, arr) => arr.findIndex((x) => x.id === d.id) === i)
+      .map((d) => ({
+        id: d.id,
+        title: d.title,
+        docType: d.docType,
+        scope: d.scope,
+        issuer: d.issuer,
+        issuedAt: d.issuedAt,
+        expiresAt: d.expiresAt,
+        verificationStatus: d.verificationStatus,
+        url: this.passportDocumentsService.documentPublicUrl(d.fileDocumentId),
+      }));
+
+    const warnings = buildPassportWarnings({ isCompromised, seedRecalled });
+
+    const fieldTreatments = fieldWorkEntries
+      .filter((e) => /^(PRSKANJE|PRIHRANA|SPRAYING|SPRAY|TREATMENT|FERTILIZING|FERTILIZER|PESTICIDE)/i.test(e.type))
+      .map((e) => ({
+        appliedAt: e.occurredAt,
+        productName: e.materialName ?? e.type,
+        dosage:
+          e.materialQuantity != null && e.materialUnit
+            ? `${e.materialQuantity} ${e.materialUnit}`
+            : '—',
+        waterVolume: (() => { try { return parseFieldOperation((e.data as Record<string, unknown> | null)?.operation).waterLitres ?? null; } catch { return null; } })(),
+        reason: e.notes ?? null,
+        deviceTimestamp: e.occurredAt,
+        gpsLatitude: e.lat ?? undefined,
+        gpsLongitude: e.lng ?? undefined,
+        gpsAccuracyM: ((e.data as Record<string, unknown> | null)?.location as { accuracy?: number } | undefined)?.accuracy ?? null,
+        needsAudit: e.createdAt.getTime() - e.occurredAt.getTime() > 24 * 60 * 60 * 1000,
+        linkage: 'confirmed' as const,
+        source: 'field_entry' as const,
+      }));
+
+    const harvestAnnouncementsOut: Array<{
+      id: string;
+      kind: 'planting' | 'harvest';
+      estimatedDate: Date;
+      actualDate: Date | null;
+      cropType: string;
+      estimatedQuantity: number | null;
+      actualQuantity: number | null;
+      status: string;
+      notes: string | null;
+      linkage: 'confirmed';
+    }> = [];
+    if (plantingRow && plantingRow.status !== 'CANCELLED' && plantingRow.status !== 'REJECTED') {
+      harvestAnnouncementsOut.push({
+        id: plantingRow.id,
+        kind: 'planting',
+        estimatedDate: plantingRow.estimatedDate,
+        actualDate: plantingRow.actualDate ?? null,
+        cropType: plantingRow.cropType,
+        estimatedQuantity: null,
+        actualQuantity: null,
+        status: plantingRow.status,
+        notes: plantingRow.notes ?? null,
+        linkage: 'confirmed',
+      });
+    }
+    if (harvestRow && harvestRow.status !== 'CANCELLED' && harvestRow.status !== 'REJECTED') {
+      harvestAnnouncementsOut.push({
+        id: harvestRow.id,
+        kind: 'harvest',
+        estimatedDate: harvestRow.estimatedDate,
+        actualDate: harvestRow.actualDate ?? null,
+        cropType: harvestRow.cropType,
+        estimatedQuantity: harvestRow.estimatedQuantity ?? null,
+        actualQuantity: harvestRow.actualQuantity ?? null,
+        status: harvestRow.status,
+        notes: harvestRow.notes ?? null,
+        linkage: 'confirmed',
+      });
+    }
+
+    const primarySeed = seedsLinked[0] ?? null;
+
+    const productionHistory: ProductionEvent[] = [];
+    const event = (id: string, kind: string, date: HistoryDate, source: string,
+      facts: Record<string, unknown>, recordedAt?: HistoryDate, photos?: string[]) => {
+      const row: ProductionEvent = { id, kind, date: historyDate(date), source,
+        recordedAt: historyDate(recordedAt), photos,
+        facts: Object.entries(facts).filter(([, v]) => v !== null && v !== undefined && v !== '')
+          .map(([label, value]) => ({ label, value: String(value) })) };
+      productionHistory.push(row);
+      return row;
+    };
+    for (const seed of seedsLinked) {
+      const run = seed.productionRun;
+      event(`seed-${seed.id}`, 'seed', run?.productionDate, 'seed', {
+        product: run?.approvedProduct?.name ?? seed.name, variety: run?.approvedProduct?.variety,
+        serial: seed.serialNumber, lot: run?.lotNumber ?? seed.batchNumber,
+        producer: run?.producer?.name, country: run?.producer?.country,
+        cropYear: run?.seedCropYear, germination: run?.germinationPct, purity: run?.purityPct,
+      }, seed.createdAt);
+      if (seed.plantedAt) event(`seed-planted-${seed.id}`, 'planting', seed.plantedAt, 'seed', { serial: seed.serialNumber });
+    }
+    for (const plan of harvestAnnouncementsOut.filter(p => p.kind === 'planting')) {
+      event(`planting-${plan.id}`, plan.actualDate ? 'planting' : 'plantingPlan',
+        plan.actualDate ?? plan.estimatedDate, 'planting', { product: plan.cropType, notes: plan.notes });
+    }
+    for (const e of fieldWorkEntries) {
+      const treatment = /^(PRSKANJE|PRIHRANA|SPRAY|TREATMENT|FERTILIZ|PESTICIDE)/i.test(e.type);
+      const row = event(`field-${e.id}`, e.type === 'WEATHER' ? 'weather' : e.type === 'IRRIGATION' ? 'irrigation' : e.type === 'INSPECTION' ? 'inspection' : treatment ? 'treatment' : 'fieldWork',
+        e.occurredAt, 'fieldDiary', { activity: e.type, material: e.materialName, materialBarcode: e.fertilizerBarcode,
+          quantity: e.materialQuantity != null ? `${e.materialQuantity} ${e.materialUnit ?? ''}`.trim() : null,
+          area: e.areaHa, notes: e.notes }, e.createdAt, e.photos);
+      try {
+        const operation = parseFieldOperation((e.data as Record<string, unknown> | null)?.operation);
+        row.endDate = operation.endedAt ?? null;
+        if (operation.waterLitres != null) row.facts.push({ label: 'waterLitres', value: `${operation.waterLitres} L` });
+        if (operation.method) row.facts.push({ label: 'method', value: operation.method });
+      } catch { /* Legacy entries remain visible with only their recorded fields. */ }
+      if (e.type === 'WEATHER') {
+        try {
+          const weather = parseWeatherObservation((e.data as Record<string, unknown> | null)?.weather);
+          row.date = weather.from; row.endDate = weather.until;
+          row.facts.push({ label: 'temperature', value: `${weather.minimumC} – ${weather.maximumC} °C` },
+            { label: 'frost', value: weather.frostObserved === null ? 'unknown' : weather.frostObserved ? 'yes' : 'no' });
+        } catch { /* Keep the diary note without fabricating missing measurements. */ }
+      }
+    }
+    for (const g of growthLogsLinked) event(`growth-${g.id}`, 'growth', g.deviceTimestamp ?? g.networkTimestamp,
+      'growthDiary', { stage: g.growthStage, notes: g.notes, material: g.materialBarcode }, g.networkTimestamp,
+      g.imageUrl ? [g.imageUrl] : []);
+    event(`harvest-${batch.id}`, 'harvest', batch.harvestDate, 'lot', {
+      product: batch.productName, quantity: `${batch.quantity} ${batch.unit}`,
+    }, batch.createdAt);
+    packedOrders.forEach((p, i) => event(`packing-${i}`, 'packing', p.packedAt, 'packing', {
+      packaging: p.packagingType ?? p.packLabel, netMass: p.packSizeKg != null ? `${p.packSizeKg} kg` : null,
+      count: p.packedPackCount, quantity: p.packedKg != null ? `${p.packedKg} kg` : null,
+      declaredHours: p.declaredShelfLifeHours,
+    }));
+    if (verificationAudit) event(`quality-${verificationAudit.id}`, 'quality', verificationAudit.timestamp, 'quality', {});
+    temperatureReadingsDetailed.forEach((r, i) => event(`temperature-${i}`,
+      r.phase === 'transport' ? 'temperatureTransport' : 'temperatureFarm', r.timestamp, 'temperatureLog',
+      { temperature: `${r.temperature} °C`, humidity: r.humidity != null ? `${r.humidity}%` : null, mission: r.missionNumber }));
+    for (const m of batch.missions ?? []) {
+      if (m.pickedUpAt) event(`pickup-${m.id}`, 'pickup', m.pickedUpAt, 'transport', { mission: m.missionNumber });
+      if (m.completedAt) event(`delivery-${m.id}`, 'delivery', m.completedAt, 'transport', { mission: m.missionNumber });
+    }
+    const historyGaps = ['seed', 'planting', 'weather', 'packing'].filter(kind => !productionHistory.some(e => e.kind === kind));
+    if (!temperatureReadingsDetailed.length) historyGaps.push('temperature');
+
     return {
       qrId,
+      productionHistory: sortProductionHistory(productionHistory),
+      historyGaps,
+      originCandidate,
+      summary: {
+        ...summary,
+        productDescription,
+        actualPackDate: batch.actualPackDate ?? null,
+      },
+      warnings,
+      lotPackagingFormats,
+      passportDocuments,
+      packingRecords: packedOrders.map((o) => ({
+        packLabel: o.packLabel,
+        packSizeKg: o.packSizeKg,
+        packedPackCount: o.packedPackCount,
+        packedKg: o.packedKg,
+        packedAt: o.packedAt,
+        packagingType: o.packagingType,
+        declaredShelfLifeHours: o.declaredShelfLifeHours,
+        declaredExpiresAt: o.declaredExpiresAt,
+      })),
+      linkage: {
+        plantingChain: chain,
+        hasConfirmedPlanting: Boolean(chain.plantingId),
+        hasConfirmedHarvest: Boolean(chain.harvestId),
+      },
       batch: {
         id: batch.id,
         batchId: batch.batchId,
@@ -307,11 +689,14 @@ export class QrService {
       coldChainProof:
         temps.length > 0
           ? {
+              ...coldChainMeta,
               temperatureData: temperatureReadingsDetailed,
               minTemp: Math.min(...temps),
               maxTemp: Math.max(...temps),
               avgTemp: temps.reduce((sum, x) => sum + x, 0) / temps.length,
-              isWithinRange: numericsOk ? temps.every((t) => t >= 2 && t <= 8) : null,
+              isWithinRange: coldChainMeta.readingsWithinCriteria,
+              continuousControlConfirmed: coldChainMeta.continuousControlConfirmed,
+              evaluationCriteria: coldChainMeta.evaluationCriteria,
               farmColdChain:
                 farmTemps.length > 0
                   ? {
@@ -333,11 +718,14 @@ export class QrService {
                   : null,
             }
           : {
+              ...coldChainMeta,
               temperatureData: [],
               minTemp: null,
               maxTemp: null,
               avgTemp: null,
               isWithinRange: null,
+              continuousControlConfirmed: coldChainMeta.continuousControlConfirmed,
+              evaluationCriteria: coldChainMeta.evaluationCriteria,
               farmColdChain: null,
               transportColdChain: null,
             },
@@ -353,12 +741,13 @@ export class QrService {
           routeDetail,
         };
       })(),
-      freshness: batch.freshness_trackers ? {
-        timestampHarvested: batch.freshness_trackers.timestampHarvested,
-        remainingShelfLifeHours: batch.freshness_trackers.remainingShelfLifeHours,
-        expiresAt: batch.freshness_trackers.expiresAt,
-        isExpired: batch.freshness_trackers.isExpired,
-      } : null,
+      freshness: freshnessEstimate
+        ? {
+            estimate: freshnessEstimate,
+            timestampHarvested: batch.freshness_trackers?.timestampHarvested ?? null,
+            isExpired: batch.freshness_trackers?.isExpired ?? false,
+          }
+        : null,
       missions: (batch.missions ?? []).map((m) => ({
         id: m.id,
         missionNumber: m.missionNumber,
@@ -411,7 +800,7 @@ export class QrService {
         // Privacy protection: Only first name
         name: batch.estates.users.firstName,
         lastName: undefined, // Never send to Buyer
-        bio: batch.estates.users.farmerBio || `Grown by ${batch.estates.users.firstName}${batch.estates.users.generation ? `, ${batch.estates.users.generation} generation grower` : ''}${batch.estates.users.yearsOfExperience ? ` with ${batch.estates.users.yearsOfExperience} years of experience` : ''}`,
+        bio: batch.estates.users.farmerBio ?? null,
         photo: batch.estates.users.farmerPhoto || null,
         generation: batch.estates.users.generation || '3rd',
         yearsOfExperience: batch.estates.users.yearsOfExperience || null,
@@ -428,57 +817,59 @@ export class QrService {
       })),
       // Protocol 360: Quality Control Levels
       protocol360: await this.getProtocol360Data(batch.id),
-      // Parcel & raw chronology: planting period, treatments (sredstva), growth logs, harvest announcements
       parcelInfo: batch.parcels
         ? {
-            cropType: batch.parcels.cropType ?? null,
-            plantingDate: batch.parcels.plantingDate ?? null,
-            expectedHarvestDate: batch.parcels.expectedHarvestDate ?? null,
+            cropType: plantingRow?.cropType ?? harvestRow?.cropType ?? batch.parcels.cropType ?? null,
+            plantingDate: plantingRow?.actualDate ?? null,
+            plannedPlantingDate: plantingRow?.estimatedDate ?? null,
+            expectedHarvestDate: harvestRow?.estimatedDate ?? null,
             calculatedAreaHa: batch.parcels.calculatedArea,
             mapCenter: this.polygonCentroid(batch.parcels.polygonCoordinates as unknown),
+            linkage: chain.plantingId ? ('confirmed' as const) : ('notRecorded' as const),
           }
         : null,
-      treatments: (batch.parcels?.treatment_logs ?? []).map((t) => ({
-        appliedAt: t.appliedAt,
-        productName: t.productName,
-        dosage: t.dosage,
-        waterVolume: t.waterVolume,
-        reason: t.reason ?? null,
-        deviceTimestamp: t.deviceTimestamp,
-        gpsLatitude: t.gpsLatitude,
-        gpsLongitude: t.gpsLongitude,
-        gpsAccuracyM: t.gpsAccuracy,
-        needsAudit: t.needsAudit,
+      fieldWork: fieldWorkEntries.map((e) => ({
+        type: e.type,
+        occurredAt: e.occurredAt,
+        materialName: e.materialName ?? null,
+        materialQuantity: e.materialQuantity ?? null,
+        materialUnit: e.materialUnit ?? null,
+        notes: e.notes ?? null,
+        linkage: 'confirmed' as const,
       })),
-      growthLogs: (batch.parcels?.growth_logs ?? []).map((g) => ({
+      treatments: fieldTreatments,
+      growthLogs: growthLogsLinked.map((g) => ({
         networkTimestamp: g.networkTimestamp,
         deviceTimestamp: g.deviceTimestamp,
         growthStage: g.growthStage ?? null,
         notes: g.notes ?? null,
         labTestDate: g.labTestDate ?? null,
+        labResultUrl: g.labResultUrl ?? null,
+        imageUrl: g.imageUrl ?? null,
+        materialBarcode: g.materialBarcode ?? null,
+        materialKind: g.materialKind ?? null,
         gpsLatitude: g.gpsLatitude,
         gpsLongitude: g.gpsLongitude,
         gpsAccuracyM: g.gpsAccuracy,
+        linkage: 'confirmed' as const,
       })),
-      harvestAnnouncements: (batch.parcels?.harvest_announcements ?? []).map((h) => ({
-        estimatedDate: h.estimatedDate,
-        actualDate: h.actualDate ?? null,
-        cropType: h.cropType,
-        estimatedQuantity: h.estimatedQuantity ?? null,
-        actualQuantity: h.actualQuantity ?? null,
-        status: h.status,
-        notes: h.notes ?? null,
-      })),
-      parcelSeed: batch.parcels?.seeds
+      harvestAnnouncements: harvestAnnouncementsOut,
+      parcelSeed: primarySeed
         ? {
-            serialNumber: batch.parcels.seeds.serialNumber,
-            name: batch.parcels.seeds.name,
-            batchNumber: batch.parcels.seeds.batchNumber,
-            seedType: batch.parcels.seeds.type,
+            serialNumber: primarySeed.serialNumber,
+            name: primarySeed.name,
+            batchNumber: primarySeed.batchNumber,
+            seedType: primarySeed.type,
+            linkage: 'confirmed' as const,
           }
-        : null,
-      seedOrigin: await this.buildSeedOrigin(batch),
-      /** Barcode / packaging / input scans linked to batch or parcel harvest window. */
+        : { linkage: 'notRecorded' as const },
+      packageBadges: (batch.package_badges ?? []).map((b) => ({
+        serial: b.serial,
+        type: b.type,
+        linkage: 'confirmed' as const,
+      })),
+      seedOrigin: seedOriginRows,
+      /** Barcode / packaging scans confirmed for this lot only. */
       materialScans: complianceMaterialLogs.map((m) => ({
         entryType: m.entryType,
         scannedBarcode: m.scannedBarcode,
@@ -489,6 +880,7 @@ export class QrService {
         deviceTimestamp: m.deviceTimestamp,
         relatedBatchId: m.relatedBatchId,
         blockedReason: m.blockedReason ?? null,
+        linkage: 'confirmed' as const,
       })),
       qualityEntry: batch.quality_entries
         ? {
@@ -504,31 +896,28 @@ export class QrService {
     };
   }
 
-  /** Bio Vera production-run bags planted on the harvest parcel (public-safe fields only). */
-  private async buildSeedOrigin(batch: {
-    parcelId: string | null;
-    harvestDate: Date | null;
-  }) {
-    if (!batch.parcelId) return [];
-
-    const harvestAnchor = batch.harvestDate ? new Date(batch.harvestDate) : new Date();
-    const windowStart = new Date(harvestAnchor.getTime() - 365 * 86_400_000);
-    const windowEnd = new Date(harvestAnchor.getTime() + 14 * 86_400_000);
-
-    const bags = await this.prisma.seeds.findMany({
-      where: {
-        plantedParcelId: batch.parcelId,
-        productionRunId: { not: null },
-        plantedAt: { gte: windowStart, lte: windowEnd },
-      },
-      include: {
-        productionRun: { include: { approvedProduct: true, producer: true } },
-      },
-      orderBy: { plantedAt: 'asc' },
-    });
-
-    const byRun = new Map<string, typeof bags>();
-    for (const b of bags) {
+  /** Bio Vera seed bags linked to the lot planting chain (public-safe fields only). */
+  private buildSeedOriginFromLinked(
+    seedsLinked: Array<{
+      productionRunId: string | null;
+      plantedAt: Date | null;
+      status: string;
+      productionRun?: {
+        status: string;
+        lotNumber: string;
+        seedCropYear: number;
+        productionDate: Date | null;
+        germinationPct: number | null;
+        purityPct: number | null;
+        certificateUrls: string[];
+        approvedProduct: { name: string; variety: string | null };
+        producer: { name: string; city: string | null; country: string };
+      } | null;
+    }>,
+  ) {
+    const withRun = seedsLinked.filter((b) => b.productionRunId && b.productionRun);
+    const byRun = new Map<string, typeof withRun>();
+    for (const b of withRun) {
       if (!b.productionRunId) continue;
       const list = byRun.get(b.productionRunId) ?? [];
       list.push(b);
@@ -558,6 +947,7 @@ export class QrService {
         plantedTo: plantedDates[plantedDates.length - 1]?.toISOString().slice(0, 10) ?? null,
         recalled,
         recallNotice: recalled ? 'This seed lot was recalled by Bio Vera.' : null,
+        linkage: 'confirmed' as const,
       };
     });
   }
@@ -773,9 +1163,12 @@ export class QrService {
   /**
    * Generate detailed Product Passport PDF for a batch (for download from passport page)
    */
-  async generatePassportPDF(batchId: string): Promise<Buffer> {
+  async generatePassportPDF(
+    batchId: string,
+    opts?: { packageBadgeSerial?: string },
+  ): Promise<Buffer> {
     const qrId = batchId.startsWith('BIO-VERA-') ? batchId : `BIO-VERA-${batchId}`;
-    const data = await this.getCertificateData(qrId) as any;
+    const data = await this.getCertificateData(qrId, opts) as any;
 
     const veraGreen = '#2D5A27';
     const darkGray = '#1F2937';
@@ -813,23 +1206,56 @@ export class QrService {
         doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('1. Product & harvest', 50, doc.y);
         doc.moveDown(0.5);
         const boxY = doc.y;
-        doc.rect(50, boxY, doc.page.width - 100, 95).fill('#FFF').stroke(veraGreen, 1);
+        const boxH = 130;
+        doc.rect(50, boxY, doc.page.width - 100, boxH).fill('#FFF').stroke(veraGreen, 1);
         doc.fontSize(10).fillColor(lightGray).text('Batch ID:', 60, boxY + 10);
         doc.fontSize(11).fillColor(darkGray).text(data.batch?.batchId ?? '—', 60, boxY + 24);
         doc.text('Product:', 60, boxY + 42);
-        doc.text(data.batch?.productName ?? '—', 140, boxY + 42);
-        doc.text('Quantity:', 60, boxY + 58);
-        doc.text(`${data.batch?.quantity ?? '—'} ${data.batch?.unit ?? ''}`, 140, boxY + 58);
-        doc.text('Status:', 60, boxY + 74);
-        doc.text(data.batch?.status ?? '—', 140, boxY + 74);
-        doc.text('Where harvested:', 320, boxY + 10);
-        doc.text(data.origin?.harvestLocation ?? '—', 320, boxY + 24, { width: 200 });
-        doc.text('When harvested:', 320, boxY + 42);
-        doc.text(data.origin?.harvestDate ? formatDateTime(data.origin.harvestDate) : '—', 320, boxY + 58);
-        doc.text('Period:', 320, boxY + 74);
-        doc.text(data.origin?.harvestPeriod ?? '—', 320, boxY + 74, { width: 200 });
-        doc.y = boxY + 100;
+        doc.text(data.summary?.productName ?? data.batch?.productName ?? '—', 140, boxY + 42, { width: 160 });
+        if (data.summary?.variety) {
+          doc.text('Variety:', 60, boxY + 58);
+          doc.text(data.summary.variety, 140, boxY + 58, { width: 160 });
+        }
+        doc.text('Lot quantity:', 60, boxY + 74);
+        doc.text(`${data.summary?.lot?.totalQuantity ?? data.batch?.quantity ?? '—'} ${data.summary?.lot?.unit ?? data.batch?.unit ?? ''}`, 140, boxY + 74);
+        if (data.summary?.identifiedPackaging) {
+          doc.text('This package:', 60, boxY + 90);
+          doc.text(`${data.summary.identifiedPackaging.badgeSerial} · ${data.summary.identifiedPackaging.badgeType}`, 140, boxY + 90, { width: 160 });
+        }
+        if (data.summary?.productDescription) {
+          doc.fontSize(9).fillColor(lightGray).text(data.summary.productDescription, 60, boxY + 106, { width: doc.page.width - 120 });
+        }
+        doc.fontSize(10).fillColor(lightGray).text('Where harvested:', 320, boxY + 10);
+        doc.fontSize(11).fillColor(darkGray).text(data.origin?.harvestLocation ?? '—', 320, boxY + 24, { width: 200 });
+        doc.fontSize(10).fillColor(lightGray).text('When harvested:', 320, boxY + 42);
+        doc.fontSize(11).fillColor(darkGray).text(
+          data.summary?.actualHarvestDate ? formatDateTime(data.summary.actualHarvestDate) : data.origin?.harvestDate ? formatDateTime(data.origin.harvestDate) : '—',
+          320, boxY + 56, { width: 200 },
+        );
+        if (data.summary?.actualPackDate) {
+          doc.fontSize(10).fillColor(lightGray).text('Packed on:', 320, boxY + 72);
+          doc.fontSize(11).fillColor(darkGray).text(formatDate(data.summary.actualPackDate), 320, boxY + 86);
+        }
+        if (data.summary?.storage?.productStorageConditions) {
+          doc.fontSize(10).fillColor(lightGray).text('Storage:', 320, boxY + 100);
+          doc.fontSize(10).fillColor(darkGray).text(data.summary.storage.productStorageConditions, 320, boxY + 114, { width: 200 });
+        }
+        if (data.summary?.storage?.declaredShelfLifeHours != null) {
+          doc.fontSize(10).fillColor(darkGray).text(`Declared shelf life: ${data.summary.storage.declaredShelfLifeHours} h`, 60, boxY + boxH - 14);
+        }
+        doc.y = boxY + boxH + 8;
         doc.moveDown(1);
+
+        if (data.originCandidate?.status === 'PENDING_DOCUMENTATION' && data.originCandidate.verified === false) {
+          checkPage(100);
+          doc.font('Helvetica-Bold').fontSize(11).fillColor('#92400e')
+            .text(englishGlossary.productionHistory.candidateSupplier, 50, doc.y);
+          doc.font('Helvetica').fontSize(10).fillColor(darkGray)
+            .text(data.originCandidate.supplierName, 50, doc.y)
+            .text(englishGlossary.productionHistory.pendingOrigin, 50, doc.y)
+            .text(englishGlossary.productionHistory.pendingOriginHelp, 50, doc.y, { width: doc.page.width - 100 });
+          doc.moveDown(1);
+        }
 
         // 2. Parcel & chronology intro
         if (data.parcelInfo && (data.parcelInfo.cropType || data.parcelInfo.plantingDate || data.parcelInfo.expectedHarvestDate)) {
@@ -899,78 +1325,30 @@ export class QrService {
           doc.moveDown(0.5);
         }
 
-        // 3. Chronology (activities) – with sortKey for correct ordering
-        const chronology: { sortKey: number; date: string; activity: string; detail: string }[] = [];
-        const push = (sortKey: number, date: string, activity: string, detail: string) => chronology.push({ sortKey, date, activity, detail });
-        if (data.parcelInfo?.plantingDate) push(new Date(data.parcelInfo.plantingDate).getTime(), formatDateTime(data.parcelInfo.plantingDate), 'Planting', data.parcelInfo.cropType ? `Crop: ${data.parcelInfo.cropType}` : '—');
-        if (data.parcelInfo?.expectedHarvestDate) push(new Date(data.parcelInfo.expectedHarvestDate).getTime(), formatDate(data.parcelInfo.expectedHarvestDate), 'Expected harvest', '—');
-        (data.treatments || []).forEach((t: any) => push(new Date(t.appliedAt).getTime(), formatDateTime(t.appliedAt), 'Treatment', `${t.productName} · ${t.dosage}${t.reason ? ` · ${t.reason}` : ''}`));
-        (data.growthLogs || []).forEach((g: any) => {
-          const isFd = typeof g.notes === 'string' && g.notes.trim().startsWith('[Field diary');
-          const gGps =
-            g.gpsLatitude != null && g.gpsLongitude != null
-              ? `GPS: ${g.gpsLatitude.toFixed(5)}, ${g.gpsLongitude.toFixed(5)}`
-              : '';
-          push(
-            new Date(g.networkTimestamp).getTime(),
-            formatDateTime(g.networkTimestamp),
-            isFd ? 'Field diary' : 'Growth log',
-            [g.growthStage && `Stage: ${g.growthStage}`, g.notes, gGps].filter(Boolean).join(' · ') ||
-              'Field record',
-          );
-        });
-        (data.harvestAnnouncements || []).forEach((h: any) => push(new Date(h.estimatedDate).getTime(), formatDate(h.estimatedDate), 'Harvest announcement', `${h.cropType} · ${h.status}`));
-        if (data.timeline?.harvested) push(new Date(data.timeline.harvested).getTime(), formatDateTime(data.timeline.harvested), 'Harvested', data.origin?.harvestLocation ?? '—');
-        if (data.qualityEntry?.preCoolingStartTime) push(new Date(data.qualityEntry.preCoolingStartTime).getTime(), formatDateTime(data.qualityEntry.preCoolingStartTime), 'Pre-cooling / quality', data.qualityEntry.status);
-        if (data.timeline?.verified) push(new Date(data.timeline.verified).getTime(), formatDateTime(data.timeline.verified), 'Quality verified', '—');
-        if (data.timeline?.loaded)
-          push(
-            new Date(data.timeline.loaded).getTime(),
-            formatDateTime(data.timeline.loaded),
-            'Picked up',
-            data.missions?.[0]?.vehicle?.vehicleNumber ?? '—',
-          );
-        (data.missions || []).forEach((mis: any) => {
-          const lh = mis.logisticsHandover;
-          if (lh?.timestamp && lh.insideTruckTemperature != null) {
-            push(
-              new Date(lh.timestamp).getTime(),
-              formatDateTime(lh.timestamp),
-              'Loading (cold chain)',
-              `Inside truck: ${lh.insideTruckTemperature} °C · mission ${mis.missionNumber ?? '—'}`,
-            );
-          }
-        });
-        if (data.timeline?.arrived || data.missions?.[0]?.deliveredAt)
-          push(
-            new Date(data.timeline?.arrived || data.missions?.[0]?.deliveredAt).getTime(),
-            formatDateTime(data.timeline?.arrived || data.missions?.[0]?.deliveredAt),
-            'Arrival',
-            '—',
-          );
-        chronology.sort((a, b) => a.sortKey - b.sortKey);
-
-        if (chronology.length > 0) {
-          checkPage(120);
-          doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('3. Chronology (what happened when)', 50, doc.y);
+        // Use the same complete, source-attributed history as web and mobile.
+        const translate = (key: string, opts?: { defaultValue?: string }): string => {
+          const value = key.replace(/^glossary\./, '').split('.').reduce<any>((node, part) => node?.[part], englishGlossary);
+          return typeof value === 'string' ? value : opts?.defaultValue ?? key;
+        };
+        const historyLabel = (key: string) => translate(`glossary.productionHistory.${key}`);
+        if (data.productionHistory?.length) {
+          checkPage(90);
+          doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('3. Production history', 50, doc.y);
           doc.moveDown(0.5);
-          const tableTop = doc.y;
-          doc.fontSize(9).fillColor(lightGray);
-          doc.text('Date & time', 50, tableTop);
-          doc.text('Activity', 180, tableTop);
-          doc.text('Detail', 320, tableTop);
-          doc.moveTo(50, tableTop + 12).lineTo(doc.page.width - 50, tableTop + 12).stroke(veraGreen, 0.5);
-          doc.y = tableTop + 18;
-          chronology.slice(0, 20).forEach((row, i) => {
-            checkPage(14);
-            doc.fontSize(8).fillColor(darkGray).font('Helvetica').text(row.date, 50, doc.y, { width: 120 });
-            doc.text(row.activity, 180, doc.y, { width: 130 });
-            doc.text(row.detail, 320, doc.y, { width: doc.page.width - 370 });
-            doc.y += 14;
-          });
-          if (chronology.length > 20) doc.fontSize(8).fillColor(lightGray).text(`+ ${chronology.length - 20} more entries`, 50, doc.y);
-          doc.y += 12;
-          doc.moveDown(1);
+          for (const row of data.productionHistory as ProductionEvent[]) {
+            checkPage(70);
+            doc.fontSize(10).fillColor(darkGray).font('Helvetica-Bold').text(historyLabel(row.kind), 50, doc.y);
+            doc.font('Helvetica').fontSize(9);
+            const date = row.date ? formatDateTime(row.date) : historyLabel('unknown');
+            doc.text(`${date}${row.endDate ? ` – ${formatDateTime(row.endDate)}` : ''}`, 50, doc.y);
+            doc.text(`${historyLabel('source')}: ${historyLabel(row.source)}`, 50, doc.y);
+            if (row.recordedAt) doc.text(`${historyLabel('recordedAt')}: ${formatDateTime(row.recordedAt)}`, 50, doc.y);
+            for (const fact of row.facts) {
+              checkPage(24);
+              doc.text(`${historyLabel(fact.label)}: ${historyFactLabel(translate, fact)}`, 50, doc.y, { width: doc.page.width - 100 });
+            }
+            doc.moveDown(0.7);
+          }
         }
 
         // 4. Applied inputs (treatments)
@@ -980,9 +1358,9 @@ export class QrService {
           doc.moveDown(0.5);
           const tTop = doc.y;
           doc.fontSize(9).fillColor(lightGray);
-          doc.text('Applied (server time)', 50, tTop);
+          doc.text('Applied at', 50, tTop);
           doc.text('Product', 160, tTop);
-          doc.text('Rate', 300, tTop);
+          doc.text('Quantity / rate', 300, tTop);
           doc.text('Water (L)', 380, tTop);
           doc.text('Reason', 430, tTop);
           doc.moveTo(50, tTop + 12).lineTo(doc.page.width - 50, tTop + 12).stroke(veraGreen, 0.5);
@@ -1012,7 +1390,7 @@ export class QrService {
 
         if (data.materialScans?.length > 0) {
           checkPage(120);
-          doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('4c. Material & barcode scans (batch / parcel window)', 50, doc.y);
+          doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('4c. Material & barcode scans (this lot only)', 50, doc.y);
           doc.moveDown(0.5);
           data.materialScans.slice(0, 25).forEach((scan: any) => {
             checkPage(12);
@@ -1050,7 +1428,7 @@ export class QrService {
           doc.moveDown(0.5);
           const cc = data.coldChainProof;
           doc.fontSize(10).fillColor(darkGray)
-            .text(`Min temp: ${cc.minTemp != null ? cc.minTemp + ' °C' : '—'}  |  Max temp: ${cc.maxTemp != null ? cc.maxTemp + ' °C' : '—'}  |  Avg: ${cc.avgTemp != null ? Number(cc.avgTemp).toFixed(1) + ' °C' : '—'}  |  Within range: ${cc.isWithinRange === true ? 'Yes' : cc.isWithinRange === false ? 'No' : '—'}`, 50, doc.y);
+            .text(`Min temp: ${cc.minTemp != null ? cc.minTemp + ' °C' : '—'}  |  Max temp: ${cc.maxTemp != null ? cc.maxTemp + ' °C' : '—'}  |  Avg: ${cc.avgTemp != null ? Number(cc.avgTemp).toFixed(1) + ' °C' : '—'}  |  Criteria: ${cc.evaluationCriteria ?? '—'}  |  Points within criteria: ${cc.isWithinRange === true ? 'Yes' : cc.isWithinRange === false ? 'No' : '—'}  |  Continuous control: No (spot readings only)`, 50, doc.y, { width: doc.page.width - 100 });
           doc.y += 20;
           if (cc.temperatureData && cc.temperatureData.length > 0) {
             doc.fontSize(9).fillColor(lightGray).text('Temperature log (first 15):', 50, doc.y);
@@ -1067,11 +1445,45 @@ export class QrService {
           }
           doc.moveDown(0.5);
         }
-        if (data.freshness) {
+        if (data.freshness?.estimate) {
           checkPage(50);
           doc.fontSize(10).fillColor(darkGray)
-            .text(`Remaining shelf life: ${data.freshness.remainingShelfLifeHours != null ? Math.round(data.freshness.remainingShelfLifeHours) + ' h' : '—'}  |  Expires: ${data.freshness.expiresAt ? formatDate(data.freshness.expiresAt) : '—'}  |  Harvested at: ${data.freshness.timestampHarvested ? formatDateTime(data.freshness.timestampHarvested) : '—'}`, 50, doc.y);
+            .text(
+              `Freshness estimate (${data.freshness.estimate.source}): ${data.freshness.estimate.remainingHours != null ? Math.round(data.freshness.estimate.remainingHours) + ' h remaining' : '—'}  |  Estimated use-by: ${data.freshness.estimate.estimatedExpiresAt ? formatDate(data.freshness.estimate.estimatedExpiresAt) : '—'}`,
+              50,
+              doc.y,
+              { width: doc.page.width - 100 },
+            );
           doc.y += 25;
+          if (data.summary?.storage?.declaredShelfLifeHours != null) {
+            doc.fontSize(8).fillColor(darkGray).text(
+              `Declared shelf life (on pack label): ${data.summary.storage.declaredShelfLifeHours} h`,
+              50,
+              doc.y,
+            );
+          } else {
+            doc.fontSize(8).fillColor(lightGray).text('Declared shelf life: not recorded on this lot.', 50, doc.y);
+          }
+          doc.y += 16;
+        }
+        if (data.summary?.storage?.platformStandard) {
+          checkPage(30);
+          doc.fontSize(9).fillColor(darkGray).text(
+            `Platform temperature standard (${data.summary.storage.platformStandard.source}): ${data.summary.storage.platformStandard.label}`,
+            50,
+            doc.y,
+          );
+          doc.y += 18;
+        }
+        if (data.lotPackagingFormats?.length) {
+          checkPage(40);
+          doc.fontSize(9).fillColor(darkGray).text('Pack formats recorded on orders from this lot (informational):', 50, doc.y);
+          doc.y += 14;
+          data.lotPackagingFormats.forEach((p: { label?: string | null; packSizeKg?: number | null }) => {
+            doc.text(`· ${p.label ?? '—'}${p.packSizeKg != null ? ` · ${p.packSizeKg} kg` : ''}`, 60, doc.y);
+            doc.y += 12;
+          });
+          doc.y += 8;
         }
 
         // 6. Timeline (journey)
@@ -1117,6 +1529,21 @@ export class QrService {
             doc.fontSize(9).text(`Level ${l.level}: ${l.name}  –  ${l.badgeText || l.status}`, 60, doc.y);
             doc.y += 12;
           });
+        }
+
+        if (data.passportDocuments?.length) {
+          checkPage(60);
+          doc.fontSize(16).fillColor(veraGreen).font('Helvetica-Bold').text('10. Verified documents', 50, doc.y);
+          doc.moveDown(0.5);
+          data.passportDocuments.forEach((d: { title: string; docType: string; verificationStatus?: string; url?: string }) => {
+            doc.fontSize(10).fillColor(darkGray).text(
+              `· ${d.title} (${d.docType})${d.verificationStatus === 'CONFIRMED' ? ' — verified' : ''}`,
+              60,
+              doc.y,
+            );
+            doc.y += 14;
+          });
+          doc.y += 8;
         }
 
         doc.fontSize(8).fillColor(lightGray).text(`Document generated: ${formatDateTime(new Date())}  ·  Bio Vera Product Passport  ·  Batch: ${data.batch?.batchId ?? batchId}`, 50, doc.page.height - 35);

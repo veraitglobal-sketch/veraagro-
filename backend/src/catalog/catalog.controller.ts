@@ -32,6 +32,38 @@ export class CatalogController {
     return this.catalogService.getPublicProduct(id);
   }
 
+  @Get('grower/products')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('GROWER', 'FARMER', 'PARTNER')
+  listGrower(@Request() req: { user: { id: string } }) {
+    return this.catalogService.listGrowerProducts(req.user.id);
+  }
+
+  @Get('grower/products/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('GROWER', 'FARMER', 'PARTNER')
+  getGrower(@Param('id') id: string, @Request() req: { user: { id: string } }) {
+    return this.catalogService.getGrowerProduct(req.user.id, id);
+  }
+
+  @Post('grower/products')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('GROWER', 'FARMER', 'PARTNER')
+  createGrower(@Body() body: CreateCatalogProductDto, @Request() req: { user: { id: string } }) {
+    return this.catalogService.createGrowerProduct(req.user.id, body);
+  }
+
+  @Patch('grower/products/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('GROWER', 'FARMER', 'PARTNER')
+  updateGrower(
+    @Param('id') id: string,
+    @Body() body: UpdateCatalogProductDto,
+    @Request() req: { user: { id: string } },
+  ) {
+    return this.catalogService.updateGrowerProduct(req.user.id, id, body);
+  }
+
   @Get('admin/products')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')

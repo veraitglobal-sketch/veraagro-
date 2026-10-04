@@ -3,6 +3,18 @@ export type TranslateFn = (key: string, options?: { defaultValue?: string }) => 
 
 export type StatusAudience = 'buyer' | 'admin' | 'logistics';
 
+/** Translate known crop names only; preserve custom product/variety names verbatim. */
+export function productNameLabel(t: TranslateFn, name: string | null | undefined): string {
+  if (!name) return '';
+  const aliases: Record<string, string> = {
+    malina: 'raspberry', raspberry: 'raspberry', raspberries: 'raspberry',
+    kupina: 'blackberry', blackberry: 'blackberry', blackberries: 'blackberry',
+    jagoda: 'strawberry', strawberry: 'strawberry', strawberries: 'strawberry',
+  };
+  const crop = aliases[name.trim().toLowerCase()];
+  return crop ? labelOrFallback(t, glossaryKey('productNames', crop), name) : name;
+}
+
 function glossaryKey(...parts: string[]): string {
   return ['glossary', ...parts].join('.');
 }

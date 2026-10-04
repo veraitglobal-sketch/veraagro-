@@ -61,6 +61,12 @@ export class BatchesController {
     return this.batchesService.recordPackingFlowCheck(req.user.id, batchId, body);
   }
 
+  @Get(':batchId/passport-completeness')
+  @UseGuards(JwtAuthGuard)
+  async passportCompleteness(@Param('batchId') batchId: string, @Request() req: { user: { id: string } }) {
+    return this.batchesService.getPassportCompleteness(req.user.id, batchId);
+  }
+
   @Get(':batchId/packing-flow/photo/:kind')
   @UseGuards(JwtAuthGuard)
   @Header('Cache-Control', 'private, max-age=3600')

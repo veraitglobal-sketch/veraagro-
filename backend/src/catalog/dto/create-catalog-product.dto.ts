@@ -8,8 +8,14 @@ export class CreateCatalogProductDto {
   @IsOptional() @IsString() @MaxLength(50)
   category?: string;
 
+  @IsOptional() @IsString() @MaxLength(120)
+  variety?: string;
+
   @IsOptional() @IsString() @MaxLength(5000)
   description?: string;
+
+  @IsOptional() @IsString() @MaxLength(2000)
+  storageConditions?: string;
 
   @IsOptional() @IsString() @MaxLength(2_500_000)
   imageUrl?: string;

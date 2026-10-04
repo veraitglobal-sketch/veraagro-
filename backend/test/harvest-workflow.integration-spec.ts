@@ -26,6 +26,12 @@ import { AuditTrailService } from '../src/audit-trail/audit-trail.service';
 import { NotificationsGateway } from '../src/notifications/notifications.gateway';
 import { NotificationsService } from '../src/notifications/notifications.service';
 import { BlockchainService } from '../src/blockchain/blockchain.service';
+import { GrowthLogsController } from '../src/growth-logs/growth-logs.controller';
+import { GrowthLogsService } from '../src/growth-logs/growth-logs.service';
+import { AntiFraudService } from '../src/anti-fraud/anti-fraud.service';
+import { MaterialBarcodeValidationService } from '../src/compliance/material-barcode-validation.service';
+import { GrowthLogTreatmentSyncService } from '../src/treatment-logs/growth-log-treatment-sync.service';
+import { SmartLockService } from '../src/smart-lock/smart-lock.service';
 
 const url = process.env.BIOVERA_TEST_DATABASE_URL;
 if (!url || process.env.NODE_ENV !== 'test' || process.env.DATABASE_URL !== url ||
@@ -49,14 +55,20 @@ describe('Harvest plan → lot → mission (real HTTP and PostgreSQL)', () => {
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [PassportModule],
-      controllers: [B2bSuppliersController, GrowerPortalController, BatchesController, MissionsController, HarvestAnnouncementsController],
+      controllers: [B2bSuppliersController, GrowerPortalController, BatchesController, MissionsController, HarvestAnnouncementsController, GrowthLogsController],
       providers: [{ provide: ImageResizeService, useValue: {} }, B2bSuppliersService, GrowerPortalService, { provide: QrService, useValue: {} }, PrismaService, JwtStrategy, BatchesService, MissionsService, HarvestAnnouncementsService, MaterialControlService,
-        { provide: ConfigService, useValue: { get: (key: string) => key === 'JWT_SECRET' ? 'isolated-integration-test-secret' : undefined } },
+        GrowthLogsService, AntiFraudService,
+        // Ordinary progress entries do not use material scanning or treatment synchronization.
+        { provide: MaterialBarcodeValidationService, useValue: {} },
+        { provide: GrowthLogTreatmentSyncService, useValue: {} },
+        { provide: SmartLockService, useValue: {} },
+        { provide: ConfigService, useValue: { get: (key: string, fallback?: string) => key === 'JWT_SECRET' ? 'isolated-integration-test-secret' : fallback } },
         { provide: FreshnessService, useValue: { createFreshnessTracker: async () => undefined } },
         { provide: TreatmentLogsService, useValue: { getEarliestHarvestDate: async () => ({ date: null }) } },
         { provide: AuditTrailService, useValue: { createAuditTrail: async () => undefined } },
         { provide: NotificationsGateway, useValue: { notifyMissionUpdate: async () => undefined } },
         { provide: NotificationsService, useValue: { create: async () => undefined,
+          notifyAdminsNewGrowthPhoto: async () => undefined,
           notifyAdminsForNewTransportRequest: async () => undefined, sendSmartNotification: async () => undefined } },
         { provide: BlockchainService, useValue: { isEnabled: () => false } },
       ],
@@ -73,7 +85,7 @@ describe('Harvest plan → lot → mission (real HTTP and PostgreSQL)', () => {
     delete process.env.MISSIONS_AUTO_ASSIGN_LOGISTICS_PARTNER;
     delete process.env.MISSIONS_REQUIRE_CONFIRMED_HARVEST_PLAN;
     await db.$executeRawUnsafe('TRUNCATE TABLE users, bio_vera_standards CASCADE');
-    for (const [id, role] of Object.entries({ farmer: UserRole.GROWER, other: UserRole.GROWER, logistics: UserRole.LOGISTICS_PARTNER, supplier: UserRole.MATERIAL_SUPPLIER })) {
+    for (const [id, role] of Object.entries({ farmer: UserRole.GROWER, other: UserRole.GROWER, admin: UserRole.SUPER_ADMIN, logistics: UserRole.LOGISTICS_PARTNER, supplier: UserRole.MATERIAL_SUPPLIER })) {
       await db.users.create({ data: { id, partnerCode: id, firstName: id, lastName: 'Test', passwordHash: 'not-a-login-password', roles: [role], status: 'ACTIVE', updatedAt: new Date() } });
     }
     await db.estates.create({ data: { id: 'farm', ownerId: 'farmer', name: 'Test farm', polygonCoordinates: polygon,
@@ -94,8 +106,30 @@ describe('Harvest plan → lot → mission (real HTTP and PostgreSQL)', () => {
       cropType: 'Apple', estimatedDate: '2026-03-01' }).expect(201)).body;
   }
 
-  it('preserves the chosen planting through harvest and lot, and prevents deleting its history', async () => {
+  it('preserves the chosen planting through journal, harvest and lot, with owner and admin visibility', async () => {
     const source = await planting();
+    await db.parcels.update({ where: { id: 'plot' }, data: { approvedAt: new Date() } });
+    const entry = {
+      estateId: 'farm', parcelId: 'plot', harvestAnnouncementId: source.id,
+      imageUrl: 'https://example.invalid/progress.jpg', imageHash: 'a'.repeat(64),
+      gpsLatitude: 44.005, gpsLongitude: 20.005, deviceId: 'integration-device',
+      deviceTimestamp: new Date().toISOString(), growthStage: 'Flowering',
+      notes: 'Visible progress on the selected planting.',
+    };
+    const log = (await post('/growth-logs').send(entry).expect(201)).body;
+    const diary = (await get('/growth-logs/parcel/plot').expect(200)).body;
+    expect(diary).toHaveLength(1);
+    expect(diary[0]).toMatchObject({ id: log.id, ...entry, harvest_announcements: { id: source.id } });
+    expect(await db.growth_logs.findUniqueOrThrow({ where: { id: log.id } })).toMatchObject({
+      userId: 'farmer', parcelId: 'plot', harvestAnnouncementId: source.id,
+      gpsLatitude: entry.gpsLatitude, gpsLongitude: entry.gpsLongitude, notes: entry.notes,
+    });
+    await get('/growth-logs/parcel/plot', 'other').expect(403);
+    await post('/growth-logs', 'other').send(entry).expect(403);
+    await get('/growth-logs/admin/list').expect(403);
+    expect((await get('/growth-logs/admin/list', 'admin').expect(200)).body).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: log.id, harvestAnnouncementId: source.id })]),
+    );
     const harvest = (await post('/harvest-announcements').send({ parcelId: 'plot', announcementType: 'HARVEST',
       cropType: 'Apple', estimatedDate: '2026-09-26', estimatedQuantity: 20, sourcePlantingId: source.id }).expect(201)).body;
     expect(harvest.sourcePlantingId).toBe(source.id);
@@ -104,6 +138,7 @@ describe('Harvest plan → lot → mission (real HTTP and PostgreSQL)', () => {
     expect(workflow.harvestPlan).toMatchObject({ sourcePlantingId: source.id, parcelId: 'plot' });
     const plans = (await get('/harvest-announcements/my-announcements').expect(200)).body;
     expect(plans.find(row => row.id === harvest.id).sourcePlantingId).toBe(source.id);
+    expect(plans.find(row => row.id === source.id).plantingProgress.lastGrowthLogAt).toBe(log.networkTimestamp);
     await expect(app.get(HarvestAnnouncementsService).adminDeletePlanting('admin', source.id)).rejects.toThrow('linked harvests');
   });
 

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -167,8 +168,10 @@ export class CatalogService {
     const product = await this.prisma.catalog_products.create({
       data: {
         name: dto.name.trim(),
+        variety: dto.variety?.trim() || null,
         category: dto.category?.trim() || null,
         description: dto.description?.trim() || null,
+        storageConditions: dto.storageConditions?.trim() || null,
         imageUrl: imageUrl || null,
         estateId: dto.estateId || null,
         sourcePlantingId: dto.sourcePlantingId || null,
@@ -199,8 +202,12 @@ export class CatalogService {
       where: { id },
       data: {
         ...(dto.name != null ? { name: dto.name.trim() } : {}),
+        ...(dto.variety !== undefined ? { variety: dto.variety?.trim() || null } : {}),
         ...(dto.category !== undefined ? { category: dto.category?.trim() || null } : {}),
         ...(dto.description !== undefined ? { description: dto.description?.trim() || null } : {}),
+        ...(dto.storageConditions !== undefined
+          ? { storageConditions: dto.storageConditions?.trim() || null }
+          : {}),
         ...(imageUrl !== undefined ? { imageUrl: imageUrl || null } : {}),
         ...(dto.estateId !== undefined ? { estateId: dto.estateId || null } : {}),
         ...(dto.sourcePlantingId !== undefined ? { sourcePlantingId: dto.sourcePlantingId || null } : {}),
@@ -212,6 +219,7 @@ export class CatalogService {
           ? { availableUntil: dto.availableUntil ? new Date(dto.availableUntil) : null }
           : {}),
         updatedAt: new Date(),
+        updatedBy: actorId ?? null,
       },
       include: {
         estate: { select: { id: true, name: true } },
@@ -221,6 +229,67 @@ export class CatalogService {
     });
     await this.audit(id, actorId, 'UPDATE', { changes: dto }, { name: existing.name, plannedQuantityKg: existing.plannedQuantityKg });
     return this.mapAdminProduct(product);
+  }
+
+  private async assertGrowerOwnsProduct(userId: string, productId: string) {
+    const product = await this.prisma.catalog_products.findUnique({
+      where: { id: productId },
+      include: { estate: { select: { ownerId: true } } },
+    });
+    if (!product) throw new NotFoundException('Catalog product not found');
+    if (!product.estateId || product.estate?.ownerId !== userId) {
+      throw new ForbiddenException('You can only manage products on your own farm');
+    }
+    return product;
+  }
+
+  async listGrowerProducts(userId: string) {
+    const products = await this.prisma.catalog_products.findMany({
+      where: { estate: { ownerId: userId }, status: { not: 'ARCHIVED' } },
+      include: {
+        estate: { select: { id: true, name: true } },
+        source_planting: { select: { id: true, cropType: true, estimatedDate: true } },
+        packOptions: { where: { isActive: true }, orderBy: { sortOrder: 'asc' } },
+      },
+      orderBy: { updatedAt: 'desc' },
+    });
+    return products;
+  }
+
+  async createGrowerProduct(userId: string, dto: CreateCatalogProductDto) {
+    if (!dto.estateId) throw new BadRequestException('estateId is required');
+    const estate = await this.prisma.estates.findFirst({ where: { id: dto.estateId, ownerId: userId } });
+    if (!estate) throw new ForbiddenException('Estate not found or access denied');
+    if (dto.sourcePlantingId) {
+      const planting = await this.prisma.harvest_announcements.findFirst({
+        where: { id: dto.sourcePlantingId, userId, announcementType: 'PLANTING', parcel: { estateId: dto.estateId } },
+      });
+      if (!planting) throw new BadRequestException('sourcePlantingId must be your planting announcement');
+    }
+    return this.createProduct({ ...dto, estateId: dto.estateId }, userId);
+  }
+
+  async updateGrowerProduct(userId: string, id: string, dto: UpdateCatalogProductDto) {
+    await this.assertGrowerOwnsProduct(userId, id);
+    if (dto.estateId === null) throw new BadRequestException('Estate is required');
+    const product = await this.prisma.catalog_products.findUniqueOrThrow({ where: { id } });
+    const estateId = dto.estateId ?? product.estateId;
+    if (!estateId || !await this.prisma.estates.findFirst({ where: { id: estateId, ownerId: userId } })) {
+      throw new ForbiddenException('Estate not found or access denied');
+    }
+    const sourcePlantingId = dto.sourcePlantingId === undefined ? product.sourcePlantingId : dto.sourcePlantingId;
+    if (sourcePlantingId) {
+      const planting = await this.prisma.harvest_announcements.findFirst({
+        where: { id: sourcePlantingId, userId, announcementType: 'PLANTING', parcel: { estateId } },
+      });
+      if (!planting) throw new BadRequestException('sourcePlantingId must be your planting announcement');
+    }
+    return this.updateProduct(id, dto, userId);
+  }
+
+  async getGrowerProduct(userId: string, id: string) {
+    await this.assertGrowerOwnsProduct(userId, id);
+    return this.getAdminProduct(id);
   }
 
   async publishProduct(id: string, actorId?: string) {

@@ -490,7 +490,14 @@ export class OrdersService {
   async recordGrowerPacking(
     growerId: string,
     orderId: string,
-    body: { packedPackCount: number; packedKg?: number; batchId?: string },
+    body: {
+      packedPackCount: number;
+      packedKg?: number;
+      batchId?: string;
+      declaredShelfLifeHours?: number;
+      declaredExpiresAt?: string;
+      packagingType?: string;
+    },
   ) {
     const result = await this.prisma.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT id FROM orders WHERE id = ${orderId} FOR UPDATE`;
@@ -561,16 +568,65 @@ export class OrdersService {
         );
       }
 
+      const packNow = order.packedAt ?? new Date();
+      const declaredHours =
+        body.declaredShelfLifeHours != null && Number.isFinite(Number(body.declaredShelfLifeHours))
+          ? Math.floor(Number(body.declaredShelfLifeHours))
+          : order.declaredShelfLifeHours;
+      const declaredExpires =
+        body.declaredExpiresAt != null
+          ? new Date(body.declaredExpiresAt)
+          : declaredHours != null && !order.declaredExpiresAt
+            ? new Date(packNow.getTime() + declaredHours * 3600_000)
+            : order.declaredExpiresAt;
+      const packagingType =
+        body.packagingType?.trim() || order.packagingType || order.packLabel || null;
+      if (declaredHours != null && (!Number.isInteger(declaredHours) || declaredHours <= 0)) {
+        throw new BadRequestException('Declared shelf life must be a positive number of hours');
+      }
+      if (declaredExpires && (!Number.isFinite(declaredExpires.getTime()) || declaredExpires <= packNow)) {
+        throw new BadRequestException('Declared expiry must follow packing');
+      }
+      if (order.packedAt && (
+        (body.declaredShelfLifeHours != null && Number(body.declaredShelfLifeHours) !== order.declaredShelfLifeHours) ||
+        (body.declaredExpiresAt != null && new Date(body.declaredExpiresAt).getTime() !== order.declaredExpiresAt?.getTime()) ||
+        (body.packagingType != null && packagingType !== (order.packagingType || order.packLabel || null))
+      )) throw new BadRequestException('The recorded packaging declaration cannot be changed');
+
       const updated = await tx.orders.update({
         where: { id: orderId },
         data: {
           packedPackCount,
           packedKg: packedKg ?? undefined,
-          packedAt: order.packedAt ?? new Date(),
+          packedAt: packNow,
           packedBatchId: packedBatchId ?? undefined,
+          packedByUserId: growerId,
+          packagingType,
+          declaredShelfLifeHours: declaredHours ?? undefined,
+          declaredExpiresAt: declaredExpires ?? undefined,
           updatedAt: new Date(),
         },
       });
+
+      if (packedBatchId) {
+        const existingBatch = await tx.batches.findUniqueOrThrow({ where: { id: packedBatchId } });
+        const product = !existingBatch.passportProductSnapshot
+          ? await tx.catalog_products.findUnique({ where: { id: order.catalogProductId } }) : null;
+        await tx.batches.update({
+          where: { id: packedBatchId },
+          data: {
+            actualPackDate: existingBatch.actualPackDate ?? packNow,
+            ...(product ? { passportProductSnapshot: {
+              catalogProductId: product.id, name: product.name, variety: product.variety,
+              description: product.description, storageConditions: product.storageConditions,
+              imageUrl: product.imageUrl, capturedAt: packNow.toISOString(),
+            } } : {}),
+            packedByUserId: growerId,
+            catalogProductId: order.catalogProductId ?? undefined,
+            updatedAt: new Date(),
+          },
+        });
+      }
 
       let notification = null;
       if (isFullyPacked(updated) && order.buyerId && !order.buyerPackedNotifiedAt) {

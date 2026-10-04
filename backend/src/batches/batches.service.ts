@@ -7,6 +7,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationsGateway } from '../notifications/notifications.gateway';
 import { BlockchainService, ChainEventType } from '../blockchain/blockchain.service';
 import { BatchStatus } from '@prisma/client';
+import { buildPassportCompleteness } from '../../../shared/passport/completeness';
 
 /**
  * Batch Tracking Service
@@ -807,5 +808,79 @@ export class BatchesService {
     if (buf[0] === 0xff && buf[1] === 0xd8) return 'jpg';
     if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return 'png';
     return 'jpg';
+  }
+
+  async getPassportCompleteness(userId: string, batchKey: string) {
+    const batch = await this.prisma.batches.findFirst({
+      where: { OR: [{ id: batchKey }, { batchId: batchKey }] },
+      include: {
+        estates: { select: { ownerId: true } },
+        quality_entries: { select: { id: true } },
+        package_badges: { where: { lifecycle: 'ACTIVE' }, take: 1 },
+      },
+    });
+    if (!batch) throw new NotFoundException('Batch not found');
+    if (batch.estates.ownerId !== userId) throw new ForbiddenException('Access denied');
+
+    const catalogProduct = batch.catalogProductId
+      ? await this.prisma.catalog_products.findUnique({
+          where: { id: batch.catalogProductId },
+          select: {
+            name: true,
+            variety: true,
+            description: true,
+            imageUrl: true,
+            storageConditions: true,
+            sourcePlantingId: true,
+          },
+        })
+      : batch.harvestAnnouncementId
+        ? await this.prisma.catalog_products.findFirst({
+            where: {
+              sourcePlantingId: {
+                in: await this.plantingIdsForBatch(batch.harvestAnnouncementId),
+              },
+            },
+            select: {
+              name: true,
+              variety: true,
+              description: true,
+              imageUrl: true,
+              storageConditions: true,
+              sourcePlantingId: true,
+            },
+          })
+        : null;
+
+    const packedCount = await this.prisma.orders.count({ where: { packedBatchId: batch.id } });
+    const publicDocs = await this.prisma.passport_documents.count({
+      where: {
+        OR: [{ batchId: batch.id }, { catalogProductId: batch.catalogProductId ?? undefined }],
+        isPublic: true,
+      },
+    });
+
+    return buildPassportCompleteness({
+      catalogProduct,
+      batch: {
+        harvestDate: batch.harvestDate,
+        actualPackDate: batch.actualPackDate,
+        catalogProductId: batch.catalogProductId,
+        harvestAnnouncementId: batch.harvestAnnouncementId,
+      },
+      hasPackedOrders: packedCount > 0,
+      hasActiveBadge: batch.package_badges.length > 0,
+      publicDocumentsCount: publicDocs,
+      hasQualityEntry: Boolean(batch.quality_entries),
+    });
+  }
+
+  private async plantingIdsForBatch(harvestAnnouncementId: string): Promise<string[]> {
+    const harvest = await this.prisma.harvest_announcements.findUnique({
+      where: { id: harvestAnnouncementId },
+      select: { sourcePlantingId: true, id: true },
+    });
+    if (!harvest) return [];
+    return [harvest.sourcePlantingId, harvest.id].filter(Boolean) as string[];
   }
 }

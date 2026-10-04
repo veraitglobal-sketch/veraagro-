@@ -23,7 +23,33 @@ export class StoredDocumentsService {
     return apiBase ? `${apiBase}${relPath}` : relPath;
   }
 
-  async get(id: string): Promise<{ mimeType: string; fileName: string | null; data: Buffer }> {
+  /** Store base64 data URL; returns document id for internal references. */
+  async storeDataUrl(dataUrl: string, fileName = 'upload.jpg'): Promise<string> {
+    const match = /^data:([^;]+);base64,(.+)$/.exec(dataUrl.trim());
+    if (!match) throw new NotFoundException('Invalid image data');
+    const mimeType = match[1].toLowerCase();
+    const buffer = Buffer.from(match[2], 'base64');
+    const id = randomUUID();
+    await this.prisma.stored_documents.create({
+      data: { id, mimeType, fileName: fileName.slice(0, 200), data: buffer },
+    });
+    return id;
+  }
+
+  async get(id: string, actor?: { id: string; roles: string[] }): Promise<{ mimeType: string; fileName: string | null; data: Buffer }> {
+    const [passportDocs, report] = await Promise.all([
+      this.prisma.passport_documents.findMany({ where: { fileDocumentId: id } }),
+      this.prisma.passport_reports.findFirst({ where: { photoDocumentId: id }, select: { id: true } }),
+    ]);
+    const admin = actor?.roles?.some(role => ['ADMIN', 'SUPER_ADMIN'].includes(role));
+    if (!admin && report) throw new NotFoundException('Document not found');
+    if (!admin && passportDocs.length && !passportDocs.some(d => d.isPublic && d.verificationStatus === 'CONFIRMED')) {
+      const ownEstate = actor && await this.prisma.estates.findFirst({
+        where: { id: { in: passportDocs.map(d => d.estateId).filter((x): x is string => !!x) }, ownerId: actor.id },
+        select: { id: true },
+      });
+      if (!ownEstate) throw new NotFoundException('Document not found');
+    }
     const doc = await this.prisma.stored_documents.findUnique({ where: { id } });
     if (!doc) throw new NotFoundException('Document not found');
     return {

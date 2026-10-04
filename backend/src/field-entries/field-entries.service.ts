@@ -3,6 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
@@ -13,7 +14,9 @@ import {
 import { SmartLockService } from '../smart-lock/smart-lock.service';
 import { SeedProductionService } from '../seed-production/seed-production.service';
 import { GeometryUtil } from '../common/utils/geometry.util';
+import { parseWeatherObservation } from '../../../shared/passport/weather-observation';
 import { randomUUID } from 'crypto';
+import { parseFieldOperation, FIELD_OPERATION_TYPES, FieldOperation } from '../../../shared/passport/field-operation';
 
 export type EntryType = LegacyFieldEntryType | string;
 
@@ -214,9 +217,95 @@ export class FieldEntriesService {
     };
   }
 
+  /** Structured mobile diary: one atomic activity + treatment record, with replay protection. */
+  private async createOperation(userId: string, dto: CreateFieldEntryDto) {
+    let operation: FieldOperation;
+    try { operation = parseFieldOperation(dto.data.operation); }
+    catch (e) { throw new BadRequestException(e instanceof Error ? e.message : 'Invalid operation'); }
+    if (operation.type !== dto.type) throw new BadRequestException('Activity type mismatch');
+    const clientReference = dto.clientReference?.trim();
+    if (!clientReference || clientReference.length > 128) throw new BadRequestException('Client reference required');
+    const parcelId = this.resolveParcelId(dto);
+    const plantingId = typeof dto.data.plantingId === 'string' ? dto.data.plantingId.trim() : '';
+    const planting = await this.prisma.harvest_announcements.findFirst({
+      where: { id: plantingId, userId, parcelId, announcementType: 'PLANTING',
+        status: { notIn: ['CANCELLED', 'REJECTED'] }, parcel: { estateId: dto.farmId, approvedAt: { not: null } } },
+      include: { parcel: true },
+    });
+    if (!planting || !parcelId || !plantingId) throw new ForbiddenException('Choose an approved parcel and its active planting');
+    const gps = dto.data.location;
+    const gpsCheck = await this.validateGPSLocation(gps, dto.farmId);
+    if (!gpsCheck.valid) throw new ForbiddenException(gpsCheck.reason);
+    const points = GeometryUtil.polygonFromJson(planting.parcel.polygonCoordinates as unknown);
+    const tolerance = this.effectiveGpsToleranceMeters(gps.accuracy);
+    if (points.length >= 3 && !GeometryUtil.isPointInPolygonOrWithinBoundaryMeters(gps, points, tolerance)) {
+      throw new ForbiddenException('GPS is outside the selected parcel');
+    }
+    if (points.length === 1 && GeometryUtil.calculateDistance(gps, points[0]) > Math.max(100, tolerance)) {
+      throw new ForbiddenException('GPS is outside the selected parcel');
+    }
+    const photos = Array.isArray(dto.data.photos) ? dto.data.photos.filter(p => typeof p === 'string' && /^(https?:\/\/|data:image\/)/.test(p)) : [];
+    if (!photos.length) throw new BadRequestException('An activity photo is required');
+    const barcode = dto.fertilizerBarcode?.trim().replace(/\s+/g, '') || null;
+    // Compare the submitted operation, not a later change in catalogue naming.
+    const requestIdentity = JSON.stringify({ farmId: dto.farmId, parcelId, plantingId, operation, barcode });
+    const replay = async () => {
+      const row = await this.prisma.field_entries.findUnique({ where: { userId_clientReference: { userId, clientReference } } });
+      if (!row) return null;
+      if ((row.data as Record<string, unknown>).requestIdentity !== requestIdentity) throw new ConflictException('This reference belongs to a different activity');
+      return this.mapRow(row);
+    };
+    const existing = await replay();
+    if (existing) return existing;
+    let productId = barcode;
+    if (operation.type === 'SPRAYING' || operation.type === 'FERTILIZING') {
+      if (!barcode || barcode.toUpperCase().startsWith('SEED')) throw new BadRequestException('A treatment material barcode is required');
+      await this.materialBarcodeValidation.assertValidForGrower(userId, barcode,
+        operation.type === 'SPRAYING' ? 'PESTICIDE' : 'FERTILIZER', { farmId: dto.farmId, entryType: dto.type });
+      const product = await this.prisma.bio_white_list.findFirst({ where: { barcode, isActive: true }, select: { id: true, productName: true, materialType: true } });
+      const unit = product ? null : await this.prisma.supplier_material_barcodes.findUnique({ where: { barcode }, include: { catalogItem: { select: { name: true } } } });
+      if (!product && !unit) throw new ForbiddenException('Material barcode is not registered');
+      const expectedKind = operation.type === 'SPRAYING' ? 'PESTICIDE' : 'FERTILIZER';
+      if (product && product.materialType !== 'OTHER' && product.materialType !== expectedKind) {
+        throw new BadRequestException('Material does not match this activity');
+      }
+      operation.materialName = product?.productName || unit?.catalogItem?.name || operation.materialName;
+      productId = product?.id || barcode;
+    }
+    const occurredAt = new Date(operation.occurredAt);
+    const normalized = JSON.parse(JSON.stringify({ ...dto.data, operation, requestIdentity, date: operation.occurredAt,
+      plantingId, parcelId, notes: operation.notes, photos, materialName: operation.materialName,
+      materialQuantity: operation.quantity, materialUnit: operation.unit, areaHa: operation.areaHa }));
+    try {
+      const row = await this.prisma.$transaction(async tx => {
+        const saved = await tx.field_entries.create({ data: { userId, farmId: dto.farmId, parcelId, plantingId,
+          type: dto.type, occurredAt, clientReference, materialName: operation.materialName,
+          materialQuantity: operation.quantity, materialUnit: operation.unit, areaHa: operation.areaHa,
+          fertilizerBarcode: barcode, notes: operation.notes, photos, lat: gps.lat, lng: gps.lng, data: normalized } });
+        if (operation.type === 'SPRAYING') await tx.treatment_logs.create({ data: {
+          id: randomUUID(), parcelId, userId, productId, productName: operation.materialName,
+          dosage: `${operation.quantity} ${operation.unit}`, waterVolume: operation.waterLitres,
+          reason: operation.notes, appliedAt: occurredAt, gpsLatitude: gps.lat, gpsLongitude: gps.lng,
+          gpsAccuracy: gps.accuracy, deviceTimestamp: occurredAt,
+          needsAudit: Date.now() - occurredAt.getTime() > 24 * 60 * 60 * 1000,
+        } });
+        return saved;
+      });
+      return this.mapRow(row);
+    } catch (e) {
+      if ((e as { code?: string }).code === 'P2002') {
+        const original = await replay();
+        if (original) return original;
+      }
+      throw e;
+    }
+  }
+
   async create(userId: string, dto: CreateFieldEntryDto) {
+    if (!dto || typeof dto.type !== 'string' || !dto.data || typeof dto.data !== 'object') throw new BadRequestException('Activity data required');
+    const documented = FIELD_OPERATION_TYPES.includes(dto.type as FieldOperation['type']);
     const clientRef = dto.clientReference?.trim();
-    if (clientRef) {
+    if (clientRef && !documented) {
       const existing = await this.prisma.field_entries.findUnique({
         where: { userId_clientReference: { userId, clientReference: clientRef } },
       });
@@ -227,6 +316,7 @@ export class FieldEntriesService {
       where: { id: dto.farmId, ownerId: userId },
     });
     if (!farm) throw new NotFoundException('Farm not found or you do not have access');
+    if (documented) return this.createOperation(userId, dto);
 
     await this.assertEstateHasApprovedParcelForFieldWork(dto.farmId, dto.type);
 
@@ -242,6 +332,19 @@ export class FieldEntriesService {
       typeof dto.data.plantingId === 'string' && dto.data.plantingId.trim()
         ? dto.data.plantingId.trim()
         : null;
+    if (dto.type === 'WEATHER') {
+      if (!parcelId || !plantingId) throw new BadRequestException('Weather observations require a parcel and planting');
+      const planting = await this.prisma.harvest_announcements.findFirst({
+        where: { id: plantingId, userId, parcelId, announcementType: 'PLANTING',
+          status: { notIn: ['CANCELLED', 'REJECTED'] }, parcel: { estateId: dto.farmId } },
+        select: { id: true },
+      });
+      if (!planting) throw new ForbiddenException('Planting does not belong to this parcel and grower');
+      try {
+        const weather = parseWeatherObservation(dto.data.weather);
+        dto.data = { ...dto.data, weather, date: weather.from };
+      } catch { throw new BadRequestException('Invalid weather observation: check dates and temperature range'); }
+    }
     const bags = Array.isArray(dto.data.bags) ? dto.data.bags : [];
     const primarySerial = dto.seedSerialNumber?.trim() || bags[0]?.serial?.trim() || '';
 

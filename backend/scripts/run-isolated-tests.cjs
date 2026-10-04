@@ -9,6 +9,7 @@ const root = path.resolve(__dirname, '..');
 const migrationCheck = process.argv.includes('--migrations');
 const browserCheck = process.argv.includes('--browser');
 const mobileApi = process.argv.includes('--mobile-api');
+const passportCheck = process.argv.includes('--passport');
 const harvestCheck = process.argv.includes('--harvest');
 const probe = spawnSync('pg_config', ['--bindir'], { encoding: 'utf8' });
 const pgBin = process.env.PG_BIN || (probe.status === 0 ? probe.stdout.trim() : '');
@@ -53,6 +54,8 @@ async function main() {
     run(process.execPath, ['-r', 'ts-node/register', path.join(root, 'test/mobile-fixture.ts')], env);
   } else if (browserCheck) {
     run(process.execPath, [path.join(root, 'node_modules/jest/bin/jest.js'), '--config', 'test/jest-integration.json', '--runInBand', '--testPathPattern', 'orders.integration-spec', '--testNamePattern', 'browser checkout'], env);
+  } else if (passportCheck) {
+    run(process.execPath, [path.join(root, 'node_modules/jest/bin/jest.js'), '--config', 'test/jest-integration.json', '--runInBand', '--testPathPattern', 'passport.integration-spec'], env);
   } else if (harvestCheck) {
     run(process.execPath, [path.join(root, 'node_modules/jest/bin/jest.js'), '--config', 'test/jest-integration.json', '--runInBand', '--testPathPattern', 'harvest-workflow.integration-spec'], env);
   } else if (migrationCheck) {

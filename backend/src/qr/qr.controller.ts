@@ -22,7 +22,10 @@ export class QrController {
   }
 
   @Get('verify/:batchId')
-  async getVerification(@Param('batchId') raw: string) {
+  async getVerification(
+    @Param('batchId') raw: string,
+    @Query('badge') badge?: string,
+  ) {
     const batchId = (() => {
       try {
         return decodeURIComponent(raw);
@@ -32,7 +35,9 @@ export class QrController {
     })();
     // Support both batchId and QR ID format
     const qrId = batchId.startsWith('BIO-VERA-') ? batchId : `BIO-VERA-${batchId}`;
-    return this.qrService.getCertificateData(qrId);
+    return this.qrService.getCertificateData(qrId, {
+      packageBadgeSerial: badge?.trim() || undefined,
+    });
   }
 
   /**
@@ -40,8 +45,14 @@ export class QrController {
    * GET /qr/verify/:batchId/pdf
    */
   @Get('verify/:batchId/pdf')
-  async getPassportPDF(@Param('batchId') batchId: string, @Res() res: Response) {
-    const pdf = await this.qrService.generatePassportPDF(batchId);
+  async getPassportPDF(
+    @Param('batchId') batchId: string,
+    @Query('badge') badge: string | undefined,
+    @Res() res: Response,
+  ) {
+    const pdf = await this.qrService.generatePassportPDF(batchId, {
+      packageBadgeSerial: badge?.trim() || undefined,
+    });
     const filename = `bio-vera-passport-${batchId.replace(/^BIO-VERA-/, '')}.pdf`;
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);

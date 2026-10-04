@@ -692,7 +692,7 @@ export class PackageBadgesService {
       });
       publicBatchId = b?.batchId ?? null;
       if (publicBatchId) {
-        passportUrl = `${base}/passport/${encodeURIComponent(publicBatchId)}`;
+        passportUrl = `${base}/passport/${encodeURIComponent(publicBatchId)}?badge=${encodeURIComponent(row.serial)}`;
       }
     }
     return {

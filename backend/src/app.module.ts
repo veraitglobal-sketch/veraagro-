@@ -86,6 +86,8 @@ import { BioVeraFreshModule } from './biovera-fresh/biovera-fresh.module';
 import { CatalogModule } from './catalog/catalog.module';
 import { SeedProductionModule } from './seed-production/seed-production.module';
 import { StoredDocumentsModule } from './stored-documents/stored-documents.module';
+import { PassportReportsModule } from './passport-reports/passport-reports.module';
+import { PassportDocumentsModule } from './passport-documents/passport-documents.module';
 
 @Module({
   controllers: [AppController],
@@ -179,6 +181,8 @@ import { StoredDocumentsModule } from './stored-documents/stored-documents.modul
     CatalogModule,
     SeedProductionModule,
     StoredDocumentsModule,
+    PassportReportsModule,
+    PassportDocumentsModule,
   ],
   providers: [
     {
