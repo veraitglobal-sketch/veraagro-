@@ -68,6 +68,10 @@ model batches {
   quantity                                   Float
   unit                                       String
   harvestDate                                DateTime
+  actualPackDate                             DateTime?
+  passportProductSnapshot                    Json?
+  catalogProductId                           String?
+  packedByUserId                             String?
   status                                     BatchStatus            @default(PACKED)
   qualityIssues                              Json?
   inventoryId                                String?
@@ -92,9 +96,12 @@ model batches {
   temperature_logs                           temperature_logs[]
   package_badges                             package_badges[]
   orders_packed_as                           orders[]               @relation("OrderPackedBatch")
+  catalog_product                            catalog_products?      @relation(fields: [catalogProductId], references: [id])
+  passport_documents                         passport_documents[]
 
   @@index([harvestAnnouncementId])
   @@index([batchId])
+  @@index([catalogProductId])
   @@index([currentHubId])
   @@index([estateId])
   @@index([status])
@@ -411,8 +418,10 @@ model estates {
 model catalog_products {
   id                String                 @id @default(uuid())
   name              String
+  variety           String?
   category          String?
   description       String?
+  storageConditions String?
   imageUrl          String?
   estateId          String?
   sourcePlantingId  String?
@@ -421,6 +430,7 @@ model catalog_products {
   availableUntil    DateTime?
   status            CatalogProductStatus   @default(DRAFT)
   createdBy         String?
+  updatedBy         String?
   createdAt         DateTime               @default(now())
   updatedAt         DateTime               @updatedAt
   estate            estates?               @relation(fields: [estateId], references: [id])
@@ -428,6 +438,8 @@ model catalog_products {
   packOptions       catalog_pack_options[]
   stockMovements    catalog_stock_movements[]
   orders            orders[]
+  batches           batches[]
+  passport_documents passport_documents[]
 
   @@index([status])
   @@index([estateId])
@@ -928,6 +940,10 @@ model orders {
   packedPackCount      Int?
   packedKg             Float?
   packedAt             DateTime?
+  packedByUserId       String?
+  packagingType        String?
+  declaredShelfLifeHours Int?
+  declaredExpiresAt    DateTime?
   /// Lot (batch) the grower selected when recording packing — used for admin mission + dispatch link.
   packedBatchId        String?
   /// Set once when buyer is notified that the full order is packed (idempotent guard).
@@ -1299,6 +1315,84 @@ model stored_documents {
   fileName  String?
   data      Bytes
   createdAt DateTime @default(now())
+}
+
+enum PassportDocumentScope {
+  PRODUCT
+  LOT
+  PLANTING
+  ESTATE
+}
+
+enum PassportDocumentType {
+  CERTIFICATE
+  LAB_RESULT
+  OTHER
+}
+
+enum PassportDocumentVerificationStatus {
+  UPLOADED
+  REVIEWED
+  CONFIRMED
+}
+
+enum PassportReportStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+}
+
+/// Traceability documents linked to product, lot, or estate — public only when isPublic.
+model passport_documents {
+  id                 String                             @id @default(uuid())
+  title              String
+  docType            PassportDocumentType
+  scope              PassportDocumentScope
+  issuer             String?
+  issuedAt           DateTime?
+  expiresAt          DateTime?
+  fileDocumentId     String
+  isPublic           Boolean                            @default(false)
+  verificationStatus PassportDocumentVerificationStatus @default(UPLOADED)
+  estateId           String?
+  catalogProductId   String?
+  batchId            String?
+  plantingId         String?
+  uploadedByUserId   String?
+  createdAt          DateTime                           @default(now())
+  updatedAt          DateTime                           @updatedAt
+  catalog_product    catalog_products?                  @relation(fields: [catalogProductId], references: [id], onDelete: SetNull)
+  batch              batches?                           @relation(fields: [batchId], references: [id], onDelete: SetNull)
+
+  @@index([batchId])
+  @@index([catalogProductId])
+  @@index([estateId])
+  @@index([isPublic])
+}
+
+/// Public passport problem reports — not shown on the passport page itself.
+model passport_reports {
+  id              String               @id @default(uuid())
+  reportNumber    String               @unique
+  batchId         String
+  publicBatchId   String
+  badgeSerial     String?
+  description     String
+  photoDocumentId String?
+  contactEmail    String?
+  contactPhone    String?
+  status          PassportReportStatus @default(NEW)
+  idempotencyKey  String?
+  resolvedBy      String?
+  resolvedAt      DateTime?
+  adminNotes      String?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  @@unique([batchId, idempotencyKey])
+  @@index([status])
+  @@index([publicBatchId])
+  @@index([createdAt])
 }
 
 model seeds {
