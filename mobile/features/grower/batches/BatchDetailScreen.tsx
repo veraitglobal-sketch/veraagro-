@@ -12,6 +12,7 @@ import LocationHistoryBlock from './LocationHistoryBlock';
 import QualityIssuesBlock from './QualityIssuesBlock';
 import { BatchHarvestContext } from './BatchHarvestContext';
 import { BatchWorkflowActions } from './BatchWorkflowActions';
+import { PassportCompletenessBlock } from '../../../components/grower/PassportCompletenessBlock';
 
 interface BatchDetailScreenProps {
   batchId: string | undefined;
@@ -57,6 +58,7 @@ export default function BatchDetailScreen({ batchId }: BatchDetailScreenProps) {
       >
         <View style={{ padding: theme.spacing.md }}>
           <BatchHeaderBlock batch={batch} />
+          <PassportCompletenessBlock batchRef={batch.batchId || batch.id || batchId || ''} />
           <BatchProductBlock batch={batch} />
           <Text style={{ color: theme.colors.text.secondary, fontSize: 12.5, lineHeight: 17, marginBottom: 14, marginHorizontal: 4 }}>
             {batch.packing?.completedAt

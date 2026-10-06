@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   View,
+  Image,
   Text,
   TouchableOpacity,
   StyleSheet,
@@ -142,6 +143,13 @@ export function FieldLogHistoryPanel({
                 <>
                   <Text style={styles.modalWhen}>{formatWhen(detail.timestamp)}</Text>
                   <Text style={styles.modalPreview}>{detail.journalNotesPreview}</Text>
+                  {detail.detailData?.operation ? <View style={styles.detailBlock}>
+                    {detail.detailData.operation.endedAt ? <Text>{t('glossary.productionHistory.until')}: {formatWhen(detail.detailData.operation.endedAt)}</Text> : null}
+                    {detail.detailData.operation.materialName ? <Text>{detail.detailData.operation.materialName} · {detail.detailData.operation.quantity} {detail.detailData.operation.unit}</Text> : null}
+                    {detail.detailData.operation.waterLitres != null ? <Text>{t('glossary.productionHistory.waterLitres')}: {detail.detailData.operation.waterLitres} L</Text> : null}
+                    {detail.detailData.operation.method ? <Text>{t('glossary.productionHistory.method')}: {detail.detailData.operation.method}</Text> : null}
+                    {detail.detailData.photos?.map((uri, i) => <Image key={i} source={{ uri }} style={{ width: 180, height: 120, marginTop: 8 }} />)}
+                  </View> : null}
                   {detail.detailData?.bags?.length ? (
                     <View style={styles.detailBlock}>
                       <Text style={styles.detailLabel}>{t('producer.fieldLogForm.historyBags')}</Text>

@@ -18,3 +18,4 @@ export * from './passport/estimate-source';
 export * from './passport/completeness';
 export * from './passport/api-urls';
 export * from './passport/display-snapshot';
+export * from './passport/weather-entry';

@@ -28,6 +28,7 @@ import { EnterpriseButton, EnterpriseTextField } from '../../../design-system';
 import { normalizeHarvestParcelId } from '../harvest/useHarvestData';
 import { harvestPlanLink } from '../../../lib/harvest-batch-link';
 import { useAppLocaleTag } from '../../../lib/date-locale';
+import { GrowerDateField } from '../../../components/grower/GrowerDateField';
 
 type ParcelRow = {
   id: string;
@@ -129,6 +130,7 @@ export default function CreateBatchScreen() {
   const [productName, setProductName] = useState('');
   const [quantity, setQuantity] = useState('50');
   const [unit, setUnit] = useState('kg');
+  const [actualHarvestDate, setActualHarvestDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [saving, setSaving] = useState(false);
   const savingRef = useRef(false);
   const [formErr, setFormErr] = useState<string | null>(null);
@@ -263,8 +265,7 @@ export default function CreateBatchScreen() {
       Alert.alert(t('error'), t('producer.batches.createNeedQty'));
       return;
     }
-    const harvestDate = new Date().toISOString().slice(0, 10);
-    const parsed = plantingFormDateToEstimatedIsoUtc(harvestDate);
+    const parsed = plantingFormDateToEstimatedIsoUtc(actualHarvestDate);
     if (!parsed.ok) {
       Alert.alert(t('error'), t('producer.batches.createDateInvalid'));
       return;
@@ -454,6 +455,11 @@ export default function CreateBatchScreen() {
                     title={t('producer.batches.createStepQty')}
                   />
                   <Text style={styles.stepLead}>{t('producer.batches.createStepQtyLead')}</Text>
+
+                  <View style={{ marginBottom: 16 }}>
+                    <Text style={styles.fieldLabel}>{t('producer.batches.actualHarvestDate', 'Actual harvest date')} *</Text>
+                    <GrowerDateField value={actualHarvestDate} onChange={setActualHarvestDate} />
+                  </View>
 
                   <EnterpriseTextField
                     label={t('producer.batches.createQuantity')}

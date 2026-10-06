@@ -21,7 +21,7 @@
     "nameEs": "испански"
   },
   "footer": {
-    "tagline": "Вертикално управлявана агро-хранителна верига: производители по договор от цяла Европа, контрол на качеството, хладилна верига и продажба под марката Bio Vera — с Bio‑Ready досие за всяка партида.",
+    "tagline": "Bio Vera — немска agrifood компания със седалище в Хамбург, изгражда прозрачна европейска производствена мрежа от планиране до пазарен достъп.",
     "columnProduct": "Продукт",
     "columnCompany": "Компания",
     "columnSupport": "поддръжка",
@@ -79,26 +79,26 @@
       },
       "ro": {
         "title": "Română",
-        "body": "Пълен румънски интерфейс за производители и партньори, които работят на румънски и одитори в Румъния и по-широките коридори на ЕС. Същата възможност за проследяване, готова за Bio-Ready структура и оформление на Vera като английски и сръбски."
+        "body": "Пълен румънски интерфейс за производители и партньори, които работят на румънски и одитори в Румъния и по-широките коридори на ЕС. Същата възможност за проследяване, готова за programme-ready структура и оформление на Vera като английски и сръбски."
       },
       "bg": {
         "title": "Български",
-        "body": "Пълен български интерфейс за производители и дистрибутори в България: същият модел за проследяване, Bio-Ready досиета и работни потоци на Vera, както навсякъде в нашето внедряване в ЕС – създаден за модернизация и съвместими експортни канали."
+        "body": "Пълен български интерфейс за производители и дистрибутори в България: същият модел за проследяване, programme-ready досиета и работни потоци на Vera, както навсякъде в нашето внедряване в ЕС – създаден за модернизация и съвместими експортни канали."
       },
       "fr": {
         "title": "Français",
-        "body": "Пълен френски интерфейс за Франция, Белгия (ФР), Люксембург и търговски екипи — същата проследимост и Bio-Ready модел като при останалите локализирани екрани на Vera."
+        "body": "Пълен френски интерфейс за Франция, Белгия (ФР), Люксембург и търговски екипи — същата проследимост и programme-ready модел като при останалите локализирани екрани на Vera."
       },
       "es": {
         "title": "Español",
-        "body": "Пълен испански интерфейс за Испания, латиноамерикански коридори и екипи, които предпочитат испански — същият модел на проследимост Vera и Bio-Ready структура като на останалите езици."
+        "body": "Пълен испански интерфейс за Испания, латиноамерикански коридори и екипи, които предпочитат испански — същият модел на проследимост Vera и programme-ready структура като на останалите езици."
       }
     }
   },
   "metadata": {
     "siteName": "Био Вера",
-    "siteDescription": "Вертикално интегрирана агро-хранителна компания от Хамбург. Цифров продуктов паспорт на ЕС за всяка партида — проследимост от нивата до рафта за производители, логистика и доставчици.",
-    "ldJsonDescription": "Сертифицирана agrifood операционна система за производство, качество, логистика и дистрибуция — всяка партида от парцел до крайна точка, всеки участник верифициран, всяка стъпка документирана.",
+    "siteDescription": "Bio Vera е agrifood компания със седалище в Хамбург, специализирана в премиум горски плодове, производствени програми и дигитална проследимост на ниво партида.",
+    "ldJsonDescription": "Немска agrifood компания в Хамбург, координираща европейска мрежа от производители с Bio Vera Digital Product Passport на ниво партида.",
     "keywords": [
       "Био Вера",
       "Селскостопанска мрежа",
@@ -114,7 +114,7 @@
       "Прозрачност на храната"
     ],
     "ldJsonContactType": "Обслужване на клиенти",
-    "homeTitle": "Bio Vera | Traceable Fresh Produce — Field to Shelf"
+    "homeTitle": "Bio Vera | Немска agrifood компания и европейска мрежа от производители"
   },
   "chat": {
     "needHelp": "Нуждаете се от помощ?",
@@ -184,7 +184,10 @@
     "login": "Вход",
     "logout": "Изход",
     "openMenu": "Отворете менюто",
-    "closeMenu": "Затваряне на менюто"
+    "closeMenu": "Затваряне на менюто",
+    "productPassport": "Цифров продуктов паспорт",
+    "about": "За нас",
+    "residueProgramme": "Програма за остатъци"
   },
   "contactPage": {
     "heroTitle": "Свържете се",
@@ -292,7 +295,7 @@
       {
         "category": "Производител",
         "q": "Как се обработват плащанията?",
-        "a": "Плащанията се обработват автоматично при успешна проверка на доставката. Използваме ескроу система, за да гарантираме сигурни транзакции. Фермерите получават плащане в рамките на 3–5 работни дни след потвърждаване на доставката."
+        "a": "Условията за плащане се договарят предварително в рамките на съответното споразумение за производство или доставка. Фактурите и падежите следват условията в договора с Bio Vera — не фиксиран брой часове или escrow договорка."
       },
       {
         "category": "купувачи",
@@ -804,7 +807,8 @@
       "fieldCapture": "Парцел capture",
       "education": "Обучение",
       "appGuide": "App ръководство",
-      "confidential": "Партньор plans (protected)"
+      "confidential": "Партньор plans (protected)",
+      "productCatalog": "Product catalog"
     },
     "placeholders": {
       "plantingsTitle": "Моите насаждения",
@@ -1672,7 +1676,9 @@
     "supply": "Доставка преглед",
     "seedProduction": "Семена production",
     "goGrowerControl": "Производител control",
-    "preOrders": "Предварителни поръчки"
+    "preOrders": "Предварителни поръчки",
+    "passportReports": "Passport reports",
+    "passportDocuments": "Документи на паспорт"
   },
   "adminPages": {
     "titles": {
@@ -3282,7 +3288,36 @@
     "packingNoLots": "Няма готови партиди. Първо завършете въвеждането на качество:",
     "packingNoLotsLink": "Качество и партиди",
     "selectLotMessage": "Опаковането е записано — свържете партидата преди да поискате вземане.",
-    "selectLotLink": "Качество и партиди"
+    "selectLotLink": "Качество и партиди",
+    "packingDeclaredShelfLife": "Declared shelf life (hours, optional)",
+    "packingDeclaredShelfLifeHint": "Only if printed on the pack label",
+    "packingPackagingType": "Packaging type",
+    "packingPackagingTypeHint": "e.g. crate 5 kg",
+    "passportCompletenessLoadFailed": "Could not load passport checklist.",
+    "catalogTitle": "Product catalog",
+    "catalogDescription": "Enter product data once — linked to planting and reused in harvest, lots, and passport.",
+    "catalogEdit": "Edit product",
+    "catalogNew": "New product",
+    "catalogName": "Product name",
+    "catalogVariety": "Variety",
+    "catalogStorage": "Storage conditions",
+    "catalogNoPlanting": "No planting link",
+    "catalogImageUrl": "Photo URL or base64",
+    "catalogLoadFailed": "Could not load catalog.",
+    "catalogSaveFailed": "Could not save product.",
+    "catalogDocuments": "Product documents",
+    "catalogDocumentsLead": "Certificates and lab results linked to this product. Public passport shows only reviewed documents.",
+    "catalogDocTitle": "Document title",
+    "catalogDocTypeCert": "Certificate",
+    "catalogDocTypeLab": "Lab result",
+    "catalogDocTypeOther": "Other",
+    "catalogDocIssuer": "Issuer (optional)",
+    "catalogDocIssued": "Issued on",
+    "catalogDocExpires": "Valid until",
+    "catalogDocUpload": "Upload document",
+    "catalogDocUploaded": "Document uploaded — admin review required before public display.",
+    "catalogDocUploadFailed": "Could not upload document.",
+    "notRecorded": "Not recorded"
   },
   "supplier": {
     "nav": {
@@ -3434,9 +3469,9 @@
   },
   "home": {
     "hero": {
-      "title1": "Вертикално интегрирана",
-      "title2": "Agrifood компания",
-      "subtitle": "Bio Vera е вертикално интегрирана агро-хранителна компания със седалище в Хамбург. Чрез собствената си програма сключваме договори с производители, извършваме контрол на качеството и опаковане, управляваме хладилната верига и доставяме пресни плодове и зеленчуци до крайните клиенти. Всяка партида има документиран дигитален паспорт — от нивата до рафта.",
+      "title1": "Немска agrifood компания.",
+      "title2": "Европейска производствена мрежа.",
+      "subtitle": "Bio Vera е agrifood компания със седалище в Хамбург, вертикално интегрирана, специализирана в отглеждането, контрола на качеството и глобалната дистрибуция на премиум горски плодове — малини, къпини, ягоди и боровинки. Чрез синергията между собственото производство и силна мрежа от избрани договорни производители в цяла Европа поддържаме най-високите стандарти през цялата година.",
       "browseProducts": "Разгледайте продуктите",
       "becomeProducer": "Станете продуцент",
       "preOrder": "Предварителните поръчки за {{year}} г. са отворени",
@@ -3445,125 +3480,127 @@
       "preOrderTip2": "Предварителната поръчка служи само за планиране на количествата за {{year}} г.; тя не е обвързваща поръчка."
     },
     "statLabels": [
-      "Проследимост",
-      "Сертифицирани",
-      "Мониторинг",
-      "QA нива",
-      "Публична блокчейн следа в Polygon при активиране"
+      "Седалище",
+      "Мрежа от производители",
+      "Проследимост на партида",
+      "Производствени програми",
+      "Цифров продуктов паспорт"
     ],
-    "partnersLine": "Доверяват се всеки ден от водещи земеделски организации",
+    "partnersLine": "",
     "vision": {
-      "title": "Нашата визия",
-      "intro": "Ние изграждаме доверен път от полето до купувача: ясни правила, честни записи и справедлив достъп до пазара за производители, които отговарят на нашите стандарти.",
+      "title": "Как работим",
+      "intro": "Три свързани стълба от планиране на производството до пазарен достъп.",
       "cards": [
         {
-          "title": "Прозрачност",
-          "description": "Пълна видимост на целия процес от полето до клиента. Всяка стъпка е документирана и неизменна."
+          "title": "Производство по търсене",
+          "description": "Производствените програми се разработват около дефинирани изисквания за продукт, качество, срокове и купувачи."
         },
         {
-          "title": "сигурност",
-          "description": "Криптографски защитени данни, защита срещу измами и неизменни цифрови доказателства."
+          "title": "Верификация на всяка партида",
+          "description": "Производствени записи, информация за качество, релевантни сертификати и лабораторни резултати могат да бъдат свързани с Bio Vera Digital Product Passport."
         },
         {
-          "title": "Достъп до ЕС",
-          "description": "Автоматизирано генериране на ЕС сертификати и цифрови паспорти за директен достъп до пазара."
+          "title": "Свързване на производството с пазара",
+          "description": "Bio Vera координира производители и специализирани партньори в Европа, а търговското и оперативното управление се води от Хамбург."
         }
       ]
     },
     "features": {
-      "title": "Основни функции",
-      "intro": "Как мрежата работи всеки ден – производство, логистика, доставка и сетълмент, свързани в един оперативен модел.",
+      "title": "Основни възможности",
+      "intro": "Една операционна система, свързваща производство, верификация и доставка.",
       "list": [
         {
-          "title": "Система Smart-Lock",
-          "description": "Сканирането на QR код е основният ключ. Неизменно доказателство за производство с GPS валидиране."
+          "title": "Производствени програми",
+          "description": "Дефинирани изисквания за култура, качество и документация, свързани с пазарното търсене."
         },
         {
-          "title": "Проследяване на партиди",
-          "description": "Всеки сандък се проследява с Batch_ID. Проследимост с едно щракване от поле до клиент."
+          "title": "Проследимост на партиди",
+          "description": "Всяка производствена партида получава уникален Batch_ID, свързващ производство, качество и логистика."
         },
         {
-          "title": "Escrow плащане",
-          "description": "Средствата на купувача остават в ескроу до потвърждаване на доставката, след което се освобождават на производители и логистични партньори при договорени условия. Био Вера управлява веригата като търговска марка и оператор на доставки — силни, справедливи търговски условия, а не публичен процентен лист."
+          "title": "Bio Vera Digital Product Passport",
+          "description": "Цифров запис на ниво партида с произход, производствена информация, качество, сертификати, лаборатория и логистични етапи."
         },
         {
-          "title": "Цифрово ръкостискане",
-          "description": "Клиентът сканира QR кода, за да потвърди доставката. Автоматично освобождаване на плащането."
+          "title": "Интеграции с партньори",
+          "description": "Системата се развива, за да свързва производители с одобрени доставчици, лаборатории, сертификационни и логистични партньори."
         },
         {
-          "title": "Защита срещу измами",
-          "description": "GPS клеймо за време, проследяване на ID на устройството, заснемане само с камера. Невъзможно да се фалшифицира."
+          "title": "Производство с контрол на остатъци",
+          "description": "Производствени протоколи и лабораторна верификация за дългосрочната цел продукти без детектируеми остатъци от пестициди."
         },
         {
-          "title": "Цифров паспорт на ЕС",
-          "description": "Автоматизирано генериране на ЕС сертификати. Директен достъп до пазара без посредници."
+          "title": "Integrity Guard",
+          "description": "GPS валидация, проверки на одобрени input-и и структурирани полеви записи защитават интегритета на партида в мрежата."
         }
       ]
     },
     "blockchain": {
-      "title": "Защо използваме блокчейн",
-      "body": "Ние използваме блокчейн система, така че нашите продукти да останат верни на вас - клиента. Всяка стъпка от пътуването, от прибиране на реколтата до доставката, се записва по начин, който не може да бъде променен. Нито от нас, нито от някой в ​​нашата компания. Никой не може да промени пътеката. Това, което виждате, когато сканирате продукт, е същото доказателство, което виждаме ние: прозрачно, проверимо и неизменно.",
+      "title": "Структурирани записи за custodia",
+      "body": "Оперативните екипи документират предавания и custodia преходи, така че записите за партидата да останат последователни от производство до доставка.",
       "bullets": []
     },
     "roadmap": {
       "title": "Пътна карта",
-      "subtitle": "Къде сме сега и накъде отиваме",
-      "statusCompleted": "Завършено",
-      "statusInProgress": "В ход",
+      "subtitle": "Статус на възможностите в системата Bio Vera",
+      "statusCompleted": "Налично",
+      "statusInProgress": "Пилот",
       "statusPlanned": "Планирано",
+      "statusInDevelopment": "В разработка",
       "phases": [
         {
           "phase": "Q1 2026",
-          "title": "Мрежата стартира на живо",
-          "status": "завършен",
+          "title": "Основна платформа",
+          "status": "completed",
           "items": [
             "Backend API",
-            "Мобилно приложение",
             "Уеб приложение",
-            "Основни функции"
+            "Проследимост на партиди",
+            "Основни производствени потоци"
           ]
         },
         {
           "phase": "Q2 2026",
-          "title": "Разширяване на функциите",
-          "status": "завършен",
+          "title": "Полеви и партньорски слой",
+          "status": "in-development",
           "items": [
-            "AI Analytics — завършен",
-            "Проверка на блокчейн (многоъгълник) — завършена",
-            "Разширено табло за управление",
-            "Интеграции",
-            "ЕС сертификати"
+            "Мобилно приложение — пилот",
+            "Bio Vera Digital Product Passport",
+            "Производствени записи на производители",
+            "Партньорски интеграции — в разработка"
           ]
         },
         {
-          "phase": "Q3-Q4 2026 г",
-          "title": "Мащабиране",
+          "phase": "Q3–Q4 2026",
+          "title": "Разширяване на мрежата",
           "status": "in-progress",
           "items": [
-            "Многорегионална поддръжка",
-            "Пазар на API",
-            "Партньорски интеграции",
-            "Корпоративни функции"
+            "Мултирегионални производствени програми",
+            "Лабораторни интеграции — планирани",
+            "Мрежа от логистични партньори",
+            "Пилоти за програми с контрол на остатъци"
           ]
         },
         {
-          "phase": "2027 г",
-          "title": "Глобална експанзия",
-          "status": "планирано",
+          "phase": "2027",
+          "title": "Интелигентност и мащаб",
+          "status": "planned",
           "items": [
-            "Глобални пазари",
-            "IoT сензори",
-            "AI прогнози"
+            "Слой данни и интелигентност",
+            "Модели за риск от остатъци — планирани",
+            "Разширени програми за купувачи",
+            "IoT мониторинг — планиран"
           ]
         }
       ]
     },
     "products": {
       "title": "Разгледайте продуктите",
-      "subtitle": "Органични продукти с пълна проследимост",
-      "fruits": "Плодове",
-      "vegetables": "зеленчуци",
-      "grains": "зърна"
+      "subtitle": "Пресни горски плодове (малина, къпина, ягода, боровинка), замразената програма и горски плодове с шоколад (малина, къпина, ягода) — всяка линия с пълен batch досие.",
+      "raspberries": "Малини",
+      "blackberries": "Къпини",
+      "strawberries": "Ягоди",
+      "blueberries": "Боровинки"
     },
     "cta": {
       "title": "Произвеждайте за нас, превозвайте за нас или купувайте от нас",
@@ -3578,15 +3615,15 @@
       "items": [
         {
           "question": "Какво е Bio Vera?",
-          "answer": "Bio Vera е вертикално интегрирана агро-хранителна компания със седалище в Хамбург. Сключваме договори с производители, извършваме контрол на качеството и опаковане, управляваме хладилната верига и продаваме пресни продукти чрез собствената си програма — всяка партида има документиран дигитален паспорт от нивата до рафта. Не сме маркетплейс, който просто свързва непознати страни."
+          "answer": "Bio Vera е agrifood компания със седалище в Хамбург, специализирана в премиум горски плодове — малини, къпини, ягоди и боровинки. Чрез собствено производство и мрежа от избрани договорни производители в Европа поддържаме високи стандарти през цялата година, с проследимост на ниво партида и дефинирани производствени програми. Не сме маркетплейс, който просто свързва непознати страни."
         },
         {
-          "question": "What is an EU Digital Продукт Passport?",
-          "answer": "An EU Digital Product Passport is a digital record that accompanies a product from production to the consumer. Bio Vera generates these automatically for every batch — documenting origin, harvest data, quality checks, transport conditions, and EU compliance certificates. The QR code on every crate links to its passport."
+          "question": "Какво е Bio Vera Digital Product Passport?",
+          "answer": "Цифров запис на ниво партида, свързващ произход, производствени данни, контроли на качеството, релевантни сертификати, лабораторни резултати и логистични събития. QR кодът на касата или опаковката може да води към паспорта, където е наличен."
         },
         {
-          "question": "How does Bio Vera ensure food traceability?",
-          "answer": "Bio Vera uses Protocol 360 — an end-to-end quality system with soil analysis, biometric scanning at packaging, cold chain monitoring, and GPS-verified anti-fraud protection. Every checkpoint is recorded in the batch dossier. Optionally, dossiers are anchored to Polygon blockchain for immutable verification."
+          "question": "Как Bio Vera осигурява проследимост на храните?",
+          "answer": "Bio Vera използва Protocol 360 — рамка за верификация, обхващаща производствени записи, проверки на партиди и опаковане, лабораторна верификация където е необходима, плюс логистични и custodia данни. Всяка партида може да получи Bio Vera Digital Product Passport."
         },
         {
           "question": "Who is behind Bio Vera?",
@@ -3597,15 +3634,30 @@
           "answer": "Bio Vera is preparing for a growth-stage investment round. Investor materials, pitch deck, and project documentation are available at biovera.app/investor-deck."
         },
         {
-          "question": "How does Bio Vera use AI?",
-          "answer": "Bio Vera's AI Intelligence Terminal provides real-time logistics decisions, route optimization, demand forecasting, and harvest planning. The AI system was developed by Vera IT and integrates with the Bio Vera operating system for predictive supply chain management."
+          "question": "Как Bio Vera използва изкуствен интелект?",
+          "answer": "Bio Vera използва структурирани производствени, третмански, качествени и логистични данни за откриване на аномалии и подкрепа на оперативни решения. Възможностите за данни и интелигентност са в разработка; планирани са модели за прогноза на реколта, оценка на риска от остатъци и планиране на доставки."
         }
       ]
+    },
+    "statNumbers": [
+      "Hamburg",
+      "Европа",
+      "Партида",
+      "Програма",
+      "Паспорт"
+    ],
+    "residue": {
+      "title": "Към продукти без детектируеми остатъци от пестициди",
+      "body": "Разработваме производствени протоколи, предназначени да намалят употребата на пестициди и да позволят на избрани партиди да постигнат недетектируеми остатъци при дефинирани лабораторни условия и граници на детекция.",
+      "flow": "Производствен протокол → одобрени input-и → документация за третман → лабораторна верификация → Bio Vera Digital Product Passport",
+      "cta": "Научете повече за програмата"
     }
   },
   "forBuyersPage": {
-    "title": "За купувачи",
-    "heroLead": "Снабдете се с пресни продукти от мрежата Bio Vera: сертифициран произход и проследима история на партидите, а не само списък. Пълният каталог и поръчката са във вашето табло, след като се регистрирате.",
+    "metaTitle": "Горски плодове на едро | Bio Vera — Пресни, замразени, с шоколад",
+    "metaDescription": "Пресни горски плодове, замразена програма и горски плодове с шоколад (малина, къпина, ягода). Проследимост на ниво партида и Bio Vera Digital Product Passport.",
+    "title": "Горски плодове за търговия на едро — пресни, замразени, с шоколад",
+    "heroLead": "Снабдете се от Bio Vera: сертифициран произход, проследима история на всяка партида и дигитален паспорт. Каталог, цени и поръчки в таблото след регистрация.",
     "notShopBody": "Ние не сме стандартен онлайн магазин. Ние работим с ясен и прозрачен процес: вие виждате какво предлагаме, предоставяте вашата компания и данни за контакт и съгласие, а ние приемаме всяко искане сериозно. Прочетете как работим по-долу и, когато сте готови, изразете интереса си в долната част на страницата, за да можем да се свържем с вас.",
     "linkHowWeOperate": "Как работим",
     "linkExpressInterest": "Изразете интереса си",
@@ -3620,7 +3672,7 @@
       },
       {
         "title": "Разгледайте и поръчайте",
-        "body": "Филтрирайте по категория — плодове, зеленчуци, зърнени. Вижте произход, период на беритба и цени. Поръчайте директно или използвайте предварителната поръчка за {{year}} г. за сезонно планиране."
+        "body": "Филтрирайте по формат — пресни, замразени или с шоколад. Вижте произход, период на беритба и цени. Поръчайте директно или използвайте предварителната поръчка за {{year}} г. за сезонно планиране."
       },
       {
         "title": "Потвърдете и платете",
@@ -3631,12 +3683,12 @@
         "body": "Проследявайте вашата партида чрез цифровия паспорт. Виждате къде е събрано, кога (период на прибиране на реколтата) и как е било обработвано до доставката."
       }
     ],
-    "productsTitle": "Продукти, които предлагаме",
-    "productsLead": "Доставяме широка гама пресни плодове и зеленчуци (и зърнени храни) на европейските пазари. Пълният, актуален списък с разновидности, наличност и цени е на вашето табло след регистрация.",
+    "productsTitle": "Програма горски плодове",
+    "productsLead": "Пресни: малина, къпина, ягода, боровинка. Замразени: програма горски плодове (малина, къпина, ягода, микс). С шоколад: малина, къпина, ягода. Всяка линия с Bio Vera Digital Product Passport.",
     "productCategoryLabels": [
-      "Плодове",
-      "зеленчуци",
-      "Зърнени храни"
+      "Пресни",
+      "Замразена програма",
+      "С шоколад"
     ],
     "productsNote": "Влезте в панела за купувачи, за да видите целия каталог, да поръчате или да изпратите предварителна поръчка за {{year}} г.",
     "harvestCalendarTitle": "Календар на жътвата",
@@ -3668,7 +3720,7 @@
       }
     ],
     "valueTitle": "Какво получавате с Bio Vera",
-    "valueLead": "Нашите плодове и зеленчуци са прясно набрани, проследими и подкрепени от пълен цифров паспорт.",
+    "valueLead": "Нашите горски плодове са прясно набрани, проследими и подкрепени от пълен цифров паспорт — пресни, замразени и с шоколад.",
     "valueBlocks": [],
     "ctaRepeat": "Готови ли сте да поръчате или да планирате за 2026 г.?",
     "interestTitle": "Изразете интереса си",
@@ -3691,8 +3743,6 @@
     "formSending": "Изпращане...",
     "required": "*",
     "heroSubtitle": "Пълна проследимост от стопанството до вашия склад",
-    "metaTitle": "Buy Traceable Fresh Produce | Bio Vera for Buyers",
-    "metaDescription": "Поръчка certified fresh fruit, vegetables and cereals with full Batch_ID traceability. Digital продукт passport, жътва calendar, and secured плащане. Register for dashboard access.",
     "harvestCalendarLead": ""
   },
   "growersPage": {
@@ -3765,8 +3815,10 @@
         "standard": "Директно опаковане във фермата в опаковка Vera"
       }
     ],
-    "paymentGuaranteedBold": "Гарантирано плащане:",
-    "paymentGuaranteedRest": "Плащането е обезпечено с договори с немски търговски вериги (60-90 дни).",
+    "paymentTermsTitle": "Прозрачни условия за плащане",
+    "paymentTermsBody": "Условията за плащане се договарят предварително в рамките на съответното споразумение за производство или доставка.",
+    "paymentGuaranteedBold": "",
+    "paymentGuaranteedRest": "",
     "applyCertCta": "Кандидатствайте за Vera Group Certification 2026",
     "resourcesTitle": "Ресурси и изтегляния",
     "resourcesLead": "Основни документи и ръководства за производителите",
@@ -4255,7 +4307,7 @@
   },
   "aboutPage": {
     "heroTitle": "За Bio Vera",
-    "heroSubtitle": "Трансформиране на селското стопанство чрез технологии, прозрачност и доверие",
+    "heroSubtitle": "Bio Vera е agrifood компания със седалище в Хамбург, вертикално интегрирана, специализирана в отглеждането, контрола на качеството и глобалната дистрибуция на премиум горски плодове — малини, къпини, ягоди и боровинки. Чрез синергията между собственото производство и силна мрежа от избрани договорни производители в цяла Европа поддържаме най-високите стандарти през цялата година.",
     "techPartnerLine": "Платформата Bio Vera се разработва и поддържа от <1>Vera IT</1>, Хамбург — технологичен партньор в рамките на Vera Group.",
     "missionTitle": "Нашата мисия",
     "missionP1": "Bio Vera работи за укрепване на веригите за доставка на селскостопански продукти, като свързва производителите по света директно с пазарите, осигурявайки ясни стандарти, осигуряване на качеството и справедливо възнаграждение на всяка стъпка.",
@@ -4306,7 +4358,7 @@
     "ctaProducer": "Станете продуцент",
     "ctaContact": "Свържете се с нас",
     "protocol360Title": "Protocol 360",
-    "protocol360Body": "Protocol 360 is Bio Vera's end-to-end quality assurance system. From soil analysis at the parcel level through biometric scanning at packaging to cold chain monitoring during transport — every quality checkpoint is documented in the batch dossier and tied to the product's EU Digital Passport.",
+    "protocol360Body": "Protocol 360 is Bio Vera's end-to-end quality assurance system. From soil analysis at the parcel level through biometric scanning at packaging to cold chain monitoring during transport — every quality checkpoint is documented in the batch dossier and tied to the product's Bio Vera Digital Product Passport.",
     "metaTitle": "За Bio Vera | Вертикално интегрирана агрохранителна компания, Хамбург",
     "metaDescription": "Bio Vera е вертикално интегрирана агрохранителна компания в Хамбург: производители в цяла Европа, програмен QA, хладилна верига и цифрови паспорти на партиди — не marketplace."
   },
@@ -5410,7 +5462,7 @@
     "plainLanguageCards": [
       {
         "title": "What Bio Vera is",
-        "body": "Bio Vera is the selling company—not a bulletin board matching strangers. Contracted parcels and authorised Vera pack-outs feed one Bio‑Ready dossier that commercial, QA and treasury all defend; shoppers still see tomatoes, auditors see lineage."
+        "body": "Bio Vera is the selling company—not a bulletin board matching strangers. Contracted parcels and authorised Vera pack-outs feed one programme-ready dossier that commercial, QA and treasury all defend; shoppers still see tomatoes, auditors see lineage."
       },
       {
         "title": "How the operation runs седмица to седмица",
@@ -5528,7 +5580,7 @@
     "transparencyBullets": [
       "That QR resolves to някой’s face, certs and route breadcrumbs — succinct, factual, stubbornly linkable.",
       "Студено narratives and custody sit следващ to geography instead of politely ignoring each друг in separate decks.",
-      "Bio-Ready language on опаковка isn’t orphaned от какво операции реално surfaced.",
+      "programme-ready language on опаковка isn’t orphaned от какво операции реално surfaced.",
       "We leave purple adjectives stranded когато artefacts don’t назад ги — reputations downstream matter."
     ],
     "financeTitle": "Money that stops pretending to да бъде monolithic",
@@ -5892,11 +5944,11 @@
     "pdfLimitHint": "Length and layout are intentionally constrained for formal submissions. Banner imagery may да бъде customised in deployment.",
     "coverEyebrow": "Преглед на проекта",
     "coverTitle": "Bio Vera — Project overview",
-    "coverSubtitle": "Vertically operated agrifood company under Bio‑Ready rules—from sanctioned inputs through опаковане, refrigerated legs and passports our sales teams honour at checkout.",
+    "coverSubtitle": "Vertically operated agrifood company under programme-ready rules—from sanctioned inputs through опаковане, refrigerated legs and passports our sales teams honour at checkout.",
     "sections": [
       {
         "title": "Introduction",
-        "body": "Bio Vera operates as an agrifood company that organizes production through contracted growers, coordinates logistics and sells to customers—all under Bio‑Ready transparency. The corridor ambition is single-recipe assurance: Southeastern European cultivation inside EU QA rails without contradictory spreadsheet folklore."
+        "body": "Bio Vera operates as an agrifood company that organizes production through contracted growers, coordinates logistics and sells to customers—all under programme-ready transparency. Bio Vera develops producer programmes across selected European growing regions based on crop expertise, seasonal availability, quality capability and buyer demand."
       },
       {
         "title": "Problem",
@@ -6165,5 +6217,65 @@
     "expectWhoBody": "Екипът на Bio Vera в Хамбург, отговорен за вашата област.",
     "contactPromptTitle": "Предпочитате разговор?",
     "contactPromptCta": "Запазете безплатен разговор"
+  },
+  "passportCompleteness": {
+    "title": "What is missing for the passport",
+    "lead": "Fix gaps before publishing — optional items improve completeness but do not block work.",
+    "allRequiredOk": "Required passport data is recorded for this lot.",
+    "levelRequired": "Required",
+    "levelRecommended": "Recommended",
+    "fixLink": "Add data",
+    "productName": "Product name in catalog",
+    "plantingLink": "Link to planting or harvest plan",
+    "harvestDate": "Actual harvest date on lot",
+    "packDate": "Pack date from order packing",
+    "variety": "Variety in catalog",
+    "description": "Short product description",
+    "photo": "Product photo",
+    "storage": "Product storage conditions",
+    "qualityEntry": "Quality entry for lot",
+    "publicDocument": "Verified public document",
+    "badge": "Package badge (when applicable)"
+  },
+  "admin": {
+    "passportReports": {
+      "details": "Подробности за сигнала",
+      "product": "Продукт",
+      "notes": "Вътрешни бележки",
+      "error": "Сигналът не може да бъде зареден или записан.",
+      "new": "Нов",
+      "title": "Сигнали от паспорта",
+      "contact": "Контакт",
+      "inProgress": "В обработка",
+      "resolve": "Решено",
+      "openPhoto": "Отвори снимката",
+      "openPassport": "Отвори паспорта",
+      "empty": "Няма сигнали."
+    },
+    "passportDocuments": {
+      "title": "Документи на паспорта",
+      "lead": "В публичния паспорт се показват само потвърдени документи, одобрени за публикуване.",
+      "openFile": "Отвори файла",
+      "confirmPublic": "Потвърди и публикувай",
+      "confirmInternal": "Потвърди за вътрешна употреба",
+      "empty": "Няма документи."
+    }
+  },
+  "residueControlledPage": {
+    "metaTitle": "Производство с контрол на остатъци | Bio Vera",
+    "metaDescription": "Производствени програми Bio Vera, предназначени да намалят употребата на пестициди и да целят недетектируеми остатъци при дефинирана лабораторна верификация.",
+    "title": "Програма Bio Vera за производство с контрол на остатъци",
+    "heroLead": "Bio Vera разработва производствени програми, предназначени систематично да намалят употребата на пестициди и да помогнат на избрани производители да целят продукти без детектируеми остатъци при дефинирани лабораторни методи и граници на детекция.",
+    "disclaimer": "Тази програма е в разработка и не представлява био сертификация, нито твърдение, че пестициди никога не са използвани.",
+    "flowTitle": "Как програмата свързва стъпките",
+    "flowSteps": [
+      "Производствен протокол",
+      "Насоки за одобрени input-и",
+      "Документация за третман",
+      "Планиране на реколта",
+      "Лабораторна верификация",
+      "Bio Vera Digital Product Passport"
+    ],
+    "labNote": "Лабораторна верификация е задължителна, преди партида да може да бъде представена като отговаряща на приложимата Bio Vera цел за остатъци."
   }
 }

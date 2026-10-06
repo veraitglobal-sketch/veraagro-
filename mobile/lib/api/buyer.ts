@@ -5,6 +5,7 @@ import api from './client';
 import { API_URL } from '../api-url';
 import { axiosResponseStatus, isLikelyNetworkError } from '../api-error';
 import type { Product, RetailLocation, ProductPassport } from './types';
+import { buildQrReportUrl, buildQrVerifyUrl } from '../../../shared/passport/api-urls';
 
 export const inventoryAPI = {
   getAvailableProducts: async (city?: string, lat?: number, lng?: number): Promise<Product[]> => {
@@ -33,10 +34,9 @@ export const inventoryAPI = {
 };
 
 export const passportAPI = {
-  getByBatchId: async (batchId: string): Promise<ProductPassport> => {
+  getByBatchId: async (batchId: string, badgeSerial?: string | null): Promise<ProductPassport> => {
     try {
-      const id = encodeURIComponent(batchId);
-      const response = await axios.get(`${API_URL}/qr/verify/${id}`);
+      const response = await axios.get(buildQrVerifyUrl(API_URL, batchId, badgeSerial));
       return response.data;
     } catch (error: unknown) {
       if (axiosResponseStatus(error) === 404) {
@@ -44,6 +44,19 @@ export const passportAPI = {
       }
       throw error;
     }
+  },
+  submitReport: async (
+    batchId: string,
+    body: {
+      description: string;
+      contactEmail?: string;
+      photoDataUrl?: string;
+      idempotencyKey: string;
+    },
+    badgeSerial?: string | null,
+  ): Promise<{ reportNumber: string; duplicate?: boolean }> => {
+    const response = await axios.post(buildQrReportUrl(API_URL, batchId, badgeSerial), body);
+    return response.data;
   },
 };
 

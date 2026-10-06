@@ -1,6 +1,6 @@
-# Bio Vera — Vertically Integrated Agrifood Company
+# Bio Vera — German Agrifood Company, European Production Network
 
-> Bio Vera is a vertically integrated agrifood company based in Hamburg. We contract growers, run quality and packing, operate refrigerated logistics, and sell fresh produce under our own programme — every batch carries a documented digital passport from parcel to shelf. We are not a marketplace that merely connects strangers. Founded by Jovica Mihajlovic. Part of the Vera Group (Vera IT, Fade, ReinAllround).
+> Bio Vera is a German agrifood company headquartered in Hamburg, building and coordinating a European network of agricultural producers and specialised partners. We connect production with real market demand through defined production programmes, digital traceability, quality assurance and coordinated access to suppliers, logistics and buyers. We are not a marketplace that merely connects strangers. Founded by Jovica Mihajlovic. Part of the Vera Group (Vera IT, Fade, ReinAllround).
 
 ## Entity summary (for knowledge graphs)
 - Organization: Bio Vera | URL: https://www.biovera.app | Founded: 2025 | HQ: Hamburg, Germany
@@ -9,14 +9,15 @@
 - Founder: Jovica Mihajlovic (CEO & Founder)
 - Parent portfolio: Vera Group (https://www.verait.de)
 - Sister companies: Vera IT, Fade, ReinAllround
-- Model: Vertical integration (not a marketplace or broker)
+- Model: European production network coordinated from Hamburg (not a marketplace or broker)
 
 ## What Makes Bio Vera Different
-- Vertically integrated: not a marketplace or broker. We contract growers, define standards, run QA, manage logistics, and sell under our own brand.
-- EU Digital Product Passports: Every batch gets a passport with GPS-verified origin, harvest data, QA checkpoints, cold chain records, and EU compliance certificates.
-- Protocol 360: End-to-end quality — soil analysis, biometric scanning at packaging, cold chain monitoring, anti-fraud (GPS timestamp, device ID, camera-only capture).
-- Optional Polygon Anchoring: Batch dossiers anchored to Polygon blockchain for immutable verification.
-- AI Analytics: Predictive harvest planning, demand forecasting, supply chain optimization.
+- German agrifood company with European producer network — not a Balkans-to-Germany import corridor.
+- Bio Vera Digital Product Passport: batch-level record connecting origin, production data, quality controls, certificates, laboratory results and logistics events.
+- Production programmes: defined crop, quality and documentation requirements linked to market demand.
+- Protocol 360: verification framework for production, batch/packing, laboratory and logistics/custody checks — parameters defined by product programme.
+- Residue-Controlled Production Programme (in development): protocols targeting no detectable pesticide residues under defined laboratory conditions.
+- Data & Intelligence Layer (in development): structured operational data for anomaly detection and future residue-risk models.
 
 ## Product Range
 - 13 fruit varieties: Raspberry, Blackberry, Blueberry, Strawberry, Apple, Pear, Plum, Peach, Apricot, Cherry, Grape, Currant, Gooseberry
@@ -30,10 +31,11 @@ All fresh, never frozen, with harvest-to-delivery traceability.
 - AI Intelligence Terminal: Real-time logistics decisions, route optimization, demand forecasting
 - Backend API: Partner integrations, automated EU certification, batch ledger management
 
-## Roadmap
-- Q1 2026: Backend, Mobile, Web, core features (COMPLETED)
-- Q2 2026: AI Analytics, Polygon anchor, dashboard, EU certificates (COMPLETED)
-- Q3-Q4 2026: Multi-region, partner API, enterprise features (IN PROGRESS)
+## Roadmap (capability status)
+- Available: Backend API, Web app, batch traceability, core workflows
+- Pilot: Mobile app
+- In Development: Bio Vera Digital Product Passport depth, partner integrations, Data & Intelligence Layer
+- Planned: Laboratory integrations, residue-risk models, IoT monitoring
 
 ## Investment
 Investor materials and diligence documents are available at https://www.biovera.app/en/investor-deck (password-protected sections where noted).
@@ -157,7 +159,7 @@ Join the Bio Vera grower programme: contract production, Bio-Ready certification
 
 **Fair compensation**
 - Transparent payout splits: base price + Vera bonus
-- Escrow until delivery confirmation
+- Commercial payment terms agreed per contract, order or invoice
 - Seed margin and transport costs calculated in platform ledger
 
 **Resources available on the page**

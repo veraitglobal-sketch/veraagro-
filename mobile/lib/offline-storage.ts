@@ -1,3 +1,6 @@
+import type { FieldOperation } from '../../shared/passport/field-operation';
+import { formatWeatherObservationPreview } from '../../shared/passport/weather-entry';
+import type { WeatherObservation } from '../../shared/passport/weather-observation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { CreateHarvestPlanBody } from './api';
 import i18n from '../i18n/config';
@@ -13,6 +16,7 @@ const PENDING_ENTRIES_KEY = 'pending_field_entries';
 const FIELD_LOG_HISTORY_KEY = 'field_log_history_v1';
 const FIELD_LOG_HISTORY_MAX = 100;
 const PENDING_HARVEST_KEY = 'pending_harvest_plans';
+const PENDING_WEATHER_KEY = 'pending_weather_observations';
 const PENDING_PRODUCTS_KEY = 'pending_products';
 const LEGACY_OWNER_SLOT = '__legacy__';
 
@@ -90,9 +94,14 @@ export type FieldActivityType =
   | 'Spraying'
   | 'Harvest'
   | 'TransportCoordination'
-  | 'Packaging';
+  | 'Packaging'
+  | 'Irrigation'
+  | 'Inspection'
+  | 'Weather';
 
 export interface PendingFieldEntry {
+  operation?: import('../../shared/passport/field-operation').FieldOperation;
+  plantingId?: string;
   id: string;
   /** Set when saving so sync targets the same estate (avoids 403 if API returns estates in a different order). */
   estateId?: string;
@@ -157,6 +166,7 @@ export function shouldRemoveLegacyFieldLogRow(entry: PendingFieldEntry): boolean
 
 /** Lightweight local history for Field log (survives sync success; device-only). */
 export interface FieldLogHistoryItem {
+  weatherPayloadIdentity?: string;
   id: string;
   /** Offline idempotency key — dedupes against server rows after sync. */
   clientReference?: string;
@@ -176,6 +186,7 @@ export interface FieldLogHistoryItem {
   status: 'pending' | 'syncing' | 'synced' | 'error' | 'unrecoverable';
   error?: string;
   detailData?: {
+    operation?: FieldOperation;
     type?: string;
     bags?: Array<{ serial: string; quantityKg?: number }>;
     parcelId?: string;
@@ -188,8 +199,35 @@ export interface FieldLogHistoryItem {
     materialName?: string;
     materialQuantity?: number;
     materialUnit?: string;
+    weather?: WeatherObservation;
   };
 }
+
+/** Grower weather/frost observation queued for POST /field-entries (WEATHER). */
+export type PendingWeatherObservation = {
+  /** A server conflict needs review, not automatic retries with the same key. */
+  conflict?: boolean;
+  id: string;
+  farmId: string;
+  parcelId: string;
+  plantingId: string;
+  payload: {
+    type: 'WEATHER';
+    farmId: string;
+    clientReference: string;
+    data: {
+      parcelId: string;
+      plantingId: string;
+      date: string;
+      weather: WeatherObservation;
+      notes?: string;
+      requestIdentity: string;
+    };
+  };
+  createdAt: string;
+  status: 'pending' | 'syncing' | 'synced' | 'error';
+  error?: string;
+};
 
 /** Offline product (QR or manual). */
 export interface PendingProduct {
@@ -259,6 +297,9 @@ const LEGACY_ACTIVITY_TO_EN: Record<string, FieldActivityType> = {
   Harvest: 'Harvest',
   TransportCoordination: 'TransportCoordination',
   Packaging: 'Packaging',
+  Irrigation: 'Irrigation',
+  Inspection: 'Inspection',
+  Weather: 'Weather',
 };
 
 const KNOWN_ACTIVITIES_SET = new Set<FieldActivityType>([
@@ -268,6 +309,9 @@ const KNOWN_ACTIVITIES_SET = new Set<FieldActivityType>([
   'Harvest',
   'TransportCoordination',
   'Packaging',
+  'Irrigation',
+  'Inspection',
+  'Weather',
 ]);
 
 function normalizeFieldActivity(raw: string): FieldActivityType {
@@ -447,6 +491,7 @@ return {
     fieldLogQueue: number;
     fieldLogHistory: number;
     harvestPlans: number;
+    weatherObservations: number;
     products: number;
     costs: number;
     certificatePhotos: number;
@@ -460,6 +505,11 @@ return {
     const harvestKept = harvests.filter((h) => !unsent(h.status));
     const harvestPlans = harvests.length - harvestKept.length;
     await scopedSetItem(PENDING_HARVEST_KEY, JSON.stringify(harvestKept));
+
+    const weatherRows = await this.getPendingWeatherObservations();
+    const weatherKept = weatherRows.filter((row) => !unsent(row.status));
+    const weatherObservations = weatherRows.length - weatherKept.length;
+    await scopedSetItem(PENDING_WEATHER_KEY, JSON.stringify(weatherKept));
 
     const productsOwner = await productOwnerId();
     const products = await this.getPendingProducts(productsOwner);
@@ -481,6 +531,7 @@ return {
       fieldLogQueue: field.queueRemoved,
       fieldLogHistory: field.historyRemoved,
       harvestPlans,
+      weatherObservations,
       products: productsRemoved,
       costs: costsRemoved,
       certificatePhotos,
@@ -506,7 +557,8 @@ return {
     try {
       const item: FieldLogHistoryItem = {
         id: entry.id,
-        timestamp: entry.timestamp,
+        clientReference: entry.id,
+        timestamp: entry.operation?.occurredAt ?? entry.timestamp,
         activityType: entry.activityType,
         estateId: entry.estateId,
         parcelId: entry.parcelId,
@@ -521,6 +573,10 @@ return {
         catalogMaterialName: entry.catalogMaterialName,
         status: entry.status,
         error: entry.error,
+        ...(entry.operation ? { detailData: { operation: entry.operation, date: entry.operation.occurredAt,
+          areaHa: entry.operation.areaHa, notes: entry.operation.notes, photos: [entry.photoUri],
+          lat: entry.location.lat, lng: entry.location.lng, materialName: entry.operation.materialName,
+          materialQuantity: entry.operation.quantity, materialUnit: entry.operation.unit } } : {}),
       };
       const prev = await this.getFieldLogHistory();
       const without = prev.filter((h) => h.id !== item.id);
@@ -777,6 +833,116 @@ return {
     }
   },
 
+  async getPendingWeatherObservations(): Promise<PendingWeatherObservation[]> {
+    try {
+      const data = await scopedGetItem(PENDING_WEATHER_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async savePendingWeatherObservation(
+    entry: Omit<PendingWeatherObservation, 'createdAt' | 'status'>,
+  ): Promise<string> {
+    const list = await this.getPendingWeatherObservations();
+    const idx = list.findIndex((row) => row.id === entry.id);
+    const identity = JSON.stringify(entry.payload);
+    const history = (await this.getFieldLogHistory()).find((row) => row.id === entry.id);
+    const savedIdentity = idx >= 0 ? JSON.stringify(list[idx].payload) : history?.weatherPayloadIdentity;
+    // Saving records an immutable observation. Further input is a new observation,
+    // not a mutation of a request that the server may already have accepted.
+    if (savedIdentity !== undefined) {
+      if (savedIdentity !== identity) throw new Error('Weather observation already saved; use a new reference');
+      return entry.id;
+    }
+    const row: PendingWeatherObservation = {
+      ...entry,
+      createdAt: idx >= 0 ? list[idx].createdAt : new Date().toISOString(),
+      status: 'pending',
+      error: undefined,
+    };
+    if (idx >= 0) list[idx] = row;
+    else list.push(row);
+    await scopedSetItem(PENDING_WEATHER_KEY, JSON.stringify(list));
+    await this.upsertFieldLogHistoryFromWeather(row);
+    return row.id;
+  },
+
+  async removePendingWeatherObservation(id: string): Promise<void> {
+    const list = await this.getPendingWeatherObservations();
+    await scopedSetItem(PENDING_WEATHER_KEY, JSON.stringify(list.filter((row) => row.id !== id)));
+  },
+
+  /** Owner operations serialize this compare-and-set with local saves. */
+  async settleWeatherObservation(
+    expected: PendingWeatherObservation,
+    status: PendingWeatherObservation['status'],
+    error?: string,
+    conflict = false,
+  ): Promise<boolean> {
+    const list = await this.getPendingWeatherObservations();
+    const item = list.find((row) => row.id === expected.id);
+    if (!item || JSON.stringify(item.payload) !== JSON.stringify(expected.payload)) return false;
+    item.status = status;
+    item.error = error;
+    item.conflict = conflict;
+    // Write the canonical snapshot to history before removing the retryable queue item.
+    await this.upsertFieldLogHistoryFromWeather(item);
+    await scopedSetItem(PENDING_WEATHER_KEY, JSON.stringify(
+      status === 'synced' ? list.filter((row) => row.id !== item.id) : list,
+    ));
+    return true;
+  },
+
+  async updatePendingWeatherObservationStatus(
+    id: string,
+    status: PendingWeatherObservation['status'],
+    error?: string,
+  ): Promise<void> {
+    const list = await this.getPendingWeatherObservations();
+    const item = list.find((row) => row.id === id);
+    if (!item) return;
+    item.status = status;
+    if (error !== undefined) item.error = error;
+    await scopedSetItem(PENDING_WEATHER_KEY, JSON.stringify(list));
+    await this.patchFieldLogHistory(id, { status, error });
+  },
+
+  async upsertFieldLogHistoryFromWeather(entry: PendingWeatherObservation): Promise<void> {
+    try {
+      const preview = formatWeatherObservationPreview(
+        entry.payload.data.weather,
+        entry.payload.data.notes,
+      );
+      const item: FieldLogHistoryItem = {
+        id: entry.id,
+        weatherPayloadIdentity: JSON.stringify(entry.payload),
+        clientReference: entry.id,
+        timestamp: entry.payload.data.weather.from,
+        activityType: 'Weather',
+        estateId: entry.farmId,
+        parcelId: entry.parcelId,
+        harvestAnnouncementId: entry.plantingId,
+        journalNotesPreview: preview,
+        status: entry.status,
+        error: entry.error,
+        detailData: {
+          type: 'WEATHER',
+          weather: entry.payload.data.weather,
+          notes: entry.payload.data.notes,
+          date: entry.payload.data.date,
+        },
+      };
+      const prev = await this.getFieldLogHistory();
+      const without = prev.filter((h) => h.id !== item.id);
+      const next = [item, ...without].slice(0, FIELD_LOG_HISTORY_MAX);
+      await scopedSetItem(FIELD_LOG_HISTORY_KEY, JSON.stringify(next));
+    } catch (e) {
+      console.error('Error writing weather field log history:', e);
+    }
+  },
+
   /**
    * Rows left in `syncing` after an app crash never complete; `needsSync` keeps them forever.
    * Reset to `pending` before any outbound sync sweep.
@@ -838,6 +1004,17 @@ return {
         return h;
       });
       if (dirty) await scopedSetItem(PENDING_HARVEST_KEY, JSON.stringify(harvestsNext));
+
+      const weatherRows = await this.getPendingWeatherObservations();
+      dirty = false;
+      const weatherNext = weatherRows.map((row) => {
+        if (row.status === 'syncing') {
+          dirty = true;
+          return { ...row, status: 'pending' as const };
+        }
+        return row;
+      });
+      if (dirty) await scopedSetItem(PENDING_WEATHER_KEY, JSON.stringify(weatherNext));
     } catch (e) {
       console.warn('[offlineStorage] resetStuckSyncingQueues:', e);
     }

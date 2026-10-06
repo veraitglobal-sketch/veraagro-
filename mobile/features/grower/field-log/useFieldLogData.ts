@@ -1,3 +1,5 @@
+import { FIELD_OPERATION_TYPES, type FieldOperationType } from '../../../../shared/passport/field-operation';
+import { emptyOperationForm, operationFromForm } from '../../../lib/field-operation';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +14,7 @@ import {
   fieldEntryToHistoryItem,
   mergeFieldLogHistory,
   pendingPlantingToHistoryItem,
+  pendingWeatherToHistoryItem,
 } from '../../../lib/field-log-history';
 import { apiErrorMessage } from '../../../lib/api-error';
 import { isDeviceOnline } from '../../../lib/network-utils';
@@ -33,7 +36,9 @@ export type ActivityType =
   | 'SPRAYING'
   | 'HARVEST'
   | 'TRANSPORT_COORD'
-  | 'PACKAGING';
+  | 'PACKAGING'
+  | 'IRRIGATION'
+  | 'INSPECTION';
 
 /** Barcode validation path — user taps first so we don't infer wrong from vague typing. */
 export type MaterialKindForLog = FieldLogMaterialKind;
@@ -46,9 +51,13 @@ const ACTIVITY_TO_PENDING: Record<ActivityType, PendingFieldEntry['activityType'
   HARVEST: 'Harvest',
   TRANSPORT_COORD: 'TransportCoordination',
   PACKAGING: 'Packaging',
+  IRRIGATION: 'Irrigation',
+  INSPECTION: 'Inspection',
 };
 
 export const ACTIVITY_TYPES: { value: ActivityType }[] = [
+  { value: 'IRRIGATION' },
+  { value: 'INSPECTION' },
   { value: 'PLANTING' },
   { value: 'FERTILIZING' },
   { value: 'SPRAYING' },
@@ -64,10 +73,13 @@ const FIELD_HISTORY_ACTIVITY_KEY: Record<string, string> = {
   Harvest: 'harvest',
   TransportCoordination: 'transportCoord',
   Packaging: 'packaging',
+  Irrigation: 'irrigation',
+  Inspection: 'inspection',
+  Weather: 'weather',
 };
 
 function activityRequiresParcelGps(a: ActivityType | ''): boolean {
-  return a === 'PLANTING' || a === 'FERTILIZING' || a === 'SPRAYING';
+  return a === 'PLANTING' || a === 'FERTILIZING' || a === 'SPRAYING' || a === 'IRRIGATION' || a === 'INSPECTION';
 }
 
 export function historyActivityLabelKey(activity: string): string {
@@ -82,6 +94,7 @@ export function useFieldLogData() {
   const requestedParcel = typeof route.parcelId === 'string' ? route.parcelId : '';
   const requestedPlan = typeof route.plantingId === 'string' ? route.plantingId : '';
   const plansRequest = useRef(0);
+  const [operationForm, setOperationForm] = useState(emptyOperationForm);
   const [activityType, setActivityType] = useState<ActivityType | ''>('');
   const [materialID, setMaterialID] = useState('');
   const [materialKind, setMaterialKind] = useState<MaterialKindForLog>('SEED');
@@ -99,7 +112,7 @@ export function useFieldLogData() {
   const [selectedParcelId, setSelectedParcelId] = useState(requestedParcel);
   const [selectedHarvestPlanId, setSelectedHarvestPlanId] = useState(requestedPlan);
   const [parcelPlans, setParcelPlans] = useState<
-    { id: string; label: string; announcementType: string; cropType: string }[]
+    { id: string; label: string; announcementType: string; cropType: string; sourcePlantingId?: string }[]
   >([]);
   const [growthStagePreset, setGrowthStagePreset] = useState('');
   const [growthStageCustom, setGrowthStageCustom] = useState('');
@@ -235,7 +248,7 @@ export function useFieldLogData() {
         return aid === selectedParcelId && a.status !== 'CANCELLED';
       });
       const options = forParcel.map(
-        (a: { id: string; announcementType: string; cropType: string; estimatedDate: string }) => {
+        (a: { id: string; announcementType: string; cropType: string; estimatedDate: string; sourcePlantingId?: string }) => {
           const kind =
             a.announcementType === 'PLANTING'
               ? t('producer.growthJournal.planKindPlanting')
@@ -245,6 +258,7 @@ export function useFieldLogData() {
             id: a.id,
             announcementType: a.announcementType,
             cropType: a.cropType ?? '',
+            sourcePlantingId: a.sourcePlantingId,
             label: `${kind} · ${a.cropType} · ${dateStr}`,
           };
         },
@@ -368,7 +382,7 @@ export function useFieldLogData() {
     if (
       activityType === 'HARVEST' ||
       activityType === 'TRANSPORT_COORD' ||
-      activityType === 'PACKAGING'
+      activityType === 'PACKAGING' || activityType === 'IRRIGATION' || activityType === 'INSPECTION'
     ) {
       setMaterialID('');
       setMaterialValid(null);
@@ -394,7 +408,7 @@ export function useFieldLogData() {
     if (
       activityType === 'HARVEST' ||
       activityType === 'TRANSPORT_COORD' ||
-      activityType === 'PACKAGING'
+      activityType === 'PACKAGING' || activityType === 'IRRIGATION' || activityType === 'INSPECTION'
     ) {
       setMaterialValid(null);
       return;
@@ -452,7 +466,7 @@ export function useFieldLogData() {
     }
 
     const farmName = currentEstate?.name;
-    let pendingItems: ReturnType<typeof pendingPlantingToHistoryItem>[] = [];
+    let pendingItems: FieldLogHistoryItem[] = [];
     try {
       const pendingPlanting = await offlineStorage.getPendingPlantingEntries();
       pendingItems = pendingPlanting
@@ -460,6 +474,16 @@ export function useFieldLogData() {
         .map((r) => pendingPlantingToHistoryItem(r, farmName));
     } catch {
       pendingItems = [];
+    }
+    try {
+      const pendingWeather = await offlineStorage.getPendingWeatherObservations();
+      pendingItems = pendingItems.concat(
+        pendingWeather
+          .filter((row) => row.status !== 'synced')
+          .map((row) => pendingWeatherToHistoryItem(row)),
+      );
+    } catch {
+      /* keep planting pending rows */
     }
 
     let apiItems: ReturnType<typeof fieldEntryToHistoryItem>[] = [];
@@ -535,6 +559,10 @@ export function useFieldLogData() {
 
       const entryId = await offlineStorage.savePendingEntry({
         activityType: ACTIVITY_TO_PENDING[activityType as ActivityType],
+        ...(FIELD_OPERATION_TYPES.includes(activityType as FieldOperationType) ? {
+          operation: operationFromForm(activityType as FieldOperationType, operationForm, journalNotes),
+          plantingId: plan?.announcementType === 'PLANTING' ? plan.id : plan?.sourcePlantingId,
+        } : {}),
         estateId: currentEstate?.id,
         parcelId: selectedParcelId,
         harvestAnnouncementId: selectedHarvestPlanId,
@@ -581,6 +609,7 @@ export function useFieldLogData() {
       setGrowthStageCustom('');
       setJournalNotes('');
       setMaterialQuantity('');
+      setOperationForm(emptyOperationForm());
       await reloadLocalHistory();
     } catch (error) {
       Alert.alert(t('error'), t('producer.fieldLogAlerts.saveFailed'));
@@ -601,6 +630,7 @@ export function useFieldLogData() {
     growthStageCustom,
     journalNotes,
     materialQuantity,
+    operationForm,
     t,
     reloadLocalHistory,
   ]);
@@ -723,6 +753,13 @@ export function useFieldLogData() {
       missing.push(t('producer.fieldLogForm.submitMissingPlan'));
     }
     const plan = parcelPlans.find((p) => p.id === selectedHarvestPlanId);
+    if (FIELD_OPERATION_TYPES.includes(activityType as FieldOperationType)) {
+      if (!(plan?.announcementType === 'PLANTING' ? plan.id : plan?.sourcePlantingId)) {
+        missing.push(t('glossary.productionHistory.choosePlanting'));
+      }
+      try { operationFromForm(activityType as FieldOperationType, operationForm, journalNotes); }
+      catch { missing.push(t('glossary.productionHistory.operationInvalid')); }
+    }
     if (plan?.announcementType === 'PLANTING' && activityType === 'PLANTING') {
       if (journalNotes.trim().length < PLANTING_NOTES_MIN) {
         missing.push(
@@ -775,10 +812,12 @@ export function useFieldLogData() {
     materialID,
     materialValid,
     saveEntry,
+    operationForm,
     t,
   ]);
 
   return {
+    operationForm, setOperationForm,
     router,
     estates,
     currentEstate,

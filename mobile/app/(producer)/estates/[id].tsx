@@ -269,8 +269,15 @@ export default function EstateDetailsScreen() {
               </Text>
               <View style={{ gap: theme.spacing.sm }}>
                 {estate.parcels.map((parcel) => (
-                  <View
+                  <TouchableOpacity
                     key={parcel.id}
+                    onPress={() =>
+                      router.push({
+                        pathname: '/(producer)/parcels/[parcelId]',
+                        params: { parcelId: parcel.id },
+                      })
+                    }
+                    activeOpacity={0.88}
                     style={{
                       backgroundColor: theme.colors.background,
                       borderRadius: theme.borderRadius.md,
@@ -363,7 +370,7 @@ export default function EstateDetailsScreen() {
                         {t('producer.plotMapper.openPlanForParcel')} →
                       </Text>
                     </TouchableOpacity>
-                  </View>
+                  </TouchableOpacity>
                 ))}
               </View>
             </View>

@@ -24,7 +24,7 @@ Jovica Mihajlovic, adresa de mai sus
 
 ## Activitate
 
-Bio Vera este o companie agroalimentară integrată vertical, cu sediul în Hamburg. Lucrăm cu producători sub contract din toată Europa, asigurăm controlul calității și ambalarea, gestionăm lanțul frigorific și comercializăm fructe și legume proaspete către clienți din toată Europa.
+Bio Vera este o companie agroalimentară integrată vertical, cu sediul în Hamburg, specializată în fructe de pădure premium — proaspete (zmeură, mură, căpșuni, afine), congelate și acoperite cu ciocolată (zmeură, mură, căpșuni). Prin producția proprie și o rețea de producători contractuali selectați din Europa, asigurăm controlul calității și ambalarea, gestionăm lanțul frigorific și aprovizionăm clienți din toată Europa.
 
 ## Soluționarea litigiilor cu consumatorii
 

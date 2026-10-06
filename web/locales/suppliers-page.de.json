@@ -1,13 +1,13 @@
 {
-  "metaTitle": "Lieferanten-Partnerschaft | Bio Vera — Saatgut, Düngemittel & Verpackung",
-  "metaDescription": "Lieferanten-Partnerprogramm: zertifizierte Inputs über das Bio-Vera-Erzeugernetzwerk in Ihrer Region. Garantierte Nachfrage, feste Preisstruktur, integrierte Logistik.",
+  "metaTitle": "Zugelassenes Lieferantennetzwerk | Bio Vera",
+  "metaDescription": "Bio Vera arbeitet mit ausgewählten Lieferanten für Inputs und Verpackung, um Produzenten in definierten Produktionsprogrammen zu unterstützen.",
   "hero": {
-    "title": "Lieferanten-Partnerprogramm",
-    "subtitle": "Vertreiben Sie zertifizierte Inputs — Saatgut, Düngemittel und Verpackung — über das Bio-Vera-Erzeugernetzwerk in Ihrer Region. Garantierte Nachfrage, feste Preisstruktur und integrierte Logistik.",
+    "title": "Bio Vera Zugelassenes Lieferantennetzwerk",
+    "subtitle": "Bio Vera arbeitet mit ausgewählten Lieferanten für Inputs, Verpackung und Technik. Wo Integration verfügbar ist, können Produzenten programmzugelassene Produkte über die Bio Vera Plattform beziehen.",
     "downloadPdf": "Prospekt-PDF herunterladen",
     "downloadFail": "Der Prospekt konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut.",
     "eyebrow": "Bio Vera · Lieferanten",
-    "tagline": "Integrierte Lieferkette, garantierte Nachfrage"
+    "tagline": "Zugelassenes Lieferantennetzwerk für Produktionsprogramme"
   },
   "whoApply": {
     "title": "Wen wir suchen",
@@ -24,27 +24,28 @@
     "subtitle": "",
     "cards": [
       {
-        "title": "Garantierte Nachfrage",
-        "description": "Unsere Erzeuger beziehen ausschließlich von zugelassenen Lieferanten. Stabiles Volumen über die gesamte Saison."
+        "title": "Zugelassener Katalog",
+        "description": "Programmzugelassene Produkte für teilnehmende Produzenten — vorbehaltlich kommerzieller Vereinbarung."
       },
       {
-        "title": "Feste Preise",
-        "description": "Vorab vereinbarte Preisstruktur. Keine Verhandlungen pro Transaktion."
+        "title": "Produkt- & Technikdaten",
+        "description": "Strukturierte Produktinformationen verbunden mit Produktions- und Chargendokumentation, wo integriert."
       },
       {
-        "title": "Kostenlose Zustellung",
-        "description": "Inputs werden über das integrierte Bio-Vera-Logistiknetzwerk verteilt — Kühl-Rücktransporte. Keine zusätzlichen Logistikkosten für den Partner."
+        "title": "Regionale Belieferung",
+        "description": "Belieferung von Produzenten in Ihrer Region innerhalb von Bio Vera Produktionsprogrammen."
       },
       {
-        "title": "EU-Marktzugang",
-        "description": "Zugang zum Bio-Vera-Netzwerk zertifizierter Erzeuger und europäischer Abnehmer über vertikal integrierte Infrastruktur."
+        "title": "Optionale Bestellintegration",
+        "description": "Wo technische Integration verfügbar ist, können Produzenten zugelassene Inputs über Bio Vera beziehen."
       },
       {
-        "title": "Exclusive Market Access",
-        "description": "Access to Bio Vera's network of certified growers and European buyers through vertically integrated infrastructure."
+        "title": "Programmausrichtung",
+        "description": "Teilnahme an einem lieferantenneutralen Betriebssystem — kein dauerhafter Exklusivstatus."
       }
     ]
   },
+  "paymentTermsNote": "Kommerzielle Konditionen, Zahlungsbedingungen und Zahlungsziele werden im jeweiligen Lieferantenvertrag beziehungsweise Auftrag individuell vereinbart.",
   "howItWorks": {
     "title": "",
     "subtitle": "",

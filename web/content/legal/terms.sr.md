@@ -100,17 +100,15 @@ Bio Vera upravlja vertikalno integrisanom poljoprivrednom mrežom koja povezuje 
               
 
                 
-- **Digital Marketplace:** Kanal za kupovinu i prodaju poljoprivrednih proizvoda sa transparentnim cenama i standardima kvaliteta
+- **Agrifood operativna platforma:** Digitalna infrastruktura za ugovorene proizvodne programe, sledljivost po lotu, dokumentaciju kvaliteta i koordinaciju partnera
                 
-- **Sistemi sledljivosti:** Kompletno praćenje putovanja proizvoda od polja do police sa nepromenljivim digitalnim dokazom
+- **Sistemi sledljivosti:** Sledljivost na nivou lota i strukturirani digitalni zapisi od proizvodnje do isporuke
                 
 - **Osiguranje kvaliteta:** Sistemi kontrole kvaliteta na više nivoa uključujući verifikaciju usklađenosti sa Protokolom 360
                 
 - **Koordinacija logistike:** Upravljanje transportom, optimizacija rute i praćenje isporuke
                 
-- **Obrada plaćanja:** usluge deponovanja, poravnanje sa partnerima prema dogovorenim uslovima i upravljanje finansijskim transakcijama
-                
-- **Upravljanje sertifikacijom:** GlobalG.A.P. Olakšanje grupne sertifikacije IFA v6 i praćenje usklađenosti
+- **Priprema za sertifikaciju:** Podrška za dokumentaciju i koordinaciju sa kvalifikovanim nezavisnim telima za sertifikaciju gde je primenjivo
                 
 - **Mobilne aplikacije:** Upravljanje terenom, praćenje logistike i aplikacije portala za kupce
                 
@@ -120,6 +118,30 @@ Bio Vera upravlja vertikalno integrisanom poljoprivrednom mrežom koja povezuje 
               
 
 Zadržavamo pravo da izmenimo, suspendujemo ili obustavimo bilo koji aspekt Usluge u bilo kom trenutku, sa ili bez obaveštenja. Ne garantujemo da će usluga biti dostupna u svakom trenutku ili da će biti bez grešaka. Možemo da izvršimo planirano ili neplanirano održavanje koje može dovesti do privremenog nedostupnosti Usluge.
+
+            
+
+            
+
+              
+
+## 4.1 Komercijalna plaćanja
+
+              
+
+**Komercijalna plaćanja**
+
+              
+
+Plaćanja između Bio Vere i ugovornih partnera vrše se prema rokovima dospeća dogovorenim u relevantnom ugovoru, porudžbini ili fakturi.
+
+              
+
+Način plaćanja, valuta i datumi dospeća mogu se razlikovati u zavisnosti od poslovnog odnosa, proizvodnog programa i transakcije.
+
+              
+
+Bio Vera nije pružalac platnih usluga, escrow agent niti fintech platforma. Ne držimo novac kupaca u ime trećih strana, osim ako to nije izričito dogovoreno posebnim pisanim aranžmanom sa regulisanim partnerom.
 
             
 

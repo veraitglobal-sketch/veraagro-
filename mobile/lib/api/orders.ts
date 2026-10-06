@@ -51,7 +51,14 @@ export const ordersAPI = {
   /** Producer: record what was packed for a paid catalogue order. */
   recordPacking: async (
     orderId: string,
-    body: { packedPackCount: number; packedKg?: number; batchId?: string },
+    body: {
+      packedPackCount: number;
+      packedKg?: number;
+      batchId?: string;
+      declaredShelfLifeHours?: number;
+      declaredExpiresAt?: string;
+      packagingType?: string;
+    },
   ): Promise<Order> => {
     const response = await api.patch(`/orders/grower/${encodeURIComponent(orderId)}/packing`, body);
     return response.data;

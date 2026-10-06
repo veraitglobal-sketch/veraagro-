@@ -30,7 +30,7 @@
         "NSCameraUsageDescription": "Bio Vera needs camera access to capture growth evidence with GPS metadata.",
         "NSLocationWhenInUseUsageDescription": "Bio Vera needs location access to verify parcel boundaries and prevent fraud.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Bio Vera needs location access to verify parcel boundaries and prevent fraud.",
-        "NSUserNotificationsUsageDescription": "Obaveštenja o žetvi, transportu, sinhronizaciji terenskih unosa i porukama Bio Vera tima.",
+        "NSUserNotificationsUsageDescription": "Bio Vera sends notifications about harvest, transport, field sync, and account messages.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },

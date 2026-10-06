@@ -197,7 +197,14 @@ export const ordersAPI = {
   },
   recordPacking: async (
     orderId: string,
-    body: { packedPackCount: number; packedKg?: number; batchId?: string },
+    body: {
+      packedPackCount: number;
+      packedKg?: number;
+      batchId?: string;
+      declaredShelfLifeHours?: number;
+      declaredExpiresAt?: string;
+      packagingType?: string;
+    },
   ) => {
     const response = await api.patch(`/orders/grower/${orderId}/packing`, body);
     return response.data;
@@ -578,6 +585,34 @@ export const catalogAPI = {
     (await api.get(`/catalog/admin/products/${encodeURIComponent(productId)}/stock`)).data,
   listPublicProducts: async () => (await api.get('/catalog/products')).data,
   getPublicProduct: async (id: string) => (await api.get(`/catalog/products/${encodeURIComponent(id)}`)).data,
+  listGrowerProducts: async () => (await api.get('/catalog/grower/products')).data,
+  getGrowerProduct: async (id: string) => (await api.get(`/catalog/grower/products/${encodeURIComponent(id)}`)).data,
+  createGrowerProduct: async (body: Record<string, unknown>) => (await api.post('/catalog/grower/products', body)).data,
+  updateGrowerProduct: async (id: string, body: Record<string, unknown>) =>
+    (await api.patch(`/catalog/grower/products/${encodeURIComponent(id)}`, body)).data,
+};
+
+export const passportReportsAPI = {
+  openAttachment: async (documentId: string) => {
+    const response = await api.get(`/documents/${encodeURIComponent(documentId)}`, { responseType: 'blob' });
+    const url = URL.createObjectURL(response.data);
+    const anchor = document.createElement('a');
+    anchor.href = url; anchor.download = `document-${documentId}`;
+    document.body.appendChild(anchor); anchor.click(); anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  },
+  submit: async (batchId: string, body: Record<string, unknown>, badge?: string) => {
+    const qs = badge ? `?badge=${encodeURIComponent(badge)}` : '';
+    const response = await api.post(`/qr/verify/${encodeURIComponent(batchId)}/report${qs}`, body);
+    return response.data;
+  },
+  listAdmin: async (status?: string) => {
+    const response = await api.get('/admin/passport-reports', { params: status ? { status } : undefined });
+    return response.data;
+  },
+  getAdmin: async (id: string) => (await api.get(`/admin/passport-reports/${encodeURIComponent(id)}`)).data,
+  updateStatus: async (id: string, body: { status: string; adminNotes?: string }) =>
+    (await api.patch(`/admin/passport-reports/${encodeURIComponent(id)}/status`, body)).data,
 };
 
 // Harvest plans (harvest_announcements — grower notifies admin)
@@ -630,6 +665,10 @@ export const harvestAnnouncementsAPI = {
 
 /** Field diary entries (grower mobile + web read) */
 export const fieldEntriesAPI = {
+  create: async (body: Record<string, unknown>) => {
+    const response = await api.post('/field-entries', body);
+    return response.data;
+  },
   list: async (params?: {
     farmId?: string;
     parcelId?: string;
@@ -1507,6 +1546,31 @@ export const batchesAPI = {
   },
   getAvailability: async (batchId: string) => {
     const response = await api.get(`/batches/${batchId}/availability`);
+    return response.data;
+  },
+  getPassportCompleteness: async (batchId: string) => {
+    const response = await api.get(`/batches/${encodeURIComponent(batchId)}/passport-completeness`);
+    return response.data;
+  },
+};
+
+export const passportDocumentsAPI = {
+  listGrower: async (params?: { batchId?: string; catalogProductId?: string }) => {
+    const response = await api.get('/passport-documents/grower', { params });
+    return response.data;
+  },
+  listAdmin: async (status?: string) => {
+    const response = await api.get('/admin/passport-documents', { params: status ? { status } : undefined });
+    return response.data;
+  },
+  adminVerify: async (id: string, body: { status: string; isPublic?: boolean }) => {
+    const response = await api.patch(`/admin/passport-documents/${encodeURIComponent(id)}/verify`, body);
+    return response.data;
+  },
+  uploadGrower: async (formData: FormData) => {
+    const response = await api.post('/passport-documents/grower', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data;
   },
 };

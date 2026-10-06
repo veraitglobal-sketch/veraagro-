@@ -1,3 +1,4 @@
+import type { SeedOrigin } from '../../../shared/passport/seed-origin';
 export interface CatalogPackOption {
   id: string;
   label: string;
@@ -234,8 +235,86 @@ export interface Order {
 }
 
 
+export type PassportLinkageStatus = 'confirmed' | 'notRecorded';
+
+export interface PassportDocumentPublic {
+  id: string;
+  title: string;
+  docType: string;
+  scope?: string;
+  issuer?: string | null;
+  issuedAt?: string | null;
+  expiresAt?: string | null;
+  verificationStatus?: string;
+  url: string;
+}
+
+export interface ProductPassportSummary {
+  productName: string;
+  productDescription?: string | null;
+  actualPackDate?: string | null;
+  variety: string | null;
+  varietyLinkage: PassportLinkageStatus;
+  productPhotoUrl: string | null;
+  photoLinkage: PassportLinkageStatus;
+  producerName: string;
+  regionLabel: string;
+  productionCountry: string | null;
+  actualHarvestDate: string | null;
+  harvestDateLinkage: PassportLinkageStatus;
+  lot: { batchId: string; totalQuantity: number; unit: string };
+  identifiedPackaging: {
+    badgeSerial: string;
+    badgeType: string;
+    linkage: PassportLinkageStatus;
+  } | null;
+  storage: {
+    productStorageConditions: string | null;
+    productStorageLinkage: PassportLinkageStatus;
+    platformStandard: {
+      minC: number;
+      maxC: number;
+      source: string;
+      label: string;
+    } | null;
+    declaredShelfLifeHours: number | null;
+    declaredExpiresAt: string | null;
+    freshnessEstimate: {
+      remainingHours: number | null;
+      estimatedExpiresAt: string | null;
+      modelShelfLifeHours: number | null;
+      source: string;
+    } | null;
+  };
+}
+
 export interface ProductPassport {
+  originCandidate?: import('../../../shared/passport/origin-candidate').OriginCandidate | null;
+  productionHistory?: import('../../../shared/passport/production-history').ProductionEvent[];
+  historyGaps?: string[];
   qrId?: string;
+  summary?: ProductPassportSummary;
+  warnings?: Array<{ code: string; severity: string; messageKey: string }>;
+  lotPackagingFormats?: Array<{ label: string | null; packSizeKg: number | null; scope: string }>;
+  fieldWork?: Array<{
+    type: string;
+    occurredAt: string;
+    materialName?: string | null;
+    notes?: string | null;
+  }>;
+  growthLogs?: Array<{
+    networkTimestamp: string;
+    growthStage?: string | null;
+    notes?: string | null;
+    imageUrl?: string | null;
+    labResultUrl?: string | null;
+  }>;
+  seedOrigin?: SeedOrigin[];
+  qualityEntry?: {
+    weatherAtHarvestSummary?: string | null;
+    notes?: string | null;
+    status?: string;
+  } | null;
   batch: {
     batchId: string;
     productName: string;
@@ -313,16 +392,40 @@ export interface ProductPassport {
     deliveredAt?: string | null;
   }>;
   coldChainProof?: {
+    hasReadings?: boolean;
+    continuousControlConfirmed?: boolean;
+    readingsWithinCriteria?: boolean | null;
+    evaluationCriteria?: string | null;
+    readingsCount?: number;
     temperatureData?: Array<{ timestamp: string; temperature: number; location?: string }>;
     minTemp?: number | null;
     maxTemp?: number | null;
     avgTemp?: number | null;
   };
+  photos?: Array<{ url: string; type: string; verified: boolean }>;
+  parcelInfo?: {
+    cropType?: string | null;
+    plantingDate?: string | null;
+    expectedHarvestDate?: string | null;
+    linkage?: PassportLinkageStatus;
+  } | null;
+  packageBadges?: Array<{ serial: string; type: string }>;
   sustainability?: { totalDistanceKm?: string };
   protocol360?: {
     overallStatus?: string;
     levels?: Array<{ level: number; name: string; status: string; badgeText?: string }>;
   };
+  passportDocuments?: PassportDocumentPublic[];
+  packingRecords?: Array<{
+    packLabel?: string | null;
+    packSizeKg?: number | null;
+    packedPackCount?: number | null;
+    packedKg?: number | null;
+    packedAt?: string | null;
+    packagingType?: string | null;
+    declaredShelfLifeHours?: number | null;
+    declaredExpiresAt?: string | null;
+  }>;
 }
 
 

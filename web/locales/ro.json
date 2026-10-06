@@ -21,7 +21,7 @@
     "nameEs": "Spaniolă"
   },
   "footer": {
-    "tagline": "Un lanț agroalimentar gestionat vertical: producători sub contract din toată Europa, controlul calității, lanț frigorific și vânzare sub marca Bio Vera — cu dosar Bio‑Ready pentru fiecare lot.",
+    "tagline": "Bio Vera — companie agrifood germană cu sediul în Hamburg, construiește o rețea europeană transparentă de producție, de la planificare până la accesul pe piață.",
     "columnProduct": "Produs",
     "columnCompany": "Companie",
     "columnSupport": "Sprijin",
@@ -79,26 +79,26 @@
       },
       "ro": {
         "title": "Română",
-        "body": "Interfață completă românească pentru cultivatori și parteneri care lucrează în limba română și auditori din România și coridoarele UE mai largi. Aceeași trasabilitate, structură Bio-Ready și aspect Vera ca în engleză și sârbă."
+        "body": "Interfață completă românească pentru cultivatori și parteneri care lucrează în limba română și auditori din România și coridoarele UE mai largi. Aceeași trasabilitate, structură programme-ready și aspect Vera ca în engleză și sârbă."
       },
       "bg": {
         "title": "Български",
-        "body": "Interfață completă în bulgară pentru cultivatori și distribuitori din Bulgaria — același model de trasabilitate, dosare Bio-Ready și fluxuri Vera ca în restul extinderii UE, gândit pentru modernizare și canale de export conforme."
+        "body": "Interfață completă în bulgară pentru cultivatori și distribuitori din Bulgaria — același model de trasabilitate, dosare programme-ready și fluxuri Vera ca în restul extinderii UE, gândit pentru modernizare și canale de export conforme."
       },
       "fr": {
         "title": "Français",
-        "body": "Interfață completă în franceză pentru Franța, Belgia francofonă, Luxemburg și echipe retail — aceeași trasabilitate, structură Bio-Ready și aranjament Vera ca la celelalte limbi ale programului."
+        "body": "Interfață completă în franceză pentru Franța, Belgia francofonă, Luxemburg și echipe retail — aceeași trasabilitate, structură programme-ready și aranjament Vera ca la celelalte limbi ale programului."
       },
       "es": {
         "title": "Spaniolă",
-        "body": "Interfață completă în spaniolă pentru Spania, coridoare de achiziții în America Latină și echipe care preferă spaniola — aceeași trasabilitate Vera și structură Bio-Ready ca în celelalte limbi."
+        "body": "Interfață completă în spaniolă pentru Spania, coridoare de achiziții în America Latină și echipe care preferă spaniola — aceeași trasabilitate Vera și structură programme-ready ca în celelalte limbi."
       }
     }
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "Companie agroalimentară integrată vertical din Hamburg. Pașaport digital de produs UE pentru fiecare lot — trasabilitate de la parcelă până la raft pentru producători, logistică și furnizori.",
-    "ldJsonDescription": "Sistem agrifood certificat pentru producție, calitate, logistică și distribuție — fiecare lot de la parcelă la punctul final, fiecare participant verificat, fiecare pas documentat.",
+    "siteDescription": "Bio Vera este o companie agrifood cu sediul în Hamburg, specializată în fructe de pădure premium, programe de producție și trasabilitate digitală la nivel de lot.",
+    "ldJsonDescription": "Companie agrifood germană în Hamburg care coordonează o rețea europeană de producători cu Bio Vera Digital Product Passport la nivel de lot.",
     "keywords": [
       "Bio Vera",
       "Rețeaua agricolă",
@@ -114,7 +114,7 @@
       "Transparența alimentară"
     ],
     "ldJsonContactType": "Serviciu clienți",
-    "homeTitle": "Bio Vera | Traceable Fresh Produce — Field to Shelf"
+    "homeTitle": "Bio Vera | Companie agrifood germană și rețea europeană de producători"
   },
   "chat": {
     "needHelp": "Ai nevoie de ajutor?",
@@ -184,7 +184,10 @@
     "login": "Log in",
     "logout": "Deconectare",
     "openMenu": "Deschide meniul",
-    "closeMenu": "Închide meniul"
+    "closeMenu": "Închide meniul",
+    "productPassport": "Pașaport digital al produsului",
+    "about": "Despre",
+    "residueProgramme": "Program reziduuri"
   },
   "contactPage": {
     "heroTitle": "Luați legătura",
@@ -292,7 +295,7 @@
       {
         "category": "Producător",
         "q": "Cum sunt procesate plățile?",
-        "a": "Plățile sunt procesate automat după verificarea cu succes a livrării. Folosim un sistem escrow pentru a asigura tranzacții sigure. Fermierii primesc plata în 3-5 zile lucrătoare de la confirmarea livrării."
+        "a": "Termenii de plată se convin în avans în cadrul acordului de producție sau furnizare relevant. Facturile și scadențele urmează condițiile din contractul cu Bio Vera — nu un număr fix de ore sau un aranjament escrow."
       },
       {
         "category": "cumpărători",
@@ -804,7 +807,8 @@
       "fieldCapture": "Parcelă capture",
       "education": "Instruire",
       "appGuide": "App ghid",
-      "confidential": "Partener plans (protected)"
+      "confidential": "Partener plans (protected)",
+      "productCatalog": "Product catalog"
     },
     "placeholders": {
       "plantingsTitle": "Plantațiile mele",
@@ -1672,7 +1676,9 @@
     "supply": "Aprovizionare prezentare generală",
     "seedProduction": "Semințe production",
     "goGrowerControl": "Producător control",
-    "preOrders": "Precomenzi"
+    "preOrders": "Precomenzi",
+    "passportReports": "Passport reports",
+    "passportDocuments": "Documente pașaport"
   },
   "adminPages": {
     "titles": {
@@ -3282,7 +3288,36 @@
     "packingNoLots": "Nu există loturi pregătite. Finalizați mai întâi intrarea de calitate:",
     "packingNoLotsLink": "Calitate și loturi",
     "selectLotMessage": "Ambalarea este înregistrată — legați lotul înainte de a solicita ridicarea.",
-    "selectLotLink": "Calitate și loturi"
+    "selectLotLink": "Calitate și loturi",
+    "packingDeclaredShelfLife": "Declared shelf life (hours, optional)",
+    "packingDeclaredShelfLifeHint": "Only if printed on the pack label",
+    "packingPackagingType": "Packaging type",
+    "packingPackagingTypeHint": "e.g. crate 5 kg",
+    "passportCompletenessLoadFailed": "Could not load passport checklist.",
+    "catalogTitle": "Product catalog",
+    "catalogDescription": "Enter product data once — linked to planting and reused in harvest, lots, and passport.",
+    "catalogEdit": "Edit product",
+    "catalogNew": "New product",
+    "catalogName": "Product name",
+    "catalogVariety": "Variety",
+    "catalogStorage": "Storage conditions",
+    "catalogNoPlanting": "No planting link",
+    "catalogImageUrl": "Photo URL or base64",
+    "catalogLoadFailed": "Could not load catalog.",
+    "catalogSaveFailed": "Could not save product.",
+    "catalogDocuments": "Product documents",
+    "catalogDocumentsLead": "Certificates and lab results linked to this product. Public passport shows only reviewed documents.",
+    "catalogDocTitle": "Document title",
+    "catalogDocTypeCert": "Certificate",
+    "catalogDocTypeLab": "Lab result",
+    "catalogDocTypeOther": "Other",
+    "catalogDocIssuer": "Issuer (optional)",
+    "catalogDocIssued": "Issued on",
+    "catalogDocExpires": "Valid until",
+    "catalogDocUpload": "Upload document",
+    "catalogDocUploaded": "Document uploaded — admin review required before public display.",
+    "catalogDocUploadFailed": "Could not upload document.",
+    "notRecorded": "Not recorded"
   },
   "supplier": {
     "nav": {
@@ -3434,9 +3469,9 @@
   },
   "home": {
     "hero": {
-      "title1": "Integrat vertical",
-      "title2": "Companie agrifood",
-      "subtitle": "Bio Vera este o companie agroalimentară integrată vertical, cu sediul în Hamburg. Prin programul nostru propriu contractăm producători, asigurăm controlul calității și ambalarea, gestionăm lanțul frigorific și livrăm fructe și legume proaspete direct clienților finali. Fiecare lot are un pașaport digital documentat — de la parcelă până la raft.",
+      "title1": "Companie agrifood germană.",
+      "title2": "Rețea europeană de producție.",
+      "subtitle": "Bio Vera este o companie agrifood cu sediul în Hamburg, integrată vertical, specializată în cultivarea, controlul calității și distribuția globală a fructelor de pădure premium — zmeură, mură, căpșuni și afine. Prin sinergia dintre producția proprie și o rețea puternică de producători contractuali selectați din întreaga Europă, menținem cele mai înalte standarde pe tot parcursul anului.",
       "browseProducts": "Răsfoiți produse",
       "becomeProducer": "Deveniți producător",
       "preOrder": "Precomenzile pentru {{year}} sunt deschise",
@@ -3445,125 +3480,127 @@
       "preOrderTip2": "Precomanda servește doar la planificarea cantităților pentru {{year}}; nu este o comandă fermă."
     },
     "statLabels": [
-      "Trasabilitate",
-      "Certificat",
-      "Monitorizare",
-      "Niveluri QA",
-      "Trasabilitate blockchain publică pe Polygon când este activată"
+      "Sediu",
+      "Rețea de producători",
+      "Trasabilitate lot",
+      "Programe de producție",
+      "Pașaport digital al produsului"
     ],
-    "partnersLine": "De încredere în fiecare zi de către organizațiile agricole de top",
+    "partnersLine": "",
     "vision": {
-      "title": "Viziunea noastră",
-      "intro": "Construim o cale de încredere de la câmp la cumpărător: reguli clare, înregistrări oneste și acces echitabil la piață pentru cultivatorii care îndeplinesc standardele noastre.",
+      "title": "Cum lucrăm",
+      "intro": "Trei piloni conectați de la planificarea producției la accesul pe piață.",
       "cards": [
         {
-          "title": "Transparenţă",
-          "description": "Vizibilitatea completă a întregului proces de la teren la client. Fiecare pas este documentat și imuabil."
+          "title": "Producție la cerere",
+          "description": "Programele de producție se dezvoltă în jurul cerințelor definite pentru produs, calitate, termene și cumpărători."
         },
         {
-          "title": "Securitate",
-          "description": "Date protejate criptografic, protecție antifraudă și dovezi digitale imuabile."
+          "title": "Verificarea fiecărui lot",
+          "description": "Înregistrările de producție, informațiile de calitate, certificatele relevante și rezultatele de laborator pot fi conectate la un Bio Vera Digital Product Passport."
         },
         {
-          "title": "Acces la UE",
-          "description": "Generarea automată de certificate UE și pașapoarte digitale pentru acces direct la piață."
+          "title": "Conectarea producției cu piața",
+          "description": "Bio Vera coordonează producători și parteneri specializați în Europa, iar managementul comercial și operațional este condus din Hamburg."
         }
       ]
     },
     "features": {
-      "title": "Caracteristici de bază",
-      "intro": "Cum funcționează rețeaua de zi cu zi — producția, logistica, livrarea și decontarea conectate într-un singur model de operare.",
+      "title": "Capabilități de bază",
+      "intro": "Un singur sistem de operare care conectează producția, verificarea și livrarea.",
       "list": [
         {
-          "title": "Sistem Smart-Lock",
-          "description": "Scanarea codului QR este cheia principală. Dovada imuabilă a producției cu validare GPS."
+          "title": "Programe de producție",
+          "description": "Cerințe definite pentru cultură, calitate și documentație legate de cererea pieței."
         },
         {
-          "title": "Urmărirea loturilor",
-          "description": "Fiecare cudă urmărită cu Batch_ID. Trasabilitate cu un singur clic de la câmp la client."
+          "title": "Trasabilitate lot",
+          "description": "Fiecare lot de producție primește un Batch_ID unic care leagă producția, calitatea și logistica."
         },
         {
-          "title": "Plata escrow",
-          "description": "Fondurile cumpărătorului rămân în escrow până când livrarea este confirmată, apoi sunt eliberate producătorilor și partenerilor logistici în condițiile convenite. Bio Vera conduce lanțul în calitate de operator de marcă și aprovizionare - condiții comerciale puternice, echitabile, nu o foaie publică de procente."
+          "title": "Bio Vera Digital Product Passport",
+          "description": "Înregistrare digitală la nivel de lot cu origine, informații de producție, calitate, certificate, laborator și repere logistice."
         },
         {
-          "title": "Strângere de mână digitală",
-          "description": "Clientul scanează codul QR pentru a confirma livrarea. Eliberarea automată a plății."
+          "title": "Integrări cu parteneri",
+          "description": "Sistemul se dezvoltă pentru a conecta producătorii cu furnizori, laboratoare, parteneri de certificare și logistică aprobați."
         },
         {
-          "title": "Protecție antifraudă",
-          "description": "Marca temporală GPS, urmărirea ID-ului dispozitivului, captură doar cu cameră. Imposibil de falsificat."
+          "title": "Producție controlată a reziduurilor",
+          "description": "Protocoale de producție și verificare de laborator pentru obiectivul pe termen lung al produselor fără reziduuri de pesticide detectabile."
         },
         {
-          "title": "Pașaport digital al UE",
-          "description": "Generarea automată a certificatelor UE. Acces direct pe piață fără intermediari."
+          "title": "Integrity Guard",
+          "description": "Validare GPS, verificări ale inputurilor aprobate și înregistrări structurate în câmp protejează integritatea lotului în rețea."
         }
       ]
     },
     "blockchain": {
-      "title": "De ce folosim Blockchain",
-      "body": "Folosim un sistem blockchain, astfel încât produsele noastre să rămână fidele ție - client. Fiecare pas al călătoriei, de la recoltare până la livrare, este înregistrat într-un mod care nu poate fi schimbat. Nu de către noi, nu de către nimeni din cadrul companiei noastre. Nimeni nu poate modifica traseul. Ceea ce vedeți când scanați un produs este aceeași dovadă pe care o vedem noi: transparentă, verificabilă și imuabilă.",
+      "title": "Înregistrări structurate de custodie",
+      "body": "Echipele operaționale documentează predările și tranzițiile de custodie astfel încât înregistrările lotului rămân consistente de la producție până la livrare.",
       "bullets": []
     },
     "roadmap": {
       "title": "Foaia de parcurs",
-      "subtitle": "Unde suntem acum și încotro ne îndreptăm",
-      "statusCompleted": "Terminat",
-      "statusInProgress": "În curs",
+      "subtitle": "Starea capabilităților în sistemul Bio Vera",
+      "statusCompleted": "Disponibil",
+      "statusInProgress": "Pilot",
       "statusPlanned": "Planificat",
+      "statusInDevelopment": "În dezvoltare",
       "phases": [
         {
           "phase": "T1 2026",
-          "title": "Lansarea rețelei",
-          "status": "finalizat",
+          "title": "Platformă de bază",
+          "status": "completed",
           "items": [
-            "API de backend",
-            "Aplicația mobilă",
-            "aplicație web",
-            "Caracteristici de bază"
+            "API backend",
+            "Aplicație web",
+            "Trasabilitate lot",
+            "Fluxuri de producție de bază"
           ]
         },
         {
           "phase": "T2 2026",
-          "title": "Extindere caracteristică",
-          "status": "finalizat",
+          "title": "Strat câmp și parteneri",
+          "status": "in-development",
           "items": [
-            "AI Analytics — Finalizat",
-            "Verificare blockchain (Poligon) — Finalizată",
-            "Tabloul de bord avansat",
-            "Integrari",
-            "Certificate UE"
+            "Aplicație mobilă — pilot",
+            "Bio Vera Digital Product Passport",
+            "Înregistrări de producție pentru cultivatori",
+            "Integrări parteneri — în dezvoltare"
           ]
         },
         {
-          "phase": "T3-T4 2026",
-          "title": "Scalare",
+          "phase": "T3–T4 2026",
+          "title": "Extinderea rețelei",
           "status": "in-progress",
           "items": [
-            "Suport pentru mai multe regiuni",
-            "Piața API",
-            "Integrarea partenerilor",
-            "Caracteristici Enterprise"
+            "Programe de producție multi-regiune",
+            "Integrări laborator — planificate",
+            "Rețea de parteneri logistici",
+            "Piloți pentru programe controlate de reziduuri"
           ]
         },
         {
           "phase": "2027",
-          "title": "Expansiunea globală",
-          "status": "planificat",
+          "title": "Inteligență și scalare",
+          "status": "planned",
           "items": [
-            "Piețele globale",
-            "Senzori IoT",
-            "Predicții AI"
+            "Strat date și inteligență",
+            "Modele de risc reziduuri — planificate",
+            "Programe extinse pentru cumpărători",
+            "Monitorizare IoT — planificată"
           ]
         }
       ]
     },
     "products": {
       "title": "Răsfoiți produse",
-      "subtitle": "Produse ecologice cu trasabilitate completa",
-      "fruits": "Fructe",
-      "vegetables": "Legume",
-      "grains": "Cereale"
+      "subtitle": "Fructe de pădure proaspete (zmeură, mură, căpșuni, afine), program congelat și fructe acoperite cu ciocolată (zmeură, mură, căpșuni) — fiecare linie cu dosar complet de lot.",
+      "raspberries": "Zmeură",
+      "blackberries": "Mură",
+      "strawberries": "Căpșuni",
+      "blueberries": "Afine"
     },
     "cta": {
       "title": "Cultivați pentru noi, transportați pentru noi sau cumpărați de la noi",
@@ -3578,15 +3615,15 @@
       "items": [
         {
           "question": "Ce este Bio Vera?",
-          "answer": "Bio Vera este o companie agroalimentară integrată vertical, cu sediul în Hamburg. Contractăm producători, asigurăm controlul calității și ambalarea, gestionăm lanțul frigorific și vindem produse proaspete prin programul nostru propriu — fiecare lot are un pașaport digital documentat de la parcelă până la raft. Nu suntem un marketplace care doar pune în legătură părți necunoscute."
+          "answer": "Bio Vera este o companie agrifood cu sediul în Hamburg, specializată în fructe de pădure premium — zmeură, mură, căpșuni și afine. Prin producția proprie și o rețea de producători contractuali selectați din Europa, menținem standarde înalte pe tot parcursul anului, cu trasabilitate la nivel de lot și programe de producție definite. Nu suntem un marketplace care doar pune în legătură părți necunoscute."
         },
         {
-          "question": "What is an EU Digital Produs Passport?",
-          "answer": "An EU Digital Product Passport is a digital record that accompanies a product from production to the consumer. Bio Vera generates these automatically for every batch — documenting origin, harvest data, quality checks, transport conditions, and EU compliance certificates. The QR code on every crate links to its passport."
+          "question": "Ce este Bio Vera Digital Product Passport?",
+          "answer": "O înregistrare digitală la nivel de lot care leagă originea, datele de producție, controalele de calitate, certificatele relevante, rezultatele de laborator și evenimentele logistice. Codul QR de pe ladă sau ambalaj poate duce la pașaport acolo unde este disponibil."
         },
         {
-          "question": "How does Bio Vera ensure food traceability?",
-          "answer": "Bio Vera uses Protocol 360 — an end-to-end quality system with soil analysis, biometric scanning at packaging, cold chain monitoring, and GPS-verified anti-fraud protection. Every checkpoint is recorded in the batch dossier. Optionally, dossiers are anchored to Polygon blockchain for immutable verification."
+          "question": "Cum asigură Bio Vera trasabilitatea alimentelor?",
+          "answer": "Bio Vera folosește Protocol 360 — un cadru de verificare care acoperă înregistrările de producție, verificările lotului și ambalării, verificarea de laborator unde este necesară, plus datele logistice și de custodie. Fiecare lot poate primi un Bio Vera Digital Product Passport."
         },
         {
           "question": "Who is behind Bio Vera?",
@@ -3597,15 +3634,30 @@
           "answer": "Bio Vera is preparing for a growth-stage investment round. Investor materials, pitch deck, and project documentation are available at biovera.app/investor-deck."
         },
         {
-          "question": "How does Bio Vera use AI?",
-          "answer": "Bio Vera's AI Intelligence Terminal provides real-time logistics decisions, route optimization, demand forecasting, and harvest planning. The AI system was developed by Vera IT and integrates with the Bio Vera operating system for predictive supply chain management."
+          "question": "Cum folosește Bio Vera inteligența artificială?",
+          "answer": "Bio Vera folosește date structurate de producție, tratament, calitate și logistică pentru a identifica anomalii și a sprijini deciziile operaționale. Capabilitățile de date și inteligență sunt în dezvoltare; sunt planificate modele pentru prognoza recoltei, evaluarea riscului de reziduuri și planificarea aprovizionării."
         }
       ]
+    },
+    "statNumbers": [
+      "Hamburg",
+      "Europa",
+      "Lot",
+      "Program",
+      "Pașaport"
+    ],
+    "residue": {
+      "title": "Către produse fără reziduuri de pesticide detectabile",
+      "body": "Dezvoltăm protocoale de producție concepute să reducă utilizarea pesticidelor și să permită loturilor selectate să atingă reziduuri de pesticide nedetectabile în condiții de laborator și limite de detecție definite.",
+      "flow": "Protocol de producție → inputuri aprobate → documentație tratamente → verificare de laborator → Bio Vera Digital Product Passport",
+      "cta": "Aflați despre program"
     }
   },
   "forBuyersPage": {
-    "title": "Pentru Cumpărători",
-    "heroLead": "Sursă de produse proaspete din rețeaua Bio Vera: origine certificată și un istoric al lotului urmăribil, nu doar o listă. Catalogul complet și comanda sunt în tabloul de bord după ce vă înregistrați.",
+    "metaTitle": "Fructe de pădure en-gros | Bio Vera — Proaspete, congelate, cu ciocolată",
+    "metaDescription": "Fructe de pădure proaspete, program congelat și fructe acoperite cu ciocolată (zmeură, mură, căpșuni). Trasabilitate pe lot și Bio Vera Digital Product Passport.",
+    "title": "Fructe de pădure pentru comerț en-gros — proaspete, congelate, cu ciocolată",
+    "heroLead": "Aprovizionați-vă de la Bio Vera: origine certificată, istoric trasabil al fiecărui lot și pașaport digital. Catalog, prețuri și comenzi în tabloul de bord după înregistrare.",
     "notShopBody": "Nu suntem un magazin online standard. Lucrăm cu un proces clar, transparent: vedeți ce oferim, furnizați companiei dvs. și datele de contact și consimțământul, iar fiecare solicitare o luăm în serios. Citiți mai jos cum funcționăm și, atunci când sunteți gata, exprimați-vă interesul în partea de jos a paginii pentru a vă putea contacta.",
     "linkHowWeOperate": "Cum operăm",
     "linkExpressInterest": "Exprimați-vă interesul",
@@ -3620,7 +3672,7 @@
       },
       {
         "title": "Răsfoiți și comandați",
-        "body": "Filtrați după categorie — fructe, legume, cereale. Vedeți originea, perioada de recoltare și prețurile. Comandați direct sau folosiți precomanda {{year}} pentru planificarea sezonului."
+        "body": "Filtrați după format — proaspete, congelate sau acoperite cu ciocolată. Vedeți originea, perioada de recoltare și prețurile. Comandați direct sau folosiți precomanda {{year}} pentru planificarea sezonului."
       },
       {
         "title": "Confirmați și plătiți",
@@ -3631,12 +3683,12 @@
         "body": "Urmăriți lotul prin pașaportul digital. Vezi unde a fost recoltat, când (perioada de recoltare) și cum a fost manipulat până la livrare."
       }
     ],
-    "productsTitle": "Produsele pe care le oferim",
-    "productsLead": "Livrăm o gamă largă de fructe și legume proaspete (și cereale) pe piețele europene. Lista completă și actualizată cu soiuri, disponibilitate și prețuri se află în tabloul de bord după înregistrare.",
+    "productsTitle": "Program fructe de pădure",
+    "productsLead": "Proaspete: zmeură, mură, căpșuni, afine. Congelate: program de fructe de pădure (zmeură, mură, căpșuni, amestec). Acoperite cu ciocolată: zmeură, mură, căpșuni. Fiecare linie cu Bio Vera Digital Product Passport.",
     "productCategoryLabels": [
-      "Fructe",
-      "Legume",
-      "Cereale"
+      "Proaspete",
+      "Program congelat",
+      "Cu ciocolată"
     ],
     "productsNote": "Autentificați-vă în panoul de cumpărător pentru a vedea catalogul complet, a plasa comenzi sau a trimite o precomandă pentru {{year}}.",
     "harvestCalendarTitle": "Calendarul recoltei",
@@ -3668,7 +3720,7 @@
       }
     ],
     "valueTitle": "Ce primești cu Bio Vera",
-    "valueLead": "Fructele și legumele noastre sunt proaspăt recoltate, urmăribile și susținute de un pașaport digital complet.",
+    "valueLead": "Fructele noastre de pădure sunt proaspăt recoltate, urmăribile și susținute de un pașaport digital complet — proaspete, congelate și acoperite cu ciocolată.",
     "valueBlocks": [],
     "ctaRepeat": "Ești gata să comanzi sau să planifici pentru 2026?",
     "interestTitle": "Exprimați-vă interesul",
@@ -3691,8 +3743,6 @@
     "formSending": "Se trimite…",
     "required": "*",
     "heroSubtitle": "Trasabilitate completă de la fermă la depozitul dvs.",
-    "metaTitle": "Buy Traceable Fresh Produce | Bio Vera for Buyers",
-    "metaDescription": "Comandă certified fresh fruit, vegetables and cereals with full Batch_ID traceability. Digital produs passport, recoltă calendar, and secured plată. Register for dashboard access.",
     "harvestCalendarLead": ""
   },
   "growersPage": {
@@ -3765,8 +3815,10 @@
         "standard": "Ambalare directă la fermă în ambalaj Vera"
       }
     ],
-    "paymentGuaranteedBold": "Plata garantata:",
-    "paymentGuaranteedRest": "Plata este asigurată prin contracte cu lanțurile germane de retail (60-90 de zile).",
+    "paymentTermsTitle": "Termeni de plată transparenți",
+    "paymentTermsBody": "Termenii de plată sunt conveniți în avans în cadrul acordului de producție sau furnizare relevant.",
+    "paymentGuaranteedBold": "",
+    "paymentGuaranteedRest": "",
     "applyCertCta": "Aplicați pentru Certificarea Vera Group 2026",
     "resourcesTitle": "Resurse și descărcări",
     "resourcesLead": "Documente și ghiduri esențiale pentru cultivatori",
@@ -4255,7 +4307,7 @@
   },
   "aboutPage": {
     "heroTitle": "Despre Bio Vera",
-    "heroSubtitle": "Transformarea agriculturii prin tehnologie, transparență și încredere",
+    "heroSubtitle": "Bio Vera este o companie agrifood cu sediul în Hamburg, integrată vertical, specializată în cultivarea, controlul calității și distribuția globală a fructelor de pădure premium — zmeură, mură, căpșuni și afine. Prin sinergia dintre producția proprie și o rețea puternică de producători contractuali selectați din întreaga Europă, menținem cele mai înalte standarde pe tot parcursul anului.",
     "techPartnerLine": "Platforma Bio Vera este dezvoltată și întreținută de <1>Vera IT</1>, Hamburg — partenerul tehnologic din cadrul Vera Group.",
     "missionTitle": "Misiunea noastră",
     "missionP1": "Bio Vera lucrează pentru a consolida lanțurile de aprovizionare agricole prin conectarea producătorilor din întreaga lume direct cu piețele, asigurând standarde clare, asigurare a calității și compensare echitabilă la fiecare pas.",
@@ -4306,7 +4358,7 @@
     "ctaProducer": "Deveniți producător",
     "ctaContact": "Contactaţi-ne",
     "protocol360Title": "Protocol 360",
-    "protocol360Body": "Protocol 360 is Bio Vera's end-to-end quality assurance system. From soil analysis at the parcel level through biometric scanning at packaging to cold chain monitoring during transport — every quality checkpoint is documented in the batch dossier and tied to the product's EU Digital Passport.",
+    "protocol360Body": "Protocol 360 is Bio Vera's end-to-end quality assurance system. From soil analysis at the parcel level through biometric scanning at packaging to cold chain monitoring during transport — every quality checkpoint is documented in the batch dossier and tied to the product's Bio Vera Digital Product Passport.",
     "metaTitle": "Despre Bio Vera | Companie agrifood integrată vertical, Hamburg",
     "metaDescription": "Bio Vera este o companie agrifood integrată vertical din Hamburg: producători din toată Europa, QA de program, lanț frigorific și pașapoarte digitale pe lot — nu marketplace."
   },
@@ -5410,7 +5462,7 @@
     "plainLanguageCards": [
       {
         "title": "What Bio Vera is",
-        "body": "Bio Vera is the selling company—not a bulletin board matching strangers. Contracted parcels and authorised Vera pack-outs feed one Bio‑Ready dossier that commercial, QA and treasury all defend; shoppers still see tomatoes, auditors see lineage."
+        "body": "Bio Vera is the selling company—not a bulletin board matching strangers. Contracted parcels and authorised Vera pack-outs feed one programme-ready dossier that commercial, QA and treasury all defend; shoppers still see tomatoes, auditors see lineage."
       },
       {
         "title": "How the operation runs săptămână to săptămână",
@@ -5528,7 +5580,7 @@
     "transparencyBullets": [
       "That QR resolves to cineva’s face, certs and route breadcrumbs — succinct, factual, stubbornly linkable.",
       "Rece narratives and custody sit următor to geography instead of politely ignoring each altul in separate decks.",
-      "Bio-Ready language on ambalare isn’t orphaned de la ce operațiuni de fapt surfaced.",
+      "programme-ready language on ambalare isn’t orphaned de la ce operațiuni de fapt surfaced.",
       "We leave purple adjectives stranded când artefacts don’t înapoi le — reputations downstream matter."
     ],
     "financeTitle": "Money that stops pretending to fi monolithic",
@@ -5892,11 +5944,11 @@
     "pdfLimitHint": "Length and layout are intentionally constrained for formal submissions. Banner imagery may fi customised in deployment.",
     "coverEyebrow": "Prezentarea proiectului",
     "coverTitle": "Bio Vera — Project overview",
-    "coverSubtitle": "Vertically operated agrifood company under Bio‑Ready rules—from sanctioned inputs through ambalare, refrigerated legs and passports our sales teams honour at checkout.",
+    "coverSubtitle": "Vertically operated agrifood company under programme-ready rules—from sanctioned inputs through ambalare, refrigerated legs and passports our sales teams honour at checkout.",
     "sections": [
       {
         "title": "Introduction",
-        "body": "Bio Vera operates as an agrifood company that organizes production through contracted growers, coordinates logistics and sells to customers—all under Bio‑Ready transparency. The corridor ambition is single-recipe assurance: Southeastern European cultivation inside EU QA rails without contradictory spreadsheet folklore."
+        "body": "Bio Vera operates as an agrifood company that organizes production through contracted growers, coordinates logistics and sells to customers—all under programme-ready transparency. Bio Vera develops producer programmes across selected European growing regions based on crop expertise, seasonal availability, quality capability and buyer demand."
       },
       {
         "title": "Problem",
@@ -6165,5 +6217,65 @@
     "expectWhoBody": "Echipa Bio Vera din Hamburg responsabilă de domeniul dumneavoastră.",
     "contactPromptTitle": "Preferați să discutăm?",
     "contactPromptCta": "Programați o discuție gratuită"
+  },
+  "passportCompleteness": {
+    "title": "What is missing for the passport",
+    "lead": "Fix gaps before publishing — optional items improve completeness but do not block work.",
+    "allRequiredOk": "Required passport data is recorded for this lot.",
+    "levelRequired": "Required",
+    "levelRecommended": "Recommended",
+    "fixLink": "Add data",
+    "productName": "Product name in catalog",
+    "plantingLink": "Link to planting or harvest plan",
+    "harvestDate": "Actual harvest date on lot",
+    "packDate": "Pack date from order packing",
+    "variety": "Variety in catalog",
+    "description": "Short product description",
+    "photo": "Product photo",
+    "storage": "Product storage conditions",
+    "qualityEntry": "Quality entry for lot",
+    "publicDocument": "Verified public document",
+    "badge": "Package badge (when applicable)"
+  },
+  "admin": {
+    "passportReports": {
+      "details": "Detaliile sesizării",
+      "product": "Produs",
+      "notes": "Note interne",
+      "error": "Sesizarea nu a putut fi încărcată sau salvată.",
+      "new": "Nou",
+      "title": "Sesizări din pașaport",
+      "contact": "Contact",
+      "inProgress": "În curs",
+      "resolve": "Rezolvat",
+      "openPhoto": "Deschide fotografia",
+      "openPassport": "Deschide pașaportul",
+      "empty": "Nu există sesizări."
+    },
+    "passportDocuments": {
+      "title": "Documentele pașaportului",
+      "lead": "În pașaportul public apar doar documentele confirmate și aprobate pentru publicare.",
+      "openFile": "Deschide fișierul",
+      "confirmPublic": "Confirmă și publică",
+      "confirmInternal": "Confirmă pentru uz intern",
+      "empty": "Nu există documente."
+    }
+  },
+  "residueControlledPage": {
+    "metaTitle": "Producție controlată a reziduurilor | Bio Vera",
+    "metaDescription": "Programe de producție Bio Vera concepute să reducă utilizarea pesticidelor și să vizeze reziduuri de pesticide nedetectabile sub verificare de laborator definită.",
+    "title": "Programul Bio Vera de producție controlată a reziduurilor",
+    "heroLead": "Bio Vera dezvoltă programe de producție concepute să reducă sistematic utilizarea pesticidelor și să ajute producătorii selectați să vizeze produse fără reziduuri de pesticide detectabile sub metode de laborator și limite de detecție definite.",
+    "disclaimer": "Acest program este în dezvoltare și nu constituie o certificare ecologică și nici o afirmație că pesticidele nu au fost niciodată utilizate.",
+    "flowTitle": "Cum se conectează pașii programului",
+    "flowSteps": [
+      "Protocol de producție",
+      "Ghiduri pentru inputuri aprobate",
+      "Documentație tratamente",
+      "Planificarea recoltei",
+      "Verificare de laborator",
+      "Bio Vera Digital Product Passport"
+    ],
+    "labNote": "Verificarea de laborator este necesară înainte ca un lot să poată fi reprezentat ca îndeplinind ținta Bio Vera aplicabilă pentru reziduuri."
   }
 }

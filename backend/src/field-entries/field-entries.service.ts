@@ -15,6 +15,10 @@ import { SmartLockService } from '../smart-lock/smart-lock.service';
 import { SeedProductionService } from '../seed-production/seed-production.service';
 import { GeometryUtil } from '../common/utils/geometry.util';
 import { parseWeatherObservation } from '../../../shared/passport/weather-observation';
+import {
+  storedWeatherRequestIdentity,
+  weatherEntryRequestIdentity,
+} from '../../../shared/passport/weather-entry';
 import { randomUUID } from 'crypto';
 import { parseFieldOperation, FIELD_OPERATION_TYPES, FieldOperation } from '../../../shared/passport/field-operation';
 
@@ -301,22 +305,116 @@ export class FieldEntriesService {
     }
   }
 
+  /** Grower weather/frost observation — no GPS/photo; idempotent by clientReference + content. */
+  private async createWeather(userId: string, dto: CreateFieldEntryDto) {
+    const clientReference = dto.clientReference?.trim();
+    if (!clientReference || clientReference.length > 128) {
+      throw new BadRequestException('Client reference required');
+    }
+    const parcelId = this.resolveParcelId(dto);
+    const plantingId =
+      typeof dto.data.plantingId === 'string' && dto.data.plantingId.trim()
+        ? dto.data.plantingId.trim()
+        : '';
+    if (!parcelId || !plantingId) {
+      throw new BadRequestException('Weather observations require a parcel and planting');
+    }
+    const planting = await this.prisma.harvest_announcements.findFirst({
+      where: {
+        id: plantingId,
+        userId,
+        parcelId,
+        announcementType: 'PLANTING',
+        status: { notIn: ['CANCELLED', 'REJECTED'] },
+        parcel: { estateId: dto.farmId },
+      },
+      select: { id: true },
+    });
+    if (!planting) {
+      throw new ForbiddenException('Planting does not belong to this parcel and grower');
+    }
+    let weather;
+    try {
+      weather = parseWeatherObservation(dto.data.weather);
+    } catch {
+      throw new BadRequestException('Invalid weather observation: check dates and temperature range');
+    }
+    const notes = typeof dto.data.notes === 'string' ? dto.data.notes.trim() : '';
+    const requestIdentity = weatherEntryRequestIdentity({
+      farmId: dto.farmId,
+      parcelId,
+      plantingId,
+      weather,
+      notes,
+    });
+    const replay = async () => {
+      const row = await this.prisma.field_entries.findUnique({
+        where: { userId_clientReference: { userId, clientReference } },
+      });
+      if (!row) return null;
+      const storedIdentity = storedWeatherRequestIdentity(row);
+      if (storedIdentity !== requestIdentity) {
+        throw new ConflictException('This reference belongs to a different weather observation');
+      }
+      return this.mapRow(row);
+    };
+    const existing = await replay();
+    if (existing) return existing;
+    const normalized = {
+      ...dto.data,
+      parcelId,
+      plantingId,
+      weather,
+      date: weather.from,
+      notes: notes || undefined,
+      requestIdentity,
+    };
+    try {
+      const row = await this.prisma.field_entries.create({
+        data: {
+          id: randomUUID(),
+          userId,
+          farmId: dto.farmId,
+          parcelId,
+          plantingId,
+          type: 'WEATHER',
+          occurredAt: new Date(weather.from),
+          notes: notes || null,
+          photos: [],
+          lat: null,
+          lng: null,
+          data: normalized,
+          clientReference,
+        },
+      });
+      return this.mapRow(row);
+    } catch (e) {
+      if ((e as { code?: string }).code === 'P2002') {
+        const original = await replay();
+        if (original) return original;
+      }
+      throw e;
+    }
+  }
+
   async create(userId: string, dto: CreateFieldEntryDto) {
     if (!dto || typeof dto.type !== 'string' || !dto.data || typeof dto.data !== 'object') throw new BadRequestException('Activity data required');
     const documented = FIELD_OPERATION_TYPES.includes(dto.type as FieldOperation['type']);
     const clientRef = dto.clientReference?.trim();
-    if (clientRef && !documented) {
-      const existing = await this.prisma.field_entries.findUnique({
-        where: { userId_clientReference: { userId, clientReference: clientRef } },
-      });
-      if (existing) return this.mapRow(existing);
-    }
 
     const farm = await this.prisma.estates.findFirst({
       where: { id: dto.farmId, ownerId: userId },
     });
     if (!farm) throw new NotFoundException('Farm not found or you do not have access');
     if (documented) return this.createOperation(userId, dto);
+    if (dto.type === 'WEATHER') return this.createWeather(userId, dto);
+
+    if (clientRef && !documented) {
+      const existing = await this.prisma.field_entries.findUnique({
+        where: { userId_clientReference: { userId, clientReference: clientRef } },
+      });
+      if (existing) return this.mapRow(existing);
+    }
 
     await this.assertEstateHasApprovedParcelForFieldWork(dto.farmId, dto.type);
 
@@ -332,19 +430,6 @@ export class FieldEntriesService {
       typeof dto.data.plantingId === 'string' && dto.data.plantingId.trim()
         ? dto.data.plantingId.trim()
         : null;
-    if (dto.type === 'WEATHER') {
-      if (!parcelId || !plantingId) throw new BadRequestException('Weather observations require a parcel and planting');
-      const planting = await this.prisma.harvest_announcements.findFirst({
-        where: { id: plantingId, userId, parcelId, announcementType: 'PLANTING',
-          status: { notIn: ['CANCELLED', 'REJECTED'] }, parcel: { estateId: dto.farmId } },
-        select: { id: true },
-      });
-      if (!planting) throw new ForbiddenException('Planting does not belong to this parcel and grower');
-      try {
-        const weather = parseWeatherObservation(dto.data.weather);
-        dto.data = { ...dto.data, weather, date: weather.from };
-      } catch { throw new BadRequestException('Invalid weather observation: check dates and temperature range'); }
-    }
     const bags = Array.isArray(dto.data.bags) ? dto.data.bags : [];
     const primarySerial = dto.seedSerialNumber?.trim() || bags[0]?.serial?.trim() || '';
 

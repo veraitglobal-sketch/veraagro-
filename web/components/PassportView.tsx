@@ -15,6 +15,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedHref } from '@/hooks/useLocalizedHref';
+import { productNameLabel } from '@biovera/shared/i18n/labels';
+import { intlLocaleFor } from '@biovera/shared/i18n/format';
 
 export interface PassportData {
   producedInLabel?: string;
@@ -71,13 +73,23 @@ const vera = {
 };
 
 export default function PassportView({ data }: { data: PassportData }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = intlLocaleFor(i18n.language);
   const loc = useLocalizedHref();
   const displayName =
     [data.farmer.firstName, data.farmer.lastName].filter(Boolean).join(' ').trim() ||
     t('passportPublic.producerProfile.veraPartnerFallback');
   const photo = data.farmer.photo || data.photos.profile;
   const allGallery = [...data.photos.field, ...data.photos.growth].filter(Boolean);
+  const listedProducts = [...new Set(data.recentHarvests
+    .map(harvest => productNameLabel(t, harvest.productName)).filter(Boolean))];
+  const productsLabel = listedProducts.join(' · ');
+  // Older APIs generate an English biography from legacy parcel crops. Do not
+  // present that generated text as current harvest data; preserve custom bios.
+  const generatedBio = /^This (?:is the farm of |farm grows )/.test(data.farmer.bio || '');
+  const biography = (!data.farmer.bio || generatedBio) && productsLabel
+    ? t('passportPublic.producerProfile.listedProductsIntro', { products: productsLabel })
+    : data.farmer.bio;
 
   const producedLine =
     data.producedInLabel ||
@@ -89,7 +101,7 @@ export default function PassportView({ data }: { data: PassportData }) {
     { label: t('passportPublic.producerProfile.stats.estates'), value: data.stats.totalEstates },
     { label: t('passportPublic.producerProfile.stats.listedHarvests'), value: data.stats.totalBatches },
     { label: t('passportPublic.producerProfile.stats.latestYear'), value: data.stats.latestHarvestYear },
-    { label: t('passportPublic.producerProfile.stats.crops'), value: data.stats.crops, small: true },
+    { label: t(productsLabel ? 'passportPublic.producerProfile.stats.listedProducts' : 'passportPublic.producerProfile.stats.crops'), value: productsLabel || data.stats.crops, small: true },
   ] as const;
 
   const traceBullets = t('passportPublic.producerProfile.traceBullets', { returnObjects: true }) as string[];
@@ -170,9 +182,9 @@ export default function PassportView({ data }: { data: PassportData }) {
                     </span>
                   )}
                 </div>
-                {data.farmer.bio && (
+                {biography && (
                   <p className="text-sm sm:text-base text-gray-700 font-light leading-relaxed border-t border-gray-100 pt-5">
-                    {data.farmer.bio}
+                    {biography}
                   </p>
                 )}
                 {data.farmer.isVeraPartner && (
@@ -206,7 +218,7 @@ export default function PassportView({ data }: { data: PassportData }) {
               <p
                 className={
                   'small' in item && item.small
-                    ? 'text-sm sm:text-base font-light text-gray-900 leading-snug line-clamp-2'
+                    ? 'text-sm sm:text-base font-light text-gray-900 leading-snug'
                     : 'text-2xl sm:text-3xl font-light text-gray-900 tabular-nums'
                 }
               >
@@ -299,13 +311,13 @@ export default function PassportView({ data }: { data: PassportData }) {
                       <Package className="w-5 h-5 text-[#2D5A27]" strokeWidth={1.25} />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">{harvest.productName}</p>
+                      <p className="text-sm font-medium text-gray-900 truncate">{productNameLabel(t, harvest.productName)}</p>
                       <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
                         <Calendar className="w-3.5 h-3.5 flex-shrink-0" strokeWidth={1.5} />
-                        <span>{new Date(harvest.harvestDate).toLocaleDateString('en-GB')}</span>
+                        <span>{new Date(harvest.harvestDate).toLocaleDateString(locale)}</span>
                         <span>·</span>
                         <span>
-                          {harvest.quantity} {t('passportPublic.producerProfile.unitKg')}
+                          {harvest.quantity.toLocaleString(locale)} {t('passportPublic.producerProfile.unitKg')}
                         </span>
                       </div>
                     </div>

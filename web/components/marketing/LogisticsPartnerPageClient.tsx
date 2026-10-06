@@ -332,6 +332,11 @@ export default function LogisticsPartnerPageClient() {
               </div>
             ))}
           </div>
+          {t('logisticsPartnerPage.paymentTermsNote') ? (
+            <p className="mt-10 text-sm text-gray-600 font-light text-center max-w-3xl mx-auto leading-relaxed">
+              {t('logisticsPartnerPage.paymentTermsNote')}
+            </p>
+          ) : null}
         </div>
       </section>
 

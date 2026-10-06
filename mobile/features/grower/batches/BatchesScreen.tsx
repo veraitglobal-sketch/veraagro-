@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { productNameLabel } from '../../../../shared/i18n/labels';
 import { Package, Plus, ChevronRight } from 'lucide-react-native';
 import { EnterpriseScreen } from '../../../components/enterprise/EnterpriseScreen';
 import { BioVeraSubpageHeader } from '../../../components/BioVeraSubpageHeader';
@@ -154,7 +155,8 @@ function BatchCard({
   onPress,
   productFallback,
 }: BatchCardProps) {
-  const product = batch.productName || productFallback;
+  const { t } = useTranslation();
+  const product = productNameLabel(t, batch.productName) || productFallback;
   const qty =
     batch.quantity != null && Number(batch.quantity) > 0
       ? `${batch.quantity} ${batch.unit || 'kg'}`

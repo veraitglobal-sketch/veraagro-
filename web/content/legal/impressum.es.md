@@ -24,7 +24,7 @@ Jovica Mihajlovic, dirección indicada arriba
 
 ## Actividad
 
-Bio Vera es una empresa agroalimentaria verticalmente integrada con sede en Hamburgo. Trabajamos con productores bajo contrato en toda Europa, nos encargamos del control de calidad y del envasado, gestionamos la cadena de frío y comercializamos fruta y verdura fresca para clientes de toda Europa.
+Bio Vera es una empresa agroalimentaria verticalmente integrada con sede en Hamburgo, especializada en bayas premium — frescas (frambuesa, mora, fresa, arándano), congeladas y bañadas en chocolate (frambuesa, mora, fresa). Mediante producción propia y una red de productores contratados seleccionados en Europa, nos encargamos del control de calidad y del envasado, gestionamos la cadena de frío y abastecemos a clientes en toda Europa.
 
 ## Resolución de litigios con consumidores
 

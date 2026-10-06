@@ -1,119 +1,120 @@
 {
+  "metaTitle": "Rețea aprobată de furnizori | Bio Vera — Inputuri agricole",
+  "metaDescription": "Bio Vera colaborează cu furnizori selectați de inputuri și ambalaje pentru a sprijini producătorii în programe de producție definite.",
   "hero": {
-    "title": "Program pentru furnizori",
-    "subtitle": "Distribuiți inputuri certificate — semințe, îngrășăminte și ambalaje — prin rețeaua de producători Bio Vera din regiunea dumneavoastră. Cerere garantată, structură de preț fixă și logistică integrată.",
-    "downloadPdf": "Descărcați Prospect PDF",
+    "title": "Alăturați-vă rețelei aprobate de furnizori Bio Vera",
+    "subtitle": "Bio Vera colaborează cu furnizori selectați de inputuri, ambalaje și produse tehnice pentru a sprijini producătorii în programe de producție definite. Unde integrarea tehnică este disponibilă, producătorii vor putea accesa produse aprobate de program prin platforma Bio Vera.",
+    "downloadPdf": "Descărcați PDF prospect",
     "downloadFail": "Nu s-a putut descărca prospectul. Vă rugăm să încercați din nou.",
     "eyebrow": "Bio Vera · Furnizori",
-    "tagline": "Lanț integrat, cerere garantată"
+    "tagline": "Rețea aprobată de furnizori pentru programe de producție"
   },
   "whoApply": {
     "title": "Cine ar trebui să aplice",
-    "intro": "Companii consacrate din sectorul agricol — distribuitori, magazine agricole sau operatori cu infrastructură de depozitare și rețea existentă în regiune. Căutăm parteneri care pot oferi suport la fața locului și distribuție conform standardelor Bio Vera.",
+    "intro": "Companii consacrate din sectorul agro — distribuitori, magazine agricole sau operatori cu infrastructură de depozitare și rețea existentă în regiune. Căutăm parteneri care pot oferi suport la nivel de câmp și distribuție conform standardelor Bio Vera.",
     "bullets": []
   },
   "yourRole": {
-    "title": "Rolul tău",
-    "intro": "Partener operațional regional în rețeaua Bio Vera. Gestionați distribuția inputurilor certificate, oferiți suport pe teren producătorilor și mențineți standardele de calitate la nivel local. Coordonare cu echipa centrală prin Vera Admin Panel.",
+    "title": "Rolul dvs.",
+    "intro": "Partener operațional regional în rețeaua Bio Vera. Gestionați distribuția inputurilor certificate, oferiți suport la nivel de câmp producătorilor și mențineți standardele de calitate la nivel local. Coordonare cu echipa centrală prin Vera Admin Panel.",
     "bullets": []
   },
   "benefits": {
-    "title": "Ce primești",
-    "subtitle": "Beneficiile de a deveni furnizor Bio Vera",
+    "title": "Ce obțineți",
+    "subtitle": "",
     "cards": [
       {
-        "title": "Preluare garantată",
-        "description": "Preluare garantată de la producătorii noștri din țara dumneavoastră. Cultivatorii noștri se aprovizionează de la furnizori aprobați – obțineți o cerere stabilă și venituri previzibile."
+        "title": "Integrare catalog aprobat",
+        "description": "Produse aprobate de program listate pentru producătorii participanți, sub rezerva acordului comercial."
       },
       {
-        "title": "Produsele și ambalajele noastre",
-        "description": "Vindeți produse Bio Vera și ambalaje Bio Vera. O singură marcă, un standard, trasabilitate completă prin QR și sistemul Vera."
+        "title": "Date produs și tehnice",
+        "description": "Informații structurate despre produs conectate la documentația de producție și lot, unde este integrat."
       },
       {
-        "title": "Stabilitatea prețurilor",
-        "description": "Structura de prețuri pre-acordată. Fără fluctuații de preț sau negocieri per tranzacție. Marje previzibile."
+        "title": "Livrare regională",
+        "description": "Deserviți producători din regiunea dvs. în programele de producție Bio Vera."
       },
       {
-        "title": "Logistica integrata",
-        "description": "Inputurile se distribuie prin rețeaua logistică integrată Bio Vera — transport refrigerat pe ture de retur. Fără costuri logistice suplimentare pentru partener."
+        "title": "Integrare opțională a comenzilor",
+        "description": "Unde integrarea tehnică este disponibilă, producătorii pot accesa inputuri aprobate prin sistemul Bio Vera."
       },
       {
-        "title": "Acoperire națională preferată",
-        "description": "Preferăm furnizori cu prezență națională puternică. Extindeți-vă acoperirea și reprezentați Bio Vera în întreaga țară."
+        "title": "Aliniere la program",
+        "description": "Participare într-un sistem de operare neutru față de furnizor — fără statut exclusiv permanent implicit."
       }
     ]
   },
+  "paymentTermsNote": "Termenii comerciali, condițiile de plată și datele de plată se convin individual în cadrul acordului de furnizor sau comenzii de achiziție relevante.",
   "howItWorks": {
     "title": "Cum funcționează",
-    "subtitle": "Înțelegerea lanțului de aprovizionare Bio Vera",
-    "supplyChainTitle": "Procesul lanțului de aprovizionare",
+    "subtitle": "Furnizorii aprobați furnizează inputuri și ambalaje aliniate programului. Unde este integrat, tranzacțiile pot fi urmărite prin sistemul Bio Vera.",
+    "supplyChainTitle": "",
     "steps": [],
-    "forSuppliersPanelTitle": "Pentru Furnizori",
-    "forSuppliersPanelIntro": "În calitate de furnizor, cumpărați de la partenerii noștri aprobați și vindeți cultivatorilor la prețul convenit. Mențineți inventarul local, achiziționați ambalaje (de exemplu, cutii) pentru utilizatorii noștri și oferiți sprijin regional fermierilor.",
+    "forSuppliersPanelTitle": "",
+    "forSuppliersPanelIntro": "",
     "forSuppliersPanelBullets": []
   },
   "requirements": {
-    "title": "Cerințe de program",
-    "subtitle": "Ce așteptăm de la furnizorii noștri",
-    "supplierHeading": "Pentru Furnizori",
+    "title": "Cerințe ale programului",
+    "subtitle": "Depozit uscat și securizat. Scanare QR obligatorie pentru fiecare expediere. Verificare fizică a mărfii primite. Evidență digitală prin Vera Admin Dashboard.",
+    "supplierHeading": "",
     "cards": [],
-    "commonLabel": "Obligație comună:",
-    "commonBody": "Toți partenerii trebuie să folosească Tabloul de bord Vera Admin pentru a înregistra fiecare intrare și ieșire de bunuri. Fără „hârțoage” – totul trebuie să fie în sistemul digital."
+    "commonLabel": "",
+    "commonBody": ""
   },
   "logistics": {
-    "title": "Vera Logistics Advantage",
-    "subtitle": "Sistem logistic de returnare inteligent",
-    "noEmptyTitle": "Fără călătorii de întoarcere goale",
+    "title": "",
+    "subtitle": "",
+    "noEmptyTitle": "",
     "steps": [],
-    "supplierColumnTitle": "Pentru Furnizori",
-    "supplierColumnIntro": "Primiți livrări regulate de semințe și îngrășăminte Vera direct de la partenerii noștri, livrate de rețeaua noastră logistică în călătoriile de întoarcere.",
+    "supplierColumnTitle": "",
+    "supplierColumnIntro": "",
     "supplierColumnBullets": [],
-    "systemColumnTitle": "Beneficiile sistemului",
-    "systemColumnIntro": "Sistemul nostru de logistică inteligentă asigură eficiență maximă eliminând călătoriile goale dus-întors și optimizând fiecare kilometru de transport.",
+    "systemColumnTitle": "",
+    "systemColumnIntro": "",
     "systemColumnBullets": []
   },
   "application": {
-    "title": "Aplicație furnizor",
-    "intro": "Aplicați online (fără autentificare la magazin cu autoservire). Primiți un cod de referință pentru a vă urmări cererea. Echipa noastră vă va contacta pentru a programa o întâlnire; când ești aprobat, creăm contul tău de magazin partener.",
-    "linkCheckStatus": "Verificați starea cu referința dvs",
-    "linkPartnerLogin": "Conectare la magazinul partener",
+    "title": "Cerere furnizor",
+    "intro": "Aplicați online. Primiți un cod de referință pentru urmărirea cererii. Echipa noastră vă contactează pentru a programa o întâlnire; după aprobare creăm contul dvs. de partener.",
+    "linkCheckStatus": "Verificați statusul cu referința dvs.",
+    "linkPartnerLogin": "Autentificare magazin partener",
     "receivedTitle": "Cerere primită",
     "referencePrefix": "Referința dvs.:",
-    "receivedBody": "Vă vom contacta pentru a programa o conversație. Salvați numărul de referință - îl puteți utiliza pentru a vă verifica oricând starea aplicației.",
-    "ctaCheckStatus": "Verificați starea aplicației",
-    "ctaAnother": "Trimiteți altul"
+    "receivedBody": "Vă vom contacta pentru a programa o conversație. Salvați numărul de referință — îl puteți folosi oricând pentru a verifica statusul cererii.",
+    "ctaCheckStatus": "Verificați statusul cererii",
+    "ctaAnother": "Trimiteți o altă cerere"
   },
   "form": {
     "companyNameLabel": "Numele companiei *",
     "companyNamePlaceholder": "Introduceți numele companiei",
-    "vatLabel": "ID TVA/Număr de identificare fiscală *",
-    "vatPlaceholder": "Introduceți codul de TVA",
-    "contactPersonLabel": "Persoana de contact *",
-    "contactPlaceholder": "Numele complet",
+    "vatLabel": "CUI / Cod fiscal *",
+    "vatPlaceholder": "Introduceți CUI",
+    "contactPersonLabel": "Persoană de contact *",
+    "contactPlaceholder": "Nume complet",
     "emailLabel": "E-mail *",
-    "emailPlaceholder": "e-mail@example.com",
+    "emailPlaceholder": "email@exemplu.com",
     "phoneLabel": "Telefon *",
-    "phonePlaceholder": "+1234567890",
+    "phonePlaceholder": "+40712345678",
     "productTypeLabel": "Tip produs *",
     "productTypePlaceholder": "Selectați tipul de produs",
-    "certificationsLabel": "Certificari *",
+    "certificationsLabel": "Certificări *",
     "certificationsHint": "Selectați cel puțin o certificare",
     "websiteLabel": "Site web (opțional)",
-    "websitePlaceholder": "https://www.example.com",
+    "websitePlaceholder": "https://www.exemplu.com",
     "descriptionLabel": "Descrierea afacerii (opțional)",
-    "descriptionPlaceholder": "Scurtă descriere a companiei și a produselor dvs....",
-    "submitting": "Se trimite...",
+    "descriptionPlaceholder": "Scurtă descriere a companiei și produselor...",
+    "submitting": "Se trimite…",
     "submit": "Trimiteți cererea",
-    "submitErrorFallback": "Trimiterea eșuată. Vă rugăm să încercați din nou sau să contactați info@biovera.app",
+    "submitErrorFallback": "Trimiterea a eșuat. Vă rugăm să încercați din nou sau contactați info@biovera.app",
     "productTypes": {
       "seeds": "Semințe",
       "fertilizers": "Îngrășăminte",
       "packaging": "Materiale de ambalare",
-      "equipment": "Echipamente",
-      "other": "Alte"
+      "equipment": "Echipament",
+      "other": "Altele"
     }
   },
-  "formspeeNote": "De asemenea, stocat în sistemul Bio Vera - utilizați această referință în aplicațiile de administrare pentru parteneri.",
-  "metaTitle": "Supplier Partnership | Bio Vera — Agricultural Inputs",
-  "metaDescription": "Supplier partnership programme: distribute certified inputs through the Bio Vera grower network in your region. Guaranteed demand, fixed pricing structure, integrated logistics."
+  "formspeeNote": "De asemenea stocat în sistemul Bio Vera — folosiți această ref. în aplicațiile admin Partner."
 }

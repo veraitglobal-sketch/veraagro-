@@ -12,6 +12,7 @@ import { estatesAPI, fieldEntriesAPI, growthLogsAPI, parcelsAPI } from '@/lib/ap
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { Loader2, NotebookPen } from 'lucide-react';
 import { growerApiErrorOrT } from '@/lib/grower-api-error';
+import WeatherObservationForm from '@/components/grower/WeatherObservationForm';
 import {
   formatFieldEntryPreview,
   fieldEntryDetailData,
@@ -234,6 +235,7 @@ export default function GrowerFieldDiaryPage() {
             </div>
           )}
 
+          {estateId && parcelId !== 'ALL' ? <WeatherObservationForm key={`${estateId}:${parcelId}`} farmId={estateId} parcelId={parcelId} onSaved={loadData} /> : null}
           {err && (
             <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-base text-red-800">{err}</div>
           )}

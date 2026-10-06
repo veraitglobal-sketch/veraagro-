@@ -2,10 +2,13 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { productNameLabel } from '@biovera/shared/i18n/labels';
 import Link from 'next/link';
 import SidebarLayout from '@/components/SidebarLayout';
 import AuthGuard from '@/components/AuthGuard';
 import { batchesAPI, standardEngineAPI } from '@/lib/api';
+import PassportCompletenessPanel from '@/components/grower/PassportCompletenessPanel';
+import type { PassportCompletenessItem } from '@biovera/shared/passport/completeness';
 import { useGrowerNavItems } from '@/lib/grower-nav';
 import { GrowerPageHeader, GrowerPageShell } from '@/components/grower/GrowerPageShell';
 import { useAuth } from '@/lib/auth';
@@ -91,6 +94,8 @@ export default function GrowerBatchesPage() {
   const [approving, setApproving] = useState(false);
   const [showTraceabilityJson, setShowTraceabilityJson] = useState(false);
   const [approvalNotice, setApprovalNotice] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [passportCompleteness, setPassportCompleteness] = useState<PassportCompletenessItem[] | null>(null);
+  const [passportCompletenessError, setPassportCompletenessError] = useState<string | null>(null);
 
   useEffect(() => {
     loadBatches();
@@ -127,11 +132,11 @@ export default function GrowerBatchesPage() {
       if (!q) return true;
       const bid = String(batch.batchId ?? '').toLowerCase();
       const sid = String(batch.id ?? '').toLowerCase();
-      const pname = String(batch.productName ?? '').toLowerCase();
+      const pname = `${batch.productName ?? ''} ${productNameLabel(t, batch.productName)}`.toLowerCase();
       const ename = String(batch.estates?.name ?? '').toLowerCase();
       return bid.includes(q) || sid.includes(q) || pname.includes(q) || ename.includes(q);
     });
-  }, [batches, searchTerm, lotFilter]);
+  }, [batches, searchTerm, lotFilter, t]);
 
   const groupedLots = useMemo(() => groupLotsByEstate(filteredBatches), [filteredBatches]);
 
@@ -145,6 +150,8 @@ export default function GrowerBatchesPage() {
   const handleViewDetails = async (batch: Batch) => {
     setSelectedBatch(batch);
     setBatchDetailsError(null);
+    setPassportCompleteness(null);
+    setPassportCompletenessError(null);
     setLoadingDetails(true);
     const traceRef = String(batch.batchId ?? batch.id ?? '').trim();
     if (!traceRef) {
@@ -154,8 +161,13 @@ export default function GrowerBatchesPage() {
       return;
     }
     try {
-      const details = await batchesAPI.getOne(traceRef);
+      const [details, completeness] = await Promise.all([
+        batchesAPI.getOne(traceRef),
+        batchesAPI.getPassportCompleteness(traceRef).catch(() => null),
+      ]);
       setBatchDetails(details);
+      if (Array.isArray(completeness)) setPassportCompleteness(completeness as PassportCompletenessItem[]);
+      else setPassportCompletenessError(t('growerPages.passportCompletenessLoadFailed', 'Could not load passport checklist.'));
     } catch (err: unknown) {
       console.error('Error loading batch details:', err);
       setBatchDetails(null);
@@ -342,7 +354,7 @@ export default function GrowerBatchesPage() {
                             ? 'border-blue-500'
                             : 'border-[#2D5A27]';
                       const metaParts = [
-                        batch.productName,
+                        productNameLabel(t, batch.productName),
                         batch.quantity != null ? `${batch.quantity} ${batch.unit}` : null,
                         batch.harvestDate
                           ? new Date(batch.harvestDate).toLocaleDateString(undefined, {
@@ -398,7 +410,7 @@ export default function GrowerBatchesPage() {
                   <div className="flex justify-between items-center">
                     <div>
                       <LotIdsBlock lot={selectedBatch} />
-                      <p className="text-base text-gray-600 mt-2">{selectedBatch.productName}</p>
+                      <p className="text-base text-gray-600 mt-2">{productNameLabel(t, selectedBatch.productName)}</p>
                     </div>
                     <button
                       type="button"
@@ -429,6 +441,11 @@ export default function GrowerBatchesPage() {
                     </div>
                   ) : (
                     <div className="space-y-6">
+                      {passportCompleteness ? (
+                        <PassportCompletenessPanel items={passportCompleteness} localizeHref={loc} />
+                      ) : passportCompletenessError ? (
+                        <p className="text-sm text-gray-500">{passportCompletenessError}</p>
+                      ) : null}
                       {/* Basic Info */}
                       <div className="grid grid-cols-2 gap-4">
                         <div>

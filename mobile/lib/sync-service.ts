@@ -1,3 +1,4 @@
+import { operationEntryPayload } from './field-operation';
 import { productOwnerId } from './offline-storage';
 import {
   offlineStorageForOwner, currentStorageOwner,
@@ -79,12 +80,13 @@ async function reconcileLegacyQueueOnce(offlineStorage: ReturnType<typeof offlin
 
 async function peekFirstRecordedQueueError(offlineStorage: ReturnType<typeof offlineStorageForOwner>): Promise<string | null> {
   try {
-    const [entries, products, costs, certPhotos, harvests] = await Promise.all([
+    const [entries, products, costs, certPhotos, harvests, weatherRows] = await Promise.all([
       offlineStorage.getPendingEntries(),
       offlineStorage.getPendingProducts(),
       offlineStorage.getPendingCosts(),
       offlineStorage.getPendingCertificatePhotos(),
       offlineStorage.getPendingHarvestPlans(),
+      offlineStorage.getPendingWeatherObservations(),
     ]);
     for (const e of entries) {
       if (e.error?.trim()) return e.error.trim();
@@ -101,6 +103,9 @@ async function peekFirstRecordedQueueError(offlineStorage: ReturnType<typeof off
     for (const h of harvests) {
       if (h.error?.trim()) return h.error.trim();
     }
+    for (const row of weatherRows) {
+      if (row.error?.trim()) return row.error.trim();
+    }
   } catch {
     /* ignore */
   }
@@ -113,6 +118,7 @@ export interface SyncQueueBreakdown {
   costs: number;
   certificatePhotos: number;
   harvestPlans: number;
+  weatherObservations: number;
 }
 
 export interface SyncStatus {
@@ -158,20 +164,22 @@ function syncServiceForSession(owner: string, token: string | null) {
    */
   async getSyncStatus(): Promise<SyncStatus> {
     try {
-      const [entries, products, costs, certPhotos, harvests] = await Promise.all([
+      const [entries, products, costs, certPhotos, harvests, weatherRows] = await Promise.all([
         offlineStorage.getPendingEntries(),
         offlineStorage.getPendingProducts(),
         offlineStorage.getPendingCosts(),
         offlineStorage.getPendingCertificatePhotos(),
         offlineStorage.getPendingHarvestPlans(),
+        offlineStorage.getPendingWeatherObservations(),
       ]);
       const pendingEntries = entries.filter((e) => needsSync(e.status)).length;
       const pendingProducts = products.filter((p) => needsSync(p.status)).length;
       const pendingCosts = costs.filter((c) => needsSync(c.status)).length;
       const pendingCertPhotos = certPhotos.filter((c) => needsSync(c.status)).length;
       const pendingHarvests = harvests.filter((h) => needsSync(h.status)).length;
+      const pendingWeather = weatherRows.filter((row) => needsSync(row.status)).length;
       const pendingCount =
-        pendingEntries + pendingProducts + pendingCosts + pendingCertPhotos + pendingHarvests;
+        pendingEntries + pendingProducts + pendingCosts + pendingCertPhotos + pendingHarvests + pendingWeather;
       const legacyFieldLogCount = await offlineStorage.countLegacyFieldLogEntries();
       const firstQueueError = await peekFirstRecordedQueueError(offlineStorage);
 
@@ -188,6 +196,7 @@ function syncServiceForSession(owner: string, token: string | null) {
           costs: pendingCosts,
           certificatePhotos: pendingCertPhotos,
           harvestPlans: pendingHarvests,
+          weatherObservations: pendingWeather,
         },
         syncing: status.syncing || false,
         lastError: status.lastError || null,
@@ -205,6 +214,7 @@ function syncServiceForSession(owner: string, token: string | null) {
           costs: 0,
           certificatePhotos: 0,
           harvestPlans: 0,
+          weatherObservations: 0,
         },
         syncing: false,
         lastError: null,
@@ -293,6 +303,9 @@ function syncServiceForSession(owner: string, token: string | null) {
           throw new Error(apiErrorMessage(e, tString(i18n.t, 'producer.fieldLogAlerts.saveFailed')));
         }
 
+        if (entry.operation) {
+          await syncApi.post('/field-entries', operationEntryPayload(entry, estateId, imageDataUrl));
+        } else {
         const imageHash = await sha256HexFromImageUri(entry.photoUri);
         const deviceId = await getOrCreateDeviceId();
         const notesMerged = buildFieldLogGrowthNotes(entry).trim();
@@ -324,6 +337,8 @@ function syncServiceForSession(owner: string, token: string | null) {
               }
             : {}),
         });
+
+        }
 
         await offlineStorage.patchFieldLogHistory(entry.id, { status: 'synced', error: undefined });
         // Mark as synced
@@ -481,6 +496,34 @@ function syncServiceForSession(owner: string, token: string | null) {
   /**
    * Sync pending certificate photos (when endpoint exists)
    */
+  async syncPendingWeatherObservations(expectedOwner?: string): Promise<{ success: number; failed: number }> {
+    if (expectedOwner && owner !== expectedOwner) throw new Error('Account changed; sync paused.');
+    const pending = await offlineStorage.getPendingWeatherObservations();
+    const toSync = pending.filter((row) => needsSync(row.status) && !row.conflict);
+    if (toSync.length === 0) return { success: 0, failed: 0 };
+
+    let success = 0;
+    let failed = 0;
+
+    for (const row of toSync) {
+      try {
+        if (!await offlineStorage.settleWeatherObservation(row, 'syncing')) continue;
+        await syncApi.post('/field-entries', row.payload);
+        if (await offlineStorage.settleWeatherObservation(row, 'synced')) success++;
+      } catch (err: unknown) {
+        const status = axiosResponseStatus(err);
+        const msg = apiErrorMessage(err, 'Sync failed');
+        if (status === 429 || msg.toLowerCase().includes('too many')) {
+          await offlineStorage.settleWeatherObservation(row, 'pending', msg);
+          break;
+        }
+        await offlineStorage.settleWeatherObservation(row, 'error', msg, status === 409);
+        failed++;
+      }
+    }
+    return { success, failed };
+  },
+
   async syncPendingHarvestPlans(): Promise<{ success: number; failed: number }> {
     const pending = await offlineStorage.getPendingHarvestPlans();
     const toSync = pending.filter((h) => needsSync(h.status));
@@ -599,6 +642,7 @@ function syncServiceForSession(owner: string, token: string | null) {
     costs: { success: number; failed: number };
     certificatePhotos: { success: number; failed: number };
     harvestPlans: { success: number; failed: number };
+    weatherObservations: { success: number; failed: number };
     seedScans: { success: number; failed: number };
   }> {
     const now = Date.now();
@@ -609,6 +653,7 @@ function syncServiceForSession(owner: string, token: string | null) {
         costs: { success: 0, failed: 0 },
         certificatePhotos: { success: 0, failed: 0 },
         harvestPlans: { success: 0, failed: 0 },
+        weatherObservations: { success: 0, failed: 0 },
         seedScans: { success: 0, failed: 0 },
       };
     }
@@ -623,11 +668,13 @@ function syncServiceForSession(owner: string, token: string | null) {
     let costs = { success: 0, failed: 0 };
     let certificatePhotos = { success: 0, failed: 0 };
     let harvestPlans = { success: 0, failed: 0 };
+    let weatherObservations = { success: 0, failed: 0 };
     let seedScans = { success: 0, failed: 0 };
 
     try {
       entries = await this.syncPendingEntries(false);
       await this.syncPendingPlantingEntries();
+      weatherObservations = await this.syncPendingWeatherObservations();
       products = await this.syncPendingProducts();
       costs = await this.syncPendingCosts();
       certificatePhotos = await this.syncPendingCertificatePhotos();
@@ -643,7 +690,7 @@ function syncServiceForSession(owner: string, token: string | null) {
           lastError: msg,
         }),
       );
-      return { entries, products, costs, certificatePhotos, harvestPlans, seedScans };
+      return { entries, products, costs, certificatePhotos, harvestPlans, weatherObservations, seedScans };
     }
 
     const totalFailed =
@@ -652,6 +699,7 @@ function syncServiceForSession(owner: string, token: string | null) {
       costs.failed +
       certificatePhotos.failed +
       harvestPlans.failed +
+      weatherObservations.failed +
       seedScans.failed;
     const detail = totalFailed > 0 ? await peekFirstRecordedQueueError(offlineStorage) : null;
     await AsyncStorage.setItem(
@@ -666,7 +714,7 @@ function syncServiceForSession(owner: string, token: string | null) {
       }),
     );
 
-    return { entries, products, costs, certificatePhotos, harvestPlans, seedScans };
+    return { entries, products, costs, certificatePhotos, harvestPlans, weatherObservations, seedScans };
   },
 
   /**

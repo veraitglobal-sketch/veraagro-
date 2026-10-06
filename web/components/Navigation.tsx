@@ -39,7 +39,8 @@ export default function Navigation() {
         { href: loc('/for-growers'), label: t('nav.forGrowers') },
         { href: loc('/for-suppliers'), label: t('nav.forSuppliers') },
         { href: loc('/for-logistics'), label: t('nav.forLogistics') },
-        { href: loc('/fresh-concept'), label: t('nav.freshConcept') },
+        { href: loc('/residue-controlled'), label: t('nav.residueProgramme') },
+        { href: loc('/about'), label: t('nav.about') },
         { href: loc('/contact'), label: t('nav.contact') },
       ];
     }

@@ -1,119 +1,120 @@
 {
+  "metaTitle": "Red de proveedores aprobados | Bio Vera — Insumos agrícolas",
+  "metaDescription": "Bio Vera trabaja con proveedores seleccionados de insumos y embalajes para apoyar a productores en programas de producción definidos.",
   "hero": {
-    "title": "Programa para proveedores",
-    "subtitle": "Distribuya insumos certificados — semillas, fertilizantes y envases — a través de la red de productores Bio Vera en su región. Demanda garantizada, estructura de precios fija y logística integrada.",
-    "downloadPdf": "Descargar prospecto PDF",
-    "downloadFail": "No se pudo descargar el prospecto. Por favor inténtalo de nuevo.",
+    "title": "Únase a la red de proveedores aprobados de Bio Vera",
+    "subtitle": "Bio Vera trabaja con proveedores seleccionados de insumos, embalajes y productos técnicos para apoyar a productores en programas de producción definidos. Donde la integración técnica esté disponible, los productores podrán acceder a productos aprobados por el programa a través de la plataforma Bio Vera.",
+    "downloadPdf": "Descargar PDF prospecto",
+    "downloadFail": "No se pudo descargar el prospecto. Inténtelo de nuevo.",
     "eyebrow": "Bio Vera · Proveedores",
-    "tagline": "Cadena integrada, demanda garantizada"
+    "tagline": "Red de proveedores aprobados para programas de producción"
   },
   "whoApply": {
-    "title": "¿Quién debería aplicar?",
-    "intro": "Empresas consolidadas del sector agrícola — distribuidores, tiendas agrícolas u operadores con infraestructura de almacén y red existente en la región. Buscamos socios que puedan ofrecer soporte en campo y distribución conforme a los estándares Bio Vera.",
+    "title": "Quién debe postularse",
+    "intro": "Empresas establecidas del sector agro — distribuidores, tiendas agrícolas u operadores con infraestructura de almacén y red existente en la región. Buscamos socios que puedan ofrecer soporte en campo y distribución bajo los estándares de Bio Vera.",
     "bullets": []
   },
   "yourRole": {
-    "title": "Tu papel",
-    "intro": "Socio operativo regional en la red Bio Vera. Gestiona la distribución de insumos certificados, brinda soporte en campo a los productores y mantiene los estándares de calidad a nivel local. Coordinación con el equipo central a través del Vera Admin Panel.",
+    "title": "Su rol",
+    "intro": "Socio operativo regional dentro de la red Bio Vera. Gestiona la distribución de insumos certificados, brinda soporte en campo a productores y mantiene estándares de calidad a nivel local. Coordinación con el equipo central a través del Vera Admin Panel.",
     "bullets": []
   },
   "benefits": {
-    "title": "lo que obtienes",
-    "subtitle": "Beneficios de convertirse en proveedor de Bio Vera",
+    "title": "Qué obtiene",
+    "subtitle": "",
     "cards": [
       {
-        "title": "Salida garantizada",
-        "description": "Compra garantizada de nuestros productores en su país. Nuestros productores se abastecen de proveedores aprobados: usted obtiene una demanda estable e ingresos predecibles."
+        "title": "Integración de catálogo aprobado",
+        "description": "Productos aprobados por el programa listados para productores participantes, sujeto a acuerdo comercial."
       },
       {
-        "title": "Nuestros productos y embalajes",
-        "description": "Vendes productos Bio Vera y envases Bio Vera. Una marca, un estándar, trazabilidad total mediante QR y sistema Vera."
+        "title": "Datos de producto y técnicos",
+        "description": "Información estructurada del producto conectada a documentación de producción y lote, donde esté integrada."
       },
       {
-        "title": "Estabilidad de precios",
-        "description": "Estructura de precios previamente acordada. Sin fluctuaciones de precios ni negociaciones por transacción. Márgenes predecibles."
+        "title": "Cumplimiento regional",
+        "description": "Atiende productores en su región dentro de los programas de producción de Bio Vera."
       },
       {
-        "title": "Logística integrada",
-        "description": "Los insumos se distribuyen a través de la red logística integrada de Bio Vera — viajes de retorno en transporte refrigerado. Sin costes logísticos adicionales para el socio."
+        "title": "Integración opcional de pedidos",
+        "description": "Donde la integración técnica esté disponible, los productores pueden acceder a insumos aprobados a través del sistema Bio Vera."
       },
       {
-        "title": "Cobertura nacional preferida",
-        "description": "Preferimos proveedores con fuerte presencia nacional. Amplíe su alcance y represente a Bio Vera en todo su país."
+        "title": "Alineación con el programa",
+        "description": "Participación en un sistema operativo neutral respecto al proveedor — sin estatus exclusivo permanente implícito."
       }
     ]
   },
+  "paymentTermsNote": "Los términos comerciales, condiciones de pago y fechas de pago se acuerdan individualmente en el marco del acuerdo de proveedor u orden de compra correspondiente.",
   "howItWorks": {
     "title": "Cómo funciona",
-    "subtitle": "Comprender la cadena de suministro de Bio Vera",
-    "supplyChainTitle": "Proceso de la cadena de suministro",
+    "subtitle": "Los proveedores aprobados suministran insumos y embalajes alineados con el programa. Donde esté integrado, las transacciones pueden rastrearse a través del sistema Bio Vera.",
+    "supplyChainTitle": "",
     "steps": [],
-    "forSuppliersPanelTitle": "Para proveedores",
-    "forSuppliersPanelIntro": "Como proveedor, usted compra a nuestros socios aprobados y vende a los productores al precio acordado. Usted mantiene el inventario local, adquiere embalajes (por ejemplo, cajas) para nuestros usuarios y brinda apoyo regional a los agricultores.",
+    "forSuppliersPanelTitle": "",
+    "forSuppliersPanelIntro": "",
     "forSuppliersPanelBullets": []
   },
   "requirements": {
     "title": "Requisitos del programa",
-    "subtitle": "Qué esperamos de nuestros proveedores",
-    "supplierHeading": "Para proveedores",
+    "subtitle": "Almacén seco y seguro. Escaneo QR obligatorio para cada envío. Verificación física de mercancías recibidas. Registro digital exclusivamente a través del Vera Admin Dashboard.",
+    "supplierHeading": "",
     "cards": [],
-    "commonLabel": "Obligación común:",
-    "commonBody": "Todos los socios deben utilizar el Panel de administración de Vera para registrar cada entrada y salida de mercancías. Sin \"papeleo\": todo debe estar en el sistema digital."
+    "commonLabel": "",
+    "commonBody": ""
   },
   "logistics": {
-    "title": "Ventaja logística de Vera",
-    "subtitle": "Sistema de logística de devolución inteligente",
-    "noEmptyTitle": "No hay viajes de regreso vacíos",
+    "title": "",
+    "subtitle": "",
+    "noEmptyTitle": "",
     "steps": [],
-    "supplierColumnTitle": "Para proveedores",
-    "supplierColumnIntro": "Reciba entregas periódicas de semillas y fertilizantes de Vera directamente de nuestros socios, entregadas por nuestra red logística en viajes de regreso.",
+    "supplierColumnTitle": "",
+    "supplierColumnIntro": "",
     "supplierColumnBullets": [],
-    "systemColumnTitle": "Beneficios del sistema",
-    "systemColumnIntro": "Nuestro sistema de logística inteligente garantiza la máxima eficiencia al eliminar los viajes de regreso vacíos y optimizar cada kilómetro de transporte.",
+    "systemColumnTitle": "",
+    "systemColumnIntro": "",
     "systemColumnBullets": []
   },
   "application": {
     "title": "Solicitud de proveedor",
-    "intro": "Solicite en línea (sin iniciar sesión en la tienda de autoservicio). Recibirá un código de referencia para realizar un seguimiento de su solicitud. Nuestro equipo se comunicará con usted para programar una reunión; Cuando sea aprobado, crearemos su cuenta de tienda asociada.",
-    "linkCheckStatus": "Consulta el estado con tu referencia.",
-    "linkPartnerLogin": "Inicio de sesión en la tienda asociada",
+    "intro": "Postúlese en línea. Recibe un código de referencia para seguir su solicitud. Nuestro equipo le contactará para programar una reunión; tras la aprobación creamos su cuenta de socio.",
+    "linkCheckStatus": "Verificar estado con su referencia",
+    "linkPartnerLogin": "Inicio de sesión tienda socio",
     "receivedTitle": "Solicitud recibida",
-    "referencePrefix": "Tu referencia:",
-    "receivedBody": "Nos comunicaremos con usted para programar una conversación. Guarde su número de referencia; puede usarlo para verificar el estado de su solicitud en cualquier momento.",
-    "ctaCheckStatus": "Verificar el estado de la solicitud",
-    "ctaAnother": "enviar otro"
+    "referencePrefix": "Su referencia:",
+    "receivedBody": "Le contactaremos para programar una conversación. Guarde su número de referencia — puede usarlo en cualquier momento para verificar el estado.",
+    "ctaCheckStatus": "Verificar estado de la solicitud",
+    "ctaAnother": "Enviar otra solicitud"
   },
   "form": {
-    "companyNameLabel": "Nombre de empresa *",
+    "companyNameLabel": "Nombre de la empresa *",
     "companyNamePlaceholder": "Introduzca el nombre de la empresa",
-    "vatLabel": "NIF IVA / Número de Identificación Fiscal *",
-    "vatPlaceholder": "Introduzca el número de IVA",
+    "vatLabel": "NIF / identificación fiscal *",
+    "vatPlaceholder": "Introduzca el NIF",
     "contactPersonLabel": "Persona de contacto *",
-    "contactPlaceholder": "nombre completo",
+    "contactPlaceholder": "Nombre completo",
     "emailLabel": "Correo electrónico *",
-    "emailPlaceholder": "correo electrónico@ejemplo.com",
+    "emailPlaceholder": "email@ejemplo.com",
     "phoneLabel": "Teléfono *",
-    "phonePlaceholder": "+1234567890",
+    "phonePlaceholder": "+34612345678",
     "productTypeLabel": "Tipo de producto *",
-    "productTypePlaceholder": "Seleccione tipo de producto",
+    "productTypePlaceholder": "Seleccione el tipo de producto",
     "certificationsLabel": "Certificaciones *",
     "certificationsHint": "Seleccione al menos una certificación",
     "websiteLabel": "Sitio web (opcional)",
     "websitePlaceholder": "https://www.ejemplo.com",
     "descriptionLabel": "Descripción del negocio (opcional)",
-    "descriptionPlaceholder": "Breve descripción de su empresa y productos...",
-    "submitting": "Sumisión...",
+    "descriptionPlaceholder": "Breve descripción de la empresa y productos...",
+    "submitting": "Enviando...",
     "submit": "Enviar solicitud",
-    "submitErrorFallback": "No se pudo enviar. Por favor inténtalo de nuevo o contacta con info@biovera.app",
+    "submitErrorFallback": "Error al enviar. Inténtelo de nuevo o contacte info@biovera.app",
     "productTypes": {
       "seeds": "Semillas",
       "fertilizers": "Fertilizantes",
       "packaging": "Materiales de embalaje",
-      "equipment": "Equipo",
+      "equipment": "Equipamiento",
       "other": "Otro"
     }
   },
-  "formspeeNote": "También almacenado en el sistema Bio Vera: utilice esta referencia en las aplicaciones administrativas de los socios.",
-  "metaTitle": "Supplier Partnership | Bio Vera — Agricultural Inputs",
-  "metaDescription": "Supplier partnership programme: distribute certified inputs through the Bio Vera grower network in your region. Guaranteed demand, fixed pricing structure, integrated logistics."
+  "formspeeNote": "También almacenado en el sistema Bio Vera — use esta ref. en solicitudes admin Partner."
 }

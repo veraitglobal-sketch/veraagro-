@@ -4,14 +4,13 @@ import type { TFunction } from 'i18next';
 import { useAuth } from '../../../hooks/useAuth';
 import { useGrowerDashboard } from '../../../contexts/GrowerDashboardContext';
 import { useGrowerTabRefresh } from '../../../hooks/useGrowerTabRefresh';
-import { useWallet } from '../../../contexts/WalletContext';
 import { GrowerHeroSheetScaffold } from '../../../design-system';
 import { GrowerHeroTopBar } from '../../../components/enterprise/GrowerHeroTopBar';
 import NextStepCard from './NextStepCard';
-import { HomeFarmSnapshot } from './HomeFarmSnapshot';
 import { HomeDashboardHeader } from './HomeDashboardHeader';
-import { HomeKpiStrip } from './HomeKpiStrip';
 import { OrdersToPrepareCard } from './OrdersToPrepareCard';
+import { HomeParcelList } from './HomeParcelList';
+import { useHomeParcels } from './useHomeParcels';
 import { tString } from '../../../lib/i18n-strings';
 
 function humanizeSyncError(lastError: string | null, pendingCount: number, t: TFunction): string | null {
@@ -29,8 +28,8 @@ export default function DashboardScreen() {
   const { user } = useAuth();
   const router = useRouter();
   const data = useGrowerDashboard();
-  const { ordersFinancial } = useWallet();
   const tabRefresh = useGrowerTabRefresh();
+  const homeParcels = useHomeParcels();
 
   const farmName = data.estates[0]?.name || t('producer.dashboard.defaultFarmName');
   const estateCount = data.estates.length;
@@ -50,24 +49,11 @@ export default function DashboardScreen() {
           farmName={farmName}
           greetingLine={greeting}
           partnerCode={user?.partnerCode}
-          parcelSteps={ps}
-          estateCount={estateCount}
         />
       }
       refreshing={tabRefresh.refreshing}
       onRefresh={() => void tabRefresh.onRefresh()}
     >
-      <HomeKpiStrip
-        loaded={ps.loaded}
-        estateCount={estateCount}
-        parcelSteps={ps}
-        activeMissions={data.activeMissions.length}
-        batchesReadyForTransport={data.batchesReadyForTransport}
-        activeBatches={data.activeBatches.length}
-        offlinePending={data.offlinePending}
-        ordersFinancial={ordersFinancial}
-      />
-
       <OrdersToPrepareCard />
 
       <NextStepCard
@@ -84,7 +70,11 @@ export default function DashboardScreen() {
         syncError={syncError}
         syncing={data.offlineSyncing}
         onAddField={() => router.push('/(producer)/estates/new')}
-        onAddParcel={() => router.push('/(producer)/(tabs)/field')}
+        onAddParcel={() =>
+          estateCount === 0
+            ? router.push('/(producer)/estates/new')
+            : router.push('/(producer)/plot-mapper')
+        }
         onMissions={() => router.push('/(producer)/missions')}
         onRequestTransport={() => router.push('/(producer)/missions-create')}
         onSteps={() => router.push('/(producer)/(tabs)/steps')}
@@ -93,15 +83,7 @@ export default function DashboardScreen() {
         onNotifications={() => router.push('/(producer)/notifications')}
       />
 
-      <HomeFarmSnapshot
-        estateCount={estateCount}
-        parcelSteps={ps}
-        activeMissions={data.activeMissions.length}
-        batchesReadyForTransport={data.batchesReadyForTransport}
-        activeBatches={data.activeBatches.length}
-        offlinePending={data.offlinePending}
-        ordersFinancial={ordersFinancial}
-      />
+      <HomeParcelList rows={homeParcels.rows} loaded={homeParcels.loaded} estateCount={estateCount} />
     </GrowerHeroSheetScaffold>
   );
 }

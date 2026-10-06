@@ -74,6 +74,8 @@ function PackingForm({
   const expected = expectedPackedKg(order, packsNum);
   const [kg, setKg] = useState<string>(order.packedKg != null ? String(order.packedKg) : '');
   const [kgTouched, setKgTouched] = useState(order.packedKg != null);
+  const [declaredHours, setDeclaredHours] = useState('');
+  const [packagingType, setPackagingType] = useState(order.packLabel ?? '');
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -128,6 +130,10 @@ function PackingForm({
         packedPackCount: packsNum,
         batchId: batchId.trim(),
         ...(kgNum != null ? { packedKg: kgNum } : {}),
+        ...(declaredHours.trim()
+          ? { declaredShelfLifeHours: Math.floor(Number(declaredHours.replace(',', '.'))) }
+          : {}),
+        ...(packagingType.trim() ? { packagingType: packagingType.trim() } : {}),
       });
       onSaved();
     } catch (e: unknown) {
@@ -211,6 +217,31 @@ function PackingForm({
               {t('growerPages.packingWeightHint', { min: nf.format(range.min), max: nf.format(range.max) })}
             </span>
           )}
+        </label>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="block text-sm font-medium text-gray-900">
+          {t('growerPages.packingDeclaredShelfLife', 'Declared shelf life (hours, optional)')}
+          <input
+            type="number"
+            min={1}
+            step={1}
+            inputMode="numeric"
+            value={declaredHours}
+            onChange={(e) => setDeclaredHours(e.target.value)}
+            placeholder={t('growerPages.packingDeclaredShelfLifeHint', 'Only if printed on the label')}
+            className={`${inputClass} mt-1`}
+          />
+        </label>
+        <label className="block text-sm font-medium text-gray-900">
+          {t('growerPages.packingPackagingType', 'Packaging type')}
+          <input
+            type="text"
+            value={packagingType}
+            onChange={(e) => setPackagingType(e.target.value)}
+            placeholder={t('growerPages.packingPackagingTypeHint', 'e.g. crate 5 kg')}
+            className={`${inputClass} mt-1`}
+          />
         </label>
       </div>
       {(problemText || err) && (

@@ -120,22 +120,22 @@ export const EN_GUIDES: Record<string, GuideDefinition> = {
     slug: 'secured-settlement',
     cluster: 'grower',
     audiences: ['Growers', 'Carriers', 'Programme finance'],
-    title: 'Secured Settlement After Conformity',
+    title: 'Commercial Payment Terms',
     metaDescription:
-      'How Bio Vera ties grower and logistics settlement to documented conformity — packing compliance, custody handovers, and batch dossier completeness before release.',
+      'How payment terms are agreed between Bio Vera and growers, suppliers and logistics partners — invoice, due date and contractual conditions.',
     eyebrow: 'Grower guide',
     lead:
-      'Fair payout requires fair evidence. Bio Vera releases grower and carrier settlement when conformity is documented in the batch dossier — not when someone verbally confirms a load “looked fine.” That discipline protects growers who invest in compliant production and buyers who stake their shelf on the same batch ID.',
+      'Bio Vera does not operate an escrow or instant-payout system. Payments between Bio Vera and contractual partners are made according to the payment terms agreed in the relevant contract, order or invoice.',
     sections: [
       {
         paragraphs: [
-          'Settlement narration follows the vertical chain: programme terms agreed upfront, field and packing evidence captured in Protocol 360, logistics custody signed at handovers, and release rules applied consistently. Carriers and growers see the same milestones — fewer disputes about who blocked payment.',
+          'For growers, suppliers and logistics partners, commercial terms — including payment conditions and due dates — are agreed individually before confirmed commitments. Delivery or service completion is documented in the batch record; invoicing and payment follow the agreed payment term.',
         ],
       },
       {
-        heading: 'What “conformity” means operationally',
+        heading: 'What is documented before invoicing',
         paragraphs: [
-          'Conformity is batch-specific: approved inputs where the programme requires them, packaging verification when material standards apply, GPS-valid field entries where Integrity Guard is active, and intake records at the buyer or hub when the corridor demands them. Missing evidence pauses release until the gap is resolved or the batch is formally rejected with audit trail.',
+          'Production, packing and logistics milestones are recorded in the Bio Vera system where the programme requires them. That documentation supports quality and traceability — it does not imply that Bio Vera holds buyer funds or guarantees payment within a fixed number of hours.',
         ],
       },
     ],

@@ -24,7 +24,7 @@ Jovica Mihajlovic, adresa kao gore
 
 ## Delatnost
 
-Bio Vera je vertikalno integrisana agrifood kompanija sa sedištem u Hamburgu. Radimo sa ugovornim proizvođačima širom Evrope, vodimo kontrolu kvaliteta i pakovanje, upravljamo hladnim lancem i plasiramo sveže voće i povrće kupcima u Evropi.
+Bio Vera je agrifood kompanija sa sedištem u Hamburgu, vertikalno integrisana, specijalizovana za premium bobice — sveže (malina, kupina, jagoda, borovnica), zamrznute i sa čokoladnim prelivom (malina, kupina, jagoda). Kroz sopstvenu proizvodnju i mrežu odabranih ugovornih proizvođača širom Evrope vodimo kontrolu kvaliteta i pakovanje, upravljamo hladnim lancem i snabdevamo kupce u Evropi.
 
 ## Rešavanje potrošačkih sporova
 

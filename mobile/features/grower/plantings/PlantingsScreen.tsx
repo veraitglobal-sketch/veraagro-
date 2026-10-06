@@ -242,6 +242,13 @@ export default function PlantingsScreen({ embedded = false }: { embedded?: boole
 
       <View style={styles.headerActions}>
         <TouchableOpacity
+          onPress={() => router.push('/(producer)/product-catalog' as never)}
+          style={[enterpriseUi.authBtnSecondary, styles.addHeaderBtn]}
+          accessibilityRole="button"
+        >
+          <Text style={enterpriseUi.authBtnSecondaryText}>{t('producer.catalog.title', 'Product catalog')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
           onPress={() => openAdd()}
           disabled={loading || saving}
           style={[enterpriseUi.authBtnPrimary, styles.addHeaderBtn, (loading || saving) && styles.disabled]}

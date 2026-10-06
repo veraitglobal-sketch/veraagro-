@@ -10,17 +10,15 @@ import Image from 'next/image';
 import {
   QrCode,
   PackageSearch,
-  Wallet,
   Shield,
   FileCheck,
-  Eye,
-  Lock,
+  Sprout,
   Globe,
-  Apple,
-  Carrot,
-  Wheat,
+  Cherry,
   HelpCircle,
   ShoppingBag,
+  FlaskConical,
+  Network,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { partners } from '@/lib/partners';
@@ -35,15 +33,14 @@ type VisionCard = { title: string; description: string };
 type FeatureItem = { title: string; description: string };
 type RoadmapPhase = { phase: string; title: string; status: string; items: string[] };
 
-const STAT_NUMBERS = ['100%', 'EU', '24/7', '3', 'Polygon'] as const;
+const VISION_ICONS: LucideIcon[] = [Sprout, FileCheck, Globe];
+const FEATURE_ICONS: LucideIcon[] = [Sprout, QrCode, FileCheck, Network, FlaskConical, Shield];
 
-const VISION_ICONS: LucideIcon[] = [Eye, Lock, Globe];
-const FEATURE_ICONS: LucideIcon[] = [QrCode, PackageSearch, Wallet, Shield, FileCheck, Lock];
-
-const PRODUCT_CATS: { id: 'fruits' | 'vegetables' | 'grains'; icon: LucideIcon }[] = [
-  { id: 'fruits', icon: Apple },
-  { id: 'vegetables', icon: Carrot },
-  { id: 'grains', icon: Wheat },
+const PRODUCT_CATS: { id: 'raspberries' | 'blackberries' | 'strawberries' | 'blueberries'; icon: LucideIcon }[] = [
+  { id: 'raspberries', icon: Cherry },
+  { id: 'blackberries', icon: Cherry },
+  { id: 'strawberries', icon: Cherry },
+  { id: 'blueberries', icon: Cherry },
 ];
 
 export type HomeHeroInitial = {
@@ -95,11 +92,18 @@ export default function HomePageClient({
     return () => document.removeEventListener('click', close);
   }, [showPreOrderInfo]);
 
+  const statNumbers = t('home.statNumbers', { returnObjects: true }) as string[];
   const statLabels = t('home.statLabels', { returnObjects: true }) as string[];
   const statRows = useMemo(
-    () => STAT_NUMBERS.map((number, i) => ({ number, label: statLabels[i] ?? '' })),
-    [i18n.language, statLabels],
+    () =>
+      (Array.isArray(statNumbers) ? statNumbers : []).map((number, i) => ({
+        number,
+        label: statLabels[i] ?? '',
+      })),
+    [i18n.language, statNumbers, statLabels],
   );
+  const partnersLine = t('home.partnersLine');
+  const showPartnersSection = partners.length > 0 && partnersLine.trim().length > 0;
 
   const visionCards = t('home.vision.cards', { returnObjects: true }) as VisionCard[];
   const featureList = t('home.features.list', { returnObjects: true }) as FeatureItem[];
@@ -181,6 +185,7 @@ export default function HomePageClient({
         </div>
       </section>
 
+      {statRows.length > 0 ? (
       <section className="pt-16 pb-12 border-t border-gray-200 bg-gray-50/50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
@@ -201,7 +206,9 @@ export default function HomePageClient({
           </div>
         </div>
       </section>
+      ) : null}
 
+      {showPartnersSection ? (
       <section className="pt-16 pb-20 border-t border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <motion.div
@@ -210,10 +217,9 @@ export default function HomePageClient({
             viewport={{ once: true }}
             className="text-center"
           >
-            <p className="text-sm text-gray-500 mb-12">{t('home.partnersLine')}</p>
+            <p className="text-sm text-gray-500 mb-12">{partnersLine}</p>
             <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
-              {partners.length > 0 ? (
-                partners.map((partner, index) => (
+              {partners.map((partner, index) => (
                   <motion.div
                     key={partner.name}
                     initial={{ opacity: 0, y: 10 }}
@@ -249,32 +255,12 @@ export default function HomePageClient({
                       />
                     )}
                   </motion.div>
-                ))
-              ) : (
-                Array.from({ length: 5 }).map((_, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.05 }}
-                    className="w-[170px] h-[84px] rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center hover:border-gray-300 hover:bg-gray-100 transition-all p-2"
-                  >
-                    <Image
-                      src="/logo1.png"
-                      alt={`${t('brand.name')} — ${t('metadata.siteName')}`}
-                      width={100}
-                      height={50}
-                      className="max-w-[100px] max-h-[50px] object-contain opacity-60 grayscale"
-                      style={{ width: 'auto', height: 'auto' }}
-                    />
-                  </motion.div>
-                ))
-              )}
+                ))}
             </div>
           </motion.div>
         </div>
       </section>
+      ) : null}
 
       <section id="vision" className="py-24 px-6 lg:px-8 border-t border-gray-200 bg-[#2D5A27]/5 scroll-mt-24">
         <div className="max-w-6xl mx-auto">
@@ -298,6 +284,20 @@ export default function HomePageClient({
               );
             })}
           </div>
+        </div>
+      </section>
+
+      <section id="residue" className="py-20 px-6 lg:px-8 border-t border-gray-200 bg-white scroll-mt-24">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl font-light text-gray-900 mb-4">{t('home.residue.title')}</h2>
+          <p className="text-base text-gray-600 font-light leading-relaxed mb-6">{t('home.residue.body')}</p>
+          <p className="text-sm text-gray-500 font-light mb-8">{t('home.residue.flow')}</p>
+          <Link
+            href={loc('/residue-controlled')}
+            className="inline-flex items-center justify-center px-6 py-3 bg-[#2D5A27] text-white text-sm font-medium hover:bg-[#23471f] transition-colors rounded-lg min-h-[48px]"
+          >
+            {t('home.residue.cta')}
+          </Link>
         </div>
       </section>
 
@@ -337,7 +337,7 @@ export default function HomePageClient({
             className="text-center mb-12"
           >
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#2D5A27]/10 mb-6">
-              <Lock className="w-6 h-6 text-[#2D5A27]" strokeWidth={1.5} />
+              <FileCheck className="w-6 h-6 text-[#2D5A27]" strokeWidth={1.5} />
             </div>
             <h2 className="text-2xl font-light text-gray-900 mb-4">{t('home.blockchain.title')}</h2>
             <p className="text-base text-gray-600 font-light leading-relaxed max-w-2xl mx-auto">
@@ -391,7 +391,7 @@ export default function HomePageClient({
                       className={`w-2 h-2 rounded-full mt-2 ${
                         plan.status === 'completed'
                           ? 'bg-[#2D5A27]'
-                          : plan.status === 'in-progress'
+                          : plan.status === 'in-progress' || plan.status === 'in-development'
                             ? 'bg-[#2D5A27]/80'
                             : 'bg-gray-300'
                       }`}
@@ -404,16 +404,19 @@ export default function HomePageClient({
                         className={`text-xs px-2 py-1 border ${
                           plan.status === 'completed'
                             ? 'border-[#2D5A27] text-[#2D5A27]'
-                            : plan.status === 'in-progress'
+                            : plan.status === 'in-progress' ||
+                                plan.status === 'in-development'
                               ? 'border-[#2D5A27]/70 text-[#2D5A27]'
                               : 'border-gray-300 text-gray-400'
                         }`}
                       >
                         {plan.status === 'completed'
                           ? t('home.roadmap.statusCompleted')
-                          : plan.status === 'in-progress'
-                            ? t('home.roadmap.statusInProgress')
-                            : t('home.roadmap.statusPlanned')}
+                          : plan.status === 'in-development'
+                            ? t('home.roadmap.statusInDevelopment')
+                            : plan.status === 'in-progress'
+                              ? t('home.roadmap.statusInProgress')
+                              : t('home.roadmap.statusPlanned')}
                       </span>
                     </div>
                     <h3 className="text-xl font-medium text-gray-900 mb-4">{plan.title}</h3>

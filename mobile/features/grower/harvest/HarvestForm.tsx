@@ -159,6 +159,15 @@ export default function HarvestForm({ embedded = false }: { embedded?: boolean }
           }
           keyboardShouldPersistTaps="handled"
         >
+        {h.selectedPlantingUnavailable ? (
+          <View style={[enterpriseUi.inAppPanel, { marginBottom: 16, padding: 12 }]}>
+            <Text accessibilityRole="alert" style={{ color: theme.colors.error, marginBottom: 8 }}>
+              {t('harvestWorkflow.planUnavailable')}
+            </Text>
+            <EnterpriseButton label={t('common.retry')} onPress={h.refreshParcels}
+              disabled={h.parcelsRefreshing} variant="secondary" />
+          </View>
+        ) : null}
         {step === 1 && h.planMode === 'HARVEST' ? <HarvestTransportStatus busy={h.loading || h.parcelsRefreshing} /> : null}
         {step === 1 ? (
         <>

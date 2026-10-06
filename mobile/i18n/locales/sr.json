@@ -1165,6 +1165,27 @@
       "allowCamera": "Dozvoli kameru",
       "validBarcodeMessage": "Barkod je validan: {{code}}"
     },
+    "homeParcels": {
+      "title": "Parcele",
+      "empty": "Još nema parcela na ovom gazdinstvu.",
+      "addCta": "Dodaj parcelu"
+    },
+    "parcelDetail": {
+      "title": "Parcela",
+      "notFound": "Parcela nije pronađena.",
+      "plantingsTitle": "Zasadi",
+      "plantingsEmpty": "Nema registrovanog zasada na ovoj parceli.",
+      "plantingsEmptyCta": "Dodaj zasad",
+      "selectPlantingHint": "Izaberite zasad pre unosa rada ili berbe.",
+      "selected": "Izabrano",
+      "recentTitle": "Poslednji radovi",
+      "addWorkCta": "Dodaj rad",
+      "recordHarvestCta": "Evidentiraj berbu",
+      "notApprovedTitle": "Parcela čeka odobrenje",
+      "notApprovedBody": "Operativa mora odobriti parcelu pre većine radova u dnevniku.",
+      "notApprovedCta": "Pogledaj korake odobrenja",
+      "noPlantingSelected": "Prvo izaberite zasad iz liste."
+    },
     "estates": {
       "newEstate": "Dodaj njivu",
       "locationPlaceholder": "npr. Arilje, Srbija",
@@ -1242,6 +1263,11 @@
       "placeholder": "Izaberite datum",
       "hint": "Otvara kalendar — ne morate da kucate.",
       "a11y": "Datum: {{date}}"
+    },
+    "timeField": {
+      "placeholder": "Izaberite vreme",
+      "hint": "Otvara sat — ne morate da kucate.",
+      "a11y": "Vreme: {{time}}"
     },
     "harvest": {
       "modePlanting": "Novi zasad (sadnja)",
@@ -1675,7 +1701,9 @@
       "spraying": "Prskanje",
       "harvest": "Žetva",
       "transportCoord": "Priprema prevoza / preuzimanje",
-      "packaging": "Pakovanje robe"
+      "packaging": "Pakovanje robe",
+      "irrigation": "Navodnjavanje",
+      "inspection": "Obilazak zasada"
     },
     "batches": {
       "title": "Lotovi",
@@ -2170,6 +2198,7 @@
       "chooseFromGallery": "Umetni iz galerije",
       "getLocation": "Trenutna lokacija",
       "locationOk": "Lokacija učitana",
+      "simulatedGps": "Simulator GPS — koordinate su samo za test, nisu dokaz lokacije na parceli.",
       "queueBanner": "{{count}} sačuvano na telefonu — još nije na serveru. Dodirni „Pošalji sada”. Ako ne uspe, pročitaj crveni tekst kod svakog reda ispod.",
       "sendQueueNow": "Pošalji sada",
       "discardQueueTitle": "Obrisati sa ovog telefona?",
@@ -2320,6 +2349,42 @@
       "noLots": "Nema spremnih lotova. Prvo završite unos kvaliteta.",
       "selectLotMessage": "Pakovanje je evidentirano — povežite lot pre nego što zatražite preuzimanje.",
       "selectLotLink": "Kvalitet i lotovi"
+    },
+    "catalog": {
+      "title": "Katalog proizvoda",
+      "lead": "Podaci o proizvodu jednom — koriste se u berbi, lotu i pasošu.",
+      "name": "Naziv proizvoda",
+      "variety": "Sorta",
+      "description": "Kratak opis",
+      "storage": "Uslovi čuvanja",
+      "imageUrl": "URL fotografije",
+      "planting": "Povezani zasad",
+      "noPlanting": "Bez zasada",
+      "loadFailed": "Katalog nije učitan.",
+      "saveFailed": "Proizvod nije sačuvan.",
+      "saved": "Proizvod sačuvan."
+    },
+    "catalogMedia": {
+      "documents": "Dokumenti proizvoda",
+      "title": "Naziv dokumenta",
+      "issuer": "Izdavalac",
+      "issuedAt": "Datum izdavanja (GGGG-MM-DD)",
+      "expiresAt": "Važi do (GGGG-MM-DD)",
+      "CERTIFICATE": "Sertifikat",
+      "LAB_RESULT": "Laboratorijski nalaz",
+      "OTHER": "Ostalo",
+      "UPLOADED": "Otpremljeno",
+      "REVIEWED": "Pregledano",
+      "CONFIRMED": "Potvrđeno",
+      "pickDocument": "Izaberi PDF ili fotografiju",
+      "upload": "Pošalji dokument",
+      "reviewNotice": "Dokument je poslat. Pre objave potrebno je odobrenje administratora.",
+      "tooLarge": "Najveća veličina fajla je 10 MB.",
+      "pickPhoto": "Izaberi fotografiju proizvoda",
+      "photoPermission": "Dozvoli pristup fotografijama za izbor slike.",
+      "photoSize": "Izaberi manju fotografiju (najviše 1,8 MB).",
+      "estate": "Gazdinstvo",
+      "plannedQuantity": "Planirana količina (kg)"
     }
   },
   "buyer": {
@@ -2581,7 +2646,54 @@
       "sectionColdChain": "Hladni lanac",
       "tempSummary": "Min {{min}}°C · Max {{max}}°C · Prosek {{avg}}°C",
       "tempReadingsCount": "{{count}} očitavanja temperature",
-      "sectionProtocol360": "Protokol 360"
+      "sectionProtocol360": "Protokol 360",
+      "notRecorded": "Nije evidentirano",
+      "retry": "Pokušaj ponovo",
+      "lotQuantity": "{{quantity}} {{unit}} (ukupno lot)",
+      "batchLine": "Lot {{batchId}}",
+      "packagingLine": "{{count}}× {{label}}{{kg}}",
+      "harvestDate": "Datum berbe",
+      "storageTemp": "Temperatura čuvanja",
+      "freshnessEstimate": "Procena svežine",
+      "sectionOrigin": "Poreklo i proizvodnja",
+      "crop": "Kultura",
+      "noLinkedTreatments": "Nema tretmana povezanih sa ovim lotom.",
+      "noTempReadings": "Nema merenja temperature za ovaj lot.",
+      "thisPackage": "Ovo pakovanje: {{serial}} · {{type}}",
+      "platformStandard": "Platformski standard",
+      "warningTemperature": "Evidentirano odstupanje temperature za ovaj lot.",
+      "warningSeedRecalled": "Povezani seed lot je opozvan.",
+      "sectionHarvestPack": "Berba i pakovanje",
+      "sectionQuality": "Kvalitet",
+      "growthLog": "Zapis rasta",
+      "labDocument": "Laboratorijski dokument",
+      "lotOrdersScope": "evidencija porudžbina",
+      "qualityStatus": "Status",
+      "spotReadingsDisclaimer": "Samo pojedinačna merenja — nije dokaz neprekidnog hladnog lanca.",
+      "estimateSource": {
+        "systemEstimate": "Sistemska procena",
+        "platformStandard": "Platformski standard"
+      },
+      "tempCriteria": "Kriterijum poređenja",
+      "tempResult": "Rezultat poređenja",
+      "tempWithinCriteria": "U okviru kriterijuma",
+      "tempOutsideCriteria": "Van kriterijuma",
+      "protocol360Overall": "Protokol 360 — ukupno",
+      "protocol360Level": "Nivo {{level}} · {{name}} · {{status}}",
+      "packDate": "Spakovano",
+      "productStorage": "Čuvanje",
+      "declaredShelfLife": "Deklarisani rok",
+      "sectionDocuments": "Dokumenti",
+      "docConfirmed": "potvrđeno",
+      "reportTitle": "Prijavi problem",
+      "reportLead": "Opišite problem. Kontakt je opcion i nije javan.",
+      "reportPlaceholder": "Opišite problem…",
+      "reportAddPhoto": "Dodaj fotografiju (opciono)",
+      "reportPhotoAdded": "Fotografija priložena",
+      "reportContact": "Imejl za odgovor (opciono)",
+      "reportSubmit": "Pošalji prijavu",
+      "reportConfirm": "Prijava primljena. Referenca: {{number}}",
+      "reportError": "Prijava nije poslata."
     },
     "marketplace": {
       "availableUntil": "Dostupno do {{date}}",
@@ -2589,6 +2701,23 @@
       "lineTotal": "{{count}} × {{label}} = {{kg}} kg · {{total}}",
       "packaging": "Pakovanje"
     }
+  },
+  "passportCompleteness": {
+    "title": "Šta nedostaje za pasoš",
+    "allRequiredOk": "Obavezni podaci pasoša su evidentirani.",
+    "levelRequired": "Obavezno",
+    "levelRecommended": "Preporučeno",
+    "fixLink": "Dodaj podatke",
+    "productName": "Naziv proizvoda u katalogu",
+    "plantingLink": "Veza sa zasadom",
+    "harvestDate": "Datum berbe na lotu",
+    "packDate": "Datum pakovanja",
+    "variety": "Sorta",
+    "description": "Opis",
+    "photo": "Fotografija",
+    "storage": "Uslovi čuvanja",
+    "qualityEntry": "Unos kvaliteta",
+    "publicDocument": "Javni dokument"
   },
   "supplier": {
     "partnerStore": "Partnerska radnja",

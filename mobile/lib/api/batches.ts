@@ -35,6 +35,10 @@ export const batchesAPI = {
     const response = await api.get(`/batches/${encodeURIComponent(batchId)}/workflow`);
     return response.data;
   },
+  getPassportCompleteness: async (batchRef: string) => {
+    const response = await api.get(`/batches/${encodeURIComponent(batchRef)}/passport-completeness`);
+    return response.data;
+  },
   create: async (data: {
     estateId: string;
     parcelId?: string;

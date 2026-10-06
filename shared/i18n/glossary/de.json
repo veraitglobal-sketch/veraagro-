@@ -312,6 +312,9 @@
     "minimumC": "Mindesttemperatur (°C)",
     "maximumC": "Höchsttemperatur (°C)",
     "dateHelp": "Datumsformat: YYYY-MM-DD HH:mm (Ortszeit).",
+    "dateHelpMobile": "Tippen Sie auf Kalender und Uhr — kein Tippen nötig.",
+    "temperatureRequired": "Mindest- und Höchsttemperatur eingeben.",
+    "operationEndHint": "Leer lassen, wenn die Arbeit zur gleichen Zeit endete.",
     "materialLot": "Materialcharge",
     "productionDate": "Produktionsdatum",
     "plantingPeriod": "Pflanzzeitraum",
@@ -334,6 +337,10 @@
     "waterLitres": "Verbrauchtes Wasser",
     "operationHelp": "Geben Sie an, wann die Arbeit tatsächlich erfolgte. Der Erfassungszeitpunkt wird separat gespeichert. Foto und GPS werden bei der Erfassung aufgenommen.",
     "operationInvalid": "Prüfen Sie Datum, Uhrzeit, Mengen und Pflichtfelder: Wasser bei Bewässerung, Beobachtungen bei Kontrolle oder Mittelname und Menge bei Behandlung.",
-    "materialBarcode": "Barcode des Mittels"
+    "materialBarcode": "Barcode des Mittels",
+    "savedLocal": "Auf dem Gerät gespeichert — wird bei Verbindung gesendet.",
+    "savedSent": "Beobachtung an den Server gesendet.",
+    "sending": "Beobachtung wird gesendet…",
+    "statusConflict": "Dieser Speicherschlüssel wurde bereits mit anderen Daten verwendet. Lokalen Eintrag löschen und erneut speichern."
   }
 }

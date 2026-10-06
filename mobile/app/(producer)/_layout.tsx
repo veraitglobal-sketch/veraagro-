@@ -40,6 +40,7 @@ export default function ProducerLayout() {
         <Stack.Screen name="estates/new" />
         <Stack.Screen name="estates/[id]" />
         <Stack.Screen name="estates/[id]/edit" />
+        <Stack.Screen name="parcels/[parcelId]" options={{ headerShown: false }} />
         <Stack.Screen name="batches" />
         <Stack.Screen name="batch-new" />
         <Stack.Screen name="batch/[id]" />
@@ -65,6 +66,7 @@ export default function ProducerLayout() {
         <Stack.Screen name="packing-flow" options={{ title: i18n.t('navigation.packingFlow') }} />
         <Stack.Screen name="package-badges" options={{ title: i18n.t('navigation.packageBadges') }} />
         <Stack.Screen name="package-badges-print-order" />
+        <Stack.Screen name="product-catalog" options={{ headerShown: false }} />
         <Stack.Screen
           name="farm-tools"
           options={{

@@ -24,7 +24,7 @@ Jovica Mihajlovic, address as above
 
 ## Business activity
 
-Bio Vera is a vertically integrated agrifood company headquartered in Hamburg. We work with contracted growers throughout Europe, run quality control and packing, manage the cold chain and sell fresh fruit and vegetables to customers across Europe.
+Bio Vera is a Hamburg-based, vertically integrated agrifood company specialising in premium berries — fresh (raspberry, blackberry, strawberry, blueberry), frozen, and chocolate-coated (raspberry, blackberry, strawberry). Through own production and a network of selected contract growers across Europe, we run quality control and packing, manage the cold chain and supply customers across Europe.
 
 ## Consumer dispute resolution
 

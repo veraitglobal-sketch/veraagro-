@@ -62,7 +62,7 @@
     <key>NSPhotoLibraryUsageDescription</key>
     <string>Bio Vera koristi fotografije samo kao dokaz unosa na parceli.</string>
     <key>NSUserNotificationsUsageDescription</key>
-    <string>Obaveštenja o žetvi, transportu, sinhronizaciji terenskih unosa i porukama Bio Vera tima.</string>
+    <string>Bio Vera sends notifications about harvest, transport, field sync, and account messages.</string>
     <key>RCTNewArchEnabled</key>
     <true/>
     <key>UIBackgroundModes</key>

@@ -1,5 +1,5 @@
 // Own a disposable PostgreSQL cluster. Never use the application's DATABASE_URL.
-const { mkdtempSync, rmSync } = require('node:fs');
+const { mkdtempSync, rmSync, existsSync } = require('node:fs');
 const { tmpdir } = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
@@ -14,6 +14,22 @@ const harvestCheck = process.argv.includes('--harvest');
 const probe = spawnSync('pg_config', ['--bindir'], { encoding: 'utf8' });
 const pgBin = process.env.PG_BIN || (probe.status === 0 ? probe.stdout.trim() : '');
 const pg = (name) => pgBin ? path.join(pgBin, name) : name;
+function resolvePgShare() {
+  if (process.env.PG_SHARE && existsSync(path.join(process.env.PG_SHARE, 'postgres.bki'))) {
+    return process.env.PG_SHARE;
+  }
+  const sharedir = spawnSync('pg_config', ['--sharedir'], { encoding: 'utf8' });
+  if (sharedir.status === 0) {
+    const dir = sharedir.stdout.trim();
+    if (existsSync(path.join(dir, 'postgres.bki'))) return dir;
+  }
+  if (pgBin) {
+    const cellar = path.join(pgBin, '..', 'share', 'postgresql');
+    if (existsSync(path.join(cellar, 'postgres.bki'))) return cellar;
+  }
+  return '';
+}
+const pgShare = resolvePgShare();
 let directory;
 let started = false;
 
@@ -34,7 +50,14 @@ async function main() {
   });
   directory = mkdtempSync(path.join(tmpdir(), 'biovera-test-'));
   const data = path.join(directory, 'data');
-  run(pg('initdb'), ['-D', data, '-U', 'postgres', '-A', 'trust', '--no-locale', '-E', 'UTF8']);
+  const initdbArgs = ['-D', data, '-U', 'postgres', '-A', 'trust', '--no-locale', '-E', 'UTF8', ...(pgShare ? ['-L', pgShare] : [])];
+  const init = spawnSync(pg('initdb'), initdbArgs, { cwd: root, env: process.env, encoding: 'utf8' });
+  if (init.status !== 0) {
+    const hint = pgShare
+      ? 'Homebrew PostgreSQL share path may be broken; recreate biovera_test on 127.0.0.1:5432 and run jest with BIOVERA_TEST_DATABASE_URL.'
+      : 'Install PostgreSQL client tools (initdb/pg_ctl) or point PG_BIN at your PostgreSQL bin directory.';
+    throw new Error(`${init.stderr?.trim() || 'initdb failed'}\n${hint}`);
+  }
   run(pg('pg_ctl'), ['-D', data, '-l', path.join(directory, 'postgres.log'), '-o', `-F -h 127.0.0.1 -p ${port} -k ${directory}`, '-w', 'start']);
   started = true;
   run(pg('createdb'), ['-h', '127.0.0.1', '-p', String(port), '-U', 'postgres', 'biovera_test']);

@@ -312,6 +312,9 @@
     "minimumC": "Température minimale (°C)",
     "maximumC": "Température maximale (°C)",
     "dateHelp": "Format de date : YYYY-MM-DD HH:mm (heure locale).",
+    "dateHelpMobile": "Touchez le calendrier et l’horloge — pas de saisie manuelle.",
+    "temperatureRequired": "Saisissez la température minimale et maximale.",
+    "operationEndHint": "Laissez vide si le travail s’est terminé au même moment.",
     "materialLot": "Lot du matériel",
     "productionDate": "Date de production",
     "plantingPeriod": "Période de plantation",
@@ -334,6 +337,10 @@
     "waterLitres": "Eau utilisée",
     "operationHelp": "Indiquez quand les travaux ont réellement eu lieu. La date de saisie est conservée séparément. La photo et le GPS sont capturés lors de la saisie.",
     "operationInvalid": "Vérifiez la date, l’heure, les quantités et les champs obligatoires : eau pour l’irrigation, observations pour la visite ou nom et quantité du produit pour le traitement.",
-    "materialBarcode": "Code-barres du produit"
+    "materialBarcode": "Code-barres du produit",
+    "savedLocal": "Enregistré sur l’appareil — envoi dès que la connexion revient.",
+    "savedSent": "Observation envoyée au serveur.",
+    "sending": "Envoi de l’observation…",
+    "statusConflict": "Cette référence a déjà été utilisée avec d’autres données. Supprimez la ligne locale et enregistrez à nouveau."
   }
 }

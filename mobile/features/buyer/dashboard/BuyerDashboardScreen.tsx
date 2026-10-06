@@ -259,9 +259,11 @@ export default function BuyerDashboardScreen() {
       <ProductPassport
         visible={data.showPassportModal}
         batchId={data.scannedBatchId}
+        badgeSerial={data.scannedBadgeSerial}
         onClose={() => {
           data.setShowPassportModal(false);
           data.setScannedBatchId(null);
+          data.setScannedBadgeSerial(null);
         }}
       />
 

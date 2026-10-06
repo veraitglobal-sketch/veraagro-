@@ -11,7 +11,7 @@ export async function generateMetadata({
   return {
     title: TITLE,
     description: DESCRIPTION,
-    robots: { index: true, follow: true },
+    robots: { index: false, follow: false },
     openGraph: { title: TITLE, description: DESCRIPTION, type: "website" },
     twitter: { card: "summary", title: TITLE, description: DESCRIPTION },
   };

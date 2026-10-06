@@ -16,6 +16,7 @@ export function useBuyerDashboardData() {
   const [selectedEstateId, setSelectedEstateId] = useState<string | null>(null);
   const [showQRScanner, setShowQRScanner] = useState(false);
   const [scannedBatchId, setScannedBatchId] = useState<string | null>(null);
+  const [scannedBadgeSerial, setScannedBadgeSerial] = useState<string | null>(null);
   const [showPassportModal, setShowPassportModal] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [batchAvailabilities, setBatchAvailabilities] = useState<Record<string, BatchAvailability>>({});
@@ -151,9 +152,36 @@ export function useBuyerDashboardData() {
     setShowQRScanner(true);
   }, [cameraPermission?.granted, requestCameraPermission]);
 
-  const handleBarcodeScanned = useCallback(({ data }: { data: string }) => {
+  const handleBarcodeScanned = useCallback(async ({ data }: { data: string }) => {
     setShowQRScanner(false);
-    setScannedBatchId(data.trim());
+    const trimmed = data.trim();
+    const { parsePassportScanInput } = await import('../../../../shared/passport/scan-input');
+    const parsed = parsePassportScanInput(trimmed);
+
+    if (parsed?.kind === 'passport') {
+      setScannedBatchId(parsed.batchId);
+      setScannedBadgeSerial(parsed.badgeSerial);
+      setShowPassportModal(true);
+      return;
+    }
+
+    if (parsed?.kind === 'badge') {
+      try {
+        const { packageBadgesAPI } = await import('../../../lib/api/batches');
+        const pub = await packageBadgesAPI.publicResolve(parsed.badgeSerial);
+        if (pub?.publicBatchId) {
+          setScannedBatchId(pub.publicBatchId);
+          setScannedBadgeSerial(pub.serial ?? parsed.badgeSerial);
+          setShowPassportModal(true);
+          return;
+        }
+      } catch {
+        /* fall through to batch-only handling */
+      }
+    }
+
+    setScannedBatchId(parsed?.kind === 'batch' ? parsed.batchId : trimmed);
+    setScannedBadgeSerial(null);
     setShowPassportModal(true);
   }, []);
 
@@ -168,6 +196,8 @@ export function useBuyerDashboardData() {
     setShowQRScanner,
     scannedBatchId,
     setScannedBatchId,
+    scannedBadgeSerial,
+    setScannedBadgeSerial,
     showPassportModal,
     setShowPassportModal,
     cameraPermission,

@@ -93,6 +93,7 @@ export function useHarvestData(
   const [parcelsRefreshing, setParcelsRefreshing] = useState(false);
   const [parcelId, setParcelId] = useState('');
   const [selectedPlantingId, setSelectedPlantingId] = useState<string | null>(null);
+  const explicitPlanting = useRef<{ parcelId: string; id: string } | null>(null);
 
   const [cropType, setCropType] = useState('');
   const [estimatedQuantity, setEstimatedQuantity] = useState('');
@@ -156,7 +157,7 @@ export function useHarvestData(
       setApprovedParcels(out);
       setPlantingAnnouncements(plantRows);
       setParcelId((prev) => {
-        if (out.some((p) => p.id === prev)) return prev;
+        if (prev) return prev;
         if (out.length === 1) return out[0].id;
         return '';
       });
@@ -180,24 +181,14 @@ export function useHarvestData(
     const key = `${prefillIntent.parcelId.trim()}|${prefillIntent.plantingId ?? ''}`;
     if (prefillAppliedKeyRef.current === key) return;
     const wantParcel = normalizeHarvestParcelId(prefillIntent.parcelId, null);
-    if (!wantParcel || !approvedParcels.some((p) => normalizeHarvestParcelId(p.id, null) === wantParcel)) {
-      return;
-    }
+    if (!wantParcel) return;
+    const wantPlanting = prefillIntent.plantingId?.trim();
+    explicitPlanting.current = wantPlanting ? { parcelId: wantParcel, id: wantPlanting } : null;
     setParcelId(wantParcel);
     setPlanMode('HARVEST');
     const forParcel = plantingAnnouncements.filter((a) => normalizeHarvestParcelId(a.parcelId, null) === wantParcel);
-    const wantPlanting = prefillIntent.plantingId?.trim();
-
-    if (wantPlanting) {
-      if (forParcel.some((p) => p.id === wantPlanting)) {
-        setSelectedPlantingId(wantPlanting);
-      } else if (forParcel.length === 0) {
-        return;
-      }
-      // Plantings loaded but id mismatch — parcel left selected for manual pick.
-    } else if (forParcel.length === 1) {
-      setSelectedPlantingId(forParcel[0].id);
-    }
+    // Keep the route's identity even when the row is missing. Never replace its origin.
+    setSelectedPlantingId(wantPlanting || (forParcel.length === 1 ? forParcel[0].id : null));
 
     prefillAppliedKeyRef.current = key;
     onPrefillConsumed?.();
@@ -211,6 +202,7 @@ export function useHarvestData(
 
   useEffect(() => {
     if (planMode !== 'HARVEST') {
+      explicitPlanting.current = null;
       setSelectedPlantingId(null);
       return;
     }
@@ -218,12 +210,13 @@ export function useHarvestData(
       setSelectedPlantingId(null);
       return;
     }
-    const list = plantingsForParcel;
-    if (list.length === 1) {
-      setSelectedPlantingId(list[0].id);
+    if (explicitPlanting.current) {
+      if (explicitPlanting.current.parcelId === parcelId) setSelectedPlantingId(explicitPlanting.current.id);
       return;
     }
-    setSelectedPlantingId((prev) => (prev && list.some((p) => p.id === prev) ? prev : null));
+    // A refresh may remove the selected planting. Keep it unresolved until the
+    // grower deliberately chooses again; a sole remaining row is not a replacement.
+    setSelectedPlantingId((prev) => prev || (plantingsForParcel.length === 1 ? plantingsForParcel[0].id : null));
   }, [planMode, parcelId, plantingsForParcel]);
 
   useEffect(() => {
@@ -235,6 +228,21 @@ export function useHarvestData(
       if (!Number.isNaN(d.getTime())) setHarvestDate(d.toISOString().slice(0, 10));
     }
   }, [planMode, selectedPlantingId, plantingAnnouncements]);
+
+  const chooseParcel = useCallback((id: string) => {
+    if (id === parcelId) return;
+    explicitPlanting.current = null;
+    setSelectedPlantingId(null);
+    setParcelId(id);
+  }, [parcelId]);
+
+  const choosePlanting = useCallback((id: string | null) => {
+    explicitPlanting.current = null;
+    setSelectedPlantingId(id);
+  }, []);
+
+  const selectedPlantingUnavailable = planMode === 'HARVEST' && !parcelsLoading && !!selectedPlantingId
+    && !plantingsForParcel.some((p) => p.id === selectedPlantingId);
 
   const refreshParcels = useCallback(() => {
     void loadApprovedParcels({ silent: true });
@@ -271,6 +279,7 @@ export function useHarvestData(
     const parcelChoice = approvedParcels.find((p) => p.id === parcelId);
 
     if (planMode === 'HARVEST') {
+      if (selectedPlantingUnavailable) missing.push(t('harvestWorkflow.planUnavailable'));
       if (selectedPlantingId?.startsWith('local:')) missing.push(t('harvestWorkflow.planNotSynced'));
       if (parcelId && !parcelChoice?.harvestPlanEligible) {
         missing.push(t('producer.harvest.submitMissingApprovedParcel'));
@@ -320,6 +329,7 @@ export function useHarvestData(
     }
 
     const resetAfterSuccess = () => {
+      explicitPlanting.current = null;
       setSelectedPlantingId(null);
       setCropType('');
       setEstimatedQuantity('');
@@ -423,6 +433,7 @@ export function useHarvestData(
     planMode,
     plantingsForParcel,
     selectedPlantingId,
+    selectedPlantingUnavailable,
     cropType,
     estimatedQuantity,
     harvestDate,
@@ -460,7 +471,7 @@ export function useHarvestData(
     harvestDetailsReady &&
     cropType.trim().length > 0 &&
     (planMode === 'PLANTING' ||
-      (selectedParcelHarvestEligible && qtyOkHarvest));
+      (selectedParcelHarvestEligible && qtyOkHarvest && !selectedPlantingId?.startsWith('local:')));
 
   return {
     planMode,
@@ -470,10 +481,11 @@ export function useHarvestData(
     parcelsRefreshing,
     refreshParcels,
     parcelId,
-    setParcelId,
+    setParcelId: chooseParcel,
     plantingsForParcel,
     selectedPlantingId,
-    setSelectedPlantingId,
+    setSelectedPlantingId: choosePlanting,
+    selectedPlantingUnavailable,
     harvestDetailsReady,
     cropType,
     setCropType,

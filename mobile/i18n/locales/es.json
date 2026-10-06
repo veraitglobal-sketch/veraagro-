@@ -1165,6 +1165,27 @@
       "allowCamera": "Permitir cámara",
       "validBarcodeMessage": "Código de barras is válido: {{code}}"
     },
+    "homeParcels": {
+      "title": "Parcelas",
+      "empty": "Aún no hay parcelas en esta finca.",
+      "addCta": "Añadir parcela"
+    },
+    "parcelDetail": {
+      "title": "Parcela",
+      "notFound": "Parcela no encontrada.",
+      "plantingsTitle": "Cultivos",
+      "plantingsEmpty": "No hay cultivo registrado en esta parcela.",
+      "plantingsEmptyCta": "Añadir cultivo",
+      "selectPlantingHint": "Seleccione un cultivo antes de registrar trabajo o cosecha.",
+      "selected": "Seleccionado",
+      "recentTitle": "Trabajo reciente",
+      "addWorkCta": "Añadir trabajo",
+      "recordHarvestCta": "Registrar cosecha",
+      "notApprovedTitle": "Parcela pendiente de aprobación",
+      "notApprovedBody": "Operaciones debe aprobar la parcela antes de la mayoría de entradas del diario.",
+      "notApprovedCta": "Ver pasos de aprobación",
+      "noPlantingSelected": "Seleccione primero un cultivo de la lista."
+    },
     "estates": {
       "newEstate": "Añadir parcela",
       "locationPlaceholder": "p. ej..g. Arilje, Serbia",
@@ -1239,9 +1260,14 @@
       "listCertDaysRemaining": "{{count}} días hasta certificación"
     },
     "dateField": {
-      "placeholder": "Seleccionar a fecha",
+      "placeholder": "Seleccionar fecha",
       "hint": "Abre el calendario — no hace falta escribir.",
       "a11y": "Fecha: {{date}}"
+    },
+    "timeField": {
+      "placeholder": "Seleccionar hora",
+      "hint": "Abre el reloj — no hace falta escribir.",
+      "a11y": "Hora: {{time}}"
     },
     "harvest": {
       "modePlanting": "New cultivo (sadnja)",
@@ -1675,7 +1701,9 @@
       "spraying": "Pulverización",
       "harvest": "Cosecha",
       "transportCoord": "Transporte pickup / logistics",
-      "packaging": "Embalaje goods"
+      "packaging": "Embalaje goods",
+      "irrigation": "Riego",
+      "inspection": "Inspección del cultivo"
     },
     "batches": {
       "title": "Lotes",
@@ -2169,7 +2197,8 @@
       "addPhoto": "Añadir foto",
       "chooseFromGallery": "Elegir from gallery instead",
       "getLocation": "Get current ubicación",
-      "locationOk": "Ubicación loaded",
+      "locationOk": "Ubicación cargada",
+      "simulatedGps": "GPS del simulador — coordenadas solo para pruebas, no prueba en campo.",
       "queueBanner": "{{count}} saved on this teléfono — not on the server yet. Tap Send now. If it fails, read the red text on each row below.",
       "sendQueueNow": "Enviar ahora",
       "discardQueueTitle": "Delete from this teléfono?",
@@ -2320,6 +2349,42 @@
       "noLots": "No hay lotes listos. Complete primero la entrada de calidad.",
       "selectLotMessage": "El empaquetado está registrado — vincule el lote antes de solicitar la recogida.",
       "selectLotLink": "Calidad y lotes"
+    },
+    "catalog": {
+      "title": "Catálogo de productos",
+      "lead": "Introduce los datos una vez — se reutilizan en cosecha, lotes y pasaporte.",
+      "name": "Nombre del producto",
+      "variety": "Variedad",
+      "description": "Descripción breve",
+      "storage": "Condiciones de almacenamiento",
+      "imageUrl": "URL de la foto",
+      "planting": "Plantación vinculada",
+      "noPlanting": "Ninguna",
+      "loadFailed": "No se pudo cargar el catálogo.",
+      "saveFailed": "No se pudo guardar el producto.",
+      "saved": "Producto guardado."
+    },
+    "catalogMedia": {
+      "documents": "Documentos del producto",
+      "title": "Título del documento",
+      "issuer": "Emisor",
+      "issuedAt": "Fecha de emisión (AAAA-MM-DD)",
+      "expiresAt": "Válido hasta (AAAA-MM-DD)",
+      "CERTIFICATE": "Certificado",
+      "LAB_RESULT": "Resultado de laboratorio",
+      "OTHER": "Otro",
+      "UPLOADED": "Subido",
+      "REVIEWED": "Revisado",
+      "CONFIRMED": "Confirmado",
+      "pickDocument": "Elegir PDF o foto",
+      "upload": "Subir documento",
+      "reviewNotice": "Documento subido. Requiere aprobación antes de publicarse.",
+      "tooLarge": "El tamaño máximo es de 10 MB.",
+      "pickPhoto": "Elegir foto del producto",
+      "photoPermission": "Permite el acceso a las fotos para elegir una imagen.",
+      "photoSize": "Elige una foto más pequeña (máximo 1,8 MB).",
+      "estate": "Explotación",
+      "plannedQuantity": "Cantidad prevista (kg)"
     }
   },
   "buyer": {
@@ -2587,7 +2652,54 @@
       "sectionColdChain": "Frío cadena",
       "tempSummary": "Mín {{min}}°C · Máx {{max}}°C · Media {{avg}}°C",
       "tempReadingsCount": "{{count}} temperatura readings",
-      "sectionProtocol360": "Protocolo 360"
+      "sectionProtocol360": "Protocolo 360",
+      "notRecorded": "Not recorded",
+      "retry": "Try again",
+      "lotQuantity": "{{quantity}} {{unit}} (lot total)",
+      "batchLine": "Lot {{batchId}}",
+      "packagingLine": "{{count}}× {{label}}{{kg}}",
+      "harvestDate": "Harvest date",
+      "storageTemp": "Storage temperature",
+      "freshnessEstimate": "Freshness estimate",
+      "sectionOrigin": "Origin & production",
+      "crop": "Crop",
+      "noLinkedTreatments": "No treatments linked to this lot.",
+      "noTempReadings": "No temperature readings for this lot.",
+      "thisPackage": "This package: {{serial}} · {{type}}",
+      "platformStandard": "Platform standard",
+      "warningTemperature": "Temperature deviation recorded for this lot.",
+      "warningSeedRecalled": "Linked seed lot was recalled.",
+      "sectionHarvestPack": "Harvest & packaging",
+      "sectionQuality": "Quality",
+      "growthLog": "Growth log",
+      "labDocument": "Open lab document",
+      "lotOrdersScope": "order records",
+      "qualityStatus": "Status",
+      "spotReadingsDisclaimer": "Spot readings only — not uninterrupted cold-chain proof.",
+      "estimateSource": {
+        "systemEstimate": "System estimate",
+        "platformStandard": "Platform standard"
+      },
+      "tempCriteria": "Evaluation criteria",
+      "tempResult": "Comparison result",
+      "tempWithinCriteria": "Within criteria",
+      "tempOutsideCriteria": "Outside criteria",
+      "protocol360Overall": "Protocol 360 overall",
+      "protocol360Level": "Level {{level}} · {{name}} · {{status}}",
+      "packDate": "Packed on",
+      "productStorage": "Storage",
+      "declaredShelfLife": "Declared shelf life",
+      "sectionDocuments": "Documents",
+      "docConfirmed": "verified",
+      "reportTitle": "Report a problem",
+      "reportLead": "Describe the issue. Contact is optional and not public.",
+      "reportPlaceholder": "Describe the issue…",
+      "reportAddPhoto": "Add photo (optional)",
+      "reportPhotoAdded": "Photo attached",
+      "reportContact": "Email for reply (optional)",
+      "reportSubmit": "Send report",
+      "reportConfirm": "Report received. Reference: {{number}}",
+      "reportError": "Could not send the report."
     }
   },
   "supplier": {
@@ -3312,5 +3424,22 @@
       "other": "Otro"
     },
     "talkingAs": "Reserva como:"
+  },
+  "passportCompleteness": {
+    "title": "What is missing for the passport",
+    "allRequiredOk": "Required passport data is recorded.",
+    "levelRequired": "Required",
+    "levelRecommended": "Recommended",
+    "fixLink": "Add data",
+    "productName": "Product name in catalog",
+    "plantingLink": "Planting link",
+    "harvestDate": "Harvest date on lot",
+    "packDate": "Pack date",
+    "variety": "Variety",
+    "description": "Description",
+    "photo": "Photo",
+    "storage": "Storage conditions",
+    "qualityEntry": "Quality entry",
+    "publicDocument": "Public document"
   }
 }

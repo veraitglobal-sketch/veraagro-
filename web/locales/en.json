@@ -123,7 +123,7 @@
     "nameEs": "Español"
   },
   "footer": {
-    "tagline": "A vertically run agrifood chain: contracted growers across Europe, quality control, cold chain and Bio Vera–branded sales — with a Bio‑Ready dossier for every batch.",
+    "tagline": "Bio Vera — German agrifood company headquartered in Hamburg, building a transparent European production network from production planning to market access.",
     "columnProduct": "Product",
     "columnCompany": "Company",
     "columnSupport": "Support",
@@ -181,27 +181,27 @@
       },
       "ro": {
         "title": "Română",
-        "body": "Full Romanian interface for growers and partners who work in Romanian and auditors in Romania and wider EU corridors. Same traceability, Bio-Ready structure, and Vera layout as English and Serbian."
+        "body": "Full Romanian interface for growers and partners who work in Romanian and auditors in Romania and wider EU corridors. Same traceability, programme-ready structure, and Vera layout as English and Serbian."
       },
       "bg": {
         "title": "Български",
-        "body": "Full Bulgarian interface for growers and distributors in Bulgaria: same traceability model, Bio-Ready dossiers and Vera workflows as elsewhere in our EU rollout—built for modernization and compliant export lanes."
+        "body": "Full Bulgarian interface for growers and distributors in Bulgaria: same traceability model, programme-ready dossiers and Vera workflows as elsewhere in our EU rollout—built for modernization and compliant export lanes."
       },
       "fr": {
         "title": "Français",
-        "body": "Full French interface for France, Belgium (FR), Luxembourg and francophone buyers: tailored retail wording, dossier wording aligned with Bio-Ready storytelling, same Vera layout and QR passport depth as elsewhere in the rollout."
+        "body": "Full French interface for France, Belgium (FR), Luxembourg and francophone buyers: tailored retail wording, dossier wording aligned with programme-ready storytelling, same Vera layout and QR passport depth as elsewhere in the rollout."
       },
       "es": {
         "title": "Español",
-        "body": "Full Spanish interface for Spain, Latin American buyer corridors, and teams who prefer Spanish for retail and compliance storytelling—same Vera traceability, Bio-Ready structure, and passport depth as our other locales."
+        "body": "Full Spanish interface for Spain, Latin American buyer corridors, and teams who prefer Spanish for retail and compliance storytelling—same Vera traceability, programme-ready structure, and passport depth as our other locales."
       }
     }
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "homeTitle": "Bio Vera | Traceable Fresh Produce — Field to Shelf",
-    "siteDescription": "Vertically integrated agrifood company from Hamburg. An EU Digital Product Passport on every batch — traceability from field to shelf for growers, logistics and suppliers.",
-    "ldJsonDescription": "Certified agrifood operating system for production, quality, logistics and distribution — every batch tracked from parcel to final point, every participant verified, every step documented.",
+    "homeTitle": "Bio Vera | German Agrifood Company & European Producer Network",
+    "siteDescription": "Bio Vera is a Hamburg-based agrifood company specialising in premium berries, production programmes and batch-level Bio Vera Digital Product Passports.",
+    "ldJsonDescription": "German agrifood company in Hamburg coordinating a European producer network with batch-level Bio Vera Digital Product Passports.",
     "keywords": [
       "Bio Vera",
       "Integrated food supply chain",
@@ -294,7 +294,10 @@
     "login": "Login",
     "logout": "Logout",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "productPassport": "Product Passport",
+    "about": "About",
+    "residueProgramme": "Residue programme"
   },
   "contactPage": {
     "heroTitle": "Get in touch",
@@ -377,7 +380,7 @@
       {
         "category": "general",
         "q": "What is Bio Vera?",
-        "a": "Bio Vera is a vertically integrated agrifood company based in Hamburg, Germany. We contract growers throughout Europe, run quality assurance and packing, operate refrigerated logistics, and sell fresh produce under our own programme. Every batch carries a documented digital passport from parcel to shelf. Bio Vera is not a marketplace that only connects strangers."
+        "a": "Bio Vera is a German agrifood company headquartered in Hamburg based in Hamburg, Germany. We contract growers throughout Europe, run quality assurance and packing, operate refrigerated logistics, and sell fresh produce under our own programme. Every batch carries a documented digital passport from parcel to shelf. Bio Vera is not a marketplace that only connects strangers."
       },
       {
         "category": "general",
@@ -402,7 +405,7 @@
       {
         "category": "growers",
         "q": "How are payments processed?",
-        "a": "Grower payouts open only once the Bio Vera process is satisfied — documented delivery plus conformity checks that show goods are in good order. Buyer funds remain secured with Bio Vera until those milestones clear; then contracted shares settle (typically 3–5 business days after verified acceptance). That protects the company — we don’t finalize partner payouts until verification says the load is right."
+        "a": "Payment terms are agreed in advance as part of the relevant production or supply agreement. Invoices and due dates follow the payment terms set out in your contract with Bio Vera — not a fixed number of hours or an escrow arrangement."
       },
       {
         "category": "buyers",
@@ -468,7 +471,7 @@
     "sectionCompany": "About Bio Vera",
     "aboutTitle": "How the company explains its model to editors",
     "aboutParagraphs": [
-      "HAMBURG, Germany. Bio Vera is a vertically integrated agrifood company based in Hamburg. We contract growers, run quality and packing, operate refrigerated logistics, and sell fresh produce under our own programme — every batch carries a documented digital passport from parcel to shelf. We are not a marketplace that merely connects strangers.",
+      "HAMBURG, Germany. Bio Vera is a German agrifood company headquartered in Hamburg based in Hamburg. We contract growers, run quality and packing, operate refrigerated logistics, and sell fresh produce under our own programme — every batch carries a documented digital passport from parcel to shelf. We are not a marketplace that merely connects strangers.",
       "Registered as an agricultural brand, the company maintains a contiguous production trace from cultivation rules through to shelf-facing goods so every downstream step—including sourcing—rides the same system: clear, joined-up and transparent.",
       "Key inputs—including seed, packaging and anything the approved worksheet names—route through contracted suppliers organised locally or, where economies demand it, at regional hubs. Procurement runs through the Bio Vera application: each purchase connects to crop-cycle records so supply-side entries track field activity.",
       "Packing carries a Bio Vera badge bearing a QR shortcut; scanning opens the product passport spanning production cues, farmer identity, lifecycle logs and QA checkpoints reachable to shoppers and supervisory bodies wherever statute requires transparency.",
@@ -911,6 +914,7 @@
       "steps": "How it works",
       "myFields": "My parcels",
       "myPlantings": "My plantings",
+      "productCatalog": "Product catalog",
       "materials": "Materials",
       "suppliersAndOrders": "Suppliers & orders",
       "myBatches": "My lots",
@@ -1521,10 +1525,10 @@
       "createFirstEstate": "Create your first estate →",
       "financialOverview": "Financial overview",
       "financialOverviewSub": "Platform-wide estimate: margins and commissions across delivered lots (typically for operations).",
-      "financialOverviewSubGrower": "Your share from buyer orders (secured / conditional payout). Track each lot on Mission tracker for when release conditions are met.",
+      "financialOverviewSubGrower": "Payment overview linked to your production in Bio Vera. Amounts follow agreed payment terms in your contract.",
       "farmerShareFromOrders": "Your share (all orders)",
       "farmerShareReleased": "Released to you",
-      "farmerShareInEscrow": "Held pending release",
+      "farmerShareInEscrow": "Pending per agreement",
       "farmerSharePending": "Pending / other",
       "estimatedVeraBonus": "Estimated Vera bonus (delivered lots)",
       "estimatedVeraBonusFootnote": "Model estimate from delivered batch weight — actual bonus follows compliance and payout rules.",
@@ -1789,6 +1793,8 @@
     "fieldBlockchain": "Field → blockchain",
     "parcelsPending": "Parcels pending",
     "harvestPlans": "Harvest plans",
+    "passportReports": "Passport reports",
+    "passportDocuments": "Passport documents",
     "growerOps": "Grower operations",
     "goGrowerControl": "Grower control",
     "goParcelsPending": "Parcels pending",
@@ -3974,7 +3980,7 @@
     "portalTotalAmount": "Total amount",
     "portalPaid": "Paid",
     "portalPending": "Pending",
-    "portalFinancialInEscrowLine": "Held securely: {{amount}} — same basis as your dashboard “Held pending release” total.",
+    "portalFinancialInEscrowLine": "Pending per agreement: {{amount}} — per your dashboard payment summary.",
     "portalJourneyMapLoadError": "Could not load journey map ({{status}})",
     "portalMilestone_farmHandover": "Farm: truck & loading handover",
     "portalMilestone_leftFarm": "Left farm (departure)",
@@ -3985,12 +3991,12 @@
     "portalFinancialMsg_PENDING": "Awaiting delivery",
     "portalFinancialMsg_PROCESSING": "Delivered and approved — payment processing",
     "portalFinancialMsg_AWAITING_APPROVAL": "Delivered — awaiting distributor approval",
-    "portalFinancialMsg_NO_ESCROW": "No secured-payment record for this batch yet — figures follow orders once funded.",
-    "portalFinancialMsg_DELIVERY_NO_ESCROW": "Delivery recorded — waiting for buyer funding / your secured holding to appear.",
-    "portalFinancialMsg_RELEASED": "Released — your farmer share should be in your wallet.",
-    "portalFinancialMsg_IN_ESCROW": "Funds held securely — released after delivery and conformity checks clear (same payout rules apply).",
-    "portalFinancialMsg_PARTIAL_RELEASE": "Partly released — some share remains held or pending verification.",
-    "portalFinancialMsg_PAYMENT_PENDING": "Payment not yet in the secured settlement flow — setup or buyer step still pending.",
+    "portalFinancialMsg_NO_ESCROW": "No payment record for this batch yet — figures follow invoicing per agreed terms.",
+    "portalFinancialMsg_DELIVERY_NO_ESCROW": "Delivery recorded — invoicing and payment follow the agreed payment term.",
+    "portalFinancialMsg_RELEASED": "Paid per agreement — check your payment records.",
+    "portalFinancialMsg_IN_ESCROW": "Amount pending per agreed payment terms after documented delivery milestones.",
+    "portalFinancialMsg_PARTIAL_RELEASE": "Partly paid — remaining amount per agreed payment schedule.",
+    "portalFinancialMsg_PAYMENT_PENDING": "Payment not yet recorded — awaiting invoice or agreed payment step.",
     "portalNotAssigned": "Not assigned",
     "missionStatus_PENDING": "Pending",
     "missionStatus_ASSIGNED": "Assigned",
@@ -4030,7 +4036,55 @@
     "packingNoLots": "No ready lots yet. Complete quality entry first:",
     "packingNoLotsLink": "Quality entry & lots",
     "selectLotMessage": "Packing is recorded — link the lot you used before requesting pickup.",
-    "selectLotLink": "Quality entry & lots"
+    "selectLotLink": "Quality entry & lots",
+    "packingDeclaredShelfLife": "Declared shelf life (hours, optional)",
+    "packingDeclaredShelfLifeHint": "Only if printed on the pack label",
+    "packingPackagingType": "Packaging type",
+    "packingPackagingTypeHint": "e.g. crate 5 kg",
+    "passportCompletenessLoadFailed": "Could not load passport checklist.",
+    "catalogTitle": "Product catalog",
+    "catalogDescription": "Enter product data once — linked to planting and reused in harvest, lots, and passport.",
+    "catalogEdit": "Edit product",
+    "catalogNew": "New product",
+    "catalogName": "Product name",
+    "catalogVariety": "Variety",
+    "catalogStorage": "Storage conditions",
+    "catalogNoPlanting": "No planting link",
+    "catalogImageUrl": "Photo URL or base64",
+    "catalogLoadFailed": "Could not load catalog.",
+    "catalogSaveFailed": "Could not save product.",
+    "catalogDocuments": "Product documents",
+    "catalogDocumentsLead": "Certificates and lab results linked to this product. Public passport shows only reviewed documents.",
+    "catalogDocTitle": "Document title",
+    "catalogDocTypeCert": "Certificate",
+    "catalogDocTypeLab": "Lab result",
+    "catalogDocTypeOther": "Other",
+    "catalogDocIssuer": "Issuer (optional)",
+    "catalogDocIssued": "Issued on",
+    "catalogDocExpires": "Valid until",
+    "catalogDocUpload": "Upload document",
+    "catalogDocUploaded": "Document uploaded — admin review required before public display.",
+    "catalogDocUploadFailed": "Could not upload document.",
+    "notRecorded": "Not recorded"
+  },
+  "passportCompleteness": {
+    "title": "What is missing for the passport",
+    "lead": "Fix gaps before publishing — optional items improve completeness but do not block work.",
+    "allRequiredOk": "Required passport data is recorded for this lot.",
+    "levelRequired": "Required",
+    "levelRecommended": "Recommended",
+    "fixLink": "Add data",
+    "productName": "Product name in catalog",
+    "plantingLink": "Link to planting or harvest plan",
+    "harvestDate": "Actual harvest date on lot",
+    "packDate": "Pack date from order packing",
+    "variety": "Variety in catalog",
+    "description": "Short product description",
+    "photo": "Product photo",
+    "storage": "Product storage conditions",
+    "qualityEntry": "Quality entry for lot",
+    "publicDocument": "Verified public document",
+    "badge": "Package badge (when applicable)"
   },
   "supplier": {
     "nav": {
@@ -4182,9 +4236,9 @@
   },
   "home": {
     "hero": {
-      "title1": "Vertically Integrated",
-      "title2": "Agrifood Company",
-      "subtitle": "Bio Vera is a vertically integrated agrifood company headquartered in Hamburg. Through our own programme, we contract growers, run quality control and packing, manage the cold chain and bring fresh fruit and vegetables to end customers. Every batch carries a documented digital passport — from field to shelf.",
+      "title1": "German Agrifood Company.",
+      "title2": "European Production Network.",
+      "subtitle": "Bio Vera is a Hamburg-based, vertically integrated agrifood company specialising in the cultivation, quality control and global distribution of premium berries — raspberries, blackberries, strawberries and blueberries. Through the synergy of our own production and a strong network of selected contract growers across Europe, we maintain the highest standards year-round.",
       "browseProducts": "Browse our products",
       "becomeProducer": "Become a Vera grower",
       "preOrder": "Pre-order for {{year}} is open",
@@ -4193,125 +4247,127 @@
       "preOrderTip2": "Pre-orders are for planning {{year}} quantities only; they are not a binding order."
     },
     "statLabels": [
-      "Traceability",
-      "Certified",
-      "Monitoring",
-      "QA tiers",
-      "Optional anchor"
+      "Headquarters",
+      "Producer network",
+      "Batch-level traceability",
+      "Production programmes",
+      "Digital product passport"
     ],
-    "partnersLine": "Trusted every day by leading agricultural organizations",
+    "partnersLine": "",
     "vision": {
-      "title": "Our Vision",
-      "intro": "We build trust from parcel to shelf: clear rules for growers in our programme, controlled quality checks at every node, and buyers who purchase directly from Bio Vera.",
+      "title": "How we work",
+      "intro": "Three connected pillars from production planning to market access.",
       "cards": [
         {
-          "title": "Transparency",
-          "description": "Every step from field to shelf stays in one dossier. Sales, QA and auditors reconcile the same record."
+          "title": "Produce to demand",
+          "description": "Production programmes are developed around defined product, quality, timing and buyer requirements."
         },
         {
-          "title": "Security",
-          "description": "Access controls and anti-fraud safeguards protect the dossier that backs every load we sell and deliver."
+          "title": "Verify every batch",
+          "description": "Production records, quality information, relevant certificates and laboratory results can be connected to a Bio Vera Digital Product Passport."
         },
         {
-          "title": "EU Documentation",
-          "description": "Automated EU certificates and digital product passports support the compliance our commercial teams stand behind."
+          "title": "Connect production with market",
+          "description": "Bio Vera coordinates producers and specialised partners across Europe while commercial and operational management is led from Hamburg."
         }
       ]
     },
     "features": {
-      "title": "Core Features",
-      "intro": "",
+      "title": "Core capabilities",
+      "intro": "One operating system connecting production, verification and delivery.",
       "list": [
         {
-          "title": "Smart-Lock System",
-          "description": "Cultivation, protocol, packaging, logistics, delivery and settlement run in one coordinated chain."
+          "title": "Production Programmes",
+          "description": "Defined crop, quality and documentation requirements linked to market demand."
         },
         {
-          "title": "Batch Tracking",
-          "description": "Every crate carries a Batch_ID. The same trace runs from parcel to delivery inside our operating system."
+          "title": "Batch Traceability",
+          "description": "Each production batch receives a unique Batch_ID connecting production, quality and logistics records."
         },
         {
-          "title": "Secured Payment",
-          "description": "Buyer funds stay with Bio Vera until delivery and conformity checks clear. Payouts to growers and logistics follow agreed terms."
+          "title": "Bio Vera Digital Product Passport",
+          "description": "A batch-level digital record connecting origin, production information, quality data, relevant certificates, laboratory results and logistics milestones."
         },
         {
-          "title": "Anti-Fraud Protection",
-          "description": "GPS timestamp, device ID tracking, camera-only capture. Records cannot be falsified after the fact."
+          "title": "Partner Integrations",
+          "description": "The system is being developed to connect producers with approved suppliers, laboratories, certification partners and logistics providers."
         },
         {
-          "title": "EU Digital Passport",
-          "description": "Automated certificates and passports tied to the sales channel we operate for end customers."
+          "title": "Residue-Controlled Production",
+          "description": "Production protocols and laboratory verification designed to support the long-term goal of products without detectable pesticide residues."
         },
         {
-          "title": "Optional Polygon Anchoring",
-          "description": "When activated for a programme tier, a public anchor links the dossier to an immutable record on Polygon."
+          "title": "Integrity Guard",
+          "description": "GPS validation, approved-input checks and structured field records help protect batch integrity across the network."
         }
       ]
     },
     "blockchain": {
-      "title": "Why Custody Records Stick",
-      "body": "We sell the goods, so reputational risk is ours. Operational teams log each transition so downstream parties cannot rewrite yesterday's custody story.",
+      "title": "Structured custody records",
+      "body": "Operational teams document handovers and custody transitions so batch records stay consistent from production through delivery.",
       "bullets": []
     },
     "roadmap": {
       "title": "Roadmap",
-      "subtitle": "Where we are now and where we are heading",
-      "statusCompleted": "Completed",
-      "statusInProgress": "In Progress",
+      "subtitle": "Product capability status across the Bio Vera system",
+      "statusCompleted": "Available",
+      "statusInProgress": "Pilot",
       "statusPlanned": "Planned",
+      "statusInDevelopment": "In Development",
       "phases": [
         {
           "phase": "Q1 2026",
-          "title": "Operations launch",
+          "title": "Core platform",
           "status": "completed",
           "items": [
             "Backend API",
-            "Mobile App",
             "Web app",
-            "Core features"
+            "Batch traceability",
+            "Core production workflows"
           ]
         },
         {
           "phase": "Q2 2026",
-          "title": "Feature Expansion",
-          "status": "completed",
+          "title": "Field & partner layer",
+          "status": "in-development",
           "items": [
-            "AI Analytics — Complete",
-            "Ledger trace anchor (Polygon) — complete",
-            "Advanced Dashboard",
-            "Integrations",
-            "EU Certificates"
+            "Mobile app — Pilot",
+            "Bio Vera Digital Product Passport",
+            "Grower production records",
+            "Partner integrations — In Development"
           ]
         },
         {
-          "phase": "Q3-Q4 2026",
-          "title": "Scaling",
+          "phase": "Q3–Q4 2026",
+          "title": "Network expansion",
           "status": "in-progress",
           "items": [
-            "Multi-region Support",
-            "Partner API access",
-            "Partner Integrations",
-            "Enterprise Features"
+            "Multi-region producer programmes",
+            "Laboratory integrations — Planned",
+            "Logistics partner network",
+            "Residue-controlled programme pilots"
           ]
         },
         {
           "phase": "2027",
-          "title": "Global Expansion",
+          "title": "Intelligence & scale",
           "status": "planned",
           "items": [
-            "Global Markets",
-            "IoT Sensors",
-            "AI Predictions"
+            "Data & Intelligence Layer",
+            "Residue-risk models — Planned",
+            "Extended buyer programmes",
+            "IoT monitoring — Planned"
           ]
         }
       ]
     },
     "products": {
       "title": "Browse Products",
-      "subtitle": "Fresh fruit, vegetables and cereals Bio Vera sells with full batch dossiers behind each line.",
-      "fruits": "Fruits",
-      "vegetables": "Vegetables",
-      "grains": "Grains"
+      "subtitle": "Fresh berries (raspberry, blackberry, strawberry, blueberry), frozen berry programme, and chocolate-coated raspberry, blackberry and strawberry — every line with a full batch dossier.",
+      "raspberries": "Raspberries",
+      "blackberries": "Blackberries",
+      "strawberries": "Strawberries",
+      "blueberries": "Blueberries"
     },
     "cta": {
       "title": "Grow for us, haul for us, or buy from us",
@@ -4325,15 +4381,15 @@
       "items": [
         {
           "question": "What is Bio Vera?",
-          "answer": "Bio Vera is a vertically integrated agrifood company headquartered in Hamburg. We contract growers, run quality control and packing, manage the cold chain and sell fresh produce through our own programme — every batch carries a documented digital passport from field to shelf. We are not a marketplace that simply connects strangers."
+          "answer": "Bio Vera is a Hamburg-based, vertically integrated agrifood company specialising in premium berries — raspberries, blackberries, strawberries and blueberries. Through our own production and a network of selected contract growers across Europe, we maintain high standards year-round with batch-level traceability and defined production programmes. We are not a marketplace that simply connects strangers."
         },
         {
-          "question": "What is an EU Digital Product Passport?",
-          "answer": "An EU Digital Product Passport is a digital record that accompanies a product from production to the consumer. Bio Vera generates these automatically for every batch — documenting origin, harvest data, quality checks, transport conditions, and EU compliance certificates. The QR code on every crate links to its passport."
+          "question": "What is the Bio Vera Digital Product Passport?",
+          "answer": "A batch-level digital record connecting origin, production data, quality controls, relevant certificates, laboratory results and logistics events. The QR code on a crate or pack can link to the passport where available."
         },
         {
           "question": "How does Bio Vera ensure food traceability?",
-          "answer": "Bio Vera uses Protocol 360 — an end-to-end quality system with soil analysis, biometric scanning at packaging, cold chain monitoring, and GPS-verified anti-fraud protection. Every checkpoint is recorded in the batch dossier. Optionally, dossiers are anchored to Polygon blockchain for immutable verification."
+          "answer": "Bio Vera uses Protocol 360 — a verification framework covering production records, batch and packing checks, laboratory verification where required, and logistics/custody data. Each batch can receive a Bio Vera Digital Product Passport linking origin, quality information and logistics milestones."
         },
         {
           "question": "Who is behind Bio Vera?",
@@ -4345,17 +4401,30 @@
         },
         {
           "question": "How does Bio Vera use AI?",
-          "answer": "Bio Vera's AI Intelligence Terminal provides real-time logistics decisions, route optimization, demand forecasting, and harvest planning. The AI system was developed by Vera IT and integrates with the Bio Vera operating system for predictive supply chain management."
+          "answer": "Bio Vera uses structured production, treatment, quality and logistics data to identify anomalies and support operational decisions. Data & Intelligence capabilities are in development; future models are planned for harvest forecasting, residue-risk assessment and supply planning."
         }
       ]
     },
-    "help": "Questions? We’re here to help."
+    "help": "Questions? We’re here to help.",
+    "statNumbers": [
+      "Hamburg",
+      "Europe",
+      "Batch",
+      "Programme",
+      "Passport"
+    ],
+    "residue": {
+      "title": "Towards products without detectable pesticide residues",
+      "body": "We are developing production protocols designed to reduce pesticide use and enable selected batches to achieve no detectable pesticide residues under defined laboratory testing conditions and detection limits.",
+      "flow": "Production protocol → approved inputs → treatment records → laboratory verification → Bio Vera Digital Product Passport",
+      "cta": "Learn about the programme"
+    }
   },
   "forBuyersPage": {
-    "metaTitle": "Buy Traceable Fresh Produce | Bio Vera for Buyers",
-    "metaDescription": "Order certified fresh fruit, vegetables and cereals with full Batch_ID traceability. Digital product passport, harvest calendar, and secured payment. Register for dashboard access.",
+    "metaTitle": "European Production Programmes | Bio Vera for Buyers",
+    "metaDescription": "Structured supply programmes with batch-level Bio Vera Digital Product Passports. Current focus: European berry programme — fresh, frozen and value-added formats.",
     "title": "For Buyers",
-    "heroLead": "Buy produce from Bio Vera: certified origins and traceable batch history from field to your facility. Full catalogue, pricing and ordering are available in your dashboard after registration.",
+    "heroLead": "European production programmes with batch-level traceability. Bio Vera develops structured supply programmes with selected producers across Europe and coordinates specifications, quality documentation and delivery requirements from Hamburg.",
     "notShopBody": "We are not a standard online store. You provide your company details and consent; we review every enquiry. Registered buyers access the dashboard with real-time stock, harvest calendars and batch passports.",
     "linkHowWeOperate": "How we operate",
     "linkExpressInterest": "Express your interest",
@@ -4370,23 +4439,23 @@
       },
       {
         "title": "Browse and Order",
-        "body": "Filter by category — fruit, vegetables, cereals. View origin, harvest window and pricing. Place direct orders or use the {{year}} pre-order for seasonal planning."
+        "body": "Filter by format — fresh, frozen or chocolate-coated. View origin, harvest window and pricing. Place direct orders or use the {{year}} pre-order for seasonal planning."
       },
       {
         "title": "Confirm and Pay",
-        "body": "Payment and delivery terms are confirmed in the system. Funds are held securely until delivery and verification clear."
+        "body": "Payment and delivery terms are confirmed according to the relevant commercial agreement. Invoices are issued per agreed payment terms."
       },
       {
         "title": "Delivery and Traceability",
         "body": "Track your batch via its digital passport: where it was harvested, when, and how it was handled until delivery."
       }
     ],
-    "productsTitle": "Products We Offer",
-    "productsLead": "13 fruit varieties, 18 vegetable varieties and 3 cereal lines. Full list with current availability and pricing in the buyer dashboard.",
+    "productsTitle": "Current focus — European Berry Programme",
+    "productsLead": "Fresh: raspberry, blackberry, strawberry, blueberry. Frozen: berry programme (raspberry, blackberry, strawberry, berry mix). Chocolate-coated: raspberry, blackberry, strawberry. Each line with batch-level Bio Vera Digital Product Passport.",
     "productCategoryLabels": [
-      "Fruits",
-      "Vegetables",
-      "Cereals"
+      "Fresh berries",
+      "Frozen programme",
+      "Chocolate-coated"
     ],
     "productsNote": "Log in to your buyer dashboard to see the full catalogue, place orders or submit a pre-order for {{year}}.",
     "harvestCalendarTitle": "Harvest calendar",
@@ -4403,7 +4472,7 @@
     "securityCards": [
       {
         "title": "Payments",
-        "desc": "Buyer funds remain secured with Bio Vera until accepted handover plus conformity checks. Goods are not payable until verification confirms programme standards."
+        "desc": "Payment terms are agreed in the relevant buyer agreement or order. Invoicing and due dates follow standard commercial practice for the programme."
       },
       {
         "title": "Contracts and Compliance",
@@ -4444,10 +4513,10 @@
     "heroSubtitle": "Full traceability from farm to your facility"
   },
   "growersPage": {
-    "metaTitle": "Grower Programme | Bio Vera — Certification, Guaranteed Terms, Buyers Across Europe",
-    "metaDescription": "Grower programme: guaranteed terms, GlobalG.A.P. IFA v6 group certification facilitation, secured settlement after conformity, and export-ready batch passports. Open to producers throughout Europe.",
+    "metaTitle": "Grower Programme | Bio Vera — European Production Network",
+    "metaDescription": "Join a European Bio Vera production programme built around market demand, transparent production requirements and digital traceability.",
     "title": "Grower programme",
-    "heroLead": "Join a network of certified growers. Bio Vera provides quality standards, group GlobalG.A.P. certification, logistics coordination and access to European buyers — at no certification cost to the grower.",
+    "heroLead": "Grow within a European production programme. Bio Vera works with producers to develop structured production programmes and connect them with relevant suppliers, quality partners, logistics providers and buyers.",
     "downloadProspectCta": "Download prospect PDF",
     "downloadProspectError": "Failed to download prospect. Please try again.",
     "whoCanApplyTitle": "Who Can Apply",
@@ -4457,20 +4526,20 @@
     "valuePropositionLead": "",
     "valueItems": [
       {
-        "title": "Guaranteed pricing",
-        "body": "Fixed seasonal price agreed in advance. No daily swings, no buyers changing the price after harvest. You know your revenue before you plant."
+        "title": "Production programmes",
+        "body": "Growers receive clear crop, quality and documentation requirements linked to the intended market programme."
       },
       {
-        "title": "Free GlobalG.A.P. certification",
-        "body": "Vera Agrar holds the group GlobalG.A.P. IFA v6 certification. Bio Vera covers all documentation and audit costs — save EUR 950–2,000 per estate annually."
+        "title": "Digital production records",
+        "body": "Production activities, treatments, harvest information and batch data can be documented through the Bio Vera system."
       },
       {
-        "title": "Payout within 48 hours",
-        "body": "Funds are reserved after field verification. Payout within 48 hours of arrival at the hub. No 60–90 day waits."
+        "title": "Market access",
+        "body": "Bio Vera develops commercial relationships with buyers and structures production programmes around defined market requirements."
       },
       {
-        "title": "Coordinated logistics",
-        "body": "Coordinated logistics through Bio Vera's refrigerated transport network. Pickup on a pre-defined schedule — no arranging your own haulage, no waiting."
+        "title": "Certification readiness",
+        "body": "Bio Vera works with qualified certification partners to help participating growers understand and prepare for buyer-required standards, including GLOBALG.A.P. where applicable."
       }
     ],
     "protocolTitle": "The Bio Vera Protocol",
@@ -4495,26 +4564,28 @@
     ],
     "groupCertTitle": "Group Certification",
     "groupCertSubtitle": "",
-    "groupCertBody": "You don’t pay for certification yourself. Vera Agrar holds the GlobalG.A.P. group certificate and you join as a group member — Bio Vera covers documentation, audit and certificate maintenance costs.",
+    "groupCertBody": "Bio Vera works with certification partners to help participating growers understand and prepare for buyer-required standards. Group certification pathways are being developed with qualified certification partners.",
     "technicalStandardsTitle": "Technical standards",
     "tableColCategory": "Category",
     "tableColStandard": "Standard",
     "certTableRows": [
       {
         "category": "Certification",
-        "standard": "GlobalG.A.P. IFA v6 (Group)"
+        "standard": "GLOBALG.A.P. readiness pathways where applicable"
       },
       {
         "category": "Analysis",
-        "standard": "MRL limit at 70% of EU permitted levels"
+        "standard": "Programme-specific residue targets and laboratory verification"
       },
       {
         "category": "Logistics",
         "standard": "Direct packaging at farm in Vera packaging"
       }
     ],
+    "paymentTermsTitle": "Transparent payment terms",
+    "paymentTermsBody": "Payment terms are agreed in advance as part of the relevant production or supply agreement.",
     "paymentGuaranteedBold": "",
-    "paymentGuaranteedRest": "Payment secured by contracts with retail chains at 60–90 day terms.",
+    "paymentGuaranteedRest": "",
     "applyCertCta": "Apply for Vera Group Certification 2026",
     "resourcesTitle": "Resources & downloads",
     "resourcesLead": "Essential documents and guides for growers",
@@ -4564,7 +4635,7 @@
       {
         "id": "payment",
         "title": "Payment process guide",
-        "description": "How secured settlement works: conditional release after delivery plus verification, and partner payouts under your Bio Vera agreements.",
+        "description": "How commercial payment terms work under your Bio Vera production or supply agreement.",
         "type": "PDF",
         "size": "1.5 MB"
       },
@@ -4631,13 +4702,13 @@
       }
     ],
     "heroEyebrow": "Bio Vera · Growers",
-    "heroSubtitle": "Guaranteed terms and buyers across Europe — open to growers from every European country"
+    "heroSubtitle": "European production programmes built around market demand, transparent standards and digital traceability"
   },
   "logisticsPartnerPage": {
-    "metaTitle": "Logistics Partner | Bio Vera — Refrigerated Transport Network",
-    "metaDescription": "Join Bio Vera's contracted cold chain network. Regular missions, route optimisation, fast payment on delivery. Small fleets, large companies and independent drivers welcome.",
-    "title": "Logistics partner programme",
-    "heroLead": "Become a contracted Bio Vera carrier in our cold chain — regular missions, Vera fleet rules and the same batch traceability we present to paying customers.",
+    "metaTitle": "Logistics Partner | Bio Vera — European Cold-Chain Network",
+    "metaDescription": "Bio Vera is building a network of qualified logistics partners for temperature-controlled transport across European producer and buyer routes.",
+    "title": "European cold-chain and logistics partner network",
+    "heroLead": "Bio Vera is building a network of qualified logistics partners for temperature-controlled and product-specific transport across European producer and buyer routes. Transport assignments, service levels, temperature requirements and commercial terms are agreed by route, product and contract.",
     "downloadProspectCta": "Download prospect PDF",
     "downloadProspectError": "Failed to download prospect. Please try again.",
     "prospectNote": "",
@@ -4654,16 +4725,16 @@
     "needLine": "",
     "requirementItems": [
       {
-        "title": "Cold Chain",
-        "body": "Mandatory refrigeration unit maintaining 0°C to +12°C for organic product transport. Required for all partners regardless of fleet size."
+        "title": "Cold chain",
+        "body": "Temperature requirements are defined by product programme and route — not one universal range for all loads."
       },
       {
-        "title": "Digital Tracking",
-        "body": "Mandatory Bio Vera sensors for real-time temperature monitoring and GPS tracking. Same requirement for every partner tier."
+        "title": "Digital tracking",
+        "body": "Where required by the programme, temperature and location data can be connected to the Bio Vera batch record."
       },
       {
         "title": "Reliability",
-        "body": "High trust score and strict adherence to delivery deadlines. Consistent performance is essential for long-term contracts."
+        "body": "Service levels, handover points and timing are agreed per route and contract."
       }
     ],
     "whatYouGetTitle": "What You Get",
@@ -4674,14 +4745,15 @@
         "body": "Our software reduces empty kilometres through intelligent route planning, maximising fleet efficiency."
       },
       {
-        "title": "Fast Payment",
-        "body": "Payment upon completed delivery. No waiting periods or delayed settlements."
+        "title": "Programme assignments",
+        "body": "Transport opportunities are structured around Bio Vera production and buyer programmes, subject to contract."
       },
       {
-        "title": "Long-Term Contracts",
-        "body": "Stable volume commitments with predictable revenue streams."
+        "title": "Payment terms",
+        "body": "Transport rates and payment terms are agreed per route, assignment and logistics agreement."
       }
     ],
+    "paymentTermsNote": "Transport rates and payment terms are agreed per route, assignment and logistics agreement.",
     "fuelTitle": "",
     "fuelLead": "Move the slider to choose an assumed fuel saving. Bars use one baseline: grey is before optimisation (100%); green scales to remaining fuel bill (100% minus your saving). Euros below assume €10,000/month in fuel spend today.",
     "fuelSavingsLabel": "Assumed fuel savings",
@@ -5040,16 +5112,16 @@
     "errorFallback": "Could not submit. Try again later or email us at info@biovera.app"
   },
   "aboutPage": {
-    "metaTitle": "About Bio Vera | Vertically Integrated Agrifood Company, Hamburg",
-    "metaDescription": "Bio Vera is a vertically integrated agrifood company in Hamburg: contracted growers throughout Europe, programme QA, cold logistics, and batch digital passports — not a marketplace.",
+    "metaTitle": "About Bio Vera | German Agrifood Company, Hamburg",
+    "metaDescription": "Bio Vera is a German agrifood company in Hamburg building a European production network with production programmes, batch traceability and Bio Vera Digital Product Passports — not a marketplace.",
     "heroTitle": "About Bio Vera",
-    "heroSubtitle": "Bio Vera organises agricultural production across contract growers who follow our standards and inputs, runs field QA, packing and logistics, and sells branded produce to end customers — all on a single batch dossier per load.",
+    "heroSubtitle": "Bio Vera is a German agrifood company headquartered in Hamburg. We are building a European production network that brings agricultural producers, specialised suppliers, quality partners, logistics providers and buyers into one coordinated system.",
     "techPartnerLine": "The Bio Vera platform is built and maintained by <1>Vera IT</1>, Hamburg — the technology partner within the Vera Group.",
     "missionTitle": "Our Mission",
-    "missionP1": "We use technology so the same records serve operations and sales: growers stay producers inside our system, buyers contract with Bio Vera, and end customers see verifiable origin and quality.",
+    "missionP1": "Our starting point is simple: agricultural production should be planned closer to real market demand. Bio Vera develops production programmes around defined product and quality requirements and provides the digital infrastructure needed to document production, trace batches and connect relevant quality and laboratory information.",
     "missionP2": "",
     "visionTitle": "Our Vision",
-    "visionP1": "To be Europe’s leading vertically integrated fresh produce chain, with quality control that buyers recognise on the shelf. Every product with a complete digital passport, every grower fairly paid, every consumer able to trust the origin.",
+    "visionP1": "Built from Hamburg. Designed for Europe. The Bio Vera system is coordinated from Hamburg and designed to work with producers and partners across different European growing regions.",
     "visionP2": "",
     "valuesTitle": "Our Values",
     "valueCards": [
@@ -5077,16 +5149,16 @@
         "body": "Every product gets a digital passport with proof of origin, journey and quality. The QR on the crate shows which estate in our programme grew the batch."
       },
       {
-        "title": "Quality Assurance",
-        "body": "Protocol 360: field-level soil analysis, biometric scanning at packaging, cold chain monitoring during transport."
+        "title": "Quality assurance",
+        "body": "Protocol 360: a verification framework for production, batch and packing, laboratory checks where required, and logistics/custody records — parameters defined by product programme."
       },
       {
-        "title": "Selling and Sourcing",
-        "body": "We sell to downstream customers while growers fulfil contracted production. Shorter accountable chain, fair grower incentives, freshness and clarity at retail."
+        "title": "Market coordination",
+        "body": "Bio Vera develops production programmes with independent growers and coordinates suppliers, quality partners, logistics and buyers from Hamburg."
       },
       {
-        "title": "EU Compliance",
-        "body": "Automated certification management, GlobalG.A.P. IFA v6 group certification facilitation, and complete compliance tracking for EU market access."
+        "title": "Residue direction",
+        "body": "We are developing production programmes focused on reducing pesticide use and, where technically achievable, producing batches with no detectable pesticide residues under defined laboratory testing conditions."
       }
     ],
     "ctaTitle": "Join the Bio Vera Programme",
@@ -5094,7 +5166,7 @@
     "ctaProducer": "Become a Vera grower",
     "ctaContact": "Contact us",
     "protocol360Title": "Protocol 360",
-    "protocol360Body": "Protocol 360 is Bio Vera's end-to-end quality assurance system. From soil analysis at the parcel level through biometric scanning at packaging to cold chain monitoring during transport — every quality checkpoint is documented in the batch dossier and tied to the product's EU Digital Passport."
+    "protocol360Body": "Protocol 360 is Bio Vera's verification framework: production records, batch and packing checks, laboratory verification where required, and logistics/custody data connected to the Bio Vera Digital Product Passport. Specific parameters are defined by product, programme and buyer specification."
   },
   "investorDeckPage": {
     "pageTitle": "Investor materials",
@@ -5181,7 +5253,7 @@
     "plainLanguageCards": [
       {
         "title": "What Bio Vera is",
-        "body": "Bio Vera is the selling company—not a bulletin board matching strangers. Contracted parcels and authorised Vera pack-outs feed one Bio‑Ready dossier that commercial, QA and treasury all defend; shoppers still see tomatoes, auditors see lineage."
+        "body": "Bio Vera is the selling company—not a bulletin board matching strangers. Contracted parcels and authorised Vera pack-outs feed one programme-ready dossier that commercial, QA and treasury all defend; shoppers still see tomatoes, auditors see lineage."
       },
       {
         "title": "How the operation runs week to week",
@@ -5299,7 +5371,7 @@
     "transparencyBullets": [
       "That QR resolves to someone’s face, certs and route breadcrumbs — succinct, factual, stubbornly linkable.",
       "Cold narratives and custody sit next to geography instead of politely ignoring each other in separate decks.",
-      "Bio-Ready language on packaging isn’t orphaned from what operations actually surfaced.",
+      "programme-ready language on packaging isn’t orphaned from what operations actually surfaced.",
       "We leave purple adjectives stranded when artefacts don’t back them — reputations downstream matter."
     ],
     "financeTitle": "Money that stops pretending to be monolithic",
@@ -5663,11 +5735,11 @@
     "pdfLimitHint": "Length and layout are intentionally constrained for formal submissions. Banner imagery may be customised in deployment.",
     "coverEyebrow": "Project overview",
     "coverTitle": "Bio Vera — Project overview",
-    "coverSubtitle": "Vertically operated agrifood company under Bio‑Ready rules—from sanctioned inputs through packing, refrigerated legs and passports our sales teams honour at checkout.",
+    "coverSubtitle": "Vertically operated agrifood company under programme-ready rules—from sanctioned inputs through packing, refrigerated legs and passports our sales teams honour at checkout.",
     "sections": [
       {
         "title": "Introduction",
-        "body": "Bio Vera operates as an agrifood company that organizes production through contracted growers, coordinates logistics and sells to customers—all under Bio‑Ready transparency. The corridor ambition is single-recipe assurance: Southeastern European cultivation inside EU QA rails without contradictory spreadsheet folklore."
+        "body": "Bio Vera operates as an agrifood company that organizes production through contracted growers, coordinates logistics and sells to customers—all under programme-ready transparency. Bio Vera develops producer programmes across selected European growing regions based on crop expertise, seasonal availability, quality capability and buyer demand."
       },
       {
         "title": "Problem",
@@ -6165,5 +6237,46 @@
     "expectWhoBody": "The Bio Vera team in Hamburg, responsible for your area.",
     "contactPromptTitle": "Prefer to talk?",
     "contactPromptCta": "Book a free call"
+  },
+  "admin": {
+    "passportReports": {
+      "details": "Report details",
+      "product": "Product",
+      "notes": "Internal notes",
+      "error": "Could not load or save the report.",
+      "new": "New",
+      "title": "Passport reports",
+      "contact": "Contact",
+      "inProgress": "In progress",
+      "resolve": "Resolved",
+      "openPhoto": "Open photo",
+      "openPassport": "Open passport",
+      "empty": "No reports."
+    },
+    "passportDocuments": {
+      "title": "Passport documents",
+      "lead": "Only confirmed public documents appear on the consumer passport.",
+      "openFile": "Open file",
+      "confirmPublic": "Confirm and publish",
+      "confirmInternal": "Confirm for internal use",
+      "empty": "No documents."
+    }
+  },
+  "residueControlledPage": {
+    "metaTitle": "Residue-Controlled Production | Bio Vera",
+    "metaDescription": "Bio Vera production programmes designed to reduce pesticide use and target no detectable pesticide residues under defined laboratory verification.",
+    "title": "Bio Vera Residue-Controlled Production Programme",
+    "heroLead": "Bio Vera is developing production programmes designed to systematically reduce pesticide use and help selected producers target products with no detectable pesticide residues under defined laboratory methods and detection limits.",
+    "disclaimer": "This programme is under development and does not constitute an organic certification or a claim that pesticides were never used.",
+    "flowTitle": "How the programme connects",
+    "flowSteps": [
+      "Production protocol",
+      "Approved input guidance",
+      "Treatment documentation",
+      "Harvest planning",
+      "Laboratory verification",
+      "Bio Vera Digital Product Passport"
+    ],
+    "labNote": "Laboratory verification is required before any batch may be represented as meeting the applicable Bio Vera residue target."
   }
 }

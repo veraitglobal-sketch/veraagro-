@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Package, Calendar } from 'lucide-react-native';
 import { theme } from '../../../lib/theme';
 import { useAppLocaleTag } from '../../../lib/date-locale';
+import { productNameLabel } from '../../../../shared/i18n/labels';
 
 export default function BatchProductBlock({ batch }: { batch: any }) {
   const { t } = useTranslation();
@@ -25,7 +26,7 @@ export default function BatchProductBlock({ batch }: { batch: any }) {
         </Text>
       </View>
       <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary, marginBottom: theme.spacing.xs }}>
-        {batch.productName || t('producer.batches.unknownProduct')}
+        {productNameLabel(t, batch.productName) || t('producer.batches.unknownProduct')}
       </Text>
       {batch.quantity && (
         <Text style={{ fontSize: 13, fontWeight: '400', color: theme.colors.text.secondary }}>

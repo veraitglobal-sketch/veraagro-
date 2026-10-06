@@ -1,13 +1,13 @@
 {
-  "metaTitle": "Distributer Semena i Đubriva | Bio Vera — Partnerstvo za Dobavljače",
-  "metaDescription": "Partnerski program za dobavljače: distribuirajte sertifikovane inpute kroz Bio Vera mrežu proizvođača u vašem regionu. Garantovana potražnja, fiksna cenovna struktura, integrisana logistika.",
+  "metaTitle": "Odobrena mreža dobavljača | Bio Vera — Poljoprivredni inputi",
+  "metaDescription": "Bio Vera saradjuje sa odabranim dobavljačima inputa i ambalaže kako bi podržala proizvođače u okviru definisanih proizvodnih programa.",
   "hero": {
-    "title": "Partnerski program za dobavljače",
-    "subtitle": "Distribuirajte sertifikovane inpute — semena, đubriva i ambalažu — kroz Bio Vera mrežu proizvođača u vašem regionu. Garantovana potražnja, fiksna cenovna struktura i integrisana logistika.",
+    "title": "Pridružite se Bio Vera odobrenoj mreži dobavljača",
+    "subtitle": "Bio Vera saradjuje sa odabranim dobavljačima inputa, ambalaže i tehničkih proizvoda kako bi podržala proizvođače u okviru definisanih proizvodnih programa. Gde je dostupna tehnička integracija, proizvođači će moći da pristupe programski odobrenim proizvodima kroz Bio Vera platformu.",
     "downloadPdf": "Preuzmite PDF prospekt",
     "downloadFail": "Preuzimanje prospekta nije uspelo. Pokušajte ponovo.",
     "eyebrow": "Bio Vera · Dobavljači",
-    "tagline": "Integrisani supply chain, garantovana potražnja"
+    "tagline": "Odobrena mreža dobavljača za proizvodne programe"
   },
   "whoApply": {
     "title": "Koga tražimo",
@@ -24,30 +24,31 @@
     "subtitle": "",
     "cards": [
       {
-        "title": "Garantovana potražnja",
-        "description": "Naši proizvođači nabavljaju isključivo od odobrenih dobavljača. Stabilan obim tokom cele sezone."
+        "title": "Integracija odobrenog kataloga",
+        "description": "Programski odobreni proizvodi navedeni za učesnike u programu, u skladu sa komercijalnim ugovorom."
       },
       {
-        "title": "Fiksne cene",
-        "description": "Unapred dogovorena struktura cena. Nema pregovora po svakoj transakciji, nema iznenađenja."
+        "title": "Proizvodni i tehnički podaci",
+        "description": "Strukturirane informacije o proizvodu povezane sa proizvodnom i serijskom dokumentacijom gde je integrisano."
       },
       {
-        "title": "Besplatna dostava inputa",
-        "description": "Inputi se distribuiraju kroz integrisanu logističku mrežu Bio Vera — povratne ture hlađenog transporta. Bez dodatnih troškova logistike za partnera."
+        "title": "Regionalna isporuka",
+        "description": "Opslužujete proizvođače u svom regionu u okviru Bio Vera proizvodnih programa."
       },
       {
-        "title": "Pristup EU tržištu",
-        "description": "Pristup Bio Vera mreži sertifikovanih proizvođača i evropskih kupaca kroz vertikalno integrisanu infrastrukturu."
+        "title": "Opciona integracija porudžbina",
+        "description": "Gde je dostupna tehnička integracija, proizvođači mogu pristupiti odobrenim inputima kroz Bio Vera sistem."
       },
       {
-        "title": "Ekskluzivan pristup tržištu",
-        "description": "Pristup Bio Vera mreži sertifikovanih proizvođača i evropskih kupaca kroz vertikalno integrisanu infrastrukturu."
+        "title": "Usklađenost sa programom",
+        "description": "Učešće u operativnom sistemu neutralnom prema dobavljaču — bez impliciranog trajnog ekskluzivnog statusa."
       }
     ]
   },
+  "paymentTermsNote": "Komercijalni uslovi, uslovi plaćanja i datumi plaćanja dogovaraju se individualno u okviru relevantnog ugovora sa dobavljačem ili narudžbenice.",
   "howItWorks": {
-    "title": "Kako funkcioniše lanac",
-    "subtitle": "Nabavljate od naših odobrenih partnera, distribuirate sertifikovanim proizvođačima po dogovorenim cenama. QR skeniranje obavezno za svaku otpremu. Sistem automatski upozorava centralu kada zalihe padnu ispod 20%.",
+    "title": "Kako funkcioniše",
+    "subtitle": "Odobreni dobavljači obezbeđuju inpute i ambalažu usklađene sa programom. Gde je integrisano, transakcije mogu biti praćene kroz Bio Vera sistem.",
     "supplyChainTitle": "",
     "steps": [],
     "forSuppliersPanelTitle": "",
@@ -55,8 +56,8 @@
     "forSuppliersPanelBullets": []
   },
   "requirements": {
-    "title": "Uslovi",
-    "subtitle": "Suv i bezbedan skladišni prostor. Digitalna evidencija kroz Vera Admin Panel — bez papirne dokumentacije. Fizička verifikacija robe pri prijemu.",
+    "title": "Uslovi programa",
+    "subtitle": "Suv i bezbedan skladišni prostor. QR skeniranje obavezno za svaku otpremu. Fizička verifikacija robe pri prijemu. Digitalna evidencija kroz Vera Admin Panel.",
     "supplierHeading": "",
     "cards": [],
     "commonLabel": "",

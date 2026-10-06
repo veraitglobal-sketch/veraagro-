@@ -1,3 +1,5 @@
+import { FIELD_OPERATION_TYPES, type FieldOperationType } from '../../../../shared/passport/field-operation';
+import FieldOperationFields from '../../../components/grower/FieldOperationFields';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { smartLockAPI } from '../../../lib/api/grower';
 import {
@@ -30,6 +32,8 @@ import {
   PLANTING_NOTES_MIN,
 } from './useFieldLogData';
 import { FieldLogHistoryPanel } from './FieldLogHistoryPanel';
+import WeatherObservationForm from '../../../components/grower/WeatherObservationForm';
+import { isSimulatedDevice } from '../../../lib/device-environment';
 
 const STEPS = 3;
 
@@ -40,6 +44,8 @@ const activityLabelKey: Record<ActivityType, string> = {
   HARVEST: 'harvest',
   TRANSPORT_COORD: 'transportCoord',
   PACKAGING: 'packaging',
+  IRRIGATION: 'irrigation',
+  INSPECTION: 'inspection',
 };
 
 const MATERIAL_ACTIVITIES = new Set<ActivityType>(['PLANTING', 'FERTILIZING', 'SPRAYING']);
@@ -126,6 +132,8 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
       })),
     [t],
   );
+
+  const documentedOperation = FIELD_OPERATION_TYPES.includes(data.activityType as FieldOperationType);
 
   const strictPlanting =
     selectedPlan?.announcementType === 'PLANTING' && data.activityType === 'PLANTING';
@@ -335,6 +343,12 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
 
           {showWizard && step === 3 ? (
             <>
+              {data.currentEstate?.id && data.selectedParcelId ? <WeatherObservationForm
+                key={`${data.selectedParcelId}:${data.selectedHarvestPlanId}`}
+                farmId={data.currentEstate.id} parcelId={data.selectedParcelId}
+                plantingId={selectedPlan?.announcementType === 'PLANTING' ? selectedPlan.id : selectedPlan?.sourcePlantingId}
+                onSaved={() => void data.reloadLocalHistory()}
+              /> : null}
 
               {data.gpsWarning ? (
                 <Text style={styles.gpsWarn}>{t('producer.fieldLog.notOnParcel')}</Text>
@@ -350,6 +364,19 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
 
               {data.activityType ? (
                 <>
+                  {documentedOperation ? <FieldOperationFields type={data.activityType as FieldOperationType}
+                    value={data.operationForm} onChange={data.setOperationForm}
+                    notes={data.journalNotes} onNotesChange={data.setJournalNotes} /> : null}
+                  {MATERIAL_ACTIVITIES.has(data.activityType as ActivityType) ? (
+                    <View style={styles.scanRow}>
+                      <TouchableOpacity onPress={() => data.router.push('/(producer)/scanner')} accessibilityRole="button"
+                        accessibilityLabel={t('producer.fieldLogForm.materialPlaceholder')} style={{ minWidth: 44, minHeight: 44, justifyContent: 'center' }}>
+                        <ScanLine size={20} color={enterpriseColors.primary} />
+                      </TouchableOpacity>
+                      <EnterpriseTextField label={t('producer.fieldLogForm.materialPlaceholder')} value={data.materialID}
+                        onChangeText={data.setMaterialID} containerStyle={styles.scanField} />
+                    </View>
+                  ) : null}
                   <Text style={enterpriseUi.inAppSectionLabel}>{t('producer.fieldLog.photo')}</Text>
                   <TouchableOpacity
                     onPress={data.takePhoto}
@@ -391,32 +418,18 @@ export default function FieldLogWizard({ embedded = false }: { embedded?: boolea
                       <Check size={20} color={enterpriseColors.primary} strokeWidth={2} />
                     ) : null}
                   </TouchableOpacity>
+                  {isSimulatedDevice() ? (
+                    <Text style={styles.gpsSimulated}>{t('producer.fieldLogForm.simulatedGps')}</Text>
+                  ) : null}
 
-                  <TouchableOpacity onPress={() => setShowOptional((v) => !v)} style={styles.optionalToggle}>
+                  {!documentedOperation ? <TouchableOpacity onPress={() => setShowOptional((v) => !v)} style={styles.optionalToggle}>
                     <Text style={enterpriseUi.inAppSectionLabel}>
                       {showOptional ? '▾' : '▸'} {t('producer.fieldLogForm.farmerOptional')}
                     </Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> : null}
 
-                  {showOptional ? (
+                  {showOptional && !documentedOperation ? (
                     <View style={[enterpriseUi.authPanel, styles.optionalBox]}>
-                      {MATERIAL_ACTIVITIES.has(data.activityType as ActivityType) ? (
-                        <View style={styles.scanRow}>
-                          <TouchableOpacity
-                            onPress={() => data.router.push('/(producer)/scanner')}
-                            hitSlop={8}
-                            accessibilityRole="button"
-                          >
-                            <ScanLine size={20} color={enterpriseColors.primary} strokeWidth={1.5} />
-                          </TouchableOpacity>
-                          <EnterpriseTextField
-                            value={data.materialID}
-                            onChangeText={data.setMaterialID}
-                            placeholder={t('producer.fieldLogForm.materialPlaceholder')}
-                            containerStyle={styles.scanField}
-                          />
-                        </View>
-                      ) : null}
                       <EnterpriseTextArea
                         value={data.journalNotes}
                         onChangeText={data.setJournalNotes}
@@ -540,6 +553,15 @@ const styles = StyleSheet.create({
     color: enterpriseColors.gray700,
     marginBottom: 12,
     lineHeight: 19,
+  },
+  gpsSimulated: {
+    fontSize: 12.5,
+    color: '#92400E',
+    backgroundColor: '#FEF3C7',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
+    lineHeight: 18,
   },
   photoBtn: {
     flexDirection: 'row',

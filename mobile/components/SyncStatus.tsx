@@ -18,7 +18,7 @@ export default function SyncStatus({ className = '', hideWhenClear = false }: Sy
     lastSyncTime: null,
     pendingCount: 0,
     legacyFieldLogCount: 0,
-    breakdown: { fieldLog: 0, products: 0, costs: 0, certificatePhotos: 0, harvestPlans: 0 },
+    breakdown: { fieldLog: 0, products: 0, costs: 0, certificatePhotos: 0, harvestPlans: 0, weatherObservations: 0 },
     syncing: false,
     lastError: null,
     firstQueueError: null,

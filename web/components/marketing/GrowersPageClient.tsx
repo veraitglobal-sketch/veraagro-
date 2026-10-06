@@ -238,8 +238,8 @@ export default function GrowersPageClient() {
   const valuePropositionLead = t('growersPage.valuePropositionLead');
   const protocolLead = t('growersPage.protocolLead');
   const groupCertSubtitle = t('growersPage.groupCertSubtitle');
-  const paymentGuaranteedBold = t('growersPage.paymentGuaranteedBold');
-  const paymentGuaranteedRest = t('growersPage.paymentGuaranteedRest');
+  const paymentTermsTitle = t('growersPage.paymentTermsTitle');
+  const paymentTermsBody = t('growersPage.paymentTermsBody');
 
   return (
     <div className="min-h-screen bg-white">
@@ -356,7 +356,7 @@ export default function GrowersPageClient() {
           </div>
           ) : null}
 
-          {paymentGuaranteedBold || paymentGuaranteedRest ? (
+          {paymentTermsTitle && paymentTermsBody ? (
           <div className="bg-[#2D5A27]/10/30 border border-[#2D5A27]/20/50 rounded-lg p-6 mb-8">
             <div className="flex items-start">
               <div className="flex-shrink-0">
@@ -366,12 +366,9 @@ export default function GrowersPageClient() {
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-700 leading-relaxed font-light">
-                  {paymentGuaranteedBold ? (
-                    <>
-                      <span className="font-medium text-gray-900">{paymentGuaranteedBold}</span>{' '}
-                    </>
-                  ) : null}
-                  {paymentGuaranteedRest}
+                  <span className="font-medium text-gray-900">{paymentTermsTitle}</span>
+                  {' '}
+                  {paymentTermsBody}
                 </p>
               </div>
             </div>

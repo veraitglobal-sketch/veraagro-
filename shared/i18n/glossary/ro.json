@@ -312,6 +312,9 @@
     "minimumC": "Temperatura minimă (°C)",
     "maximumC": "Temperatura maximă (°C)",
     "dateHelp": "Format dată: YYYY-MM-DD HH:mm (ora locală).",
+    "dateHelpMobile": "Atingeți calendarul și ceasul — fără tastare manuală.",
+    "temperatureRequired": "Introduceți temperatura minimă și maximă.",
+    "operationEndHint": "Lăsați gol dacă lucrarea s-a terminat în același timp.",
     "materialLot": "Lotul materialului",
     "productionDate": "Data producției",
     "plantingPeriod": "Perioada plantării",
@@ -334,6 +337,10 @@
     "waterLitres": "Apă utilizată",
     "operationHelp": "Introduceți momentul în care lucrarea a avut loc. Momentul înregistrării se păstrează separat. Fotografia și GPS-ul sunt capturate la înregistrare.",
     "operationInvalid": "Verificați data, ora, cantitățile și câmpurile obligatorii: apă pentru irigare, observații pentru inspecție sau denumirea și cantitatea produsului pentru tratament.",
-    "materialBarcode": "Codul de bare al produsului"
+    "materialBarcode": "Codul de bare al produsului",
+    "savedLocal": "Salvat pe dispozitiv — se trimite când există conexiune.",
+    "savedSent": "Observație trimisă pe server.",
+    "sending": "Se trimite observația…",
+    "statusConflict": "Această referință a fost deja folosită cu date diferite. Ștergeți rândul local și salvați din nou."
   }
 }

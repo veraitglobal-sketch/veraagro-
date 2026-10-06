@@ -216,6 +216,12 @@ test('rapid plus/minus actions use the current quantity and keep reservations se
 function authHarness({ unregister = async () => {}, remove = async () => {}, post = async () => ({}) } = {}) {
   const states = [];
   const writes = [];
+  const session = new Map([['auth_token', 'old-token'], ['auth_user', JSON.stringify({ id: 'old-user' })]]);
+  const persistedSessions = [];
+  const snapshot = () => persistedSessions.push({
+    userId: JSON.parse(session.get('auth_user') ?? 'null')?.id,
+    token: session.get('auth_token'),
+  });
   const axios = { defaults: { headers: { common: { Authorization: 'Bearer old' } } }, post };
   const react = {
     createContext: () => ({ Provider: 'provider' }),
@@ -226,14 +232,16 @@ function authHarness({ unregister = async () => {}, remove = async () => {}, pos
   const { AuthProvider } = load('contexts/AuthContext.tsx', {
     react,
     '@react-native-async-storage/async-storage': {
-      multiRemove: remove, setItem: async (...args) => { writes.push(args); },
+      multiRemove: remove,
+      removeItem: async (key) => { session.delete(key); snapshot(); },
+      setItem: async (...args) => { writes.push(args); session.set(...args); snapshot(); },
     },
     axios, '../lib/api-url': { API_URL: 'https://example.invalid' },
     '../lib/api-error': { axiosLikeMessage: () => 'Invalid credentials' },
     '../lib/auth-events': {}, '../lib/app-navigation': {},
     '../lib/push-service': { unregisterPushTokenFromBackend: unregister, refreshPushRegistrationIfAuthed: async () => {} },
   });
-  return { ...AuthProvider({ children: null }).props.value, states, writes, axios };
+  return { ...AuthProvider({ children: null }).props.value, states, writes, axios, persistedSessions };
 }
 
 test('simultaneous logout calls share cleanup and clear the session once', async () => {
@@ -285,4 +293,12 @@ test('login retries the legacy API path only after 404 and stores the successful
   assert.deepEqual(urls, ['https://example.invalid/auth/login', 'https://example.invalid/api/auth/login']);
   assert.equal(auth.writes[0][1], 'new-token');
   assert.equal(auth.axios.defaults.headers.common.Authorization, 'Bearer new-token');
+});
+
+test('a successful account switch never exposes the previous owner with the new token', async () => {
+  const user = { id: 'new-user', roles: ['GROWER'] };
+  const auth = authHarness({ post: async () => ({ data: { access_token: 'new-token', user } }) });
+  await auth.login('new-user', 'password');
+  assert.ok(auth.persistedSessions.every(s => s.userId !== 'old-user' || s.token !== 'new-token'));
+  assert.deepEqual(auth.persistedSessions.at(-1), { userId: 'new-user', token: 'new-token' });
 });

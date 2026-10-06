@@ -21,7 +21,7 @@
     "nameEs": "Spanisch"
   },
   "footer": {
-    "tagline": "Eine vertikal geführte Agrifood-Kette: Vertragserzeuger in ganz Europa, Qualitätskontrolle, Kühlkette und Vermarktung unter der Marke Bio Vera — mit Bio‑Ready-Dokumentation für jede Charge.",
+    "tagline": "Bio Vera — deutsches Agrifood-Unternehmen mit Sitz in Hamburg. Wir entwickeln ein transparentes europäisches Produktionsnetzwerk von der Produktionsplanung bis zum Marktzugang.",
     "columnProduct": "Produkt",
     "columnCompany": "Unternehmen",
     "columnSupport": "Unterstützung",
@@ -83,22 +83,22 @@
       },
       "bg": {
         "title": "Bulgarisch",
-        "body": "Vollständige bulgarische Oberfläche für Erzeugende und Händler in Bulgarien — dasselbe Rückverfolgungsmodell, Bio-Ready-Dossiers und Vera-Abläufe wie beim EU-Rollout insgesamt, ausgerichtet auf Modernisierung und konforme Exportkorridore."
+        "body": "Vollständige bulgarische Oberfläche für Erzeugende und Händler in Bulgarien — dasselbe Rückverfolgungsmodell, programme-ready-Dossiers und Vera-Abläufe wie beim EU-Rollout insgesamt, ausgerichtet auf Modernisierung und konforme Exportkorridore."
       },
       "fr": {
         "title": "Französisch",
-        "body": "Vollständige französische Oberfläche für Frankreich, Belgien (FR), Luxemburg und frankophone Einkaufsteams — dieselbe Traceability-, Bio-Ready- und Vera-Struktur wie in den anderen Locales dieses Ausrollplans."
+        "body": "Vollständige französische Oberfläche für Frankreich, Belgien (FR), Luxemburg und frankophone Einkaufsteams — dieselbe Traceability-, programme-ready- und Vera-Struktur wie in den anderen Locales dieses Ausrollplans."
       },
       "es": {
         "title": "Spanisch",
-        "body": "Vollständige spanische Oberfläche für Spanien, lateinamerikanische Einkaufskorridore und Teams, die Spanisch bevorzugen — dieselbe Vera-Rückverfolgbarkeit und Bio-Ready-Struktur wie in den übrigen Sprachen."
+        "body": "Vollständige spanische Oberfläche für Spanien, lateinamerikanische Einkaufskorridore und Teams, die Spanisch bevorzugen — dieselbe Vera-Rückverfolgbarkeit und programme-ready-Struktur wie in den übrigen Sprachen."
       }
     }
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "Vertikal integriertes Agrifood-Unternehmen aus Hamburg. EU-Produktpass (DPP) für jede Charge — Rückverfolgbarkeit vom Feld bis ins Regal für Erzeuger, Logistik und Lieferanten.",
-    "ldJsonDescription": "Zertifiziertes Agrifood-Betriebssystem für Produktion, Qualität, Logistik und Distribution — jede Charge vom Parzell bis zum Endpunkt, jeder Teilnehmer verifiziert, jeder Schritt dokumentiert.",
+    "siteDescription": "Bio Vera — Hamburger Agrifood-Unternehmen für Beerenobst: frisch, gefroren und mit Schokolade überzogen. Himbeere, Brombeere, Erdbeere, Blaubeere — mit Chargen-Rückverfolgbarkeit.",
+    "ldJsonDescription": "Deutsches Agrifood-Unternehmen in Hamburg mit europäischem Produzentennetzwerk und Bio Vera Digital Product Passport auf Chargenebene.",
     "keywords": [
       "Bio Vera",
       "Landwirtschaftliches Netzwerk",
@@ -114,7 +114,7 @@
       "Lebensmitteltransparenz"
     ],
     "ldJsonContactType": "Kundendienst",
-    "homeTitle": "Bio Vera | Frisches Obst & Gemüse mit voller Rückverfolgbarkeit"
+    "homeTitle": "Bio Vera | Deutsches Agrifood-Unternehmen & europäisches Produzentennetzwerk"
   },
   "chat": {
     "needHelp": "Brauchen Sie Hilfe?",
@@ -184,7 +184,10 @@
     "login": "Anmelden",
     "logout": "Abmelden",
     "openMenu": "Menü öffnen",
-    "closeMenu": "Menü schließen"
+    "closeMenu": "Menü schließen",
+    "productPassport": "Produktpass",
+    "about": "Über uns",
+    "residueProgramme": "Rückstandsprogramm"
   },
   "contactPage": {
     "heroTitle": "Nehmen Sie Kontakt auf",
@@ -267,7 +270,7 @@
       {
         "category": "Allgemein",
         "q": "Was ist Bio Vera?",
-        "a": "Bio Vera ist ein vertikal integriertes Agrar- und Lebensmittelunternehmen mit Sitz in Hamburg. Wir kontraktieren Erzeuger in ganz Europa, führen Qualitätssicherung und Verpackung durch, betreiben Kühlkettenlogistik und verkaufen frische Erzeugnisse im eigenen Programm. Jede Charge trägt einen dokumentierten digitalen Produktpass von der Parzelle bis zum Lieferpunkt. Bio Vera ist kein Marktplatz, der nur Fremde zusammenführt."
+        "a": "Bio Vera ist ein in Hamburg ansässiges, vertikal integriertes Agrifood-Unternehmen, das sich auf den Anbau, die Qualitätskontrolle und den globalen Vertrieb von hochwertigem Beerenobst — Himbeeren, Brombeeren, Erdbeeren und Blaubeeren — spezialisiert hat. Durch die perfekte Symbiose aus eigener Produktion und einem starken Netzwerk ausgewählter Vertragserzeuger in ganz Europa garantieren wir ganzjährig höchste Standards. Bio Vera ist kein Marktplatz, der nur Fremde zusammenführt."
       },
       {
         "category": "Allgemein",
@@ -292,7 +295,7 @@
       {
         "category": "Erzeuger",
         "q": "Wie werden Zahlungen abgewickelt?",
-        "a": "Die Zahlungsabwicklung erfolgt automatisch nach erfolgreicher Lieferbestätigung. Um sichere Transaktionen zu gewährleisten, verwenden wir ein Treuhandsystem. Landwirte erhalten die Zahlung innerhalb von 3–5 Werktagen nach Lieferbestätigung."
+        "a": "Zahlungsbedingungen werden im Voraus im Rahmen des jeweiligen Produktions- oder Liefervertrags vereinbart. Rechnungen und Fälligkeiten folgen den im Vertrag mit Bio Vera festgelegten Bedingungen — nicht einer festen Stundenzahl oder einem Treuhandmodell."
       },
       {
         "category": "Käufer",
@@ -804,7 +807,8 @@
       "fieldCapture": "Parzelle capture",
       "education": "Schulung",
       "appGuide": "App Leitfaden",
-      "confidential": "Partnerpläne (geschützt)"
+      "confidential": "Partnerpläne (geschützt)",
+      "productCatalog": "Product catalog"
     },
     "placeholders": {
       "plantingsTitle": "Meine Pflanzungen",
@@ -1672,7 +1676,9 @@
     "supply": "Versorgungsübersicht",
     "seedProduction": "Saatgut production",
     "goGrowerControl": "Erzeuger control",
-    "preOrders": "Vorbestellungen"
+    "preOrders": "Vorbestellungen",
+    "passportReports": "Passport reports",
+    "passportDocuments": "Passdokumente"
   },
   "adminPages": {
     "titles": {
@@ -3282,7 +3288,36 @@
     "packingNoLots": "Noch keine bereiten Lose. Zuerst Qualitätseintrag abschließen:",
     "packingNoLotsLink": "Qualität & Lose",
     "selectLotMessage": "Verpackung ist erfasst — verknüpfen Sie das Los, bevor Sie die Abholung anfordern.",
-    "selectLotLink": "Qualität & Lose"
+    "selectLotLink": "Qualität & Lose",
+    "packingDeclaredShelfLife": "Declared shelf life (hours, optional)",
+    "packingDeclaredShelfLifeHint": "Only if printed on the pack label",
+    "packingPackagingType": "Packaging type",
+    "packingPackagingTypeHint": "e.g. crate 5 kg",
+    "passportCompletenessLoadFailed": "Could not load passport checklist.",
+    "catalogTitle": "Product catalog",
+    "catalogDescription": "Enter product data once — linked to planting and reused in harvest, lots, and passport.",
+    "catalogEdit": "Edit product",
+    "catalogNew": "New product",
+    "catalogName": "Product name",
+    "catalogVariety": "Variety",
+    "catalogStorage": "Storage conditions",
+    "catalogNoPlanting": "No planting link",
+    "catalogImageUrl": "Photo URL or base64",
+    "catalogLoadFailed": "Could not load catalog.",
+    "catalogSaveFailed": "Could not save product.",
+    "catalogDocuments": "Product documents",
+    "catalogDocumentsLead": "Certificates and lab results linked to this product. Public passport shows only reviewed documents.",
+    "catalogDocTitle": "Document title",
+    "catalogDocTypeCert": "Certificate",
+    "catalogDocTypeLab": "Lab result",
+    "catalogDocTypeOther": "Other",
+    "catalogDocIssuer": "Issuer (optional)",
+    "catalogDocIssued": "Issued on",
+    "catalogDocExpires": "Valid until",
+    "catalogDocUpload": "Upload document",
+    "catalogDocUploaded": "Document uploaded — admin review required before public display.",
+    "catalogDocUploadFailed": "Could not upload document.",
+    "notRecorded": "Not recorded"
   },
   "supplier": {
     "nav": {
@@ -3434,9 +3469,9 @@
   },
   "home": {
     "hero": {
-      "title1": "Vertikal integriertes",
-      "title2": "Agrifood-Unternehmen",
-      "subtitle": "Bio Vera ist ein vertikal integriertes Agrifood-Unternehmen mit Sitz in Hamburg. In unserem eigenen Programm arbeiten wir mit Vertragserzeugern, übernehmen Qualitätskontrolle und Verpackung, steuern die Kühlkette und bringen frisches Obst und Gemüse zu unseren Kunden. Jede Charge hat einen lückenlos dokumentierten digitalen Produktpass — vom Feld bis ins Regal.",
+      "title1": "Deutsches Agrifood-Unternehmen.",
+      "title2": "Europäisches Produktionsnetzwerk.",
+      "subtitle": "Bio Vera ist ein in Hamburg ansässiges, vertikal integriertes Agrifood-Unternehmen, das sich auf den Anbau, die Qualitätskontrolle und den globalen Vertrieb von hochwertigem Beerenobst — Himbeeren, Brombeeren, Erdbeeren und Blaubeeren — spezialisiert hat. Durch die perfekte Symbiose aus eigener Produktion und einem starken Netzwerk ausgewählter Vertragserzeuger in ganz Europa garantieren wir ganzjährig höchste Standards.",
       "browseProducts": "Produkte durchsuchen",
       "becomeProducer": "Werden Sie Vera-Erzeuger",
       "preOrder": "Die Vorbestellung für {{year}} ist geöffnet",
@@ -3445,125 +3480,127 @@
       "preOrderTip2": "Die Vorbestellung dient nur der Mengenplanung für {{year}}; sie ist keine verbindliche Bestellung."
     },
     "statLabels": [
+      "Hauptsitz",
+      "Produzentennetzwerk",
       "Rückverfolgbarkeit",
-      "Zertifiziert",
-      "Überwachung",
-      "QA-Stufen",
-      "Optionale Verankerung"
+      "Produktionsprogramme",
+      "Digitaler Produktpass"
     ],
-    "partnersLine": "Führende Agrarorganisationen vertrauen uns tagtäglich",
+    "partnersLine": "",
     "vision": {
-      "title": "Unsere Vision",
-      "intro": "Wir bauen Vertrauen vom Parzell bis ins Regal: klare Regeln für Erzeuger in unserem Programm, kontrollierte Qualitätsprüfungen an jedem Schritt und Einkäufer, die direkt bei Bio Vera beschaffen.",
+      "title": "So arbeiten wir",
+      "intro": "Drei verbundene Säulen von der Produktionsplanung bis zum Marktzugang.",
       "cards": [
         {
-          "title": "Transparenz",
-          "description": "Jeder Schritt vom Feld bis ins Regal steht in einem Dossier. Vertrieb, Qualitätssicherung und Auditoren nutzen denselben Datensatz."
+          "title": "Produktion nach Nachfrage",
+          "description": "Produktionsprogramme werden entlang definierter Produkt-, Qualitäts-, Timing- und Abnehmeranforderungen entwickelt."
         },
         {
-          "title": "Sicherheit",
-          "description": "Zugriffskontrollen und Betrugsschutz sichern das Dossier hinter jeder Lieferung, die wir verkaufen und ausliefern."
+          "title": "Jede Charge verifizieren",
+          "description": "Produktionsnachweise, Qualitätsinformationen, relevante Zertifikate und Laborergebnisse können mit einem Bio Vera Digital Product Passport verbunden werden."
         },
         {
-          "title": "EU-Dokumentation",
-          "description": "Automatisierte EU-Zertifikate und digitale Produktpässe unterstützen die Compliance, für die unser Vertriebsteam einsteht."
+          "title": "Produktion mit Markt verbinden",
+          "description": "Bio Vera koordiniert Produzenten und spezialisierte Partner in ganz Europa, während kommerzielle und operative Steuerung von Hamburg aus erfolgt."
         }
       ]
     },
     "features": {
       "title": "Kernfunktionen",
-      "intro": "",
+      "intro": "Ein Betriebssystem, das Produktion, Verifikation und Auslieferung verbindet.",
       "list": [
         {
-          "title": "Smart-Lock-System",
-          "description": "Anbau, Protokoll, Verpackung, Logistik, Lieferung und Abrechnung — in einer koordinierten Kette."
+          "title": "Produktionsprogramme",
+          "description": "Definierte Anbau-, Qualitäts- und Dokumentationsanforderungen entlang der Marktnachfrage."
         },
         {
-          "title": "Chargenverfolgung",
-          "description": "Jede Kiste trägt eine Batch_ID. Dieselbe Rückverfolgung läuft vom Parzell bis zur Lieferung in unserem Betriebssystem."
+          "title": "Chargen-Rückverfolgbarkeit",
+          "description": "Jede Produktionscharge erhält eine eindeutige Batch_ID mit Produktions-, Qualitäts- und Logistikdaten."
         },
         {
-          "title": "Gesicherte Zahlung",
-          "description": "Käufergelder verbleiben bei Bio Vera, bis Lieferung und Konformitätsprüfung abgeschlossen sind. Auszahlungen an Erzeuger und Logistik folgen vereinbarten Bedingungen."
+          "title": "Bio Vera Digital Product Passport",
+          "description": "Digitaler Datensatz auf Chargenebene mit Herkunft, Produktionsinformationen, Qualitätsdaten, Zertifikaten, Laborergebnissen und Logistikmeilensteinen."
         },
         {
-          "title": "Betrugsschutz",
-          "description": "GPS-Zeitstempel, Geräte-ID-Verfolgung, ausschließlich Kameraerfassung. Datensätze können nachträglich nicht gefälscht werden."
+          "title": "Partnerintegrationen",
+          "description": "Das System wird entwickelt, um Produzenten mit zugelassenen Lieferanten, Laboren, Zertifizierungspartnern und Logistikdienstleistern zu verbinden."
         },
         {
-          "title": "EU-Digitalpass",
-          "description": "Automatisierte Zertifikate und Pässe, gebunden an den Vertriebskanal, den wir für Endkunden betreiben."
+          "title": "Rückstandskontrollierte Produktion",
+          "description": "Produktionsprotokolle und Laborverifikation zur langfristigen Unterstützung von Produkten ohne nachweisbare Pestizidrückstände."
         },
         {
-          "title": "Optionale Polygon-Verankerung",
-          "description": "Wenn für eine Programmstufe aktiviert, verknüpft ein öffentlicher Anker das Dossier mit einem unveränderlichen Eintrag auf Polygon."
+          "title": "Integrity Guard",
+          "description": "GPS-Validierung, Input-Prüfungen und strukturierte Felddaten schützen die Chargenintegrität im Netzwerk."
         }
       ]
     },
     "blockchain": {
-      "title": "Warum Custody-Datensätze bestehen bleiben",
-      "body": "Wir verkaufen die Ware, das Reputationsrisiko tragen wir. Operative Teams protokollieren jeden Übergang, damit nachgelagerte Parteien die gestrige Custody-Geschichte nicht umschreiben können.",
+      "title": "Strukturierte Custody-Datensätze",
+      "body": "Operative Teams dokumentieren Übergaben und Custody-Schritte, damit Chargendaten von der Produktion bis zur Auslieferung konsistent bleiben.",
       "bullets": []
     },
     "roadmap": {
       "title": "Fahrplan",
-      "subtitle": "Wo wir jetzt stehen und wohin wir gehen.",
-      "statusCompleted": "Abgeschlossen",
-      "statusInProgress": "In Arbeit",
+      "subtitle": "Produktstatus im Bio Vera System",
+      "statusCompleted": "Verfügbar",
+      "statusInProgress": "Pilot",
       "statusPlanned": "Geplant",
+      "statusInDevelopment": "In Entwicklung",
       "phases": [
         {
           "phase": "Q1 2026",
-          "title": "Betriebsstart",
-          "status": "Abgeschlossen",
+          "title": "Kernplattform",
+          "status": "completed",
           "items": [
             "Backend-API",
-            "Mobile App",
             "Web-App",
-            "Kernfunktionen"
+            "Chargen-Rückverfolgbarkeit",
+            "Kern-Workflows"
           ]
         },
         {
           "phase": "Q2 2026",
-          "title": "Funktionserweiterung",
-          "status": "Abgeschlossen",
+          "title": "Feld- & Partnerschicht",
+          "status": "in-development",
           "items": [
-            "KI-Analyse — abgeschlossen",
-            "Ledger-Anker (Polygon) — abgeschlossen",
-            "Erweitertes Dashboard",
-            "Integrationen",
-            "EU-Zertifikate"
+            "Mobile App — Pilot",
+            "Bio Vera Digital Product Passport",
+            "Produktionsnachweise für Erzeuger",
+            "Partnerintegrationen — In Entwicklung"
           ]
         },
         {
           "phase": "Q3–Q4 2026",
-          "title": "Skalierung",
+          "title": "Netzwerkausbau",
           "status": "in-progress",
           "items": [
-            "Multi-Region-Unterstützung",
-            "Partner-API-Zugang",
-            "Partnerintegrationen",
-            "Enterprise-Funktionen"
+            "Multi-Region-Produktionsprogramme",
+            "Laborintegrationen — Geplant",
+            "Logistikpartnernetzwerk",
+            "Piloten für rückstandskontrollierte Programme"
           ]
         },
         {
           "phase": "2027",
-          "title": "Globale Expansion",
+          "title": "Intelligence & Skalierung",
           "status": "planned",
           "items": [
-            "Globale Märkte",
-            "IoT-Sensoren",
-            "KI-Prognosen"
+            "Data & Intelligence Layer",
+            "Rückstandsrisiko-Modelle — Geplant",
+            "Erweiterte Abnehmerprogramme",
+            "IoT-Monitoring — Geplant"
           ]
         }
       ]
     },
     "products": {
       "title": "Produkte entdecken",
-      "subtitle": "Frisches Obst, Gemüse und Getreide, die Bio Vera mit vollständigem Chargendossier hinter jeder Position verkauft.",
-      "fruits": "Obst",
-      "vegetables": "Gemüse",
-      "grains": "Getreide"
+      "subtitle": "Frisches Beerenobst (Himbeere, Brombeere, Erdbeere, Blaubeere), gefrorenes Beerenobst-Programm und mit Schokolade überzogene Himbeere, Brombeere und Erdbeere — jede Position mit vollständigem Chargendossier.",
+      "raspberries": "Himbeeren",
+      "blackberries": "Brombeeren",
+      "strawberries": "Erdbeeren",
+      "blueberries": "Blaubeeren"
     },
     "cta": {
       "title": "Für uns anbauen, für uns transportieren oder bei uns kaufen",
@@ -3574,39 +3611,52 @@
     "help": "Fragen? Wir sind für Sie da.",
     "faq": {
       "title": "Häufig gestellte Fragen",
-      "subtitle": "What Bio Vera is, how traceability works, and who stands behind the platform.",
+      "subtitle": "Was Bio Vera ist, wie Rückverfolgbarkeit funktioniert und wer dahinter steht.",
       "items": [
         {
           "question": "Was ist Bio Vera?",
-          "answer": "Bio Vera ist ein vertikal integriertes Agrifood-Unternehmen mit Sitz in Hamburg. Wir arbeiten mit Vertragserzeugern, übernehmen Qualitätskontrolle und Verpackung, steuern die Kühlkette und vermarkten frische Produkte in unserem eigenen Programm — jede Charge hat einen dokumentierten digitalen Produktpass vom Feld bis ins Regal. Wir sind kein Marktplatz, der lediglich Unbekannte zusammenbringt."
+          "answer": "Bio Vera ist ein in Hamburg ansässiges, vertikal integriertes Agrifood-Unternehmen, das sich auf den Anbau, die Qualitätskontrolle und den globalen Vertrieb von hochwertigem Beerenobst — Himbeeren, Brombeeren, Erdbeeren und Blaubeeren — spezialisiert hat. Durch die perfekte Symbiose aus eigener Produktion und einem starken Netzwerk ausgewählter Vertragserzeuger in ganz Europa garantieren wir ganzjährig höchste Standards. Wir sind kein Marktplatz, der lediglich Unbekannte zusammenbringt."
         },
         {
-          "question": "What is an EU Digital Produkt Passport?",
-          "answer": "An EU Digital Product Passport is a digital record that accompanies a product from production to the consumer. Bio Vera generates these automatically for every batch — documenting origin, harvest data, quality checks, transport conditions, and EU compliance certificates. The QR code on every crate links to its passport."
+          "question": "Was ist der Bio Vera Digital Product Passport?",
+          "answer": "Ein digitaler Datensatz auf Chargenebene, der Herkunft, Produktionsdaten, Qualitätskontrollen, relevante Zertifikate, Laborergebnisse und Logistikereignisse miteinander verbindet. Der QR-Code auf Kiste oder Packung kann — wo verfügbar — zum Pass führen."
         },
         {
-          "question": "How does Bio Vera ensure food traceability?",
-          "answer": "Bio Vera uses Protocol 360 — an end-to-end quality system with soil analysis, biometric scanning at packaging, cold chain monitoring, and GPS-verified anti-fraud protection. Every checkpoint is recorded in the batch dossier. Optionally, dossiers are anchored to Polygon blockchain for immutable verification."
+          "question": "Wie stellt Bio Vera Lebensmittel-Rückverfolgbarkeit sicher?",
+          "answer": "Bio Vera nutzt Protocol 360 — einen Verifikationsrahmen für Produktionsnachweise, Chargen- und Verpackungsprüfungen, Laborverifikation wo erforderlich sowie Logistik- und Custody-Daten. Jede Charge kann einen Bio Vera Digital Product Passport erhalten."
         },
         {
-          "question": "Who is behind Bio Vera?",
-          "answer": "Bio Vera was founded by Jovica Mihajlovic in Hamburg. It is part of the Vera Group, which also includes Vera IT (software engineering — built Denis AI Co-Worker, Fade, and the Bio Vera platform), Fade (global salon booking app for iOS & Android), and ReinAllround (professional cleaning in Hamburg)."
+          "question": "Wer steht hinter Bio Vera?",
+          "answer": "Bio Vera wurde von Jovica Mihajlovic in Hamburg gegründet. Das Unternehmen gehört zur Vera Group, zu der auch Vera IT (Softwareentwicklung), Fade (Salon-Buchungs-App) und ReinAllround (Reinigung in Hamburg) gehören."
         },
         {
-          "question": "Can I invest in Bio Vera?",
-          "answer": "Bio Vera is preparing for a growth-stage investment round. Investor materials, pitch deck, and project documentation are available at biovera.app/investor-deck."
+          "question": "Kann ich in Bio Vera investieren?",
+          "answer": "Bio Vera bereitet eine Wachstumsfinanzierungsrunde vor. Investorenunterlagen sind auf biovera.app/investor-deck verfügbar."
         },
         {
-          "question": "How does Bio Vera use AI?",
-          "answer": "Bio Vera's AI Intelligence Terminal provides real-time logistics decisions, route optimization, demand forecasting, and harvest planning. The AI system was developed by Vera IT and integrates with the Bio Vera operating system for predictive supply chain management."
+          "question": "Wie nutzt Bio Vera KI?",
+          "answer": "Bio Vera nutzt strukturierte Produktions-, Behandlungs-, Qualitäts- und Logistikdaten zur Anomalieerkennung und operativen Unterstützung. Data-&-Intelligence-Fähigkeiten sind in Entwicklung; langfristig sind Modelle für Ernteprognosen, Rückstandsrisiken und Lieferplanung geplant."
         }
       ]
+    },
+    "statNumbers": [
+      "Hamburg",
+      "Europa",
+      "Charge",
+      "Programm",
+      "Pass"
+    ],
+    "residue": {
+      "title": "Auf dem Weg zu Produkten ohne nachweisbare Pestizidrückstände",
+      "body": "Wir entwickeln Produktionsprotokolle mit dem Ziel, den Einsatz von Pflanzenschutzmitteln zu reduzieren und ausgewählte Chargen unter definierten Laborbedingungen und Nachweisgrenzen ohne nachweisbare Pestizidrückstände produzieren zu können.",
+      "flow": "Produktionsprotokoll → zugelassene Inputs → Behandlungsnachweise → Laborverifikation → Bio Vera Digital Product Passport",
+      "cta": "Mehr zum Programm"
     }
   },
   "forBuyersPage": {
-    "metaTitle": "Obst & Gemüse Großhandel | Bio Vera — Rückverfolgbar & GlobalG.A.P. Zertifiziert",
-    "metaDescription": "Beschaffen Sie frisches Obst und Gemüse für Einzelhandel und Gastronomie. Chargenrückverfolgung per Batch_ID, Kühlkettenüberwachung, digitaler Produktpass. Jetzt registrieren.",
-    "title": "Obst und Gemüse für Einzelhandel und Gastronomie — Rückverfolgbar bis zum Feld",
+    "metaTitle": "Beerenobst Großhandel | Bio Vera — Frisch, Gefroren, Schokoliert",
+    "metaDescription": "Frisches Beerenobst, Tiefkühlprogramm und Schokolierte Beeren (Himbeere, Brombeere, Erdbeere). Chargenrückverfolgbarkeit und Bio Vera Digital Product Passport.",
+    "title": "Beerenobst für Einzelhandel und Gastronomie — frisch, gefroren, mit Schokolade",
     "heroLead": "Beschaffen Sie bei Bio Vera: zertifizierte Herkunft, lückenlose Chargenrückverfolgung und ein digitaler Produktpass pro Lieferung. Sortiment, Preise und Bestellung über Ihr Einkaufs-Dashboard nach Registrierung.",
     "notShopBody": "Wir sind kein klassischer Online-Großhandel. Sie hinterlegen Ihre Unternehmensdaten, wir prüfen jede Anfrage sorgfältig. Registrierte Einkäufer erhalten Zugang zum Dashboard mit Echtzeit-Beständen, Erntekalendern und Chargendossiers.",
     "linkHowWeOperate": "Wie wir arbeiten",
@@ -3622,7 +3672,7 @@
       },
       {
         "title": "Sortiment und Bestellung",
-        "body": "Nach Kategorie filtern — Obst, Gemüse, Getreide. Herkunft, Erntefenster und Preise ansehen. Direkt bestellen oder die Vorbestellung {{year}} für die Saisonplanung nutzen."
+        "body": "Nach Format filtern — frisch, gefroren oder mit Schokolade überzogen. Herkunft, Erntefenster und Preise ansehen. Direkt bestellen oder die Vorbestellung {{year}} für die Saisonplanung nutzen."
       },
       {
         "title": "Bestätigung und Zahlung",
@@ -3633,12 +3683,12 @@
         "body": "Verfolgen Sie Ihre Charge über den digitalen Produktpass: wo geerntet, wann, wie behandelt bis zur Auslieferung."
       }
     ],
-    "productsTitle": "Sortiment",
-    "productsLead": "13 Obstsorten, 18 Gemüsesorten und 3 Getreidesorten. Vertragsanbau nach Bio Vera Standards. Aktuelle Verfügbarkeit im Einkaufs-Dashboard.",
+    "productsTitle": "Sortiment — Beerenobst-Programm",
+    "productsLead": "Frisch: Himbeere, Brombeere, Erdbeere, Blaubeere. Gefroren: Beerenobst-Programm (Himbeere, Brombeere, Erdbeere, Beerenmischung). Mit Schokolade überzogen: Himbeere, Brombeere, Erdbeere. Vertragsanbau nach Bio Vera Standards — Verfügbarkeit im Einkaufs-Dashboard.",
     "productCategoryLabels": [
-      "Obst",
-      "Gemüse",
-      "Getreide"
+      "Frisches Beerenobst",
+      "Gefrorenes Programm",
+      "Mit Schokolade"
     ],
     "productsNote": "Melden Sie sich im Käuferbereich an, um den vollständigen Katalog zu sehen, zu bestellen oder eine Vorbestellung für {{year}} abzugeben.",
     "harvestCalendarTitle": "Erntekalender",
@@ -3697,7 +3747,7 @@
   },
   "growersPage": {
     "metaTitle": "Programm für Erzeuger | Bio Vera — Zertifizierung, garantierte Konditionen, Abnehmer in ganz Europa",
-    "metaDescription": "Erzeugerprogramm: garantierte Konditionen, kostenlose GlobalG.A.P. IFA v6 Gruppenzertifizierung, Auszahlung in 48h, koordinierte Logistik und EU-Marktzugang. Offen für Erzeuger in ganz Europa.",
+    "metaDescription": "Europäisches Bio Vera Produktionsprogramm mit transparenten Zahlungsbedingungen, digitaler Rückverfolgbarkeit und Marktkoordination von Hamburg.",
     "title": "Programm für Erzeuger",
     "heroLead": "Werden Sie Teil eines Netzwerks zertifizierter Erzeuger. Bio Vera sichert Qualitätsstandards, Gruppenzertifizierung GlobalG.A.P., Logistikkoordination und Zugang zu europäischen Abnehmern — ohne Zertifizierungskosten für den Erzeuger.",
     "downloadProspectCta": "Prospekt-PDF herunterladen",
@@ -3765,6 +3815,8 @@
         "standard": "Direct packaging at Betrieb in Vera packaging"
       }
     ],
+    "paymentTermsTitle": "Transparente Zahlungsbedingungen",
+    "paymentTermsBody": "Die Zahlungsbedingungen werden im Rahmen der jeweiligen Produktions- oder Liefervereinbarung im Voraus festgelegt.",
     "paymentGuaranteedBold": "",
     "paymentGuaranteedRest": "",
     "applyCertCta": "Jetzt bewerben",
@@ -3886,10 +3938,10 @@
     "heroSubtitle": "Garantierte Konditionen und Abnehmer in ganz Europa — offen für Erzeuger aus allen europäischen Ländern"
   },
   "logisticsPartnerPage": {
-    "metaTitle": "Kühlketten-Partner | Bio Vera — Frischelogistik Obst & Gemüse",
-    "metaDescription": "Werden Sie Bio Vera Transportpartner: regelmäßige Kühltransporte, Routenoptimierung, sofortige Auszahlung. Kleine Flotten, große Speditionen und Einzelfahrer.",
-    "title": "Logistik-Partnerprogramm",
-    "heroLead": "Werden Sie vertraglich gebundener Bio Vera Transportpartner in unserer Kühlkette. Regelmäßige Einsätze, optimierte Routen, sofortige Auszahlung nach Lieferung.\n\nKühleinheit 0°C bis +12°C. Bio Vera Sensoren für Echtzeit-Temperatur und GPS. Kleine Flotten, Großspeditionen und Einzelfahrer willkommen.\n\nRoutenoptimierung minimiert Leerkilometer. Rücktransporte liefern Saatgut und Düngemittel an Lieferanten. Langfristige Verträge mit stabilem Volumen.",
+    "metaTitle": "Kühlketten-Partner | Bio Vera — Frischelogistik Beerenobst",
+    "metaDescription": "Bio Vera baut ein Netzwerk qualifizierter Logistikpartner für temperaturgeführten Transport auf europäischen Erzeuger- und Abnehmerstrecken auf.",
+    "title": "Europäisches Kühlketten- und Logistikpartnernetzwerk",
+    "heroLead": "Bio Vera baut ein Netzwerk qualifizierter Logistikpartner für produktspezifischen Transport auf europäischen Erzeuger- und Abnehmerstrecken auf. Transportaufträge, Servicelevel, Temperaturanforderungen und Zahlungsbedingungen werden je Route, Produkt und Vertrag vereinbart.",
     "downloadProspectCta": "Prospekt-PDF herunterladen",
     "downloadProspectError": "Der Prospekt konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut.",
     "prospectNote": "",
@@ -3906,16 +3958,16 @@
     "needLine": "",
     "requirementItems": [
       {
-        "title": "Kühleinheit",
-        "body": "Kühleinheit 0°C bis +12°C für den Transport von Frischware. Pflicht für alle Partner — Transporter, LKW oder Sattelzug."
+        "title": "Kühlkette",
+        "body": "Temperaturanforderungen werden je Produktprogramm und Route definiert — nicht ein universeller Bereich für alle Ladungen."
       },
       {
-        "title": "GPS und Sensoren",
-        "body": "Bio Vera Sensoren für Echtzeit-Temperaturüberwachung und GPS-Tracking. Pflicht für alle Partnerstufen."
+        "title": "Digitales Tracking",
+        "body": "Wo vom Programm vorgesehen, können Temperatur- und Standortdaten mit dem Bio Vera Chargendatensatz verbunden werden."
       },
       {
         "title": "Zuverlässigkeit",
-        "body": "Strikte Einhaltung der Liefertermine. Konstante Leistung ist Voraussetzung für langfristige Verträge."
+        "body": "Servicelevel, Übergabepunkte und Termine werden je Route und Vertrag vereinbart."
       }
     ],
     "whatYouGetTitle": "Ihre Vorteile",
@@ -3926,14 +3978,15 @@
         "body": "Unsere Software minimiert Leerkilometer. Rücktransporte liefern Saatgut und Düngemittel an Lieferanten — kein Leerfahrt-Rückweg."
       },
       {
-        "title": "Sofortige Auszahlung",
-        "body": "Auszahlung unmittelbar nach bestätigter Lieferung. Keine Wartezeiten."
+        "title": "Programmaufträge",
+        "body": "Transportmöglichkeiten im Rahmen von Bio Vera Produktions- und Abnehmerprogrammen — vorbehaltlich Vertrag."
       },
       {
-        "title": "Langfristige Verträge",
-        "body": "Stabiles Volumen, planbare Erlöse. Regelmäßige Einsätze statt Einzelaufträge."
+        "title": "Zahlungsbedingungen",
+        "body": "Transportpreise und Zahlungsbedingungen werden je Route, Auftrag und Logistikvereinbarung festgelegt."
       }
     ],
+    "paymentTermsNote": "Transportpreise und Zahlungsbedingungen werden je Route, Auftrag und Logistikvereinbarung festgelegt.",
     "fuelTitle": "",
     "fuelLead": "Stellen Sie den Regler auf eine angenommene Kraftstoffeinsparung. Grau zeigt das Baseliniveau vor der Optimierung (100 %); grün entspricht dem verbleibenden Kraftstoffanteil (100 % − Ersparnis). Die EUR-Beträge unten nutzen aktuell 10.000 € Kraftstoffkosten pro Monat.",
     "fuelSavingsLabel": "Angenommene Kraftstoffeinsparung",
@@ -4243,19 +4296,19 @@
     }
   },
   "aboutPage": {
-    "metaTitle": "Über Bio Vera | Vertikal integriertes Agrarunternehmen, Hamburg",
-    "metaDescription": "Bio Vera ist ein vertikal integriertes Agrarunternehmen in Hamburg: Erzeuger in ganz Europa, Programm-QA, Kühlkette und digitale Chargenpässe — kein Marktplatz.",
+    "metaTitle": "Über Bio Vera | Deutsches Agrifood-Unternehmen, Hamburg",
+    "metaDescription": "Bio Vera ist ein deutsches Agrifood-Unternehmen in Hamburg und baut ein europäisches Produktionsnetzwerk mit Produktionsprogrammen, Chargen-Rückverfolgbarkeit und Bio Vera Digital Product Passport — kein Marktplatz.",
     "heroTitle": "Über Bio Vera",
-    "heroSubtitle": "Bio Vera organisiert landwirtschaftliche Produktion über Vertragserzeuger, führt Qualitätsprüfungen im Feld durch, verpackt und liefert Markenware direkt an den Einzelhandel — mit einem Chargendossier pro Lieferung.",
+    "heroSubtitle": "Bio Vera ist ein in Hamburg ansässiges, vertikal integriertes Agrifood-Unternehmen, das sich auf den Anbau, die Qualitätskontrolle und den globalen Vertrieb von hochwertigem Beerenobst — Himbeeren, Brombeeren, Erdbeeren und Blaubeeren — spezialisiert hat. Durch die perfekte Symbiose aus eigener Produktion und einem starken Netzwerk ausgewählter Vertragserzeuger in ganz Europa garantieren wir ganzjährig höchste Standards.",
     "techPartnerLine": "Die Bio-Vera-Plattform wird von <1>Vera IT</1> in Hamburg entwickelt und betrieben — Technologiepartner innerhalb der Vera Group.",
     "missionTitle": "Mission",
-    "missionP1": "Dieselben Daten für Betrieb und Vertrieb. Erzeuger produzieren in unserem System, Einkäufer handeln mit Bio Vera, Verbraucher sehen prüfbare Herkunft.",
+    "missionP1": "Unser Ausgangspunkt ist einfach: Landwirtschaftliche Produktion sollte näher an der realen Marktnachfrage geplant werden. Bio Vera entwickelt Produktionsprogramme entlang definierter Produkt- und Qualitätsanforderungen und stellt die digitale Infrastruktur bereit, um Produktion zu dokumentieren, Chargen zu verfolgen und relevante Qualitäts- und Laborinformationen zu verbinden.",
     "missionP2": "",
     "visionTitle": "Vision",
-    "visionP1": "Europas führende vertikal integrierte Kette für frisches Obst und Gemüse zu sein — mit einer Qualitätskontrolle, die Einkäufer im Regal erkennen. Jedes Produkt mit vollständigem digitalen Produktpass, jeder Erzeuger fair bezahlt, jeder Verbraucher sicher über die Herkunft.",
+    "visionP1": "Von Hamburg aus gebaut. Für Europa konzipiert. Das Bio Vera System wird von Hamburg aus koordiniert und ist für Produzenten und Partner in verschiedenen europäischen Anbauregionen ausgelegt.",
     "visionP2": "",
     "protocol360Title": "Protokoll 360",
-    "protocol360Body": "Protocol 360 ist Bio Veras End-to-End-Qualitätssystem. Von der Bodenanalyse auf Parzellenebene über biometrisches Scannen bei der Verpackung bis zur Kühlkettenüberwachung im Transport — jeder Qualitätscheck wird im Chargen-Dossier dokumentiert und mit dem EU-Digitalpassport des Produkts verknüpft.",
+    "protocol360Body": "Protocol 360 ist Bio Veras End-to-End-Qualitätssystem. Von der Bodenanalyse auf Parzellenebene über biometrisches Scannen bei der Verpackung bis zur Kühlkettenüberwachung im Transport — jeder Qualitätscheck wird im Chargen-Dossier dokumentiert und mit dem Bio Vera Digital Product Passportport des Produkts verknüpft.",
     "valuesTitle": "",
     "valueCards": [
       {
@@ -4566,7 +4619,7 @@
     "toolbarPrintAria": "Druckdialog öffnen — PDF speichern",
     "toolbarHint": "Tipp für PDFs: Im Druckdialog „Als PDF speichern“ wählen — praktisch für Kolleginnen und Kollegen, die ein Anhang bevorzugen.",
     "introNote": "Investor Deck gemäß Pitch Deck v4 (2026).",
-    "heroTechPill": "Farmer-Pass · Escrow · 70%-MRL · Polygon",
+    "heroTechPill": "Farmer-Pass · Chargen-Trace · Produktionsprogramme",
     "narrativeEyebrow": "Kontext",
     "narrativeTitle": "Europas Frischwarenlieferkette braucht Transparenz",
     "narrativeParagraphs": [
@@ -4677,20 +4730,20 @@
         "body": "Digitale Kontrolle ohne eigene Farmen."
       },
       {
-        "title": "Escrow 48h",
-        "body": "24h Käufer-Prüfrist, 48h Farmer-Payout."
+        "title": "Kommerzielle Zahlungen",
+        "body": "Zahlungen gemäß vereinbarten Zahlungsbedingungen im Vertrag oder Auftrag."
       }
     ],
     "techTitle": "Kernfunktionen",
-    "techLead": "Farmer-Pass, Escrow, Anti-Fraud, 70%-MRL.",
+    "techLead": "Farmer-Pass, Chargen-Rückverfolgbarkeit, Anti-Fraud, Produktionsprogramme.",
     "techItems": [
       {
         "title": "Farmer-Pass (QR)",
-        "body": "Erzeuger, Substanzen, Ernte- und Lieferdatum. EU-konform."
+        "body": "Erzeuger, Substanzen, Ernte- und Lieferdatum im Bio Vera Digital Product Passport."
       },
       {
-        "title": "Escrow",
-        "body": "48h Auszahlung statt 60–90 Tagen."
+        "title": "Zahlungsbedingungen",
+        "body": "Transparente, vertraglich vereinbarte Zahlungsziele — kein Escrow."
       },
       {
         "title": "Anti-Fraud & Blockchain",
@@ -4729,12 +4782,12 @@
         "title": "Markt — Deutschland",
         "items": [
           {
-            "heading": "Korridor",
-            "body": "Südosteuropa → Deutschland: Serbien, Rumänien, Westbalkan — hohe Bodenqualität, niedrigere Kosten, saisonale Komplementarität."
+            "heading": "Produktionsnetzwerk",
+            "body": "Bio Vera entwickelt Produzentenprogramme in ausgewählten europäischen Anbauregionen — koordiniert von Hamburg. Einzelne Regionen sind Piloten innerhalb eines breiteren europäischen Modells."
           },
           {
             "heading": "Vergleich",
-            "body": "Traditionell: papierbasiert, 3–5 Zwischenhändler, 60–90 Tage Zahlung. Bio Vera: End-to-End digital, 0 Zwischenhändler, Escrow 48h, Polygon, Farmer-Pass, 70% MRL."
+            "body": "Traditionell: papierbasiert, fragmentierte Daten, lange Zahlungszyklen. Bio Vera: strukturierte Chargen-Rückverfolgbarkeit, Bio Vera Digital Product Passport, definierte Produktionsprogramme und Laborverifikation wo erforderlich."
           },
           {
             "heading": "Zielkunden",
@@ -4758,8 +4811,8 @@
             "body": "EU-Frischwarenmarkt Obst, Gemüse, Getreide."
           },
           {
-            "heading": "SAM €8 Mrd.",
-            "body": "Korridor Südosteuropa → Deutschland."
+            "heading": "SAM",
+            "body": "Strukturierte europäische Frischwaren- und Beerenprogramme mit dokumentierter Rückverfolgbarkeit und Abnehmeranbindung in Deutschland und der EU."
           },
           {
             "heading": "SOM €1–2M",
@@ -4784,7 +4837,7 @@
           },
           {
             "heading": "Differenzierung",
-            "body": "End-to-End Traceability, Polygon, QA-Agenten, Escrow 48h, Farmer-Pass, Bio Vera Fresh, Badge-Siegel — kein direkter Wettbewerber mit diesem Modell."
+            "body": "End-to-End Traceability, QA-Agenten, Farmer-Pass, Produktionsprogramme, Bio Vera Digital Product Passport — kein direkter Wettbewerber mit diesem integrierten Modell."
           },
           {
             "heading": "Blocking with traceability",
@@ -5089,11 +5142,11 @@
       },
       {
         "title": "4. Innovation & Alleinstellungsmerkmale",
-        "body": "4. Innovation & Alleinstellungsmerkmale\nBio Vera vereint sechs Innovationsschichten, die in Kombination ein einzigartiges System\nschaffen, das so am Markt nicht existiert.\n4.1 Technologische Innovation\n1. End-to-End Batch-Traceability: Lückenlose Echtzeit-Rückverfolgbarkeit vom Feld bis\nzum Kassenbon. Jede Kiste hat eine eindeutige Batch_ID, die den gesamten Weg des\nProdukts  dokumentiert.  Dies  geht  über  die  aktuellen  EU-Anforderungen  hinaus  und  ist\nbereits kompatibel mit dem EU Digital Product Passport (DPP), der ab 2027 schrittweise\neingeführt wird.\n2.  Blockchain-verankerte  Custody  Records: Optionale  Verankerung  von  Dossier-\nFingerprints auf der Polygon-Blockchain. Dies schafft einen unveränderlichen, öffentlich\nüberprüfbaren  Nachweis  der  Lieferkette  —  ein  Differenzierungsmerkmal,  das  kein\nvergleichbarer Anbieter in der europäischen Frischwarenbranche bietet.\n3. Multi-Stakeholder Anti-Fraud System: Einzigartige Kombination aus GPS-Zeitstempel,\nDevice-ID-Tracking  und  Kamera-only-Erfassung.  Manipulationen  werden  systemisch\nausgeschlossen. Diese dreischichtige Validierung ist eine technologische Innovation, die\nBetrug in der Lieferkette auf ein Minimum reduziert.\n4. KI-gestützte Qualitätsbewertung: Bildbasierte Analyse von Frischprodukten, Anomalie-\nErkennung in der Lieferkette und Ernte-Prognosemodelle. Machine Learning ermöglicht\nprädiktive Qualitätskontrolle statt reaktiver Stichproben.\n4.2 Geschäftsmodellinnovation\n5.  Vertikale  Integration  ohne  eigene  Farmen: Bio  Vera  besitzt  keine  Anbauflächen,\nkontrolliert aber die gesamte Wertschöpfungskette digital — vom Vertragsanbau über QA,\nVerpackung  und  Logistik  bis  zum  Einzelhandelsverkauf.  Dieses  Modell  existiert  in  der\neuropäischen Frischwarenbranche so nicht. Es kombiniert die Skalierbarkeit eines Asset-\nLight-Modells mit der Kontrolle einer vertikalen Integration.\n6.  Escrow-basiertes  Settlement: Käufer-Gelder  bleiben  gesichert  bei  Bio  Vera,  bis\nLieferung und Konformitätsprüfung abgeschlossen sind. Erzeuger erhalten ihr Geld in 48\nStunden  statt  60–90  Tagen.  Diese  Zahlungsinnovation  adressiert  eines  der  größten\nProbleme kleiner Agrarbetriebe: den Cash-Flow.\n\nAlleinstellungsmerkmal: Die Kombination aus technologischer Rückverfolgbarkeit\n(Batch_ID + Blockchain), operativer Kontrolle (vertikale Integration) und finanzieller\nSicherheit (Escrow) in einem System ist in ganz Europa einzigartig im Frischwarensegment.\nKein bestehender Anbieter — weder Marktplätze noch traditionelle Händler — bietet\ndiese drei Säulen in einem integrierten System."
+        "body": "4. Innovation & Alleinstellungsmerkmale\nBio Vera vereint sechs Innovationsschichten, die in Kombination ein einzigartiges System\nschaffen, das so am Markt nicht existiert.\n4.1 Technologische Innovation\n1. End-to-End Batch-Traceability: Lückenlose Echtzeit-Rückverfolgbarkeit vom Feld bis\nzum Kassenbon. Jede Kiste hat eine eindeutige Batch_ID, die den gesamten Weg des\nProdukts  dokumentiert.  Dies  geht  über  die  aktuellen  EU-Anforderungen  hinaus  und  ist\nbereits kompatibel mit dem Bio Vera Digital Product Passport (DPP), der ab 2027 schrittweise\neingeführt wird.\n2.  Blockchain-verankerte  Custody  Records: Optionale  Verankerung  von  Dossier-\nFingerprints auf der Polygon-Blockchain. Dies schafft einen unveränderlichen, öffentlich\nüberprüfbaren  Nachweis  der  Lieferkette  —  ein  Differenzierungsmerkmal,  das  kein\nvergleichbarer Anbieter in der europäischen Frischwarenbranche bietet.\n3. Multi-Stakeholder Anti-Fraud System: Einzigartige Kombination aus GPS-Zeitstempel,\nDevice-ID-Tracking  und  Kamera-only-Erfassung.  Manipulationen  werden  systemisch\nausgeschlossen. Diese dreischichtige Validierung ist eine technologische Innovation, die\nBetrug in der Lieferkette auf ein Minimum reduziert.\n4. KI-gestützte Qualitätsbewertung: Bildbasierte Analyse von Frischprodukten, Anomalie-\nErkennung in der Lieferkette und Ernte-Prognosemodelle. Machine Learning ermöglicht\nprädiktive Qualitätskontrolle statt reaktiver Stichproben.\n4.2 Geschäftsmodellinnovation\n5.  Vertikale  Integration  ohne  eigene  Farmen: Bio  Vera  besitzt  keine  Anbauflächen,\nkontrolliert aber die gesamte Wertschöpfungskette digital — vom Vertragsanbau über QA,\nVerpackung  und  Logistik  bis  zum  Einzelhandelsverkauf.  Dieses  Modell  existiert  in  der\neuropäischen Frischwarenbranche so nicht. Es kombiniert die Skalierbarkeit eines Asset-\nLight-Modells mit der Kontrolle einer vertikalen Integration.\n6.  Escrow-basiertes  Settlement: Käufer-Gelder  bleiben  gesichert  bei  Bio  Vera,  bis\nLieferung und Konformitätsprüfung abgeschlossen sind. Erzeuger erhalten ihr Geld in 48\nStunden  statt  60–90  Tagen.  Diese  Zahlungsinnovation  adressiert  eines  der  größten\nProbleme kleiner Agrarbetriebe: den Cash-Flow.\n\nAlleinstellungsmerkmal: Die Kombination aus technologischer Rückverfolgbarkeit\n(Batch_ID + Blockchain), operativer Kontrolle (vertikale Integration) und finanzieller\nSicherheit (Escrow) in einem System ist in ganz Europa einzigartig im Frischwarensegment.\nKein bestehender Anbieter — weder Marktplätze noch traditionelle Händler — bietet\ndiese drei Säulen in einem integrierten System."
       },
       {
         "title": "5. Markt & Wettbewerb",
-        "body": "5. Markt & Wettbewerb\n5.1 Marktübersicht\nKennzahl Wert Quelle\nEU-Frischwarenmarkt (Obst & Gemüse)ca. €90 Mrd./JahrEurostat 2024\nDeutschland: Importvolumen Frischwareca. €25+ Mrd./JahrDestatis / AMI 2024\nDeutsche Importquote Obst & Gemüse> 50% BMEL Ernährungsbericht\nVerbraucher: Herkunft-Transparenz wichtig73% Eurobarometer 2024\nEU Digital Product Passport Pflicht ab 2027 EU-Verordnung 2024/1781\n5.2 Geschäftskorridor: Südosteuropa → Deutschland\nBio Vera fokussiert auf den Korridor Südosteuropa → Deutschland. Dieser Korridor ist\nstrategisch bedeutsam:\nHohe Bodenqualität: Fruchtbare Böden im pannonischen Becken, ideale\nklimatische Bedingungen für Obst- und Gemüseanbau\nKostenstruktur: Niedrigere Produktionskosten bei vergleichbarer Qualität\nermöglichen wettbewerbsfähige Preise im deutschen Markt\nSaisonale Komplementarität: Frühere Erntezeitpunkte ergänzen den\nmitteleuropäischen Anbau\nEU-Integration: Wachsende EU-Integration der Westbalkan-Staaten schafft\nregulatorische Angleichung\nBestehende Logistikrouten: Etablierte Transportwege, die durch Digitalisierung\noptimiert werden können\n5.3 Unit Economics (Beispiel: Äpfel)\nPosition EUR/kg Anteil\nFarmer-Zahlung 0,60–0,70 ~50%\nVerpackung (Retail-Karton) ~0,15 ~12%\n•\n•\n•\n•\n•\n\nLogistik + Operativ 0,10–0,15 ~10%\nGesamtkosten ~0,90 ~72%\nVerkaufspreis (Retail) ~1,30 100%\nBio Vera Marge ~0,40 ~30%\nFarmer-Vorteil: Der Markt-Abnahmepreis für Äpfel in Südosteuropa liegt bei ca. 0,25–0,35\nEUR/kg. Bio Vera zahlt 0,60–0,70 EUR/kg — mehr als das Doppelte. Farmer produzieren\nfür Bio Vera, weil es sich finanziell lohnt.\n5.4 Logistik-Kalkulation\nPosition Wert\nLKW-Kapazität ~23.000 kg\nStrecke Erzeugerregion → Deutschland ~1.200–1.500 km\nKosten pro km 1,30–1,70 EUR\nKosten pro Fahrt (Ø 1.300 km) ~1.950 EUR\nKosten pro kg ~0,085 EUR\n5.5 Wettbewerbsvergleich\nMerkmal Traditionelle\nLieferkette\nAgrar-\nMarktplätze Bio Vera\nRückverfolgbarkeitPapierbasiert,\nlückenhaft\nTeilweise digital End-to-End, Echtzeit\nQualitätskontrolle Stichproben Keine (Vermittler)Eigene Agenten vor Ort\nZahlungssicherheit60–90 Tage\nZahlungsziel\nVariabel Escrow, 48h Payout\nBlockchain Keine Selten Polygon (optional)\nZwischenhändler 3–5 1 (Plattform) 0 (vertikale Integration)\nDigitaler\nProduktpass\nNicht vorhanden Nicht vorhandenStandard, jede Charge\n\nAnti-Fraud Manuell BewertungssystemGPS + Device-ID +\nKamera\n5.6 Zielkunden\nPrimär  (B2B): Deutsche  Einzelhandelsketten  (Rewe,  Edeka,  ALDI,  Lidl),  Großhändler\n(Metro), Gastro-Lieferanten (HoReCa-Bereich).\nSekundär: Bio-Supermärkte, Spezialhandel, Foodservice-Unternehmen."
+        "body": "5. Markt & Wettbewerb\n5.1 Marktübersicht\nKennzahl Wert Quelle\nEU-Frischwarenmarkt (Obst & Gemüse)ca. €90 Mrd./JahrEurostat 2024\nDeutschland: Importvolumen Frischwareca. €25+ Mrd./JahrDestatis / AMI 2024\nDeutsche Importquote Obst & Gemüse> 50% BMEL Ernährungsbericht\nVerbraucher: Herkunft-Transparenz wichtig73% Eurobarometer 2024\nBio Vera Digital Product Passport Pflicht ab 2027 EU-Verordnung 2024/1781\n5.2 Geschäftskorridor: Südosteuropa → Deutschland\nBio Vera fokussiert auf den Korridor Südosteuropa → Deutschland. Dieser Korridor ist\nstrategisch bedeutsam:\nHohe Bodenqualität: Fruchtbare Böden im pannonischen Becken, ideale\nklimatische Bedingungen für Obst- und Gemüseanbau\nKostenstruktur: Niedrigere Produktionskosten bei vergleichbarer Qualität\nermöglichen wettbewerbsfähige Preise im deutschen Markt\nSaisonale Komplementarität: Frühere Erntezeitpunkte ergänzen den\nmitteleuropäischen Anbau\nEU-Integration: Wachsende EU-Integration der Westbalkan-Staaten schafft\nregulatorische Angleichung\nBestehende Logistikrouten: Etablierte Transportwege, die durch Digitalisierung\noptimiert werden können\n5.3 Unit Economics (Beispiel: Äpfel)\nPosition EUR/kg Anteil\nFarmer-Zahlung 0,60–0,70 ~50%\nVerpackung (Retail-Karton) ~0,15 ~12%\n•\n•\n•\n•\n•\n\nLogistik + Operativ 0,10–0,15 ~10%\nGesamtkosten ~0,90 ~72%\nVerkaufspreis (Retail) ~1,30 100%\nBio Vera Marge ~0,40 ~30%\nFarmer-Vorteil: Der Markt-Abnahmepreis für Äpfel in Südosteuropa liegt bei ca. 0,25–0,35\nEUR/kg. Bio Vera zahlt 0,60–0,70 EUR/kg — mehr als das Doppelte. Farmer produzieren\nfür Bio Vera, weil es sich finanziell lohnt.\n5.4 Logistik-Kalkulation\nPosition Wert\nLKW-Kapazität ~23.000 kg\nStrecke Erzeugerregion → Deutschland ~1.200–1.500 km\nKosten pro km 1,30–1,70 EUR\nKosten pro Fahrt (Ø 1.300 km) ~1.950 EUR\nKosten pro kg ~0,085 EUR\n5.5 Wettbewerbsvergleich\nMerkmal Traditionelle\nLieferkette\nAgrar-\nMarktplätze Bio Vera\nRückverfolgbarkeitPapierbasiert,\nlückenhaft\nTeilweise digital End-to-End, Echtzeit\nQualitätskontrolle Stichproben Keine (Vermittler)Eigene Agenten vor Ort\nZahlungssicherheit60–90 Tage\nZahlungsziel\nVariabel Escrow, 48h Payout\nBlockchain Keine Selten Polygon (optional)\nZwischenhändler 3–5 1 (Plattform) 0 (vertikale Integration)\nDigitaler\nProduktpass\nNicht vorhanden Nicht vorhandenStandard, jede Charge\n\nAnti-Fraud Manuell BewertungssystemGPS + Device-ID +\nKamera\n5.6 Zielkunden\nPrimär  (B2B): Deutsche  Einzelhandelsketten  (Rewe,  Edeka,  ALDI,  Lidl),  Großhändler\n(Metro), Gastro-Lieferanten (HoReCa-Bereich).\nSekundär: Bio-Supermärkte, Spezialhandel, Foodservice-Unternehmen."
       },
       {
         "title": "6. Vermarktungsstrategie",
@@ -6171,5 +6224,65 @@
     "expectWhoBody": "Das für Ihren Bereich zuständige Bio-Vera-Team in Hamburg.",
     "contactPromptTitle": "Lieber persönlich sprechen?",
     "contactPromptCta": "Kostenfreies Erstgespräch buchen"
+  },
+  "passportCompleteness": {
+    "title": "What is missing for the passport",
+    "lead": "Fix gaps before publishing — optional items improve completeness but do not block work.",
+    "allRequiredOk": "Required passport data is recorded for this lot.",
+    "levelRequired": "Required",
+    "levelRecommended": "Recommended",
+    "fixLink": "Add data",
+    "productName": "Product name in catalog",
+    "plantingLink": "Link to planting or harvest plan",
+    "harvestDate": "Actual harvest date on lot",
+    "packDate": "Pack date from order packing",
+    "variety": "Variety in catalog",
+    "description": "Short product description",
+    "photo": "Product photo",
+    "storage": "Product storage conditions",
+    "qualityEntry": "Quality entry for lot",
+    "publicDocument": "Verified public document",
+    "badge": "Package badge (when applicable)"
+  },
+  "admin": {
+    "passportReports": {
+      "details": "Meldungsdetails",
+      "product": "Produkt",
+      "notes": "Interne Notizen",
+      "error": "Meldung konnte nicht geladen oder gespeichert werden.",
+      "new": "Neu",
+      "title": "Produktpass-Meldungen",
+      "contact": "Kontakt",
+      "inProgress": "In Bearbeitung",
+      "resolve": "Erledigt",
+      "openPhoto": "Foto öffnen",
+      "openPassport": "Produktpass öffnen",
+      "empty": "Keine Meldungen."
+    },
+    "passportDocuments": {
+      "title": "Produktpass-Dokumente",
+      "lead": "Im öffentlichen Produktpass erscheinen nur bestätigte, zur Veröffentlichung freigegebene Dokumente.",
+      "openFile": "Datei öffnen",
+      "confirmPublic": "Bestätigen und veröffentlichen",
+      "confirmInternal": "Für interne Nutzung bestätigen",
+      "empty": "Keine Dokumente."
+    }
+  },
+  "residueControlledPage": {
+    "metaTitle": "Rückstandskontrollierte Produktion | Bio Vera",
+    "metaDescription": "Bio Vera Produktionsprogramme zur Reduzierung von Pestiziden und zum Ziel ohne nachweisbare Rückstände unter definierter Laborverifikation.",
+    "title": "Bio Vera Rückstandskontrolliertes Produktionsprogramm",
+    "heroLead": "Bio Vera entwickelt Produktionsprogramme, die den Einsatz von Pflanzenschutzmitteln systematisch reduzieren und ausgewählten Produzenten helfen, Produkte ohne nachweisbare Pestizidrückstände unter definierten Labormethoden und Nachweisgrenzen anzustreben.",
+    "disclaimer": "Dieses Programm befindet sich in Entwicklung und stellt keine Bio-Zertifizierung dar und behauptet nicht, dass nie Pestizide eingesetzt wurden.",
+    "flowTitle": "So verbindet das Programm die Schritte",
+    "flowSteps": [
+      "Produktionsprotokoll",
+      "Zugelassene Input-Leitlinien",
+      "Behandlungsdokumentation",
+      "Ernteplanung",
+      "Laborverifikation",
+      "Bio Vera Digital Product Passport"
+    ],
+    "labNote": "Eine Laborverifikation ist erforderlich, bevor eine Charge als erfüllend das geltende Bio Vera Rückstandsziel dargestellt werden darf."
   }
 }

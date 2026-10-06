@@ -18,6 +18,7 @@ import { Check, ScanLine, X } from 'lucide-react-native';
 import { EnterpriseButton, EnterprisePanel, EnterpriseTextField, EnterpriseTextArea } from '../../../design-system';
 import { GrowerStackHeader } from '../../../components/grower/GrowerStackHeader';
 import { GrowerSelectField } from '../../../components/grower/GrowerSelectField';
+import { GrowerDateField } from '../../../components/grower/GrowerDateField';
 import { enterpriseColors } from '../../../lib/enterprise-ui';
 import { growerUi } from '../../../lib/grower-ui';
 import { seedsAPI, estatesAPI, parcelsAPI, harvestAnnouncementsAPI, fieldEntriesAPI } from '../../../lib/api';
@@ -405,7 +406,12 @@ export default function PlantingEntryScreen() {
                     placeholder={t('plantingEntry.optionalPlan')}
                   />
                 ) : null}
-                <EnterpriseTextField label={t('plantingEntry.date')} value={occurredAt} onChangeText={setOccurredAt} size="farmer" />
+                <Text style={styles.fieldLabel}>{t('plantingEntry.date')}</Text>
+                {Platform.OS === 'web' ? (
+                  <EnterpriseTextField label={t('plantingEntry.date')} value={occurredAt} onChangeText={setOccurredAt} size="farmer" />
+                ) : (
+                  <GrowerDateField value={occurredAt} maximumDate={new Date()} onChange={setOccurredAt} />
+                )}
                 <EnterpriseTextField label={t('plantingEntry.areaHa')} value={areaHa} onChangeText={setAreaHa} keyboardType="decimal-pad" size="farmer" />
                 <EnterpriseTextArea label={t('plantingEntry.notes')} value={notes} onChangeText={setNotes} />
                 <EnterpriseButton variant="ghost" label={t('plantingEntry.addPhoto')} onPress={async () => {
@@ -434,6 +440,7 @@ export default function PlantingEntryScreen() {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   section: { fontSize: 16, fontWeight: '600', color: enterpriseColors.gray900, marginBottom: 12 },
+  fieldLabel: { fontSize: 14, fontWeight: '500', color: enterpriseColors.gray900, marginBottom: 6 },
   bagRow: { flexDirection: 'row', gap: 10, marginBottom: 16, alignItems: 'flex-start' },
   bagRowRejected: { backgroundColor: '#fef2f2', borderRadius: 8, padding: 8, borderWidth: 1, borderColor: '#fecaca' },
   removeBtn: { paddingTop: 2 },

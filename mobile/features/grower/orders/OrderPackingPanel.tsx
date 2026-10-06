@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -33,9 +33,13 @@ export function OrderPackingPanel({ order, onSaved }: { order: Order; onSaved: (
   const [batchId, setBatchId] = useState(order.packedBatchId ?? '');
   const [lots, setLots] = useState<CompatibleBatch[]>([]);
   const [lotsLoading, setLotsLoading] = useState(false);
+  const [lotsError, setLotsError] = useState(false);
+  const [lotsAttempt, setLotsAttempt] = useState(0);
   const [kg, setKg] = useState(order.packedKg != null ? String(order.packedKg) : '');
   const [kgTouched, setKgTouched] = useState(order.packedKg != null);
+  const [declaredHours, setDeclaredHours] = useState('');
   const [saving, setSaving] = useState(false);
+  const saveInFlight = useRef(false);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
@@ -43,15 +47,19 @@ export function OrderPackingPanel({ order, onSaved }: { order: Order; onSaved: (
     let cancelled = false;
     void (async () => {
       setLotsLoading(true);
+      setLotsError(false);
+      setLots([]);
+      setBatchId('');
       try {
         const data = await ordersAPI.getCompatibleBatches(order.id);
         if (cancelled) return;
         const rows = Array.isArray(data) ? (data as CompatibleBatch[]) : [];
         setLots(rows);
-        const pre = order.packedBatchId ?? rows.find((b) => b.selected)?.id ?? rows[0]?.id ?? '';
+        const pre = rows.find((b) => b.id === order.packedBatchId)?.id
+          ?? rows.find((b) => b.selected)?.id ?? rows[0]?.id ?? '';
         setBatchId(pre);
       } catch {
-        if (!cancelled) setLots([]);
+        if (!cancelled) setLotsError(true);
       } finally {
         if (!cancelled) setLotsLoading(false);
       }
@@ -59,7 +67,7 @@ export function OrderPackingPanel({ order, onSaved }: { order: Order; onSaved: (
     return () => {
       cancelled = true;
     };
-  }, [open, order.id, order.packedBatchId]);
+  }, [open, order.id, order.packedBatchId, lotsAttempt]);
 
   const packed = order.packedAt != null && (order.packedPackCount ?? 0) > 0;
   const packsNum = Number(packs);
@@ -68,7 +76,8 @@ export function OrderPackingPanel({ order, onSaved }: { order: Order; onSaved: (
   const kgNum = shownKg.trim() === '' ? null : Number(shownKg.replace(',', '.'));
   const range = packedWeightRange(order, packsNum);
   const problem = validatePacking(order, packsNum, kgNum);
-  const lotMissing = !batchId.trim();
+  const lotMissing = !lots.some((lot) => lot.id === batchId);
+  const saveDisabled = saving || lotsLoading || lotsError || !!problem || lotMissing;
   const problemText =
     problem === 'notPaid'
       ? t('producer.ordersPrepare.errNotPaid')
@@ -83,7 +92,8 @@ export function OrderPackingPanel({ order, onSaved }: { order: Order; onSaved: (
   const pickupBatchId = order.packedBatchId ?? order.packed_batch?.id ?? '';
 
   const save = async () => {
-    if (problem || lotMissing) return;
+    if (saveInFlight.current || saveDisabled) return;
+    saveInFlight.current = true;
     setSaving(true);
     setErr(null);
     try {
@@ -91,12 +101,17 @@ export function OrderPackingPanel({ order, onSaved }: { order: Order; onSaved: (
         packedPackCount: packsNum,
         batchId: batchId.trim(),
         ...(kgNum != null ? { packedKg: kgNum } : {}),
+        ...(declaredHours.trim()
+          ? { declaredShelfLifeHours: Math.floor(Number(declaredHours.replace(',', '.'))) }
+          : {}),
+        ...(order.packLabel ? { packagingType: order.packLabel } : {}),
       });
       setOpen(false);
       onSaved();
     } catch (e) {
       setErr(apiErrorMessage(e, t('producer.ordersPrepare.saveFailed')));
     } finally {
+      saveInFlight.current = false;
       setSaving(false);
     }
   };
@@ -130,6 +145,17 @@ export function OrderPackingPanel({ order, onSaved }: { order: Order; onSaved: (
           <Text style={styles.label}>{t('producer.ordersPrepare.selectLot')}</Text>
           {lotsLoading ? (
             <ActivityIndicator color={enterpriseColors.primary} style={{ marginVertical: 8 }} />
+          ) : lotsError ? (
+            <View>
+              <Text style={styles.error} accessibilityRole="alert">{t('transportForm.loadFailed')}</Text>
+              <TouchableOpacity
+                onPress={() => setLotsAttempt((attempt) => attempt + 1)}
+                style={styles.secondary}
+                accessibilityRole="button"
+              >
+                <Text style={styles.secondaryText}>{t('common.retry')}</Text>
+              </TouchableOpacity>
+            </View>
           ) : lots.length === 0 ? (
             <Text style={styles.hint}>{t('producer.ordersPrepare.noLots')}</Text>
           ) : (
@@ -180,11 +206,19 @@ export function OrderPackingPanel({ order, onSaved }: { order: Order; onSaved: (
               {t('producer.ordersPrepare.weightHint', { min: nf.format(range.min), max: nf.format(range.max) })}
             </Text>
           ) : null}
+          <Text style={styles.label}>{t('producer.ordersPrepare.declaredShelfLife', 'Declared shelf life (hours, optional)')}</Text>
+          <TextInput
+            value={declaredHours}
+            onChangeText={setDeclaredHours}
+            keyboardType="number-pad"
+            style={styles.input}
+            placeholder={t('producer.ordersPrepare.declaredShelfLifeHint', 'Only if declared on pack label')}
+          />
           {problemText || err ? <Text style={styles.error}>{err || problemText}</Text> : null}
           <TouchableOpacity
             onPress={() => void save()}
-            disabled={saving || !!problem || lotMissing || lots.length === 0}
-            style={[enterpriseUi.authSubmit, styles.cta, (saving || problem || lotMissing) && styles.disabled]}
+            disabled={saveDisabled}
+            style={[enterpriseUi.authSubmit, styles.cta, saveDisabled && styles.disabled]}
             accessibilityRole="button"
           >
             {saving ? (
@@ -213,7 +247,16 @@ export function OrderPackingPanel({ order, onSaved }: { order: Order; onSaved: (
           ) : null}
           {canRecordPacking(order) && order.nextAction !== 'AWAITING_PICKUP' ? (
             <TouchableOpacity
-              onPress={() => setOpen(true)}
+              onPress={() => {
+                setLots([]);
+                setLotsLoading(true);
+                setLotsError(false);
+                setErr(null);
+                setPacks(String(order.packedPackCount ?? order.packCount ?? 1));
+                setKg(order.packedKg != null ? String(order.packedKg) : '');
+                setKgTouched(order.packedKg != null);
+                setOpen(true);
+              }}
               style={order.nextAction === 'PREPARE_AND_PACK' || order.nextAction === 'SELECT_LOT' ? [enterpriseUi.authSubmit, styles.cta] : styles.secondary}
               accessibilityRole="button"
             >

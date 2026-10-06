@@ -129,7 +129,7 @@ Add **both** Play App Signing and upload-key fingerprints if Google rotates keys
 
 ### Step 3 — Link Railway CLI and run migrations (production DB)
 
-Run from the **repo root**. The BioVera service has **Root Directory = `backend`** in Railway; `railway run` injects production `DATABASE_URL` from the linked service.
+Run from the **repo root**. The BioVera service must have **Root Directory = `/` (repository root)** in Railway; `railway run` injects production `DATABASE_URL` from the linked service.
 
 ```bash
 # Repo root — link to backend service (once per shell session)
@@ -147,7 +147,7 @@ cd ..
 
 ### Step 4 — Deploy backend (Railway)
 
-Run from the **repo root** — not `backend/`. BioVera’s Root Directory setting makes `railway up` from `backend/` deploy the wrong context.
+Run from the **repo root** — not `backend/`. The root `railway.json` selects `backend/Dockerfile`; its build context must include both `backend/` and `shared/`. Keep Railway Root Directory set to `/` (or empty), not `backend`.
 
 ```bash
 # Repo root — confirm linked service before deploy

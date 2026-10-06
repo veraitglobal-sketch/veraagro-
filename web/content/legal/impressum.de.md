@@ -22,7 +22,7 @@ Jovica Mihajlovic, Anschrift wie oben
 
 ## Tätigkeit
 
-Bio Vera ist ein vertikal integriertes Agrifood-Unternehmen mit Sitz in Hamburg. Wir arbeiten mit Vertragserzeugern in ganz Europa, übernehmen Qualitätskontrolle und Verpackung, steuern die Kühlkette und vermarkten frisches Obst und Gemüse an Kunden in Europa.
+Bio Vera ist ein in Hamburg ansässiges, vertikal integriertes Agrifood-Unternehmen, das sich auf den Anbau, die Qualitätskontrolle und den globalen Vertrieb von hochwertigem Beerenobst spezialisiert hat — frisch (Himbeere, Brombeere, Erdbeere, Blaubeere), gefroren und mit Schokolade überzogen (Himbeere, Brombeere, Erdbeere). Durch die Symbiose aus eigener Produktion und einem Netzwerk ausgewählter Vertragserzeuger in ganz Europa garantieren wir ganzjährig höchste Standards.
 
 ## Verbraucherstreitbeilegung
 

@@ -123,7 +123,7 @@
     "nameEs": "Español"
   },
   "footer": {
-    "tagline": "Vertikalno vođen agrifood lanac: ugovorni proizvođači širom Evrope, kontrola kvaliteta, hladni lanac i prodaja pod brendom Bio Vera — uz Bio‑Ready dokumentaciju za svaku seriju.",
+    "tagline": "Bio Vera — nemačka agrifood kompanija sa sedištem u Hamburgu, gradi transparentnu evropsku proizvodnu mrežu od planiranja proizvodnje do pristupa tržištu.",
     "columnProduct": "Proizvod",
     "columnCompany": "Kompanija",
     "columnSupport": "Podrška",
@@ -185,22 +185,22 @@
       },
       "bg": {
         "title": "Български",
-        "body": "Kompletan bugarski interfejs za proizvođače i distributere u Bugarskoj — isti model sledljivosti, Bio-Ready dosijei i Vera tokovi kao u ostatku EU uvođenja programa."
+        "body": "Kompletan bugarski interfejs za proizvođače i distributere u Bugarskoj — isti model sledljivosti, programme-ready dosijei i Vera tokovi kao u ostatku EU uvođenja programa."
       },
       "fr": {
         "title": "Français",
-        "body": "Kompletan francuski interfejs za francusko tržište, Belgiju (FR), Luksemburg i kupce — ista sledljivost, Bio-Ready dosije i Vera raspored kao i na drugim jezicima programa."
+        "body": "Kompletan francuski interfejs za francusko tržište, Belgiju (FR), Luksemburg i kupce — ista sledljivost, programme-ready dosije i Vera raspored kao i na drugim jezicima programa."
       },
       "es": {
         "title": "Español",
-        "body": "Kompletan interfejs na španskom za Španiju, kupčke koridore u Latinskoj Americi i timove koji rade na španskom — ista sledljivost, Bio-Ready struktura i Vera iskustvo kao na ostalim jezicima."
+        "body": "Kompletan interfejs na španskom za Španiju, kupčke koridore u Latinskoj Americi i timove koji rade na španskom — ista sledljivost, programme-ready struktura i Vera iskustvo kao na ostalim jezicima."
       }
     }
   },
   "metadata": {
     "siteName": "Bio Vera",
-    "siteDescription": "Vertikalno integrisan agrifood iz Hamburga. EU Digital Product Passport na svakoj seriji — sledljivost od parcele do police za proizvođače, logistiku i dobavljače.",
-    "ldJsonDescription": "Operativni sistem za proizvodnju, kvalitet, logistiku i distribuciju svežih proizvoda — sertifikovan lanac od parcele do krajnje tačke, verifikovani učesnici, dokumentovan svaki korak.",
+    "siteDescription": "Bio Vera je agrifood kompanija sa sedištem u Hamburgu, specijalizovana za premium bobice, proizvodne programe i digitalnu sledljivost na nivou serije.",
+    "ldJsonDescription": "Nemačka agrifood kompanija u Hamburgu koordinira evropsku mrežu proizvođača sa Bio Vera Digital Product Passport na nivou serije.",
     "keywords": [
       "Bio Vera",
       "Integrisani lanac snabdevanja",
@@ -216,7 +216,7 @@
       "Transparentnost hrane"
     ],
     "ldJsonContactType": "Korisnička podrška",
-    "homeTitle": "Bio Vera | Sveže Voće i Povrće sa Punom Sledljivošću"
+    "homeTitle": "Bio Vera | Nemačka agrifood kompanija i evropska mreža proizvođača"
   },
   "chat": {
     "needHelp": "Treba pomoć?",
@@ -294,7 +294,10 @@
     "login": "Prijava",
     "logout": "Odjava",
     "openMenu": "Otvori meni",
-    "closeMenu": "Zatvori meni"
+    "closeMenu": "Zatvori meni",
+    "productPassport": "Digitalni pasoš proizvoda",
+    "about": "O nama",
+    "residueProgramme": "Program kontrole ostataka"
   },
   "contactPage": {
     "heroTitle": "Javite nam se",
@@ -402,7 +405,7 @@
       {
         "category": "growers",
         "q": "Kako se obrađuju isplate?",
-        "a": "Isplate proizvođaču otvaraju se tek kada ceo Bio Vera proces ispuni uslove — dokumentovana isporuka i provere koje pokažu da je roba u redu. Sredstva kupca ostaju osigurana kod Bio Vere dok to ne potvrdimo; potom sledi obračun po ugovoru (obično 3–5 radnih dana od potvrđenog prijema). Tako smanjujemo rizik za kompaniju — robu ne obračunavamo kao konačno plaćenu kod partnera dok dokumentacija i kontrola ne pokažu da je sve u najboljem redu."
+        "a": "Uslovi plaćanja se unapred dogovaraju u okviru relevantnog proizvodnog ili isporučnog ugovora. Fakture i rokovi plaćanja prate uslove iz ugovora sa Bio Verom — ne fiksni broj sati niti escrow aranžman."
       },
       {
         "category": "buyers",
@@ -911,6 +914,7 @@
       "steps": "Uputstva",
       "myFields": "Moje parcele",
       "myPlantings": "Moji zasadi",
+      "productCatalog": "Katalog proizvoda",
       "materials": "Materijali",
       "suppliersAndOrders": "Dobavljači i porudžbine",
       "myBatches": "Moji lotovi",
@@ -1787,6 +1791,8 @@
     "fieldBlockchain": "Polje → blockchain",
     "parcelsPending": "Parcele na čekanju",
     "harvestPlans": "Planovi berbe",
+    "passportReports": "Prijave na pasošu",
+    "passportDocuments": "Dokumenti pasoša",
     "growerOps": "Operativni zadaci (proizvođač)",
     "goGrowerControl": "Kontrola proizvođača",
     "goParcelsPending": "Parcele na čekanju",
@@ -3688,7 +3694,55 @@
     "packingNoLots": "Nema spremnih lotova. Prvo završite unos kvaliteta:",
     "packingNoLotsLink": "Kvalitet i lotovi",
     "selectLotMessage": "Pakovanje je evidentirano — povežite lot pre nego što zatražite preuzimanje.",
-    "selectLotLink": "Kvalitet i lotovi"
+    "selectLotLink": "Kvalitet i lotovi",
+    "packingDeclaredShelfLife": "Deklarisani rok (sati, opciono)",
+    "packingDeclaredShelfLifeHint": "Samo ako je štampano na nalepnici",
+    "packingPackagingType": "Vrsta pakovanja",
+    "packingPackagingTypeHint": "npr. gajbica 5 kg",
+    "passportCompletenessLoadFailed": "Nije moguće učitati listu za pasoš.",
+    "catalogTitle": "Katalog proizvoda",
+    "catalogDescription": "Podaci o proizvodu jednom — povezani sa zasadom i korišćeni u berbi, lotu i pasošu.",
+    "catalogEdit": "Izmeni proizvod",
+    "catalogNew": "Novi proizvod",
+    "catalogName": "Naziv proizvoda",
+    "catalogVariety": "Sorta",
+    "catalogStorage": "Uslovi čuvanja",
+    "catalogNoPlanting": "Bez veze sa zasadom",
+    "catalogImageUrl": "URL fotografije ili base64",
+    "catalogLoadFailed": "Katalog nije učitan.",
+    "catalogSaveFailed": "Proizvod nije sačuvan.",
+    "catalogDocuments": "Dokumenti proizvoda",
+    "catalogDocumentsLead": "Sertifikati i laboratorijski nalazi vezani za proizvod. Javni pasoš prikazuje samo pregledane dokumente.",
+    "catalogDocTitle": "Naziv dokumenta",
+    "catalogDocTypeCert": "Sertifikat",
+    "catalogDocTypeLab": "Laboratorijski nalaz",
+    "catalogDocTypeOther": "Ostalo",
+    "catalogDocIssuer": "Izdavaoc (opciono)",
+    "catalogDocIssued": "Datum izdavanja",
+    "catalogDocExpires": "Važi do",
+    "catalogDocUpload": "Otpremi dokument",
+    "catalogDocUploaded": "Dokument otpremljen — potreban je admin pregled pre javnog prikaza.",
+    "catalogDocUploadFailed": "Otpremanje dokumenta nije uspelo.",
+    "notRecorded": "Nije evidentirano"
+  },
+  "passportCompleteness": {
+    "title": "Šta nedostaje za pasoš",
+    "lead": "Dopunite pre objave — preporučeno ne blokira rad.",
+    "allRequiredOk": "Obavezni podaci za pasoš su evidentirani za ovaj lot.",
+    "levelRequired": "Obavezno",
+    "levelRecommended": "Preporučeno",
+    "fixLink": "Unesi podatak",
+    "productName": "Naziv proizvoda u katalogu",
+    "plantingLink": "Veza sa zasadom ili planom berbe",
+    "harvestDate": "Stvarni datum berbe na lotu",
+    "packDate": "Datum pakovanja iz porudžbine",
+    "variety": "Sorta u katalogu",
+    "description": "Kratak opis proizvoda",
+    "photo": "Fotografija proizvoda",
+    "storage": "Uslovi čuvanja proizvoda",
+    "qualityEntry": "Unos kvaliteta za lot",
+    "publicDocument": "Javni pregledan dokument",
+    "badge": "Nalepnica pakovanja (kada postoji)"
   },
   "supplier": {
     "nav": {
@@ -3840,9 +3894,9 @@
   },
   "home": {
     "hero": {
-      "title1": "Vertikalno Integrisana",
-      "title2": "Agrifood Kompanija",
-      "subtitle": "Bio Vera je vertikalno integrisana agrifood kompanija sa sedištem u Hamburgu. U okviru sopstvenog programa ugovaramo proizvođače, vodimo kontrolu kvaliteta i pakovanje, upravljamo hladnim lancem i plasiramo sveže voće i povrće krajnjim kupcima. Svaka serija ima dokumentovan digitalni pasoš — od parcele do police.",
+      "title1": "Nemačka agrifood kompanija.",
+      "title2": "Evropska proizvodna mreža.",
+      "subtitle": "Bio Vera je agrifood kompanija sa sedištem u Hamburgu, vertikalno integrisana, specijalizovana za gajenje, kontrolu kvaliteta i globalnu distribuciju premium bobica — malina, kupina, jagoda i borovnica. Kroz sinergiju sopstvene proizvodnje i jakog mreže odabranih ugovornih proizvođača širom Evrope obezbeđujemo najviše standarde tokom cele godine.",
       "browseProducts": "Pregledaj proizvode",
       "becomeProducer": "Postanite Vera proizvođač",
       "preOrder": "Pretporudžbina za {{year}}. je otvorena",
@@ -3851,125 +3905,127 @@
       "preOrderTip2": "Pretporudžbina služi samo za planiranje količina za {{year}}. godinu; nije obavezujuća porudžbina."
     },
     "statLabels": [
-      "Sledljivost",
-      "Sertifikovano",
-      "Monitoring",
-      "QA nivoi",
-      "Opcioni trag"
+      "Sedište",
+      "Mreža proizvođača",
+      "Sledljivost serije",
+      "Proizvodni programi",
+      "Digitalni pasoš proizvoda"
     ],
-    "partnersLine": "Poverenje vodećih poljoprivrednih organizacija svakodnevno",
+    "partnersLine": "",
     "vision": {
-      "title": "Naša vizija",
-      "intro": "Gradimo poverenje od njive do police: jasna pravila za proizvođače u našem programu, kontrolisani kvalitativni pregledi na svakom koraku i kupci koji nabavljaju direktno od Bio Vere.",
+      "title": "Kako radimo",
+      "intro": "Tri povezana stuba od planiranja proizvodnje do pristupa tržištu.",
       "cards": [
         {
-          "title": "Transparentnost",
-          "description": "Svaki korak od njive do police stoji u jednom dosijeu. Prodaja, kontrola kvaliteta i revizori koriste isti zapis."
+          "title": "Proizvodnja po potražnji",
+          "description": "Proizvodni programi se razvijaju oko definisanih zahteva za proizvod, kvalitet, rokove i kupce."
         },
         {
-          "title": "Bezbednost",
-          "description": "Kontrola pristupa i zaštita od prevara osiguravaju dosije koji stoji iza svakog tovara koji prodajemo i isporučujemo."
+          "title": "Verifikacija svake serije",
+          "description": "Proizvodni zapisi, informacije o kvalitetu, relevantni sertifikati i laboratorijski rezultati mogu biti povezani sa Bio Vera Digital Product Passport."
         },
         {
-          "title": "EU dokumentacija",
-          "description": "Automatski EU sertifikati i digitalni pasoši proizvoda podržavaju usklađenost za koju naš komercijalni tim garantuje."
+          "title": "Povezivanje proizvodnje sa tržištem",
+          "description": "Bio Vera koordinira proizvođače i specijalizovane partnere širom Evrope, dok komercijalno i operativno vođenje ide iz Hamburga."
         }
       ]
     },
     "features": {
-      "title": "Ključne funkcije",
-      "intro": "",
+      "title": "Ključne mogućnosti",
+      "intro": "Jedan operativni sistem koji povezuje proizvodnju, verifikaciju i isporuku.",
       "list": [
         {
-          "title": "Smart-Lock sistem",
-          "description": "Proizvodnja, protokol, pakovanje, logistika, isporuka i obračun — u jednom koordinisanom lancu."
+          "title": "Proizvodni programi",
+          "description": "Definisani zahtevi za usev, kvalitet i dokumentaciju povezani sa tržišnom potražnjom."
         },
         {
-          "title": "Praćenje serija",
-          "description": "Svaka gajba nosi Batch_ID. Ista sledljivost ide od parcele do isporuke unutar našeg operativnog sistema."
+          "title": "Sledljivost serija",
+          "description": "Svaka proizvodna serija dobija jedinstveni Batch_ID koji povezuje proizvodnju, kvalitet i logistiku."
         },
         {
-          "title": "Osigurana plaćanja",
-          "description": "Sredstva kupca ostaju kod Bio Vere dok isporuka i provera usklađenosti ne prođu. Isplate proizvođačima i logistici prate dogovorene uslove."
+          "title": "Bio Vera Digital Product Passport",
+          "description": "Digitalni zapis na nivou serije sa poreklom, proizvodnim podacima, kvalitetom, sertifikatima, laboratorijom i logističkim koracima."
         },
         {
-          "title": "Zaštita od prevara",
-          "description": "GPS vremenska oznaka, praćenje ID uređaja, snimanje samo kamerom. Zapisi se ne mogu falsifikovati naknadno."
+          "title": "Integracije sa partnerima",
+          "description": "Sistem se razvija da poveže proizvođače sa odobrenim dobavljačima, laboratorijama, sertifikacionim i logističkim partnerima."
         },
         {
-          "title": "EU digitalni pasoš",
-          "description": "Automatski sertifikati i pasoši vezani za prodajni kanal koji vodimo za krajnje kupce."
+          "title": "Proizvodnja sa kontrolom ostataka",
+          "description": "Proizvodni protokoli i laboratorijska verifikacija podržavaju dugoročni cilj proizvoda bez detektovanih ostataka pesticida."
         },
         {
-          "title": "Opciono Polygon usidrenje",
-          "description": "Kada se aktivira za nivo programa, javno sidro povezuje dosije sa nepromenljivim zapisom na Polygon blockchainu."
+          "title": "Integrity Guard",
+          "description": "GPS validacija, provere odobrenih inputa i strukturirani terenski zapisi štite integritet serije u mreži."
         }
       ]
     },
     "blockchain": {
-      "title": "Zašto zapisi o lancu custodia stoje",
-      "body": "Mi prodajemo robu, dakle reputacioni rizik je naš. Operativni timovi beleže svaku tranziciju tako da strane niže u lancu ne mogu prepisati jučerašnju priču.",
+      "title": "Strukturirani zapisi o custodiji",
+      "body": "Operativni timovi dokumentuju predaje i prelaze custodije kako bi zapisi serije ostali dosledni od proizvodnje do isporuke.",
       "bullets": []
     },
     "roadmap": {
       "title": "Mapa puta",
-      "subtitle": "Gde smo sada i kuda idemo.",
-      "statusCompleted": "Završeno",
-      "statusInProgress": "U toku",
+      "subtitle": "Status mogućnosti u Bio Vera sistemu",
+      "statusCompleted": "Dostupno",
+      "statusInProgress": "Pilot",
       "statusPlanned": "Planirano",
+      "statusInDevelopment": "U razvoju",
       "phases": [
         {
           "phase": "Q1 2026",
-          "title": "Start operacije",
+          "title": "Osnovna platforma",
           "status": "completed",
           "items": [
             "Backend API",
-            "Mobilna aplikacija",
-            "Veb",
-            "Osnovne funkcije"
+            "Veb aplikacija",
+            "Sledljivost serija",
+            "Osnovni proizvodni tokovi"
           ]
         },
         {
           "phase": "Q2 2026",
-          "title": "Proširenje funkcija",
-          "status": "completed",
+          "title": "Terenski i partnerski sloj",
+          "status": "in-development",
           "items": [
-            "AI analitika — završeno",
-            "Potvrda traga (Polygon) — završeno",
-            "Napredna kontrolna tabla",
-            "Integracije",
-            "EU sertifikati"
+            "Mobilna aplikacija — pilot",
+            "Bio Vera Digital Product Passport",
+            "Proizvodni zapisi proizvođača",
+            "Integracije partnera — u razvoju"
           ]
         },
         {
           "phase": "Q3–Q4 2026",
-          "title": "Skaliranje",
+          "title": "Proširenje mreže",
           "status": "in-progress",
           "items": [
-            "Podrška za više regiona",
-            "API za partnere (integracije)",
-            "Partnerske integracije",
-            "Enterprise funkcije"
+            "Proizvodni programi u više regiona",
+            "Integracije laboratorija — planirano",
+            "Mreža logističkih partnera",
+            "Piloti programa kontrole ostataka"
           ]
         },
         {
           "phase": "2027",
-          "title": "Globalno širenje",
+          "title": "Inteligencija i skala",
           "status": "planned",
           "items": [
-            "Globalna tržišta",
-            "IoT senzori",
-            "AI predikcije"
+            "Sloj podataka i inteligencije",
+            "Modeli rizika ostataka — planirano",
+            "Prošireni programi za kupce",
+            "IoT monitoring — planirano"
           ]
         }
       ]
     },
     "products": {
       "title": "Pregledajte proizvode",
-      "subtitle": "Sveže voće, povrće i žitarice koje Bio Vera prodaje sa kompletnim dosijeom serije iza svake stavke.",
-      "fruits": "Voće",
-      "vegetables": "Povrće",
-      "grains": "Žitarice"
+      "subtitle": "Sveže bobice (malina, kupina, jagoda, borovnica), zamrznuti program bobica i bobice sa čokoladnim prelivom (malina, kupina, jagoda) — svaka stavka sa kompletnim dosijeom serije.",
+      "raspberries": "Malina",
+      "blackberries": "Kupina",
+      "strawberries": "Jagoda",
+      "blueberries": "Borovnica"
     },
     "cta": {
       "title": "Prodajte nam usev ili kupujte od nas",
@@ -3983,15 +4039,15 @@
       "items": [
         {
           "question": "Šta je Bio Vera?",
-          "answer": "Bio Vera je vertikalno integrisana agrifood kompanija sa sedištem u Hamburgu. Ugovaramo proizvođače, vodimo kontrolu kvaliteta i pakovanje, organizujemo hladni lanac i prodajemo sveže proizvode u okviru sopstvenog programa — svaka serija ima dokumentovan digitalni pasoš od parcele do police. Nismo marketplace koji samo povezuje nepoznate strane."
+          "answer": "Bio Vera je agrifood kompanija sa sedištem u Hamburgu, specijalizovana za premium bobice — malina, kupina, jagoda i borovnica. Kroz sopstvenu proizvodnju i mrežu odabranih ugovornih proizvođača širom Evrope održavamo visoke standarde tokom cele godine, sa sledljivošću na nivou serije i definisanim proizvodnim programima. Nismo marketplace koji samo povezuje nepoznate strane."
         },
         {
-          "question": "Šta je EU digitalni pasoš proizvoda?",
-          "answer": "EU digitalni pasoš proizvoda je digitalni zapis koji prati proizvod od proizvodnje do potrošača. Bio Vera ih automatski generiše za svaku seriju — dokumentuje poreklo, podatke o berbi, kontrole kvaliteta, uslove transporta i EU sertifikate. QR kod na svakoj gajbi vodi na pasoš te serije."
+          "question": "Šta je Bio Vera Digital Product Passport?",
+          "answer": "Digitalni zapis na nivou serije koji povezuje poreklo, proizvodne podatke, kontrole kvaliteta, relevantne sertifikate, laboratorijske rezultate i logističke događaje. QR kod na gajbi ili pakovanju može voditi na pasoš gde je dostupan."
         },
         {
           "question": "Kako Bio Vera obezbeđuje sledljivost hrane?",
-          "answer": "Bio Vera koristi Protocol 360 — sistem kvaliteta od njive do police sa analizom zemljišta, biometrijskim skeniranjem pri pakovanju, monitoringom hladnog lanca i GPS-verifikovanom zaštitom od prevara. Svaka kontrolna tačka upisuje se u dosije serije. Po izboru, dosijei se sidre na Polygon blockchain radi nepromenljive verifikacije."
+          "answer": "Bio Vera koristi Protocol 360 — okvir verifikacije koji obuhvata proizvodne zapise, provere serija i pakovanja, laboratorijsku verifikaciju gde je potrebna te logističke i custodijske podatke. Svaka serija može dobiti Bio Vera Digital Product Passport koji povezuje poreklo, kvalitet i logističke korake."
         },
         {
           "question": "Ko stoji iza Bio Vere?",
@@ -4003,16 +4059,29 @@
         },
         {
           "question": "Kako Bio Vera koristi veštačku inteligenciju?",
-          "answer": "Bio Vera AI Intelligence Terminal donosi odluke o logistici u realnom vremenu, optimizaciju ruta, prognozu potražnje i planiranje berbe. AI sistem je razvio Vera IT i integrisan je sa Bio Vera operativnim sistemom za prediktivno upravljanje lancem snabdevanja."
+          "answer": "Bio Vera koristi strukturirane proizvodne, tretmanske, kvalitativne i logističke podatke za otkrivanje anomalija i podršku operativnim odlukama. Mogućnosti podataka i inteligencije su u razvoju; planirani su modeli za prognozu berbe, procenu rizika ostataka i planiranje snabdevanja."
         }
       ]
     },
-    "help": "Pitanja? Tu smo da pomognemo."
+    "help": "Pitanja? Tu smo da pomognemo.",
+    "statNumbers": [
+      "Hamburg",
+      "Evropa",
+      "Serija",
+      "Program",
+      "Pasoš"
+    ],
+    "residue": {
+      "title": "Ka proizvodima bez detektovanih ostataka pesticida",
+      "body": "Razvijamo proizvodne protokole dizajnirane da smanje upotrebu pesticida i omoguće odabranim serijama da postignu nedetektovane ostatke pesticida pod definisanim laboratorijskim uslovima i granicama detekcije.",
+      "flow": "Proizvodni protokol → odobreni inputi → zapisi tretmana → laboratorijska verifikacija → Bio Vera Digital Product Passport",
+      "cta": "Saznajte više o programu"
+    }
   },
   "forBuyersPage": {
-    "metaTitle": "Veleprodaja Svežeg Voća i Povrća | Bio Vera — Direktno od Proizvođača",
-    "metaDescription": "Naručite sveže voće i povrće sa kompletnom sledljivošću. Digitalni pasoš, kalendar berbe, osigurana plaćanja. 13 vrsta voća, 18 vrsta povrća, EU dokumentacija.",
-    "title": "Veleprodaja Svežeg Voća i Povrća sa Punom Sledljivošću",
+    "metaTitle": "Bobice veleprodaja | Bio Vera — Sveže, zamrznuto, sa čokoladom",
+    "metaDescription": "Sveže bobice, zamrznuti program i bobice sa čokoladnim prelivom. Bio Vera Digital Product Passport i transparentni komercijalni uslovi.",
+    "title": "Bobice za veleprodaju — sveže, zamrznuto, sa čokoladnim prelivom",
     "heroLead": "Kupujte direktno od Bio Vere: sertifikovano poreklo, sledljiva istorija svake serije od njive do vašeg skladišta. Katalog, cene i naručivanje dostupni kroz vaš kupovni panel nakon registracije.",
     "notShopBody": "Nismo klasična veleprodaja. Vi dostavljate podatke o kompaniji, mi razmatramo svaki upit ozbiljno. Registrovani kupci pristupaju panelu sa zalihama u realnom vremenu, kalendarima berbe i digitalnim pasosima serija.",
     "linkHowWeOperate": "Kako radimo",
@@ -4028,7 +4097,7 @@
       },
       {
         "title": "Pregled i narudžba",
-        "body": "Filtrirajte po kategoriji — voće, povrće, žitarice. Pogledajte poreklo, period berbe i cene. Naručite direktno ili koristite pretporudžbinu za {{year}}. za sezonsko planiranje."
+        "body": "Filtrirajte po formatu — sveže, zamrznuto ili sa čokoladnim prelivom. Pogledajte poreklo, period berbe i cene. Naručite direktno ili koristite pretporudžbinu za {{year}}. za sezonsko planiranje."
       },
       {
         "title": "Potvrda i plaćanje",
@@ -4039,12 +4108,12 @@
         "body": "Pratite seriju kroz digitalni pasoš: gde je ubrano, kada, kako je tretirano do isporuke."
       }
     ],
-    "productsTitle": "Šta nudimo",
-    "productsLead": "13 vrsta voća, 18 vrsta povrća i 3 vrste žitarica. Berba iz ugovorene mreže proizvođača koji rade po Bio Vera standardima. Kompletna lista sa trenutnom dostupnošću u kupovnom panelu.",
+    "productsTitle": "Program bobica",
+    "productsLead": "Sveže: malina, kupina, jagoda, borovnica. Zamrznuto: program bobica (malina, kupina, jagoda, mešavina bobica). Sa čokoladnim prelivom: malina, kupina, jagoda. Svaka linija sa Bio Vera Digital Product Passport.",
     "productCategoryLabels": [
-      "Voće",
-      "Povrće",
-      "Žitarice"
+      "Sveže bobice",
+      "Zamrznuti program",
+      "Sa čokoladom"
     ],
     "productsNote": "Prijavite se na kupčev panel da vidite ceo katalog, naručite ili pošaljete pretporudžbinu za {{year}}.",
     "harvestCalendarTitle": "Kalendar berbe",
@@ -4169,6 +4238,8 @@
         "standard": "HACCP principi, hladni lanac, odobreni inputi"
       }
     ],
+    "paymentTermsTitle": "Transparentni uslovi plaćanja",
+    "paymentTermsBody": "Uslovi plaćanja se unapred dogovaraju u okviru relevantnog proizvodnog ili isporučnog ugovora.",
     "paymentGuaranteedBold": "",
     "paymentGuaranteedRest": "",
     "applyCertCta": "Prijavite se",
@@ -4287,7 +4358,7 @@
       }
     ],
     "metaTitle": "Program za proizvođače | Bio Vera — Sertifikacija, garantovani uslovi, kupci širom Evrope",
-    "metaDescription": "Program za proizvođače: garantovani uslovi, besplatna GlobalG.A.P. IFA v6 grupna sertifikacija, isplata za 48h, koordinisana logistika i pristup EU tržištu. Otvoreno za proizvođače širom Evrope.",
+    "metaDescription": "Evropski Bio Vera proizvodni program sa transparentnim uslovima plaćanja, digitalnom sledljivošću i koordinacijom tržišta iz Hamburga.",
     "heroEyebrow": "Bio Vera · Proizvođači",
     "heroSubtitle": "Garantovani uslovi i kupci širom Evrope — prijava je otvorena proizvođačima iz svih evropskih zemalja"
   },
@@ -4701,7 +4772,7 @@
     "metaTitle": "O Bio Vera | Vertikalno integrisana agrifood kompanija, Hamburg",
     "metaDescription": "Bio Vera je vertikalno integrisana agrifood kompanija u Hamburgu: proizvođači širom Evrope, programski QA, hladni lanac i digitalni pasoši tura — ne marketplace.",
     "heroTitle": "O Bio Vera",
-    "heroSubtitle": "Bio Vera organizuje poljoprivrednu proizvodnju kroz ugovorne proizvođače, sprovodi terensku kontrolu kvaliteta, pakuje i isporučuje brendiranu hranu direktno EU maloprodajnim lancima. Jedan dosije serije prati svaki tovar od njive do police.",
+    "heroSubtitle": "Bio Vera je agrifood kompanija sa sedištem u Hamburgu, vertikalno integrisana, specijalizovana za gajenje, kontrolu kvaliteta i globalnu distribuciju premium bobica — malina, kupina, jagoda i borovnica. Kroz sinergiju sopstvene proizvodnje i jakog mreže odabranih ugovornih proizvođača širom Evrope obezbeđujemo najviše standarde tokom cele godine.",
     "techPartnerLine": "Bio Vera platformu razvija i održava <1>Vera IT</1> iz Hamburga — tehnološki partner u okviru Vera Group.",
     "missionTitle": "Naša misija",
     "missionP1": "Koristimo tehnologiju da isti zapisi služe operacijama i prodaji. Proizvođači proizvode unutar našeg sistema, kupci ugovaraju sa Bio Verom, potrošači vide proverljivo poreklo i kvalitet.",
@@ -4957,7 +5028,7 @@
     "transparencyBullets": [
       "QR otvara pasoš sa licem proizvodnje, sertifikatima i tragom rute u jednoj kratkoj, činjeničnoj kartici koja se lako deli.",
       "Hladni lanac i kustodija stoje pored porekla na istom ekranu, ne kao drugi dokument koji se naknadno lepi uz prvi.",
-      "Bio-Ready reč na kutiji i dalje zna šta operacija ima u grafičkom pasošu, tako da radnja i zatiljska kancelarija ne pričaju dve različite priče.",
+      "programme-ready reč na kutiji i dalje zna šta operacija ima u grafičkom pasošu, tako da radnja i zatiljska kancelarija ne pričaju dve različite priče.",
       "Grimiznu marketinšku rečenicu ne šaljemo napolje ako iza nje nema artefakata — reputacija trgovca ne plaća cenu greške par slojeva uzvodno u lancu."
     ],
     "financeTitle": "Novac koji ne glumi monolit",
@@ -5032,7 +5103,7 @@
           },
           {
             "heading": "GPS unutar ograde",
-            "body": "Terenski unosi zahtevaju poziciju unutar poligona; snimak van granice ne može da produži Bio-Ready priču."
+            "body": "Terenski unosi zahtevaju poziciju unutar poligona; snimak van granice ne može da produži programme-ready priču."
           },
           {
             "heading": "Blokada sa sledljivošću",
@@ -5321,11 +5392,11 @@
     "pdfLimitHint": "Dužina i raspored su namerni radi zvaničnih prijava. Baner se u produkciji može zameniti drugim odobrenim vizuelom.",
     "coverEyebrow": "Pregled projekta",
     "coverTitle": "Bio Vera — pregled projekta",
-    "coverSubtitle": "Kompanija koja prodaje pod brendom Bio Vera: trag od parcela i odobrenih ulaza do pakovanja, hladnog lanca i maloprodaje uz Bio-Ready dosije koji prodajni tim brani kod kupca.",
+    "coverSubtitle": "Kompanija koja prodaje pod brendom Bio Vera: trag od parcela i odobrenih ulaza do pakovanja, hladnog lanca i maloprodaje uz programme-ready dosije koji prodajni tim brani kod kupca.",
     "sections": [
       {
         "title": "Uvod (Introduction)",
-        "body": "Bio Vera je kompanija koja organizuje proizvodnju kroz Ugovorene proizvođače, vodi logistiku i prodaje kupcima uz istu Bio-Ready transparentnost. Koridor znači jedan trag — balkanska proizvodnja u EU okviru bez paralelnih naracija u tabelama."
+        "body": "Bio Vera je kompanija koja organizuje proizvodnju kroz Ugovorene proizvođače, vodi logistiku i prodaje kupcima uz istu programme-ready transparentnost. Koridor znači jedan trag — balkanska proizvodnja u EU okviru bez paralelnih naracija u tabelama."
       },
       {
         "title": "Problem",
@@ -6165,5 +6236,46 @@
     "expectWhoBody": "Bio Vera tim iz Hamburga zadužen za vašu oblast.",
     "contactPromptTitle": "Radije biste razgovarali?",
     "contactPromptCta": "Zakažite besplatan razgovor"
+  },
+  "admin": {
+    "passportReports": {
+      "details": "Detalji prijave",
+      "product": "Proizvod",
+      "notes": "Interne beleške",
+      "error": "Prijavu nije moguće učitati ili sačuvati.",
+      "new": "Novo",
+      "title": "Prijave iz pasoša",
+      "contact": "Kontakt",
+      "inProgress": "U obradi",
+      "resolve": "Rešeno",
+      "openPhoto": "Otvori fotografiju",
+      "openPassport": "Otvori pasoš",
+      "empty": "Nema prijava."
+    },
+    "passportDocuments": {
+      "title": "Dokumenti pasoša",
+      "lead": "U javnom pasošu prikazuju se samo potvrđeni dokumenti odobreni za javnost.",
+      "openFile": "Otvori dokument",
+      "confirmPublic": "Potvrdi i objavi",
+      "confirmInternal": "Potvrdi za internu upotrebu",
+      "empty": "Nema dokumenata."
+    }
+  },
+  "residueControlledPage": {
+    "metaTitle": "Proizvodnja sa kontrolom ostataka | Bio Vera",
+    "metaDescription": "Bio Vera proizvodni programi dizajnirani da smanje upotrebu pesticida i ciljaju nedetektovane ostatke pesticida pod definisanom laboratorijskom verifikacijom.",
+    "title": "Bio Vera program proizvodnje sa kontrolom ostataka",
+    "heroLead": "Bio Vera razvija proizvodne programe dizajnirane da sistematski smanje upotrebu pesticida i pomognu odabranim proizvođačima da ciljaju proizvode bez detektovanih ostataka pesticida pod definisanim laboratorijskim metodama i granicama detekcije.",
+    "disclaimer": "Ovaj program je u razvoju i ne predstavlja organsku sertifikaciju niti tvrdnju da pesticidi nikada nisu korišćeni.",
+    "flowTitle": "Kako program povezuje korake",
+    "flowSteps": [
+      "Proizvodni protokol",
+      "Smernice za odobrene inpute",
+      "Dokumentacija tretmana",
+      "Planiranje berbe",
+      "Laboratorijska verifikacija",
+      "Bio Vera Digital Product Passport"
+    ],
+    "labNote": "Laboratorijska verifikacija je obavezna pre nego što serija može biti predstavljena kao ispunjavajući odgovarajući Bio Vera cilj za ostatke."
   }
 }

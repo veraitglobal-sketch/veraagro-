@@ -6,6 +6,7 @@ import { Calendar, ChevronDown } from 'lucide-react-native';
 import { enterpriseColors } from '../../lib/enterprise-ui';
 import { theme } from '../../lib/theme';
 import { formatYmdForDisplay, parseYmd, toYmd } from '../../lib/date-ymd';
+import { resolveAppLocaleTag } from '../../lib/date-locale';
 
 type Props = {
   value: string;
@@ -82,7 +83,7 @@ export function GrowerDateField({ value, onChange, minimumDate, maximumDate, dis
             onChange={onPickerChange}
             minimumDate={minimumDate}
             maximumDate={maximumDate}
-            locale={i18n.language?.startsWith('sr') ? 'sr-Latn' : 'en-US'}
+            locale={resolveAppLocaleTag(i18n.language)}
             themeVariant="light"
             style={styles.iosPicker}
           />

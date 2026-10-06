@@ -312,6 +312,9 @@
     "minimumC": "Temperatura mínima (°C)",
     "maximumC": "Temperatura máxima (°C)",
     "dateHelp": "Formato de fecha: YYYY-MM-DD HH:mm (hora local).",
+    "dateHelpMobile": "Toque el calendario y el reloj — no hace falta escribir.",
+    "temperatureRequired": "Introduzca la temperatura mínima y máxima.",
+    "operationEndHint": "Déjelo vacío si el trabajo terminó a la misma hora.",
     "materialLot": "Lote del material",
     "productionDate": "Fecha de producción",
     "plantingPeriod": "Período de plantación",
@@ -334,6 +337,10 @@
     "waterLitres": "Agua utilizada",
     "operationHelp": "Indique cuándo se realizó el trabajo. La hora del registro se guarda por separado. La foto y el GPS se capturan al registrar.",
     "operationInvalid": "Revise la fecha, la hora, las cantidades y los campos obligatorios: agua para riego, observaciones para inspección o nombre y cantidad del producto para tratamiento.",
-    "materialBarcode": "Código de barras del producto"
+    "materialBarcode": "Código de barras del producto",
+    "savedLocal": "Guardado en el dispositivo — se enviará cuando haya conexión.",
+    "savedSent": "Observación enviada al servidor.",
+    "sending": "Enviando observación…",
+    "statusConflict": "Esta referencia ya se usó con datos distintos. Elimine la fila local y guarde de nuevo."
   }
 }

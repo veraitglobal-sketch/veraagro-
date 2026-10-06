@@ -1,11 +1,19 @@
+import { parseFieldOperation } from '../../shared/passport/field-operation';
+import { formatWeatherObservationPreview } from '../../shared/passport/weather-entry';
+import { parseWeatherObservation } from '../../shared/passport/weather-observation';
 import type { FieldEntry } from './api/types';
-import type { FieldLogHistoryItem, PendingPlantingEntry } from './offline-storage';
+import type { FieldLogHistoryItem, PendingPlantingEntry, PendingWeatherObservation } from './offline-storage';
 
 const BACKEND_TYPE_TO_ACTIVITY: Record<string, FieldLogHistoryItem['activityType']> = {
   SETVA: 'Planting',
   PRIHRANA: 'Fertilizing',
   PRSKANJE: 'Spraying',
   BERBA: 'Harvest',
+  SPRAYING: 'Spraying',
+  FERTILIZING: 'Fertilizing',
+  IRRIGATION: 'Irrigation',
+  INSPECTION: 'Inspection',
+  WEATHER: 'Weather',
 };
 
 type EntryRow = FieldEntry & {
@@ -18,6 +26,7 @@ type EntryRow = FieldEntry & {
   areaHa?: number | null;
   occurredAt?: string;
   clientReference?: string | null;
+  notes?: string | null;
   data?: Record<string, unknown>;
 };
 
@@ -51,6 +60,7 @@ function buildDetailData(entry: EntryRow): FieldLogHistoryItem['detailData'] {
       : [];
   const loc = data.location as { lat?: number; lng?: number } | undefined;
   return {
+    operation: (() => { try { return parseFieldOperation(data.operation); } catch { return undefined; } })(),
     type: entry.type,
     bags,
     parcelId: entry.parcelId ?? (typeof data.parcelId === 'string' ? data.parcelId : undefined),
@@ -68,6 +78,32 @@ function buildDetailData(entry: EntryRow): FieldLogHistoryItem['detailData'] {
 
 export function fieldEntryToHistoryItem(entry: EntryRow, farmName?: string): FieldLogHistoryItem {
   const data = entry.data ?? {};
+  if (entry.type === 'WEATHER' && data.weather) {
+    try {
+      const weather = parseWeatherObservation(data.weather);
+      const notes = typeof data.notes === 'string' ? data.notes : entry.notes ?? undefined;
+      return {
+        id: entry.id,
+        clientReference: entry.clientReference ?? undefined,
+        timestamp: weather.from,
+        activityType: 'Weather',
+        estateId: entry.farmId,
+        parcelId: entry.parcelId ?? (typeof data.parcelId === 'string' ? data.parcelId : undefined),
+        harvestAnnouncementId:
+          entry.plantingId ?? (typeof data.plantingId === 'string' ? data.plantingId : undefined),
+        journalNotesPreview: formatWeatherObservationPreview(weather, notes),
+        status: 'synced',
+        detailData: {
+          type: 'WEATHER',
+          weather,
+          notes,
+          date: weather.from,
+        },
+      };
+    } catch {
+      /* fall through to generic preview */
+    }
+  }
   return {
     id: entry.id,
     clientReference: entry.clientReference ?? undefined,
@@ -80,11 +116,33 @@ export function fieldEntryToHistoryItem(entry: EntryRow, farmName?: string): Fie
     journalNotesPreview:
       entry.type === 'SETVA'
         ? plantingPreview(entry, farmName)
-        : `${entry.type} — ${entry.materialName ?? ''}`.trim(),
+        : [entry.materialName, typeof data.notes === 'string' ? data.notes : ''].filter(Boolean).join(' — '),
     materialID: entry.seedSerialNumber ?? undefined,
     materialQuantity: entry.materialQuantity != null ? String(entry.materialQuantity) : undefined,
     status: 'synced',
     detailData: buildDetailData(entry),
+  };
+}
+
+export function pendingWeatherToHistoryItem(row: PendingWeatherObservation): FieldLogHistoryItem {
+  const weather = row.payload.data.weather;
+  return {
+    id: row.id,
+    clientReference: row.id,
+    timestamp: weather.from,
+    activityType: 'Weather',
+    estateId: row.farmId,
+    parcelId: row.parcelId,
+    harvestAnnouncementId: row.plantingId,
+    journalNotesPreview: formatWeatherObservationPreview(weather, row.payload.data.notes),
+    status: row.status === 'error' ? 'error' : row.status === 'syncing' ? 'syncing' : 'pending',
+    error: row.error,
+    detailData: {
+      type: 'WEATHER',
+      weather,
+      notes: row.payload.data.notes,
+      date: row.payload.data.date,
+    },
   };
 }
 
@@ -145,7 +203,7 @@ export function mergeFieldLogHistory(
       byKey.set(key, item);
       continue;
     }
-    if (prev.status === 'synced') continue;
+    if (prev.status === 'synced' && item.status !== 'synced') continue;
     if (item.status === 'synced') {
       byKey.set(key, item);
       continue;

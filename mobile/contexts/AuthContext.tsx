@@ -119,6 +119,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (!access_token || !u) {
             throw new Error('Invalid response from server');
           }
+          // Suspend owner-scoped work before replacing credentials. Otherwise a
+          // sync started between these writes can pair the old user with the new token.
+          await AsyncStorage.removeItem('auth_user');
           await AsyncStorage.setItem('auth_token', access_token);
           await AsyncStorage.setItem('auth_user', JSON.stringify(u));
           axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;

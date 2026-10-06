@@ -65,6 +65,8 @@ export function buildAdminNavItems(t: TFunction) {
     { href: '/admin/returns', label: t('returnFlow.title'), icon: <Package className="w-5 h-5" /> },
     { href: '/admin/dispatch', label: t('dispatchFlow.title'), icon: <Package className="w-5 h-5" /> },
     { href: '/admin/delivery-issues', label: t('deliveryReview.title'), icon: <AlertTriangle className="w-5 h-5" /> },
+    { href: '/admin/passport-reports', label: t('adminNav.passportReports', { defaultValue: 'Passport reports' }), icon: <AlertTriangle className="w-5 h-5" /> },
+    { href: '/admin/passport-documents', label: t('adminNav.passportDocuments', { defaultValue: 'Passport documents' }), icon: <ClipboardCheck className="w-5 h-5" /> },
     { href: '/admin/orders', label: t('adminNav.orders'), icon: <ShoppingCart className="w-5 h-5" /> },
     { href: '/admin/pre-orders', label: t('adminNav.preOrders'), icon: <ShoppingCart className="w-5 h-5" /> },
     { href: '/admin/finance-overview', label: t('adminNav.financeOverview'), icon: <PieChart className="w-5 h-5" /> },

@@ -1165,6 +1165,27 @@
       "allowCamera": "Permite camera",
       "validBarcodeMessage": "Codul de bare este valid: {{code}}"
     },
+    "homeParcels": {
+      "title": "Parcele",
+      "empty": "Încă nu există parcele pe această fermă.",
+      "addCta": "Adaugă parcelă"
+    },
+    "parcelDetail": {
+      "title": "Parcelă",
+      "notFound": "Parcela nu a fost găsită.",
+      "plantingsTitle": "Plantații",
+      "plantingsEmpty": "Nicio plantație înregistrată pe această parcelă.",
+      "plantingsEmptyCta": "Adaugă plantație",
+      "selectPlantingHint": "Selectați plantația înainte de a înregistra munca sau recolta.",
+      "selected": "Selectat",
+      "recentTitle": "Lucrări recente",
+      "addWorkCta": "Adaugă lucru",
+      "recordHarvestCta": "Înregistrează recolta",
+      "notApprovedTitle": "Parcelă în așteptarea aprobării",
+      "notApprovedBody": "Operațiunile trebuie să aprobe parcela înainte de majoritatea intrărilor din jurnal.",
+      "notApprovedCta": "Vezi pașii de aprobare",
+      "noPlantingSelected": "Selectați mai întâi o plantație din listă."
+    },
     "estates": {
       "newEstate": "Adăugați câmp",
       "locationPlaceholder": "de ex. Arilje, Serbia",
@@ -1240,8 +1261,13 @@
     },
     "dateField": {
       "placeholder": "Selectați o dată",
-      "hint": "Deschide calendarul - nu este nevoie de tastare.",
+      "hint": "Deschide calendarul — nu este nevoie de tastare.",
       "a11y": "Data: {{date}}"
+    },
+    "timeField": {
+      "placeholder": "Selectați ora",
+      "hint": "Deschide ceasul — nu este nevoie de tastare.",
+      "a11y": "Ora: {{time}}"
     },
     "harvest": {
       "modePlanting": "Cultură nouă (sadnja)",
@@ -1675,7 +1701,9 @@
       "spraying": "Stropire",
       "harvest": "Recoltare",
       "transportCoord": "Ridicare transport/logistica",
-      "packaging": "Ambalarea mărfurilor"
+      "packaging": "Ambalarea mărfurilor",
+      "irrigation": "Irigare",
+      "inspection": "Inspecția culturii"
     },
     "batches": {
       "title": "Multe",
@@ -2170,6 +2198,7 @@
       "chooseFromGallery": "În schimb, alegeți din galerie",
       "getLocation": "Obțineți locația curentă",
       "locationOk": "Locația a fost încărcată",
+      "simulatedGps": "GPS simulator — coordonate doar pentru test, nu dovadă pe parcelă.",
       "queueBanner": "{{count}} salvat pe acest telefon — încă nu pe server. Atinge Trimite acum. Dacă nu reușește, citiți textul roșu de pe fiecare rând de mai jos.",
       "sendQueueNow": "Trimite acum",
       "discardQueueTitle": "Ștergeți de pe acest telefon?",
@@ -2320,6 +2349,42 @@
       "noLots": "Fără loturi gata. Completați intrarea de calitate mai întâi.",
       "selectLotMessage": "Ambalarea este înregistrată — conectați lotul înainte de a solicita ridicarea.",
       "selectLotLink": "Intrare de calitate și loturi"
+    },
+    "catalog": {
+      "title": "Catalog produse",
+      "lead": "Introduceți datele o singură dată — reutilizate la recoltă, loturi și pașaport.",
+      "name": "Nume produs",
+      "variety": "Soi",
+      "description": "Descriere scurtă",
+      "storage": "Condiții de depozitare",
+      "imageUrl": "URL fotografie",
+      "planting": "Plantare legată",
+      "noPlanting": "Niciuna",
+      "loadFailed": "Catalogul nu a putut fi încărcat.",
+      "saveFailed": "Produsul nu a putut fi salvat.",
+      "saved": "Produs salvat."
+    },
+    "catalogMedia": {
+      "documents": "Documentele produsului",
+      "title": "Titlul documentului",
+      "issuer": "Emitent",
+      "issuedAt": "Data emiterii (AAAA-LL-ZZ)",
+      "expiresAt": "Valabil până la (AAAA-LL-ZZ)",
+      "CERTIFICATE": "Certificat",
+      "LAB_RESULT": "Rezultat de laborator",
+      "OTHER": "Altele",
+      "UPLOADED": "Încărcat",
+      "REVIEWED": "Verificat",
+      "CONFIRMED": "Confirmat",
+      "pickDocument": "Alege PDF sau fotografie",
+      "upload": "Încarcă documentul",
+      "reviewNotice": "Document încărcat. Publicarea necesită aprobarea administratorului.",
+      "tooLarge": "Dimensiunea maximă este 10 MB.",
+      "pickPhoto": "Alege fotografia produsului",
+      "photoPermission": "Permite accesul la fotografii pentru a alege o imagine.",
+      "photoSize": "Alege o fotografie mai mică (maximum 1,8 MB).",
+      "estate": "Fermă",
+      "plannedQuantity": "Cantitate planificată (kg)"
     }
   },
   "buyer": {
@@ -2587,7 +2652,54 @@
       "sectionColdChain": "Lanțul rece",
       "tempSummary": "Min {{min}}°C · Max {{max}}°C · Medie {{avg}}°C",
       "tempReadingsCount": "{{count}} citiri de temperatură",
-      "sectionProtocol360": "Protocol 360"
+      "sectionProtocol360": "Protocol 360",
+      "notRecorded": "Not recorded",
+      "retry": "Try again",
+      "lotQuantity": "{{quantity}} {{unit}} (lot total)",
+      "batchLine": "Lot {{batchId}}",
+      "packagingLine": "{{count}}× {{label}}{{kg}}",
+      "harvestDate": "Harvest date",
+      "storageTemp": "Storage temperature",
+      "freshnessEstimate": "Freshness estimate",
+      "sectionOrigin": "Origin & production",
+      "crop": "Crop",
+      "noLinkedTreatments": "No treatments linked to this lot.",
+      "noTempReadings": "No temperature readings for this lot.",
+      "thisPackage": "This package: {{serial}} · {{type}}",
+      "platformStandard": "Platform standard",
+      "warningTemperature": "Temperature deviation recorded for this lot.",
+      "warningSeedRecalled": "Linked seed lot was recalled.",
+      "sectionHarvestPack": "Harvest & packaging",
+      "sectionQuality": "Quality",
+      "growthLog": "Growth log",
+      "labDocument": "Open lab document",
+      "lotOrdersScope": "order records",
+      "qualityStatus": "Status",
+      "spotReadingsDisclaimer": "Spot readings only — not uninterrupted cold-chain proof.",
+      "estimateSource": {
+        "systemEstimate": "System estimate",
+        "platformStandard": "Platform standard"
+      },
+      "tempCriteria": "Evaluation criteria",
+      "tempResult": "Comparison result",
+      "tempWithinCriteria": "Within criteria",
+      "tempOutsideCriteria": "Outside criteria",
+      "protocol360Overall": "Protocol 360 overall",
+      "protocol360Level": "Level {{level}} · {{name}} · {{status}}",
+      "packDate": "Packed on",
+      "productStorage": "Storage",
+      "declaredShelfLife": "Declared shelf life",
+      "sectionDocuments": "Documents",
+      "docConfirmed": "verified",
+      "reportTitle": "Report a problem",
+      "reportLead": "Describe the issue. Contact is optional and not public.",
+      "reportPlaceholder": "Describe the issue…",
+      "reportAddPhoto": "Add photo (optional)",
+      "reportPhotoAdded": "Photo attached",
+      "reportContact": "Email for reply (optional)",
+      "reportSubmit": "Send report",
+      "reportConfirm": "Report received. Reference: {{number}}",
+      "reportError": "Could not send the report."
     }
   },
   "supplier": {
@@ -3312,5 +3424,22 @@
       "other": "Altele"
     },
     "talkingAs": "Rezervați ca:"
+  },
+  "passportCompleteness": {
+    "title": "What is missing for the passport",
+    "allRequiredOk": "Required passport data is recorded.",
+    "levelRequired": "Required",
+    "levelRecommended": "Recommended",
+    "fixLink": "Add data",
+    "productName": "Product name in catalog",
+    "plantingLink": "Planting link",
+    "harvestDate": "Harvest date on lot",
+    "packDate": "Pack date",
+    "variety": "Variety",
+    "description": "Description",
+    "photo": "Photo",
+    "storage": "Storage conditions",
+    "qualityEntry": "Quality entry",
+    "publicDocument": "Public document"
   }
 }

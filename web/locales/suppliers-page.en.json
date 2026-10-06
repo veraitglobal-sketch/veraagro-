@@ -1,13 +1,13 @@
 {
-  "metaTitle": "Supplier Partnership | Bio Vera — Agricultural Inputs",
-  "metaDescription": "Supplier partnership programme: distribute certified inputs through the Bio Vera grower network in your region. Guaranteed demand, fixed pricing structure, integrated logistics.",
+  "metaTitle": "Approved Supplier Network | Bio Vera — Agricultural Inputs",
+  "metaDescription": "Bio Vera works with selected agricultural input and packaging suppliers to support producers operating under defined production programmes.",
   "hero": {
-    "title": "Supplier partnership programme",
-    "subtitle": "Distribute certified inputs — seeds, fertilizers and packaging — through the Bio Vera grower network in your region. Guaranteed demand, fixed pricing structure and integrated logistics.",
+    "title": "Join the Bio Vera Approved Supplier Network",
+    "subtitle": "Bio Vera works with selected agricultural input, packaging and technical suppliers to support producers operating under defined production programmes. Where technical integration is available, producers will be able to access programme-approved products through the Bio Vera platform.",
     "downloadPdf": "Download Prospect PDF",
     "downloadFail": "Failed to download prospect. Please try again.",
     "eyebrow": "Bio Vera · Suppliers",
-    "tagline": "Integrated supply chain, guaranteed demand"
+    "tagline": "Approved supplier network for production programmes"
   },
   "whoApply": {
     "title": "Who Should Apply",
@@ -24,30 +24,31 @@
     "subtitle": "",
     "cards": [
       {
-        "title": "Guaranteed Offtake",
-        "description": "Our growers source from approved suppliers. Stable demand and predictable revenue."
+        "title": "Approved catalogue integration",
+        "description": "Programme-approved products listed for participating producers subject to commercial agreement."
       },
       {
-        "title": "Price Stability",
-        "description": "Pre-agreed pricing structure. No fluctuations or per-transaction negotiations."
+        "title": "Product & technical data",
+        "description": "Structured product information connected to production and batch documentation where integrated."
       },
       {
-        "title": "Integrated Logistics",
-        "description": "Inputs are distributed through Bio Vera's integrated logistics network — refrigerated return haulage. No additional logistics costs for the partner."
+        "title": "Regional fulfilment",
+        "description": "Serve producers in your region within Bio Vera production programmes."
       },
       {
-        "title": "National Coverage",
-        "description": "Expand your reach and represent Bio Vera across your country."
+        "title": "Optional order integration",
+        "description": "Where technical integration is available, producers can access approved inputs through the Bio Vera system."
       },
       {
-        "title": "Exclusive Market Access",
-        "description": "Access to Bio Vera's network of certified growers and European buyers through vertically integrated infrastructure."
+        "title": "Programme alignment",
+        "description": "Participate in a supplier-neutral operating system — no exclusive permanent supplier status implied."
       }
     ]
   },
+  "paymentTermsNote": "Commercial terms, payment conditions and payment dates are agreed individually within the relevant supplier agreement or purchase order.",
   "howItWorks": {
     "title": "How It Works",
-    "subtitle": "Suppliers procure from our approved partners, distribute to certified growers at pre-agreed prices. Every transaction tracked through QR codes. Inventory movements recorded in real time with automatic alerts at 20% threshold.",
+    "subtitle": "Approved suppliers provide programme-aligned inputs and packaging. Where integrated, transactions can be tracked through the Bio Vera system.",
     "supplyChainTitle": "",
     "steps": [],
     "forSuppliersPanelTitle": "",

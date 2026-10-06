@@ -103,17 +103,15 @@ Bio Vera operates a vertically integrated agricultural network that connects gro
               
 
                 
-- **Digital Marketplace:** Channel for buying and selling agricultural products with transparent pricing and quality standards
+- **Agrifood Operating Platform:** Digital infrastructure supporting contracted production programmes, batch traceability, quality documentation, partner coordination and commercial workflows
                 
-- **Traceability Systems:** Complete product journey tracking from field to shelf with immutable digital proof
+- **Traceability Systems:** Batch-level traceability and structured digital records from production through delivery
                 
 - **Quality Assurance:** Multi-level quality control systems including Protocol 360 compliance verification
                 
 - **Logistics Coordination:** Transportation management, route optimization, and delivery tracking
                 
-- **Payment Processing:** Escrow services, settlement to partners under agreed terms, and financial transaction management
-                
-- **Certification Management:** GlobalG.A.P. IFA v6 group certification facilitation and compliance tracking
+- **Certification readiness support:** Documentation and coordination with qualified independent certification bodies where applicable
                 
 - **Mobile Applications:** Field management, logistics tracking, and buyer portal applications
                 
@@ -123,6 +121,30 @@ Bio Vera operates a vertically integrated agricultural network that connects gro
               
 
 We reserve the right to modify, suspend, or discontinue any aspect of the Service at any time, with or without notice. We do not guarantee that the Service will be available at all times or that it will be error-free. We may perform scheduled or unscheduled maintenance that may result in temporary unavailability of the Service.
+
+            
+
+            
+
+              
+
+## 4.1 Commercial Payments
+
+              
+
+**Commercial Payments**
+
+              
+
+Payments between Bio Vera and its contractual partners are made according to the payment terms agreed in the relevant contract, order or invoice.
+
+              
+
+Payment methods, currencies and due dates may vary depending on the commercial relationship, product programme and transaction.
+
+              
+
+Bio Vera is not a payment service provider, escrow agent or fintech platform. We do not hold buyer funds on behalf of third parties unless explicitly agreed in a separate written arrangement with a regulated partner.
 
             
 

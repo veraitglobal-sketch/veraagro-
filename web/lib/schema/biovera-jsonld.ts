@@ -33,50 +33,29 @@ export function buildBioVeraOrganizationGraph(siteUrl: string = getSiteUrl()) {
         },
         telephone: '+4915563740470',
         email: 'info@biovera.app',
-        // Growers, buyers, suppliers and logistics partners from all of Europe — not a single-country export corridor.
         areaServed: { '@type': 'Continent', name: 'Europe' },
         knowsLanguage: ['en', 'de', 'sr', 'es', 'fr', 'ro', 'bg'],
         knowsAbout: [
           'Agrifood Supply Chain',
-          'Vertical Integration',
-          'EU Digital Product Passport',
+          'European Producer Network',
+          'Bio Vera Digital Product Passport',
           'Food Traceability',
-          'Precision Agriculture',
+          'Production Programmes',
           'Cold Chain Management',
-          'Blockchain Anchoring',
-          'Anti-Fraud Technology',
-          'AI Analytics',
-          'Organic Certification',
-          'GlobalG.A.P.',
+          'Residue-Controlled Agriculture',
           'Quality Assurance',
           'Contract Farming',
-          'Fresh Produce Distribution',
+          'Berry Production Programmes',
           'AgriTech',
         ],
         makesOffer: [
           {
             '@type': 'Offer',
             itemOffered: {
-              '@type': 'Product',
-              name: 'Fresh Fruits',
+              '@type': 'Service',
+              name: 'European Berry Programme',
               description:
-                '13 fruit varieties with EU Digital Product Passport and full batch traceability.',
-            },
-          },
-          {
-            '@type': 'Offer',
-            itemOffered: {
-              '@type': 'Product',
-              name: 'Fresh Vegetables',
-              description: '18 vegetable varieties with full traceability and EU compliance.',
-            },
-          },
-          {
-            '@type': 'Offer',
-            itemOffered: {
-              '@type': 'Product',
-              name: 'Cereals',
-              description: '3 cereal lines with batch tracking from field to delivery.',
+                'Structured fresh, frozen and value-added berry programmes with batch-level Bio Vera Digital Product Passports.',
             },
           },
           {
@@ -85,7 +64,7 @@ export function buildBioVeraOrganizationGraph(siteUrl: string = getSiteUrl()) {
               '@type': 'Service',
               name: 'Grower Programme',
               description:
-                'Contract farming with defined standards, inputs, fair compensation and Bio-Ready certification.',
+                'European production programmes with defined standards, digital documentation and market coordination from Hamburg.',
             },
           },
         ],
@@ -100,16 +79,6 @@ export function buildBioVeraOrganizationGraph(siteUrl: string = getSiteUrl()) {
             { '@type': 'Organization', name: 'ReinAllround', url: 'https://www.reinallround.de' },
           ],
         },
-        hasCredential: [
-          {
-            '@type': 'EducationalOccupationalCredential',
-            credentialCategory: 'EU Digital Product Passport Compliance',
-          },
-          {
-            '@type': 'EducationalOccupationalCredential',
-            credentialCategory: 'GlobalG.A.P. IFA v6 Group Certification',
-          },
-        ],
       },
       {
         '@type': 'WebSite',
